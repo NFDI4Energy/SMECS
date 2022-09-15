@@ -33,7 +33,13 @@ Introduction
 
 Documentation
 =============
-No documentation available.
+**Getting started**
+
+  #. Clone the repository
+     * Copy URL from Clone with HTTPS
+     * Change the current working directory to   the desired location
+     * Run "git clone <URL>" in Command Prompt (GitBash can be used as well)
+  
 
 
 Collaboration
