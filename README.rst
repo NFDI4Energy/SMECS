@@ -1,4 +1,3 @@
-
 =================
 RLI Metadata Tool
 =================
@@ -38,30 +37,30 @@ Documentation
 #. Cloning the repository
      * Copy URL of the project from Clone with HTTPS.
      * Change the current working directory to   the desired location.
-     * Run "git clone <URL>" in Command Prompt. (GitBash can be used as well)
+     * Run ``git clone <URL>`` in command prompt. (GitBash can be used as well)
 #. Creating virtual environment
      * Make sure `Python <https://www.python.org/>`_ is installed.
-     * Ensure you can run Python from CMD.
-      | * On Windows: Run "py --version".
-      | * On Unix/MacOS: Run "python3 --version".
-     * Run "python3 -m venv <name-of-virtual-environment>" in CMD. 
-       (for more details visit https://docs.python.org/3/library/venv.html)
+     * Ensure you can run Python from command prompt.
+         * On Windows: Run ``py --version``. 
+         * On Unix/MacOS: Run ``python3 --version``. 
+     * Run ``python3 -m venv <name-of-virtual-environment>`` in command prompt.
+     |  (for more details visit https://docs.python.org/3/library/venv.html)
      * Activate virtual environment.
-      | * On Windows: Run "env\\Scripts\\activate.bat" 
-        (env is the selected name for the virtual environment)
-      | * On Unix/MacOS: Run "source env/bin/activate"
-      | Note that activating the virtual environment change the shell's prompt and show what virtual
-        environment is being used.
+         * On Windows: Run ``env\Scripts\activate.bat``. 
+         * On Unix/MacOS: Run ``source env/bin/activate``.
+     |  env is the selected name for the virtual environment.
+     |  Note that activating the virtual environment change the shell's prompt and show what virtual
+     |  environment is being used.
 #. Managing Packages with pip
-     * Ensure you can run pip from CMD.
-      | * On Windows: Run "py -m pip --version".
-      | * On Unix/MacOS: Run "python3 -m pip --version".
+     * Ensure you can run pip from command prompt.
+         * On Windows: Run ``py -m pip --version``.
+         * On Unix/MacOS: Run ``python3 -m pip --version``.
      * Install a list of requirements specified in a *Requirements.txt*.
-      | * On Windows: Run "py -m pip install -r requirements.txt".
-      | * On Unix/MacOS: Run "python3 -m pip install -r requirements.txt".
-        (for more details visit https://packaging.python.org/en/latest/tutorials/installing-packages/)
+         * On Windows: Run ``py -m pip install -r requirements.txt``.
+         * On Unix/MacOS: Run ``python3 -m pip install -r requirements.txt``.       
+     (for more details visit https://packaging.python.org/en/latest/tutorials/installing-packages/)
 
-More information about project: https://github.com/rl-institut/meta_tool
+More information about this project: https://github.com/rl-institut/meta_tool
 
 
 Collaboration
