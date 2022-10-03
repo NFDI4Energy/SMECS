@@ -60,6 +60,17 @@ Documentation
          * On Unix/MacOS: Run ``python3 -m pip install -r requirements.txt``.       
      (for more details visit https://packaging.python.org/en/latest/tutorials/installing-packages/)
 
+
+**Running the project**
+
+* Open the project in an editor. (e.g. VS code)
+* Run the project in the editor. (Project runs on the virtual environment and activating the virtual environment will change shell’s prompt to show what virtual environment is being used)
+* Go down to **meta_tool** directory in command line or terminal. (``cd meta_tool``)
+* To run the project use subcommand **runserver**.
+    * On Windows: Run ``py manage.py runserver``.
+    * On Unix/MacOS: Run ``python3 manage.py runserver``.
+* To see the output on the browser follow the link shown in the terminal. (e.g. http://127.0.0.1:8000/)
+
 More information about this project: https://github.com/rl-institut/meta_tool
 
 
