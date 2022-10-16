@@ -4,9 +4,20 @@
 
 {% block content %}
   <h3>Supported metadata versions:</h3>
+  <div class="tabsp">
+    <button class="tablinks" onclick="openDS(event, 'data')">Data</button>
+    <button class="tablinks" onclick="openDS(event, 'software')">Software</button>
+  </div>
+
+  <div id="data" class="tabcontent">
   <ul>
     {% for version in versions %}
       <li><a href="{{version}}">v{{version}}</a></li>
     {% endfor %}
   </ul>
+  </div>
+
+  <div id="software" class="tabcontent">
+  <a href="#">Software</a>
+  </div>
 {% endblock content %}
