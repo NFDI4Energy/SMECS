@@ -77,6 +77,11 @@ Documentation
 More information about this project: https://github.com/rl-institut/meta_tool
 
 
+**Tip for developers**
+
+If the page does not refresh correctly, clear the browser cache. You can force Chrome to pull in new data and ignore the saved ("cached") data by using the keyboard shortcut ``Cmd+Shift+R`` on Mac, and ``Ctrl+F5`` or ``Ctrl+Shift+R`` on Windows. 
+
+
 Collaboration
 =============
 | Everyone is invited to develop this repository with good intentions.
