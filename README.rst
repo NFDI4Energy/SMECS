@@ -1,4 +1,3 @@
-
 =================
 RLI Metadata Tool
 =================
@@ -33,7 +32,46 @@ Introduction
 
 Documentation
 =============
-No documentation available.
+**Getting started**
+
+#. Cloning the repository
+     * Copy URL of the project from Clone with HTTPS.
+     * Change the current working directory to   the desired location.
+     * Run ``git clone <URL>`` in command prompt. (GitBash can be used as well)
+#. Creating virtual environment
+     * Make sure `Python <https://www.python.org/>`_ is installed.
+     * Ensure you can run Python from command prompt.
+         * On Windows: Run ``py --version``. 
+         * On Unix/MacOS: Run ``python3 --version``. 
+     * Run ``python3 -m venv <name-of-virtual-environment>`` in command prompt.
+     |  (for more details visit https://docs.python.org/3/library/venv.html)
+     * Activate virtual environment.
+         * On Windows: Run ``env\Scripts\activate.bat``. 
+         * On Unix/MacOS: Run ``source env/bin/activate``.
+     |  env is the selected name for the virtual environment.
+     |  Note that activating the virtual environment change the shell's prompt and show what virtual
+     |  environment is being used.
+#. Managing Packages with pip
+     * Ensure you can run pip from command prompt.
+         * On Windows: Run ``py -m pip --version``.
+         * On Unix/MacOS: Run ``python3 -m pip --version``.
+     * Install a list of requirements specified in a *Requirements.txt*.
+         * On Windows: Run ``py -m pip install -r requirements.txt``.
+         * On Unix/MacOS: Run ``python3 -m pip install -r requirements.txt``.       
+     (for more details visit https://packaging.python.org/en/latest/tutorials/installing-packages/)
+
+
+**Running the project**
+
+* Open the project in an editor. (e.g. VS code)
+* Run the project in the editor. (Project runs on the virtual environment and activating the virtual environment will change shell’s prompt to show what virtual environment is being used)
+* Go down to **meta_tool** directory in command line or terminal. (``cd meta_tool``)
+* To run the project use subcommand **runserver**.
+    * On Windows: Run ``py manage.py runserver``.
+    * On Unix/MacOS: Run ``python3 manage.py runserver``.
+* To see the output on the browser follow the link shown in the terminal. (e.g. http://127.0.0.1:8000/)
+
+More information about this project: https://github.com/rl-institut/meta_tool
 
 
 Collaboration
