@@ -43,7 +43,9 @@ Documentation
      * Ensure you can run Python from command prompt.
          * On Windows: Run ``py --version``. 
          * On Unix/MacOS: Run ``python3 --version``. 
-     * Run ``python3 -m venv <name-of-virtual-environment>`` in command prompt.
+     * Create the virtual environment by running this code in the command prompt.
+         * On Windows: Run ``py -m venv <name-of-virtual-environment>``.
+         * On Unix/MacOS: Run ``python3 -m venv <name-of-virtual-environment>``.
      |  (for more details visit https://docs.python.org/3/library/venv.html)
      * Activate virtual environment.
          * On Windows: Run ``env\Scripts\activate.bat``. 
@@ -55,6 +57,7 @@ Documentation
      * Ensure you can run pip from command prompt.
          * On Windows: Run ``py -m pip --version``.
          * On Unix/MacOS: Run ``python3 -m pip --version``.
+     * Go to meta_tool directory. (``cd meta_tool``)
      * Install a list of requirements specified in a *Requirements.txt*.
          * On Windows: Run ``py -m pip install -r requirements.txt``.
          * On Unix/MacOS: Run ``python3 -m pip install -r requirements.txt``.       
@@ -72,6 +75,11 @@ Documentation
 * To see the output on the browser follow the link shown in the terminal. (e.g. http://127.0.0.1:8000/)
 
 More information about this project: https://github.com/rl-institut/meta_tool
+
+
+**Tip for developers**
+
+If the page does not refresh correctly, clear the browser cache. You can force Chrome to pull in new data and ignore the saved ("cached") data by using the keyboard shortcut ``Cmd+Shift+R`` on Mac, and ``Ctrl+F5`` or ``Ctrl+Shift+R`` on Windows. 
 
 
 Collaboration
