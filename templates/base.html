@@ -6,14 +6,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}RLI:Meta-Tool{% endblock %}</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'foundation/css/foundation.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'foundation/css/foundation.css' %}">
   </head>
   <body>
     <div class="{% block body-class %}l-bg-color u-vh--100{% endblock %}">
       {% block content %}{% endblock %}
     </div>
     <script src="{% static 'foundation/js/vendor/jquery.js' %}"></script>
-    <script src="{% static 'foundation/js/vendor/foundation.min.js' %}"></script>
+    <script src="{% static 'foundation/js/vendor/foundation.js' %}"></script>
     <script>
       $(document).ready(function() {
         $(document).foundation();
