@@ -18,6 +18,328 @@
   </div>
 
   <div id="software" class="tabcontent">
-  <a href="#">Software</a>
+    <header class="codemetagenerator">
+      <h1>CodeMeta generator</h1>
+    </header>
+
+    <main class="codemetagenerator_main">
+  
+      <p>Most fields are optional. Mandatory fields will be highlighted when generating Codemeta.</p>
+  
+      <noscript>
+          <p id="noscriptError">
+              This application requires Javascript to show dynamic fields in the form,
+              and generate a JSON file; but your browser does not support Javascript.
+              If you cannot use a browser with Javascript support, you can try
+              <a href="https://codemeta.github.io/tools/">one of the other available tools</a>
+              or write the codemeta.json file directly.
+          </p>
+      </noscript>
+  
+      <form id="inputForm">
+          <fieldset id="fieldsetSoftwareItself" class="leafFieldset">
+              <legend>The software itself</legend>
+  
+              <p title="The name of the software">
+                  <label for="name">Name</label>
+                  <input type="text" name="name" id="name" aria-describedby="name_descr"
+                      placeholder="My Software" required="required" />
+  
+                  <span class="field-description" id="name_descr">the software title</span>
+              </p>
+  
+              <p title="a brief description of the software">
+                  <label for="description">Description</label>
+                  <textarea rows="4" cols="50"
+                      name="description" id="description"
+                      placeholder="My Software computes ephemerides and orbit propagation. It has been developed from early ´80." ></textarea>
+              </p>
+  
+  
+              <p title="The date on which the software was created.">
+                  <label for="dateCreated">Creation date</label>
+                  <input type="text" name="dateCreated" id="dateCreated"
+                      placeholder="YYYY-MM-DD" pattern="\d{4}-\d{2}-\d{2}" />
+              </p>
+  
+              <p title="Date of first publication.">
+                  <label for="datePublished">First release date</label>
+                  <input type="text" name="datePublished" id="datePublished"
+                      placeholder="YYYY-MM-DD" pattern="\d{4}-\d{2}-\d{2}" />
+              </p>
+  
+              <p>
+                  <label for="license">License</label>
+                  <input list="licenses" name="license" id="license"
+                      aria-describedby="licenses_descr"> <!-- TODO: insert placeholder -->
+  
+                  <datalist id="licenses">
+                    
+                  </datalist>
+                  <!-- This datalist is be filled automatically -->
+  
+                  <br />
+                  <span class="field-description" id="licenses_descr">from <a href="https://spdx.org/license-list">SPDX licence list</a></span>
+              </p>
+          </fieldset>
+  
+          <fieldset id="fieldsetDiscoverabilityAndCitation" class="leafFieldset">
+              <legend>Discoverability and citation</legend>
+  
+              <p title="Unique identifier">
+                  <label for="identifier">Unique identifier</label>
+                  <input type="text" name="identifier" id="identifier"
+                      placeholder="10.151.xxxxx" aria-describedby="identifier_descr" />
+                  <span class="field-description" id="identifier_descr">
+                      such as ISBNs, GTIN codes, UUIDs etc..  <a href="http://schema.org/identifier">http://schema.org/identifier</a>
+                  </span>
+              </p>
+              <!-- define better
+  
+              schema.org definition of identifier (https://schema.org/identifier),
+              can be text, url or PropertyValue.
+              Used as follows in data representation with microdata:
+  
+              <div property="identifier" typeof="PropertyValue">
+              <span property="propertyID">DOI</span>:
+              <span property="value">10.151.xxxxx</span>
+              </div>
+              we can use that with identifier-type and identifier-value to have a clearer idea
+              of what needs to be in the input.
+  
+              -->
+  
+              <p title="Type of the software application">
+                  <label for="applicationCategory">Application category</label>
+                  <input type="text" name="applicationCategory" id="applicationCategory"
+                      placeholder="Astronomy"  />
+              </p>
+  
+              <p title="Comma-separated list of keywords">
+                  <label for="keywords">Keywords</label>
+                  <input type="text" name="keywords" id="keywords"
+                      placeholder="ephemerides, orbit, astronomy"  />
+              </p>
+  
+              <p title="Funding / grant">
+                  <label for="funding">Funding</label>
+                  <input type="text" name="funding" id="funding" aria-describedby="funding_descr"
+                      placeholder="PRA_2018_73"/>
+                  <span class="field-description" id="funding_descr">grant funding software development</span>
+              </p>
+  
+              <p title="Funding / organization">
+                  <label for="funder">Funder</label>
+                  <input type="text" name="funder" id="funder" aria-describedby="funder_descr"
+                      placeholder="Università di Pisa"/>
+                  <span class="field-description" id="funder_descr">organization funding software development</span>
+              </p>
+  
+              Authors and contributors can be added below
+          </fieldset>
+  
+          <fieldset id="fieldsetDevelopmentCommunity" class="leafFieldset">
+              <legend>Development community / tools</legend>
+  
+              <p title="Link to the repository where the un-compiled, human readable code and related code is located (SVN, Git, GitHub, CodePlex, institutional GitLab instance, etc.).">
+                  <label for="codeRepository">Code repository</label>
+                  <input type="URL" name="codeRepository" id="codeRepository"
+                      placeholder="git+https://github.com/You/RepoName.git" />
+              </p>
+  
+              <p title="Link to continuous integration service (Travis-CI, Gitlab CI, etc.).">
+                  <label for="contIntegration">Continuous integration</label>
+                  <input type="URL" name="contIntegration" id="contIntegration"
+                      placeholder="https://travis-ci.org/You/RepoName" />
+              </p>
+  
+              <p title="Link to a place for users/developpers to report and manage bugs (JIRA, GitHub issues, etc.).">
+                  <label for="issueTracker">Issue tracker</label>
+                  <input type="URL" name="issueTracker" id="issueTracker"
+                      placeholder="https://github.com/You/RepoName/issues" />
+              </p>
+  
+              <p title="Related document, software, tools">
+                  <label for="relatedLink">Related links</label>
+                  <textarea rows="4" cols="50"
+                      name="relatedLink" id="relatedLink"></textarea>
+          </fieldset>
+  
+          <fieldset id="fieldsetRuntime" class="leafFieldset">
+              <legend>Run-time environment</legend>
+  
+              <p title="Programming Languages, separated by commas">
+                  <label for="programmingLanguage">Programming Language</label>
+                  <input type="text" name="programmingLanguage" id="programmingLanguage"
+                      placeholder="C#, Java, Python 3"  />
+              </p>
+  
+              <p title="Runtime Platforms, separated by commas">
+                  <label for="runtimePlatform">Runtime Platform</label>
+                  <input type="text" name="runtimePlatform" id="runtimePlatform"
+                      placeholder=".NET, JVM" />
+              </p>
+  
+              <p title="Operating Systems, separated by commas">
+                  <label for="operatingSystem">Operating System</label>
+                  <input type="text" name="operatingSystem" id="operatingSystem"
+                      placeholder="Android 1.6, Linux, Windows, macOS" />
+              </p>
+  
+              <p title="Required software to run/use this one.">
+                  <label for="softwareRequirements">Other software requirements</label>
+                  <textarea rows="4" cols="50"
+                      name="softwareRequirements" id="softwareRequirements"
+                      placeholder=
+  "Python 3.4
+https://github.com/psf/requests"></textarea>
+          </fieldset>
+  
+          <fieldset id="fieldsetCurrentVersion" class="leafFieldset">
+              <legend>Current version of the software</legend>
+  
+              <p title="Version number of the software">
+                  <label for="version">Version number</label>
+                  <input type="text" name="version" id="version"
+                      placeholder="1.0.0" />
+              </p>
+  
+              <p title="The date on which the software was most recently modified.">
+                  <label for="dateModified">Release date</label>
+                  <input type="text" name="dateModified" id="dateModified"
+                      placeholder="YYYY-MM-DD" pattern="\d{4}-\d{2}-\d{2}" />
+              </p>
+  
+              <p title="Download link">
+                  <label for="downloadUrl">Download URL</label>
+                  <input type="URL" name="downloadUrl" id="downloadUrl"
+                      placeholder="https://example.org/MySoftware.tar.gz" />
+              </p>
+  
+              <p title="a brief description of the software">
+                  <label for="releaseNotes">Release notes</label>
+                  <textarea rows="4" cols="50"
+                      name="releaseNotes" id="releaseNotes"
+                      placeholder="Change log: this and that;
+Bugfixes: that and this." ></textarea>
+              </p>
+  
+  <!--TODO: referencePublication as ScholarlyArticle array -->
+  
+          </fieldset>
+  
+          <fieldset id="fieldsetAdditionalInfo" class="leafFieldset">
+              <legend>Additional Info</legend>
+  
+              <p title="Scholarly article describing this software">
+                  <label for="referencePublication">Reference Publication</label>
+                  <input type="URL" name="referencePublication" id="referencePublication"
+                      placeholder="https://doi.org/10.1000/xyz123" />
+              </p>
+  
+              <p title="Development Status">
+              <label for="developmentStatus">Development Status</label>
+                  <datalist id="developmentStatuses">
+                          <option value="concept">
+                          <option value="wip">
+                          <option value="suspended">
+                          <option value="abandoned">
+                          <option value="active">
+                          <option value="inactive">
+                          <option value="unsupported">
+                          <option value="moved">
+                  </datalist>
+                  <input list="developmentStatuses" id="developmentStatus" aria-describedby="developmentStatuses_descr"
+                  pattern="concept|wip|suspended|abandoned|active|inactive|unsupported|moved">
+  
+                  <br />
+                  <span class="field-description" id="developmentStatuses_descr">
+                      see <a href="http://www.repostatus.org">www.repostatus.org</a> for details
+                  </span>
+              </p>
+  
+              <p title="Part of">
+                  <label for="isPartOf">Is part of</label>
+                  <input type="URL" name="isPartOf" id="isPartOf"
+                      placeholder="http://The.Bigger.Framework.org"  />
+              </p>
+          </fieldset>
+  
+          <div class="dynamicFields">
+              <fieldset class="persons" id="author_container">
+                  <legend>Authors</legend>
+  
+                  <input type="hidden" id="author_nb" value="0" />
+                  <div id="addRemoveAuthor">
+                      <input type="button" id="author_add" value="Add one"
+                          onclick="addPerson('author', 'Author');" />
+                      <input type="button" id="author_remove" value="Remove last"
+                          onclick="removePerson('author');" />
+                  </div>
+              </fieldset>
+  
+              <fieldset class="persons" id="contributor_container">
+                  <legend>Contributors</legend>
+  
+                  <p>Order of contributors does not matter.</p>
+  
+                  <input type="hidden" id="contributor_nb" value="0" />
+                  <div id="addRemoveContributor">
+                      <input type="button" id="contributor_add" value="Add one"
+                          onclick="addPerson('contributor', 'Contributor');" />
+                      <input type="button" id="contributor_remove" value="Remove last"
+                          onclick="removePerson('contributor');" />
+                  </div>
+              </fieldset>
+          </div>
+  
+      </form>
+      <form>
+          <input type="button" id="generateCodemeta" value="Generate codemeta.json"
+              title="Creates a codemeta.json file below, from the information provided above." />
+          <input type="button" id="resetForm" value="Reset form"
+              title="Erases all fields." />
+          <input type="button" id="validateCodemeta" value="Validate codemeta.json"
+              title="Checks the codemeta.json file below is valid, and displays errors." />
+          <input type="button" id="importCodemeta" value="Import codemeta.json"
+              title="Fills the fields above based on the codemeta.json file below." />
+      </form>
+  
+      <p id="errorMessage">
+      </p>
+      <p>codemeta.json:</p>
+      <pre contentEditable="true" id="codemetaText"></pre>
+    </main>
+  
+    <footer>
+      <p style="text-align:center;">
+          Do you want to improve this tool ?
+          Check out the
+          <a href="https://github.com/codemeta/codemeta-generator">
+              CodeMeta-generator repository</a>
+          <br />
+          Join the
+          <a href="https://github.com/codemeta/codemeta">CodeMeta community</a>
+          discussion
+          <br />
+          The CodeMeta vocabulary -
+          <a href="https://doi.org/10.5063/schema/codemeta-2.0">v2.0</a>
+      </p>
+  
+      <h2 style="text-align:right;">Contributed by</h2>
+      <p style="text-align:right;">
+          <a href="https://www.softwareheritage.org/save-and-reference-research-software/">
+              <img alt="Software Heritage" src="https://annex.softwareheritage.org/public/logo/software-heritage-logo-title-motto.svg"
+                  width="300">
+          </a>
+      </p>
+    </footer>
+  
+    <script>
+      initFieldsData();
+      initCallbacks();
+      loadStateFromStorage();
+    </script>  
+
   </div>
 {% endblock content %}
