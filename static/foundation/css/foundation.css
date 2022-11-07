@@ -2768,6 +2768,11 @@ textarea {
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none; }
+
+div#software input[type='text']{
+  margin:0;
+}
+
   [type='text']:focus, [type='password']:focus, [type='date']:focus, [type='datetime']:focus, [type='datetime-local']:focus, [type='month']:focus, [type='week']:focus, [type='email']:focus, [type='number']:focus, [type='search']:focus, [type='tel']:focus, [type='time']:focus, [type='url']:focus, [type='color']:focus,
   textarea:focus {
     outline: none;
@@ -2803,8 +2808,7 @@ textarea[readonly] {
   background-color: #e6e6e6;
   cursor: not-allowed; }
 
-[type='submit'],
-[type='button'] {
+[type='submit'] {
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
@@ -2846,6 +2850,14 @@ label {
   label.middle {
     margin: 0 0 1rem;
     padding: 0.5625rem 0; }
+
+div#software label {
+      color: #B4886B;
+      font-weight: bold;
+      display: block;
+      width: 200px;
+      float: left;
+}
 
 .help-text {
   margin-top: -0.5rem;
@@ -2935,6 +2947,12 @@ legend {
     margin-left: -0.1875rem;
     padding: 0 0.1875rem; }
 
+fieldset.leafFieldset , fieldset.persons{
+    margin: 5px;
+    padding: 4px;
+    border: 1px solid #cacaca;
+  }    
+  
 select {
   height: 2.4375rem;
   margin: 0 0 1rem;
