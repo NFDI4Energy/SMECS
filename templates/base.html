@@ -7,18 +7,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}RLI:Meta-Tool{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="{% static 'foundation/css/foundation.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'foundation/css/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'foundation/css/codemeta.css' %}">
+    <script src="{% static 'foundation/js/vendor/codemeta_generation.js' %}"></script>
+    <script src="{% static 'foundation/js/vendor/utils.js' %}"></script>
+    <script src="{% static 'foundation/js/vendor/fields_data.js' %}"></script>
+    <script src="{% static 'foundation/js/vendor/dynamic_form.js' %}"></script>
   </head>
+
   <body>
     <div class="{% block body-class %}l-bg-color u-vh--100{% endblock %}">
       {% block content %}{% endblock %}
     </div>
     <script src="{% static 'foundation/js/vendor/jquery.js' %}"></script>
     <script src="{% static 'foundation/js/vendor/foundation.js' %}"></script>
+    <script src="{% static 'foundation/js/vendor/validation/primitives.js' %}"></script>
+    <script src="{% static 'foundation/js/vendor/validation/things.js' %}"></script>
+    <script src="{% static 'foundation/js/vendor/validation/index.js' %}"></script>
+    
+    <script>
+      initFieldsData();
+      initCallbacks();
+      loadStateFromStorage();
+    </script>
+
     <script>
       $(document).ready(function() {
         $(document).foundation();
       })
      </script>
+     
     {% block scripts %}{% endblock %}
   </body>
 </html>
