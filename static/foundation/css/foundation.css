@@ -5860,3 +5860,273 @@ div.tabcontent {
   border-top: none;
 }
 
+/******************** Initial Form of the software metadata Extractor (index.html) ********************/
+.InitialFormContainer {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-top: 2rem;
+}
+.mainHeader {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+#form1 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* align-items: center; */
+  margin: 3.5rem auto;
+  max-width: 600px;
+  margin-bottom: 2rem;
+}
+
+#form1 h6 {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: left;
+}
+
+#form1 input[type=url],
+#form1 input[type=text] {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-size: 16px;
+  margin-bottom: 2rem;
+}
+
+button.ExData {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 50%;
+  margin: auto;
+  font-weight: bold;
+}
+
+button.ExData:hover {
+  background-color: #3e8e41;
+  cursor: pointer;
+}
+
+/************ Tool Tip Styles ************/
+.tooltip-container {
+  display: flex;
+  align-items: center;
+}
+
+.tool-tip {
+  display: inline-block;
+  position: relative;
+  margin-left: 0.5em;
+  color: white;
+
+}
+
+.tool-tip .tool-tip__icon {
+  background: #3b4246;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-block;
+  font-family: times new roman;
+  height: 20px;
+  line-height: 1.3em;
+  text-align: center;
+  width: 20px;
+}
+
+.tool-tip .tool-tip__icon a {
+  text-decoration: none;
+  color: white;
+}
+
+.tool-tip .tool-tip__info {
+  display: none;
+  background: #262626;
+  opacity: 90%;
+  border: 1px solid #e9f16c;
+  border-radius: 3px;
+  font-size: 0.875em;
+  padding: 1em;
+  position: absolute;
+  left: 30px;
+  top: -20px;
+  width: 250px;
+  z-index: 2;
+  border-radius: 6px;
+}
+
+.tool-tip .tool-tip__info:before,
+.tool-tip .tool-tip__info:after {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 7px;
+  border-style: solid;
+  border-width: 10px 10px 10px 0;
+  border-color: transparent #e9f16c;
+}
+
+.tool-tip .tool-tip__info:after {
+  left: -10px;
+  border-right-color: #262626;
+}
+
+.tool-tip .tool-tip__info .info {
+  display: block;
+}
+
+.tool-tip:hover .tool-tip__info,
+.tool-tip:focus .tool-tip__info {
+  display: inline-block;
+}
+
+a:focus+.tool-tip .tool-tip__info {
+  display: inline-block;
+}
+
+
+/******************** Style for showdata.html ********************/
+/* Styles for the entered data section */
+#enteredData {
+  margin: 1%;
+}
+
+#enteredData table {
+  margin: 0;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#enteredData td:first-child {
+  background-color: #c9c7c7e8;
+  padding: 5px;
+  font-weight: bold;
+  border-radius: 4px;
+  width: 20%;
+  text-align: center;
+}
+
+#enteredData td:last-child {
+  padding: 5px;
+  font-weight: normal;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 80%;
+}
+
+/* Styles for the extracted data section */
+.DataHeader {
+  margin-top: 1rem;
+  margin-left: 0.5rem;
+}
+
+.data-form2 {
+  background-color: #f2f2f2;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 1%;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-group input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.form-group input[type="text"]:focus {
+  outline: none;
+  border-color: #0088cc;
+}
+
+.form-group legend {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.form-group fieldset {
+  margin: 0;
+  padding: 0;
+  border: 1px solid #ada8a8; 
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.form-group fieldset label , .data-form2 label{
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.data-form2 label:first-letter{
+  text-transform: uppercase;
+}
+
+.form-group fieldset input[type="text"] {
+  width: 99%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  transition: border-color 0.2s ease-in-out;
+  margin-bottom: 5px;
+  margin-left: 4px;
+}
+.form-group fieldset label{
+  margin-left: 4px;
+}
+
+.form-group fieldset input[type="text"]:focus {
+  outline: none;
+  border-color: #0088cc;
+}
+
+/* Styles for the metadata display section */
+#metadata-form-display {
+  margin: 1%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+#metadata-json {
+  width: 100%;
+  height: 400px;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+/* Style for the download button */
+.data-form2 #downloadButton {
+  display: block;
+  margin-top: 5px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.data-form2 #downloadButton:hover {
+  background-color: #3e8e41;
+}
