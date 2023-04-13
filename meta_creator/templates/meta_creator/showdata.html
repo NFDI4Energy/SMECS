@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+<!-- Showing the information about the URL which user entered -->
+<h4 class="DataHeader">You Entered</h4>
+<form class="data-form2" method="post" action="{% url 'meta_creator:getdata' %}">
+  <label>Project URL</label>
+  <!-- Display the first key-value pair in context -->
+  {% for key, value in EnteredData.items %}
+  {% if forloop.first %}
+  <input type="text" value="{{ value }}" disabled>
+  {% endif %}
+  {% endfor %}
+</form>
+
+<!-- Showing extracted data -->
+<h4 class="DataHeader">Extracted Metadata</h4>
+<form class="data-form2" id="metadata-form">
+  {% csrf_token %}
+  {% for key, value in ExtractedMetadata.items %}
+  <div class="form-group">
+    {% if value|list and key == "programmingLanguage" %}
+    <label for="{{ key }}">Programming Language</label>
+    <input name="{{ key }}" type="text" value="{% for item in value %}{{ item }}, {% endfor %}">
+    {% elif value|is_dict and key == "copyrightHolder" %}
+    <fieldset>
+      <legend>Copyright Holder</legend>
+      {% for k, v in value.items %}
+      <label>{{ k }}</label>
+      <input name="{{ key }}[{{ k }}]" type="text" value="{{ v }}"><br>
+      {% endfor %}
+    </fieldset>
+    {% elif key == "author" %}
+    {% for author in value %}
+    <fieldset>
+      <legend>Author</legend>
+      <label>Given Name</label>
+      <input type="text" name="author.givenName" value="{{ author.givenName }}"><br>
+      <label>Family Name</label>
+      <input type="text" name="author.familyName" value="{{ author.familyName }}"><br>
+    </fieldset>
+    {% endfor %}
+    {% elif key == "contributor" %}
+    {% for contributor in value %}
+    <fieldset>
+      <legend>Contributor #{{ forloop.counter }}</legend>
+      <label>Given Name</label>
+      <input type="text" name="contributor[{{ forloop.counter0 }}].givenName" value="{{ contributor.givenName }}"><br>
+      <label>Family Name</label>
+      <input type="text" name="contributor[{{ forloop.counter0 }}].familyName" value="{{ contributor.familyName }}"><br>
+      <label>Email</label>
+      <input type="text" name="contributor[{{ forloop.counter0 }}].email" value="{{ contributor.email }}"><br>
+    </fieldset>
+    {% endfor %}
+    {% elif value|list %}
+    {% for item in value %}
+    <label for="{{ key }}">{{ key }}</label>
+    <input name="{{ key }}[]" type="text" value="{{ item }}"><br>
+    {% endfor %}
+    {% else %}
+    <label for="{{ key }}">{{ key }}</label>
+    <input id="{{ key }}-{{ k }}" name="{{ key }}[{{ k }}]" type="text" value="{{ value }}"><br>
+    {% endif %}
+  </div>
+  {% endfor %}
+  <button id="downloadButton" onclick="downloadFile()">Download JSON</button>
+</form>
+
+<!-- Showing extracted data as JSON format in the textarea -->
+<form id="metadata-form-display">
+  {% csrf_token %}
+  <h4>Metadata</h4>
+  <p>Metadata as JSON:</p>
+  <textarea name="txtareaJSON" id="metadata-json">{{ my_json_str }}</textarea>
+</form>
+
+{% endblock content %}

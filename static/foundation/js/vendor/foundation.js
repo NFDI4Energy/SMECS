@@ -1,4 +1,87 @@
-/* selection_page */
+/******** AJB ********/
+// Metadata Editor and Downloader
+// This script sets up event listeners on input fields to update changes in the textarea and a download button to download a JSON object containing metadata.
+// Possibility of modifying the extracted metadata
+// Display of changes made to the metadata in a text area
+// Possibility to download the modified metadata as a JSON file
+
+document.addEventListener("DOMContentLoaded", function () {
+  const downloadButton = document.getElementById("downloadButton");
+  const metadataJson = document.getElementById("metadata-json");
+  const inputs = document.querySelectorAll('input[type="text"]');
+  // add event listener to each input field
+  inputs.forEach((input) => {
+    input.addEventListener("input", () => {
+      // get the JSON object from the textarea
+      const jsonObject = JSON.parse(metadataJson.value);
+      // update the JSON object with the new value
+      const key = input.name.split("[")[0];
+      const subkey = input.name.split("[")[1]?.split("]")[0]; // use optional chaining to handle non-existent subkey
+      if (subkey) {
+        if (subkey === "programmingLanguage") {
+          jsonObject[key][subkey] = input.value
+            .split(",")
+            .map((lang) => lang.trim()); // split input value by comma and trim each language
+        } else if (subkey.startsWith("contributor")) {
+          const index = parseInt(subkey.split(".")[1]); // get the index of the contributor object in the array
+          const field = subkey.split(".")[2]; // get the field to update in the contributor object
+          jsonObject[key][index][field] = input.value;
+          if (field === "givenName" && index === 0) {
+            updateContributorName(jsonObject);
+          }
+        } else {
+          jsonObject[key][subkey] = input.value;
+        }
+      } else {
+        jsonObject[key] = input.value;
+      }
+      // ensure programmingLanguage is always an array of strings without empty strings
+      if (jsonObject["programmingLanguage"]) {
+        if (typeof jsonObject["programmingLanguage"] === "string") {
+          jsonObject["programmingLanguage"] = jsonObject["programmingLanguage"]
+            .split(",")
+            .map((lang) => lang.trim())
+            .filter((lang) => lang !== "");
+        } else {
+          jsonObject["programmingLanguage"] = jsonObject[
+            "programmingLanguage"
+          ].filter((lang) => lang !== "");
+        }
+      }
+      // update the textarea with the updated JSON object
+      metadataJson.value = JSON.stringify(jsonObject, null, 2);
+    });
+  });
+  // function to update the JSON object with the new value of the first given name
+  function updateContributorName(jsonObject) {
+    const givenNameInput = document.getElementById("givenName-0");
+    if (jsonObject["contributor"].length > 0) {
+      // Check if there is at least one contributor
+      jsonObject["contributor"][0]["givenName"] = givenNameInput.value;
+    }
+  }
+  // add event listener to download button
+  downloadButton.addEventListener("click", (event) => {
+    downloadFile(event);
+  });
+  // define downloadFile function
+  function downloadFile(event) { 
+    event.preventDefault(); // prevent the default behavior of the button
+    const data = metadataJson.value;
+    const fileName = "data.json";
+    const blob = new Blob([data], { type: "application/json" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.innerHTML = "Download JSON";
+    link.setAttribute("download", fileName);
+    downloadButton.parentNode.insertBefore(link, downloadButton.nextSibling);
+    link.click(); // trigger the click event of the link to start the download
+    setTimeout(() => {
+      URL.revokeObjectURL(link.href); // revoke the object URL after the download is complete
+      link.parentNode.removeChild(link); // remove the link element from the DOM
+    }, 0);
+
+/* selection_page (when switching between tabs of versions & software codemeta) */
 function openDS(evt, dataSw) {
   var i, tabcontent, tablinks;
   tabcontent = document.getElementsByClassName("tabcontent");
@@ -13,6 +96,7 @@ function openDS(evt, dataSw) {
   evt.currentTarget.className += " active";
 }
 /* end of selection_page */
+/******** AJB (END) ********/
 
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
