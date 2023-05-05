@@ -8,8 +8,23 @@
 document.addEventListener("DOMContentLoaded", function () {
   const downloadButton = document.getElementById("downloadButton");
   const metadataJson = document.getElementById("metadata-json");
-  const inputs = document.querySelectorAll('input[type="text"]');
-  // add event listener to each input field
+  const inputs = document.querySelectorAll("#metadata-form input");
+
+  function validateInput(input) {
+    if (input.value.trim() === "") {
+      input.classList.add("invalid");
+    } else {
+      input.classList.remove("invalid");
+    }
+  }
+  inputs.forEach((input) => {
+    validateInput(input);
+
+    input.addEventListener("input", function () {
+      validateInput(input);
+    });
+  });
+
   inputs.forEach((input) => {
     input.addEventListener("input", () => {
       // get the JSON object from the textarea
@@ -52,20 +67,8 @@ document.addEventListener("DOMContentLoaded", function () {
       metadataJson.value = JSON.stringify(jsonObject, null, 2);
     });
   });
-  // function to update the JSON object with the new value of the first given name
-  function updateContributorName(jsonObject) {
-    const givenNameInput = document.getElementById("givenName-0");
-    if (jsonObject["contributor"].length > 0) {
-      // Check if there is at least one contributor
-      jsonObject["contributor"][0]["givenName"] = givenNameInput.value;
-    }
-  }
-  // add event listener to download button
-  downloadButton.addEventListener("click", (event) => {
-    downloadFile(event);
-  });
   // define downloadFile function
-  function downloadFile(event) { 
+  function downloadFile(event) {
     event.preventDefault(); // prevent the default behavior of the button
     const data = metadataJson.value;
     const fileName = "data.json";
@@ -80,7 +83,20 @@ document.addEventListener("DOMContentLoaded", function () {
       URL.revokeObjectURL(link.href); // revoke the object URL after the download is complete
       link.parentNode.removeChild(link); // remove the link element from the DOM
     }, 0);
-
+  }
+  // add event listener to download button
+  downloadButton.addEventListener("click", (event) => {
+    downloadFile(event);
+  });
+});
+// function to update the JSON object with the new value of the first given name
+function updateContributorName(jsonObject) {
+  const givenNameInput = document.getElementById("givenName-0");
+  if (jsonObject["contributor"].length > 0) {
+    // Check if there is at least one contributor
+    jsonObject["contributor"][0]["givenName"] = givenNameInput.value;
+  }
+}
 /* selection_page (when switching between tabs of versions & software codemeta) */
 function openDS(evt, dataSw) {
   var i, tabcontent, tablinks;

@@ -11,3 +11,8 @@ def is_dict(value):
 @register.filter(name='list')
 def is_list(value):
     return isinstance(value, list)
+
+#Define 'get' to access values in the dictionary
+@register.filter
+def get(dictionary, key):
+    return dictionary.get(key)
