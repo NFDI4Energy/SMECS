@@ -38,7 +38,7 @@ def findWordInGroup(groupName, wordName, distanceAfterWord, splitName, searchStr
         else:
             wordNameReturn = wordName
     else:
-        wordNameReturn = "No " + wordName + " found"
+        wordNameReturn = ""
     return wordNameReturn
 
 #--------------- findWord function ---------------
@@ -52,7 +52,7 @@ def findWord(wordName, distanceAfterWord, searchString):
     wordNameReturn = searchString[
         lineNumber:searchString[lineNumber:lineNumber + 200].find("'") + lineNumber]
     if wordNameReturn == "one, ":
-        wordNameReturn = "No readme URL"
+        wordNameReturn = ""
         wordNameReturn = wordNameReturn.replace("\"", "")
     return wordNameReturn
 
@@ -65,7 +65,7 @@ def findTopics(searchString):
     topics = searchString[lineNumber:searchString
                             [lineNumber:lineNumber + 100].find("]") + lineNumber]
     if topics == "":
-        topicsReturn = "not used"
+        topicsReturn = ""
     else:
         # replace the ' from gitLab with a " for the CodeMeta format.
         topicsNew = topics.replace("'", '"')
@@ -109,7 +109,7 @@ def findWordWithSplitName(wordName, distanceAfterWord, searchString, splitName):
             wordNameReturn[1] = wordName[lastFamilyName + 1:lastFamilyName + 100]
     else:
         wordNameReturn[0] = wordName
-        wordNameReturn[1] = "no family name"
+        wordNameReturn[1] = ""
         return wordNameReturn
     return wordNameReturn
 
@@ -217,6 +217,75 @@ def data_extraction(request):
         'gl_url': gl_url,
         'project_name': project_name, 
         'personal_token_key': personal_token_key,
+        'description_dict': {
+            'codeRepository': 'Link to the repository where the un-compiled, human readable code and related code is located (SVN, GitHub, CodePlex, institutional GitLab instance, etc.).',
+            'id': 'Unique identifier',
+            'programmingLanguage': 'The computer programming language.',
+            'runtimePlatform': 'Runtime platform or script interpreter dependencies (Example - Java v1, Python2.3, .Net Framework 3.0). Supersedes runtime.',
+            'targetProduct': 'Target Operating System / Product to which the code applies. If applies to several versions, just the product name can be used.',
+            'applicationCategory': 'Type of software application, e.g. ‘Game, Multimedia’.',
+            'applicationSubCategory': 'Subcategory of the application, e.g. ‘Arcade Game’.',
+            'downloadUrl': 'If the file can be downloaded, URL to download the binary.',
+            'fileSize': 'Size of the application / package (e.g. 18MB). In the absence of a unit (MB, KB etc.), KB will be assumed.',
+            'installUrl': 'URL at which the app may be installed, if different from the URL of the item.',
+            'memoryRequirements': 'Minimum memory requirements.',
+            'operatingSystem': 'Operating systems supported (Windows 7, OSX 10.6, Android 1.6).',
+            'permissions': 'Permission(s) required to run the app (for example, a mobile app may require full internet access or may run only on wifi).',
+            'processorRequirements': 'Processor architecture required to run the application (e.g. IA64).',
+            'releaseNotes': 'Description of what changed in this version.',
+            'softwareHelp': 'Software application help.',
+            'softwareRequirements': 'Required software dependencies',
+            'softwareVersion': 'Version of the software instance.',
+            'storageRequirements': 'Storage requirements (free space required).',
+            'supportingData': 'Supporting data for a SoftwareApplication.',
+            'author': 'The author of this content or rating. Please note that author is special in that HTML 5 provides a special mechanism for indicating authorship via the rel tag. That is equivalent to this and may be used interchangeably.',
+            'citation': 'A citation or reference to another creative work, such as another publication, web page, scholarly article, etc.',
+            'contributor': 'A secondary contributor to the CreativeWork or Event.',
+            'copyrightHolder': 'The party holding the legal copyright to the CreativeWork.',
+            'copyrightYear': 'The year during which the claimed copyright for the CreativeWork was first asserted.',
+            'creator': 'The creator/author of this CreativeWork. This is the same as the Author property for CreativeWork.',
+            'dateCreated': 'The date on which the CreativeWork was created or the item was added to a DataFeed.',
+            'dateModified': 'The date on which the CreativeWork was most recently modified or when the item’s entry was modified within a DataFeed.',
+            'datePublished': 'Date of first broadcast/publication.',
+            'editor': 'Specifies the Person who edited the CreativeWork.',
+            'encoding': 'A media object that encodes this CreativeWork. This property is a synonym for associatedMedia. Supersedes encodings.',
+            'fileFormat': 'Media type, typically MIME format (see IANA site) of the content e.g. application/zip of a SoftwareApplication binary. In cases where a CreativeWork has several media type representations, ‘encoding’ can be used to indicate each MediaObject alongside particular fileFormat information. Unregistered or niche file formats can be indicated instead via the most appropriate URL, e.g. defining Web page or a Wikipedia entry.',
+            'funder': 'A person or organization that supports (sponsors) something through some kind of financial contribution.',
+            'keywords': 'Keywords or tags used to describe this content. Multiple entries in a keywords list are typically delimited by commas.',
+            'license': 'A license document that applies to this content, typically indicated by URL.',
+            'producer': 'The person or organization who produced the work (e.g. music album, movie, tv/radio series etc.).',
+            'provider': 'The service provider, service operator, or service performer; the goods producer. Another party (a seller) may offer those services or goods on behalf of the provider. A provider may also serve as the seller. Supersedes carrier.',
+            'publisher': 'The publisher of the creative work.',
+            'sponsor': 'A person or organization that supports a thing through a pledge, promise, or financial contribution. e.g. a sponsor of a Medical Study or a corporate sponsor of an event.',
+            'version': 'The version of the CreativeWork embodied by a specified resource.',
+            'isAccessibleForFree': 'A flag to signal that the publication is accessible for free.',
+            'isPartOf': 'Indicates a CreativeWork that this CreativeWork is (in some sense) part of. Reverse property hasPart',
+            'hasPart': 'Indicates a CreativeWork that is (in some sense) a part of this CreativeWork. Reverse property isPartOf',
+            'position': 'The position of an item in a series or sequence of items. (While schema.org considers this a property of CreativeWork, it is also the way to indicate ordering in any list (e.g. the Authors list). By default arrays are unordered in JSON-LD',
+            'description': 'A description of the item.',
+            'identifier': 'The identifier property represents any kind of identifier for any kind of Thing, such as ISBNs, GTIN codes, UUIDs etc. Schema.org provides dedicated properties for representing many of these, either as textual strings or as URL (URI) links. See background notes for more details.',
+            'name': 'The name of the item (software, Organization)',
+            'sameAs': 'URL of a reference Web page that unambiguously indicates the item’s identity. E.g. the URL of the item’s Wikipedia page, Wikidata entry, or official website.',
+            'url': 'URL of the item.',
+            'relatedLink': 'A link related to this object, e.g. related web pages',
+            'givenName': 'Given name. In the U.S., the first name of a Person. This can be used along with familyName instead of the name property',
+            'familyName': 'Family name. In the U.S., the last name of an Person. This can be used along with givenName instead of the name property.',
+            'email': 'Email address',
+            'affiliation': 'An organization that this person is affiliated with. For example, a school/university',
+            'identifier': 'URL identifier, ideally an ORCID ID for individuals, a FundRef ID for funders',
+            'name': 'The name of an Organization, or if separate given and family names cannot be resolved for a Person',
+            'address': 'Physical address of the item.',
+            'softwareSuggestions': 'Optional dependencies , e.g. for optional features, code development, etc.',
+            'maintainer': 'Individual responsible for maintaining the software (usually includes an email contact address)',
+            'contIntegration': 'link to continuous integration service',
+            'buildInstructions': '	link to installation instructions/documentation',
+            'developmentStatus': 'Description of development status, e.g. Active, inactive, suspended. See repostatus.org',
+            'embargoDate': 'Software may be embargoed from public access until a specified date (e.g. pending publication, 1 year from publication)',
+            'funding': 'Funding source (e.g. specific grant)',
+            'issueTracker': 'link to software bug reporting or issue tracking system',
+            'referencePublication': 'An academic publication related to the software.',
+            'readme': 'link to software Readme file',
+            }
         }
 
     #################### attributes of the project (works) ####################
@@ -258,7 +327,7 @@ def data_extraction(request):
     findDescriptionCut = descriptionCut.find("'")
     description = descriptionCut[0:findDescriptionCut]
     if description == "":
-        description = "no description"
+        description = ""
 
     #---------------codeRepository---------------
     # Finds the URL of the repository.
@@ -277,7 +346,7 @@ def data_extraction(request):
     # Filters and converts the languages to an array.
     countLanguages = languagesPercentString.count(",") + 1
     nextLang = 2
-    languageName = ["no language"] * countLanguages
+    languageName = [""] * countLanguages
     for i, item in enumerate(languageName):
         languageName[i] = languagesPercentString[
             nextLang:languagesPercentString[nextLang:100].find("'") + nextLang]
@@ -287,8 +356,8 @@ def data_extraction(request):
     #################### working on owner of the repository data ####################
     # Finds the givenName and familyName of the owner of the repository.
     ownerLineNumber = projectString.find("owner")
-    ownerUsername = "No owner username"
-    ownerName = "No owner name"
+    ownerUsername = ""
+    ownerName = ""
     ownerGivenNames = ""
     ownerFamilyNames = ""
     if ownerLineNumber != -1:
@@ -312,9 +381,9 @@ def data_extraction(request):
             if i == ownerGivenNamesCount:
                 ownerFamilyNames = ownerName[lastName + 1:100]
     if ownerGivenNames == "":
-        ownerGivenNames = "not used"
+        ownerGivenNames = ""
     if ownerFamilyNames == "":
-        ownerFamilyNames = "not used"
+        ownerFamilyNames = ""
 
     #################### data filtering with functions ####################
     # Uses the functions to filter the data -> findWordInGroup / findWord / findTopics (declared up)

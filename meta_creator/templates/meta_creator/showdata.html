@@ -4,9 +4,11 @@
 {% block content %}
 
 <!-- Showing the information about the URL which user entered -->
+<h3 class="mainHeader">Metadata Extractor Tool</h3>
+<p class="mainHeader">Get more information about elements by hovering</p>
 <h4 class="DataHeader">You Entered</h4>
 <form class="data-form2" method="post" action="{% url 'meta_creator:getdata' %}">
-  <label>Project URL</label>
+  <label title="GitLab/GitHub project URL">Project URL</label>
   <!-- Display the first key-value pair in context -->
   {% for key, value in EnteredData.items %}
   {% if forloop.first %}
@@ -22,50 +24,53 @@
   {% for key, value in ExtractedMetadata.items %}
   <div class="form-group">
     {% if value|list and key == "programmingLanguage" %}
-    <label for="{{ key }}">Programming Language</label>
+      <label title="{% with descriptions=EnteredData.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Programming Language</label>
     <input name="{{ key }}" type="text" value="{% for item in value %}{{ item }}, {% endfor %}">
     {% elif value|is_dict and key == "copyrightHolder" %}
     <fieldset>
-      <legend>Copyright Holder</legend>
+      <legend title="{% with descriptions=EnteredData.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Copyright Holder</legend>
       {% for k, v in value.items %}
-      <label>{{ k }}</label>
+      {% if k == 'name' %}
+      <label for="{{ key }}[{{ k }}]">{{ k }}</label>
       <input name="{{ key }}[{{ k }}]" type="text" value="{{ v }}"><br>
+      {% endif %}
       {% endfor %}
     </fieldset>
     {% elif key == "author" %}
     {% for author in value %}
     <fieldset>
-      <legend>Author</legend>
-      <label>Given Name</label>
-      <input type="text" name="author.givenName" value="{{ author.givenName }}"><br>
-      <label>Family Name</label>
-      <input type="text" name="author.familyName" value="{{ author.familyName }}"><br>
+      <legend title="{% with descriptions=EnteredData.description_dict %}{% if 'author' in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Author</legend>
+      <label title="{% with descriptions=EnteredData.description_dict %}{% if 'givenName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</label>
+      <input type="text" key="author.givenName" name="author.givenName" value="{{ author.givenName }}"><br>
+      <label title="{% with descriptions=EnteredData.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</label>
+      <input type="text" key="author.familyName" name="author.familyName" value="{{ author.familyName }}"><br>
     </fieldset>
     {% endfor %}
     {% elif key == "contributor" %}
+    <label for="{{ key }}" title="{% with descriptions=EnteredData.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}"><h4>Contributor(s)</h4></label>
     {% for contributor in value %}
     <fieldset>
-      <legend>Contributor #{{ forloop.counter }}</legend>
-      <label>Given Name</label>
+      <legend title="{% with descriptions=EnteredData.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Contributor #{{ forloop.counter }}</legend>
+      <label for="{{ contributor.givenName }}" title="{% with descriptions=EnteredData.description_dict %}{% if 'givenName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</label>
       <input type="text" name="contributor[{{ forloop.counter0 }}].givenName" value="{{ contributor.givenName }}"><br>
-      <label>Family Name</label>
+      <label title="{% with descriptions=EnteredData.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</label>
       <input type="text" name="contributor[{{ forloop.counter0 }}].familyName" value="{{ contributor.familyName }}"><br>
-      <label>Email</label>
+      <label title="{% with descriptions=EnteredData.description_dict %}{% if 'email' in descriptions %}{{ descriptions|get:'email' }}{% endif %}{% endwith %}">Email</label>
       <input type="text" name="contributor[{{ forloop.counter0 }}].email" value="{{ contributor.email }}"><br>
     </fieldset>
     {% endfor %}
     {% elif value|list %}
     {% for item in value %}
-    <label for="{{ key }}">{{ key }}</label>
+    <label for="{{ key }}" title="{% with descriptions=EnteredData.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">{{ key }}</label>
     <input name="{{ key }}[]" type="text" value="{{ item }}"><br>
     {% endfor %}
     {% else %}
-    <label for="{{ key }}">{{ key }}</label>
+    <label for="{{ key }}" title="{% with descriptions=EnteredData.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">{{ key }}</label>
     <input id="{{ key }}-{{ k }}" name="{{ key }}[{{ k }}]" type="text" value="{{ value }}"><br>
     {% endif %}
   </div>
   {% endfor %}
-  <button id="downloadButton" onclick="downloadFile()">Download JSON</button>
+  <button id="downloadButton" title="Download the JSON file from this form" onclick="downloadFile()">Download JSON</button>
 </form>
 
 <!-- Showing extracted data as JSON format in the textarea -->
