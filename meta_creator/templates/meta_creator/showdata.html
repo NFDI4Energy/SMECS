@@ -25,7 +25,7 @@
   <div class="form-group">
     {% if value|list and key == "programmingLanguage" %}
       <label title="{% with descriptions=EnteredData.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Programming Language</label>
-    <input name="{{ key }}" type="text" value="{% for item in value %}{{ item }}, {% endfor %}">
+    <input name="{{ key }}" type="text" value="{% for item in value %}{% if item %}{{ item }}, {% endif %}{% endfor %}">
     {% elif value|is_dict and key == "copyrightHolder" %}
     <fieldset>
       <legend title="{% with descriptions=EnteredData.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Copyright Holder</legend>
