@@ -6,6 +6,7 @@ import json
 from .metadata_extractor import data_extraction
 from meta_creator.settings import META_VERSIONS
 from meta_creator.forms import CreatorForm
+from django.shortcuts import render
 
 
 class IndexView(TemplateView):
@@ -22,24 +23,47 @@ class CreatorView(TemplateView):
 
 
 # Function for metadata extracting
-my_json_str = {}
 def index(request):
-  if request.method == 'POST':
-   global my_json_str
-   # Extract metadata
-   ExtractedMetadata, EnteredData = data_extraction(request)
-   # Convert the dictionary to JSON
-   my_json_str = json.dumps(ExtractedMetadata, indent=4)
-   template = loader.get_template('meta_creator/showdata.html')
-   return HttpResponse(template.render({
-       "EnteredData":EnteredData,
-       "ExtractedMetadata":ExtractedMetadata,
-       "my_json_str": my_json_str,
-    }, request))
-  else:
-   #if post request is not true - returing the form template
-   template = loader.get_template('meta_creator/index.html')
-   return HttpResponse(template.render())
+    """
+    View function for the index page.
+
+    Handles the POST request and displays the form or extracted metadata.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The HTTP response object.
+
+    """
+    result = data_extraction(request)
+    error_message_url = None
+    error_message_token = None
+
+    if result == 'Invalid GitLab URL':
+        error_message_url = 'Invalid GitLab URL'
+    if result == 'Invalid Personal Token Key':
+        error_message_token = 'Invalid Personal Token Key'
+    errors = {
+        "error_message_url": error_message_url,
+        "error_message_token": error_message_token
+    }
+
+    if error_message_url or error_message_token:
+        return render(request , 'meta_creator/index.html', errors)
+
+    # if request.method == 'POST':
+    my_json_str = {}
+    # Extract metadata
+    extracted_metadata, entered_data = result
+    # Convert the dictionary to JSON
+    my_json_str = json.dumps(extracted_metadata, indent=4)
+    template = loader.get_template('meta_creator/showdata.html')
+    return HttpResponse(template.render({
+        "entered_data":entered_data,
+        "extracted_metadata":extracted_metadata,
+        "my_json_str": my_json_str,
+        }, request))
 
 # View function for downloading metadata as JSON
 # def download_json(request):

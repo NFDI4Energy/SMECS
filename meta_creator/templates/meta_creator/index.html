@@ -11,14 +11,17 @@
 
 
 <!-- Initial Form to get information from user and extract metadata -->
-<div class="InitialFormContainer">
+<div class="InitialFormContainer" id="firstpage">
   <h3 class="mainHeader">Metadata Extractor Tool</h3>
   <p>Get more information about elements by hovering</p>
   <form id="form1" method="post" action="{% url 'meta_creator:getdata' %}">
     {% csrf_token %}
     <h6 title="(e.g.: GitLab/GitHub project URL)">Project URL</h6>
-    <input type="url" name="gl_url"
-      placeholder="e.g.: https://gitlab.com/zdin-zle/zle-platform/repository/meta_tool" />
+    <input type="url" id="url_input" name="gl_url" placeholder="e.g.: https://gitlab.com/zdin-zle/zle-platform/repository/meta_tool"/>
+      <!-- Display the error message if it exists -->
+    {% if error_message_url %}
+      <span id="url_error" class="error_message">{{ error_message_url }}</span>
+    {% endif %}
     <div class="tooltip-container">
     <h6 title="You can use personal access tokens to authenticate with GitLab API or Git using HTTP Basic Authentication without needing to enter your password.&#10;&#10;To create a personal access token, navigate to:&#10;Edit profile -&gt; Access Tokens -&gt; select the desired scopes -&gt; click &quot;Create personal access token&quot;.&#10;For more information visit https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#personal-access-token-scopes" >GitLab Token Key</h6>
       
@@ -39,8 +42,11 @@
       </div> -->
     </div>
     <!-- End of tooltip block -->
-    <input type="text" name="personal_token_key" placeholder="Enter your personal token from GitLab" />
-    <button class="ExData">Extract Metadata</button>
+    <input type="text" id="token_input" name="personal_token_key" placeholder="Enter your personal token from GitLab" />
+    {% if error_message_token %}
+      <span id="token_error" class="error_message">{{ error_message_token }}</span>
+    {% endif %}
+    <button class="ExData" type="submit">Extract Metadata</button>
   </form>
 </div>
 

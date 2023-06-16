@@ -6,11 +6,12 @@
 <!-- Showing the information about the URL which user entered -->
 <h3 class="mainHeader">Metadata Extractor Tool</h3>
 <p class="mainHeader">Get more information about elements by hovering</p>
+<button class="ExData" id="new-url" onclick="window.location.href = '/'">Try another URL</button>
 <h4 class="DataHeader">You Entered</h4>
-<form class="data-form2" method="post" action="{% url 'meta_creator:getdata' %}">
+<form class="data-form2">
   <label title="GitLab/GitHub project URL">Project URL</label>
   <!-- Display the first key-value pair in context -->
-  {% for key, value in EnteredData.items %}
+  {% for key, value in entered_data.items %}
   {% if forloop.first %}
   <input type="text" value="{{ value }}" disabled>
   {% endif %}
@@ -21,7 +22,7 @@
 <h4 class="DataHeader">Extracted Metadata</h4>
 <form class="data-form2" id="metadata-form">
   {% csrf_token %}
-  {% for key, value in ExtractedMetadata.items %}
+  {% for key, value in extracted_metadata.items %}
   <div class="form-group">
     {% if value|list and key == "programmingLanguage" %}
       <label title="{% with descriptions=EnteredData.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Programming Language</label>
@@ -70,7 +71,8 @@
     {% endif %}
   </div>
   {% endfor %}
-  <button id="downloadButton" title="Download the JSON file from this form" onclick="downloadFile()">Download JSON</button>
+  <button class="ExData" id="downloadButton"  title="Download the JSON file from this form" onclick="downloadFile()">Download JSON</button>
+  <button class="ExData" id="new-url" type="button" onclick="window.location.href = '/'">Try another URL</button>
 </form>
 
 <!-- Showing extracted data as JSON format in the textarea -->
