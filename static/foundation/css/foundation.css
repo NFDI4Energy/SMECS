@@ -447,7 +447,7 @@ body {
   font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
   font-weight: normal;
   line-height: 1.5;
-  color: #0a0a0a;
+  /* color: #0a0a0a; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
@@ -2273,7 +2273,8 @@ h6, .h6 {
   font-size: 1rem;
   line-height: 1.4;
   margin-top: 0;
-  margin-bottom: 0.5rem; }
+  /* margin-bottom: 0.5rem;  */
+}
 
 @media print, screen and (min-width: 40em) {
   h1, .h1 {
@@ -2753,7 +2754,7 @@ textarea {
   box-sizing: border-box;
   width: 100%;
   height: 2.4375rem;
-  margin: 0 0 1rem;
+  /* margin: 0 0 1rem; */
   padding: 0.5rem;
   border: 1px solid #cacaca;
   border-radius: 0;
@@ -5883,13 +5884,13 @@ div.tabcontent {
   justify-content: center;
   margin: 3.5rem auto;
   max-width: 600px;
-  margin-bottom: 2rem;
 }
 
 #form1 h6 {
   font-size: 18px;
   font-weight: bold;
   text-align: left;
+  margin-top:2rem;
 }
 
 #form1 input[type=url],
@@ -5900,7 +5901,6 @@ div.tabcontent {
   border: 1px solid #ccc;
   box-sizing: border-box;
   font-size: 16px;
-  margin-bottom: 2rem;
 }
 
 button.ExData {
@@ -5913,6 +5913,7 @@ button.ExData {
   font-size: 16px;
   margin: auto;
   font-weight: bold;
+  margin-top:1.5rem;
 }
 
 button.ExData:hover {
@@ -5996,6 +5997,14 @@ a:focus+.tool-tip .tool-tip__info {
   display: inline-block;
 }
 
+#form1 input[type=url].error {
+  margin-bottom: 0;
+}
+
+span.error_message {
+  color: red;
+  margin-top: 5px;
+}
 
 /******************** Style for showdata.html ********************/
 /* Styles for the entered data section */
@@ -6130,21 +6139,15 @@ a:focus+.tool-tip .tool-tip__info {
 
 /* Style for the download button */
 .data-form2 #downloadButton {
-  display: block;
-  margin-top: 5px;
-  padding: 10px 20px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.data-form2 #downloadButton:hover {
-  background-color: #3e8e41;
+ margin-left: 20px;
 }
 
 #metadata-form input.invalid {
   border: 1px solid rgba(226, 7, 7, 0.535);
   background-color: rgba(225, 94, 94, 0.377);
+}
+
+button#new-url
+{
+  margin-left: 20px;
 }
