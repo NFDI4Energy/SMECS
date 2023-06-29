@@ -268,6 +268,19 @@ def extract_license_info(project_url, personal_token_key):
             # print(f"Failed to retrieve file. Status code: {response.status_code}")
         return ""
 
+# Counting number of extracted metadata
+def count_non_empty_values(data):
+    count = 0
+    if isinstance(data, dict):
+        for value in data.values():
+            if value != "" and value is not None and value != ['']:
+                count += 1
+    elif isinstance(data, list):
+        for item in data:
+            if item != "" and item is not None and item != ['']:
+                count += 1
+    return count
+
 #################### getting metadata from gitlab project ####################
 
 @csrf_exempt
