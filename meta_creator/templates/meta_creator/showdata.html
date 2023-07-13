@@ -27,12 +27,12 @@
   <div class="form-group">
     {% if value|list and key == "programmingLanguage" %}
       <div class="single_inputs">
-      <label title="{% with descriptions=EnteredData.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Programming Language</label>
+      <label title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Programming Language</label>
       <input name="{{ key }}" type="text" value="{% for item in value %}{% if item %}{{ item }}, {% endif %}{% endfor %}">
       </div>
     {% elif value|is_dict and key == "copyrightHolder" %}
     <fieldset class="copyrightHolder">
-      <legend title="{% with descriptions=EnteredData.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Copyright Holder</legend>
+      <legend title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Copyright Holder</legend>
       {% for k, v in value.items %}
       {% if k == 'name' %}
       <label for="{{ key }}[{{ k }}]">{{ k }}</label>
@@ -43,36 +43,36 @@
     {% elif key == "author" %}
     {% for author in value %}
     <fieldset class="fieldset_content">
-      <legend title="{% with descriptions=EnteredData.description_dict %}{% if 'author' in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Author</legend>
-      <label title="{% with descriptions=EnteredData.description_dict %}{% if 'givenName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</label>
+      <legend title="{% with descriptions=entered_data.description_dict %}{% if 'author' in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Author</legend>
+      <label title="{% with descriptions=entered_data.description_dict %}{% if 'givenName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</label>
       <input type="text" key="author.givenName" name="author.givenName" value="{{ author.givenName }}"><br>
-      <label title="{% with descriptions=EnteredData.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</label>
+      <label title="{% with descriptions=entered_data.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</label>
       <input type="text" key="author.familyName" name="author.familyName" value="{{ author.familyName }}"><br>
     </fieldset>
     {% endfor %}
     {% elif key == "contributor" %}
-    <label for="{{ key }}" title="{% with descriptions=EnteredData.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}"><h4>Contributor(s)</h4></label>
+    <label for="{{ key }}" title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}"><h4>Contributor(s)</h4></label>
     {% for contributor in value %}
     <fieldset class="fieldset_content">
-      <legend title="{% with descriptions=EnteredData.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Contributor #{{ forloop.counter }}</legend>
-      <label for="{{ contributor.givenName }}" title="{% with descriptions=EnteredData.description_dict %}{% if 'givenName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</label>
+      <legend title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Contributor #{{ forloop.counter }}</legend>
+      <label for="{{ contributor.givenName }}" title="{% with descriptions=entered_data.description_dict %}{% if 'givenName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</label>
       <input type="text" name="contributor[{{ forloop.counter0 }}].givenName" value="{{ contributor.givenName }}"><br>
-      <label title="{% with descriptions=EnteredData.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</label>
+      <label title="{% with descriptions=entered_data.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</label>
       <input type="text" name="contributor[{{ forloop.counter0 }}].familyName" value="{{ contributor.familyName }}"><br>
-      <label title="{% with descriptions=EnteredData.description_dict %}{% if 'email' in descriptions %}{{ descriptions|get:'email' }}{% endif %}{% endwith %}">Email</label>
+      <label title="{% with descriptions=entered_data.description_dict %}{% if 'email' in descriptions %}{{ descriptions|get:'email' }}{% endif %}{% endwith %}">Email</label>
       <input type="text" name="contributor[{{ forloop.counter0 }}].email" value="{{ contributor.email }}"><br>
     </fieldset>
     {% endfor %}
     {% elif value|list %}
     {% for item in value %}
     <div class="single_inputs">
-    <label for="{{ key }}" title="{% with descriptions=EnteredData.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">{{ key }}</label>
+    <label for="{{ key }}" title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">{{ key }}</label>
     <input name="{{ key }}[]" type="text" value="{{ item }}"><br>
     </div>
     {% endfor %}
     {% else %}
     <div class="single_inputs">
-    <label for="{{ key }}" title="{% with descriptions=EnteredData.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">{{ key }}</label>
+    <label for="{{ key }}" title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">{{ key }}</label>
     <input  id="{{ key }}-{{ k }}" name="{{ key }}[{{ k }}]" type="text" value="{{ value }}"><br>
     </div>
     {% endif %}
