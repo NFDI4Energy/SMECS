@@ -8,7 +8,7 @@
 <p class="mainHeader">Get more information about elements by hovering</p>
 <button class="ExData" id="new-url" title="Enter another URL and extract metadata" onclick="window.location.href = '/'">Try another URL</button>
 <p id="count_extracted_data">{{count}} data were extracted</p>
-<h4 class="DataHeader">You Entered</h4>
+<!-- <h4 class="DataHeader">You Entered</h4> -->
 <form class="data-form2">
   <label title="GitLab/GitHub project URL">Project URL</label>
   <!-- Display the first key-value pair in context -->
@@ -19,9 +19,11 @@
   {% endfor %}
 </form>
 
+<div class="main-container">
 <!-- Showing extracted data -->
-<h4 class="DataHeader">Extracted Metadata</h4>
-<form class="data-form2" id="metadata-form">
+<div class="form-container">
+<!-- <h4 class="DataHeader">Extracted Metadata</h4> -->
+<form class="data-form3" id="metadata-form">
   {% csrf_token %}
   {% for key, value in extracted_metadata.items %}
   <div class="form-group">
@@ -78,16 +80,22 @@
     {% endif %}
   </div>
   {% endfor %}
-  <button class="ExData" id="downloadButton"  title="Download the JSON file from this form" onclick="downloadFile()">Download JSON</button>
-  <button class="ExData" id="new-url" type="button" title="Enter another URL and extract metadata" onclick="window.location.href = '/'">Try another URL</button>
+  <!-- <button class="ExData" id="downloadButton"  title="Download the JSON file from this form" onclick="downloadFile()">Download JSON</button>
+  <button class="ExData" id="new-url" type="button" title="Enter another URL and extract metadata" onclick="window.location.href = '/'">Try another URL</button> -->
 </form>
+</div>
 
 <!-- Showing extracted data as JSON format in the textarea -->
 <form id="metadata-form-display">
   {% csrf_token %}
   <h4>Metadata</h4>
-  <p>Metadata as JSON:</p>
-  <textarea name="txtareaJSON" id="metadata-json">{{ my_json_str }}</textarea>
+  <div class="metadata-container">
+    <button class="ExData" id="downloadButton"  title="Download the JSON file from this form" onclick="downloadFile()">Download JSON</button>
+    <button class="ExData" id="new-url" type="button" title="Enter another URL and extract metadata" onclick="window.location.href = '/'">Try another URL</button>
+    <p>Metadata as JSON:</p>
+    <textarea name="txtareaJSON" id="metadata-json">{{ my_json_str }}</textarea>
+  </div>
 </form>
+</div>
 
 {% endblock content %}
