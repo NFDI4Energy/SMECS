@@ -3,6 +3,7 @@ This module provides functions for extracting metadata from GitLab requests.
 """
 
 import json
+from urllib.parse import urlparse
 import gitlab
 from django.views.decorators.csrf import csrf_exempt
 import requests
@@ -231,17 +232,20 @@ def extract_license_info(project_url, personal_token_key):
     Returns:
         License name of the GitLab project if exists, returns none otherwise.
     """
+    parsed_url = urlparse(project_url)
+    domain = parsed_url.netloc
+    host = parsed_url.scheme + '://' + parsed_url.netloc + '/'
     # Initialize the GitLab API client
-    git_client = gitlab.Gitlab(
-        "https://gitlab.com", private_token=personal_token_key)
+    git_client = gitlab.Gitlab(host, private_token=personal_token_key)
 
     # Standardizing the format of URL to make an API call
-    gl_url_standard = project_url.replace("https://gitlab.com/", "")
+    gl_url_standard = project_url.replace(host, "")
 
     # Get a project by URL
     project = git_client.projects.get(gl_url_standard)
 
-    gitlab_base_url = "https://gitlab.com/api/v4"
+    # gitlab_base_url = "https://gitlab.com/api/v4"
+    gitlab_base_url = 'https://{}/api/v4'.format(domain)
     project_id = project.id
 
     # Get the raw text URL of the LICENSE.txt file
@@ -299,12 +303,16 @@ def data_extraction(request):
             if 'Invalid GitLab API token' in error_messages:
                 return 'Invalid Personal Token Key'
         else:
+            parsed_url = urlparse(gl_url)
+            domain = parsed_url.netloc
+            host = parsed_url.scheme + '://' + parsed_url.netloc + '/'
             # Initialize the GitLab API client
-            git_client = gitlab.Gitlab(
-                "https://gitlab.com", private_token=personal_token_key)
+            # git_client = gitlab.Gitlab("https://gitlab.com", private_token=personal_token_key)
+            git_client = gitlab.Gitlab(host, private_token=personal_token_key)
 
             # Standardizing the format of URL to make an API call
-            gl_url_standard = gl_url.replace("https://gitlab.com/", "")
+            # gl_url_standard = gl_url.replace("https://gitlab.com/", "")
+            gl_url_standard = gl_url.replace(host, "")
 
             # Get a project by URL
             project = git_client.projects.get(gl_url_standard)
