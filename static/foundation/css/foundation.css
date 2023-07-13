@@ -441,12 +441,14 @@ html {
   box-sizing: inherit; }
 
 body {
+  height: 100%;
   margin: 0;
   padding: 0;
   background: #fefefe;
   font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
   font-weight: normal;
   line-height: 1.5;
+
   /* color: #0a0a0a; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
@@ -6065,15 +6067,23 @@ span.error_message {
   margin-left: 0.5rem;
 }
 
-form.data-form2 {
+form.data-form2, form.data-form3 {
   background-color: #f2f2f2;
   padding: 10px;
   border-radius: 5px;
-  margin: 1%;
+  /* margin: 1%; */
   border: 1px solid #ccc;
 }
 
-.data-form2::after {
+form.data-form2{
+  margin: 1%;
+}
+
+form.data-form3{
+  overflow: auto;
+}
+
+.data-form3::after {
   content: "";
   display: table;
   clear: both;
@@ -6117,7 +6127,7 @@ form.data-form2 {
 }
 
 
-  .form-group fieldset.fieldset_content, .form-group fieldset.copyrightHolder{
+.form-group fieldset.fieldset_content, .form-group fieldset.copyrightHolder{
   width:47%;
   float:left;
   margin-right: 15px;
@@ -6130,13 +6140,13 @@ form.data-form2 {
 }
 
 
-.form-group fieldset label , .data-form2 label{
+.form-group fieldset label , .data-form3 label{
   display: block;
   font-weight: bold;
   margin-bottom: 5px;
 }
 
-.data-form2 label:first-letter{
+.data-form3 label:first-letter{
   text-transform: uppercase;
 }
 
@@ -6160,23 +6170,43 @@ form.data-form2 {
 
 /* Styles for the metadata display section */
 #metadata-form-display {
-  margin: 1%;
+  margin-left: 1%;
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
+  width: 35%;
+  float:right;
+  height: 85%;
+}
+
+.form-container {
+  display: flex;
+  height: 60vh;
+  overflow: hidden;
+  justify-content: space-between;
+  width: 70%;
+  float: left;
+  /* height: 500px; */
+  /* overflow: auto; */
+}
+
+.metadata-container {
+  flex: 1;
+  margin-left: 20px; 
 }
 
 #metadata-json {
   width: 100%;
-  height: 400px;
+  height: 68%;
   padding: 8px;
   border-radius: 4px;
+  margin-bottom:2px;
 }
 
 /* Style for the download button */
-.data-form2 #downloadButton {
+/* .metadata-container #downloadButton {
  margin-left: 20px;
-}
+} */
 
 #metadata-form input.invalid {
   border: 1px solid rgba(226, 7, 7, 0.535);
@@ -6186,4 +6216,21 @@ form.data-form2 {
 button#new-url
 {
   margin-left: 20px;
+}
+
+.main-container {
+  margin: 1%;
+  /* display: flex; */
+  overflow: hidden;
+}
+
+.form-container,
+#metadata-form-display {
+  flex: 1;
+  /* overflow: auto; */
+  max-height: 60vh;
+}
+
+#metadata-form-display{
+  width: 28%;
 }
