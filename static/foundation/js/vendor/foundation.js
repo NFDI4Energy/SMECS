@@ -10,6 +10,16 @@ document.addEventListener("DOMContentLoaded", function () {
   const metadataJson = document.getElementById("metadata-json");
   const inputs = document.querySelectorAll("#metadata-form input");
 
+  // Set color based on JSON.ld validation result 
+  var paragraph = document.getElementById("validate_extracted_data");
+  var validation_result = paragraph.textContent.trim();
+  if (validation_result == "The JSON data is a valid JSON-LD Codemeta object") {
+    paragraph.style.backgroundColor = "#adf1af";
+  } else {
+    paragraph.style.backgroundColor = "red";
+    paragraph.style.color = "white";
+  }
+
   function validateInput(input) {
     if (input.value.trim() === "") {
       input.classList.add("invalid");

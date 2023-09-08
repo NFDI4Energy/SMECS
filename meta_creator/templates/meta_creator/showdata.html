@@ -7,7 +7,9 @@
 <h3 class="mainHeader">Metadata Extractor Tool</h3>
 <p class="mainHeader">Get more information about elements by hovering</p>
 <button class="ExData" id="new-url" title="Enter another URL and extract metadata" onclick="window.location.href = '/'">Try another URL</button>
-<p id="count_extracted_data">{{count}} data were extracted</p>
+<p id="count_extracted_data">{{count}} data was extracted</p>
+<p id="validate_extracted_data">{{validation_result}}</p>
+
 <!-- <h4 class="DataHeader">You Entered</h4> -->
 <form class="data-form2">
   <label title="GitLab/GitHub project URL">Project URL</label>
@@ -58,6 +60,7 @@
     <fieldset class="fieldset_content">
       <legend title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Contributor #{{ forloop.counter }}</legend>
       <label for="{{ contributor.givenName }}" title="{% with descriptions=entered_data.description_dict %}{% if 'givenName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</label>
+      <p value="{{ contributor.givenName }}"><strong>Given Name:</strong></p>
       <input type="text" name="contributor[{{ forloop.counter0 }}].givenName" value="{{ contributor.givenName }}"><br>
       <label title="{% with descriptions=entered_data.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</label>
       <input type="text" name="contributor[{{ forloop.counter0 }}].familyName" value="{{ contributor.familyName }}"><br>
@@ -72,16 +75,19 @@
     <input name="{{ key }}[]" type="text" value="{{ item }}"><br>
     </div>
     {% endfor %}
+    {% elif key == "@context" %}
+    <!-- <div class="single_inputs"> -->
+    <!-- <label for="{{ key }}" title="" hidden>{{ key }}</label> -->
+    <!-- <input id="{{ key }}-{{ k }}" name="{{ key }}[{{ k }}]" type="text" value="{{ value }}" hidden><br> -->
+    <!-- </div> -->
     {% else %}
     <div class="single_inputs">
     <label for="{{ key }}" title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">{{ key }}</label>
-    <input  id="{{ key }}-{{ k }}" name="{{ key }}[{{ k }}]" type="text" value="{{ value }}"><br>
+    <input id="{{ key }}-{{ k }}" name="{{ key }}[{{ k }}]" type="text" value="{{ value }}"><br>
     </div>
     {% endif %}
   </div>
   {% endfor %}
-  <!-- <button class="ExData" id="downloadButton"  title="Download the JSON file from this form" onclick="downloadFile()">Download JSON</button>
-  <button class="ExData" id="new-url" type="button" title="Enter another URL and extract metadata" onclick="window.location.href = '/'">Try another URL</button> -->
 </form>
 </div>
 
@@ -90,8 +96,7 @@
   {% csrf_token %}
   <h4>Metadata</h4>
   <div class="metadata-container">
-    <button class="ExData" id="downloadButton"  title="Download the JSON file from this form" onclick="downloadFile()">Download JSON</button>
-    <button class="ExData" id="new-url" type="button" title="Enter another URL and extract metadata" onclick="window.location.href = '/'">Try another URL</button>
+    <button class="ExData" id="downloadButton" title="Download the JSON file." onclick="downloadFile()">Download JSON</button>
     <p>Metadata as JSON:</p>
     <textarea name="txtareaJSON" id="metadata-json">{{ my_json_str }}</textarea>
   </div>
