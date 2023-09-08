@@ -56,6 +56,27 @@
     {% endfor %}
     {% elif key == "contributor" %}
     <label for="{{ key }}" title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}"><h4>Contributor(s)</h4></label>
+    <table class="contributors-table">
+      <thead>
+          <tr>
+              <th>Contributor</th>
+              <th title="{% with descriptions=entered_data.description_dict %}{% if 'givenName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</th>
+              <th title="{% with descriptions=entered_data.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</th>
+              <th title="{% with descriptions=entered_data.description_dict %}{% if 'email' in descriptions %}{{ descriptions|get:'email' }}{% endif %}{% endwith %}">Email</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for contributor in value %}
+          <tr>
+              <td>Contributor #{{ forloop.counter }}</td>
+              <td>{{ contributor.givenName }}</td>
+              <td>{{ contributor.familyName }}</td>
+              <td>{{ contributor.email }}</td>
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+    <!-- <label for="{{ key }}" title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}"><h4>Contributor(s)</h4></label>
     {% for contributor in value %}
     <fieldset class="fieldset_content">
       <legend title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Contributor #{{ forloop.counter }}</legend>
@@ -67,7 +88,7 @@
       <label title="{% with descriptions=entered_data.description_dict %}{% if 'email' in descriptions %}{{ descriptions|get:'email' }}{% endif %}{% endwith %}">Email</label>
       <input type="text" name="contributor[{{ forloop.counter0 }}].email" value="{{ contributor.email }}"><br>
     </fieldset>
-    {% endfor %}
+    {% endfor %} -->
     {% elif value|list %}
     {% for item in value %}
     <div class="single_inputs">
