@@ -1,13 +1,12 @@
+import json
 from django.views.generic import TemplateView
 from django import forms
 from django.template import loader
 from django.http import HttpResponse
-import json
-from .metadata_extractor import data_extraction, count_non_empty_values
+from django.shortcuts import render
 from meta_creator.settings import META_VERSIONS
 from meta_creator.forms import CreatorForm
-from django.shortcuts import render
-
+from .metadata_extractor import data_extraction, count_non_empty_values, validate_codemeta
 
 class IndexView(TemplateView):
     template_name = 'meta_creator/index.html'
@@ -38,7 +37,6 @@ def index(request):
     result = data_extraction(request)
     error_message_url = None
     error_message_token = None
-
     if result == 'Invalid GitLab URL':
         error_message_url = 'Invalid GitLab URL'
     if result == 'Invalid Personal Token Key':
@@ -56,6 +54,12 @@ def index(request):
     # Extract metadata
     extracted_metadata, entered_data = result
     count = count_non_empty_values(extracted_metadata)
+    # Validate the JSON data
+    is_valid_jsonld = validate_codemeta(extracted_metadata)
+    if is_valid_jsonld:
+        validation_result = "The JSON data is a valid JSON-LD Codemeta object"
+    else:
+        validation_result = "The JSON data is not a valid JSON-LD Codemeta object"
     # Convert the dictionary to JSON
     my_json_str = json.dumps(extracted_metadata, indent=4)
     template = loader.get_template('meta_creator/showdata.html')
@@ -64,6 +68,7 @@ def index(request):
         "extracted_metadata":extracted_metadata,
         "my_json_str": my_json_str,
         "count": count,
+        "validation_result": validation_result,
         }, request))
 
 # View function for downloading metadata as JSON
