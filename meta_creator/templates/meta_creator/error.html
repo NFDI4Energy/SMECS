@@ -1,0 +1,13 @@
+
+{% extends 'base.html' %}
+<title>Error: Website Not Accessible</title>
+
+{% load static %}
+
+{% block content %}
+  <div class="error-container">
+    <h1>Something went wrong.</h1>
+    <p>We're sorry, but there was an error while processing your request. {{ error_message }}</p>
+    <p>Please try again later or <a href="/">return to the homepage</a>.</p>
+  </div>
+{% endblock content %}
