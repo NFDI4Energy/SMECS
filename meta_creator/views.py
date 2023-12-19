@@ -13,7 +13,8 @@ from django.http import HttpResponseServerError, HttpResponseForbidden
 from requests.exceptions import ConnectTimeout, ReadTimeout, RequestException
 from meta_creator.settings import META_VERSIONS
 from meta_creator.forms import CreatorForm
-from .metadata_extractor import data_extraction, count_non_empty_values, validate_codemeta
+from .metadata_extractor import data_extraction
+from .gitlab_metadata import count_non_empty_values, validate_codemeta
 
 class IndexView(TemplateView):
     template_name = 'meta_creator/index.html'
@@ -45,8 +46,8 @@ def index(request):
         result = data_extraction(request)
         error_message_url = None
         error_message_token = None
-        if result == 'Invalid GitLab URL':
-            error_message_url = 'Invalid GitLab URL'
+        if result == 'Invalid URL':
+            error_message_url = 'Invalid URL'
         if result == 'Invalid Personal Token Key':
             error_message_token = 'Invalid Personal Token Key'
         errors = {
@@ -95,12 +96,3 @@ def index(request):
         return HttpResponseServerError(error_message)  # Return 500 Internal Server Error
 
     return render(request, 'meta_creator/error.html', {'error_message': error_message})
-
-# View function for downloading metadata as JSON
-# def download_json(request):
-#     global my_json_str
-#     # Create a response object with the JSON data and the appropriate content type
-#     response = HttpResponse(my_json_str, content_type='application/json')
-#     # Set the Content-Disposition header to specify the filename
-#     response['Content-Disposition'] = 'attachment; filename="metadata.json"'
-#     return response

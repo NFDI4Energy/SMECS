@@ -1,13 +1,8 @@
-"""
-Module: gitlab_utils
-
-This module contains utility functions for working with GitLab repositories.
-"""
-
 import re
 from urllib.parse import urlparse
 import requests
 
+# Check if the URL is a Valid GitLab URL and a valid GitLab Token
 def validate_gitlab_inputs(url, token):
     """
     Validates both the GitLab repository URL and API token.
@@ -20,28 +15,21 @@ def validate_gitlab_inputs(url, token):
         tuple: A tuple containing the validation result (bool) and the error messages (str).
     """
     # Regular expression pattern to match GitLab repository URLs
-    # url_pattern = r'^https?://gitlab\.com/'
     url_pattern = r'^https?://gitlab\.[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(/|$)'
     errors = []
     # Check if the URL matches the pattern
     if not re.match(url_pattern, url):
-        errors.append('Invalid GitLab URL')
+        errors.append('Invalid URL')
 
     # Validate the URL by sending a GET request
     url_response = requests.get(url, timeout=10)
     if url_response.status_code != 200:
-        errors.append('Invalid GitLab URL')
+        errors.append('Invalid URL')
 
     parsed_url = urlparse(url)
     domain = parsed_url.netloc
-    host = parsed_url.scheme + '://' + parsed_url.netloc + '/'
-    api_url = 'https://{}/api/v4/user'.format(domain)
+    api_url = f'https://{domain}/api/v4/user'
     headers = {'Authorization': f'Bearer {token}'}
-
-
-    # Validate the token by making a request to the GitLab API
-    # api_url = 'https://gitlab.com/api/v4/user'
-    # headers = {'Authorization': f'Bearer {token}'}
 
     try:
         api_response = requests.get(api_url, headers=headers, timeout=10)

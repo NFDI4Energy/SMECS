@@ -10,7 +10,6 @@
 <p id="count_extracted_data">{{count}} data was extracted</p>
 <p id="validate_extracted_data">{{validation_result}}</p>
 
-<!-- <h4 class="DataHeader">You Entered</h4> -->
 <form class="data-form2">
   <label title="GitLab/GitHub project URL">Project URL</label>
   <!-- Display the first key-value pair in context -->
@@ -24,7 +23,6 @@
 <div class="main-container">
 <!-- Showing extracted data -->
 <div class="form-container">
-<!-- <h4 class="DataHeader">Extracted Metadata</h4> -->
 <form class="data-form3" id="metadata-form">
   {% csrf_token %}
   {% for key, value in extracted_metadata.items %}
@@ -32,6 +30,11 @@
     {% if value|list and key == "programmingLanguage" %}
       <div class="single_inputs">
       <label title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Programming Language</label>
+      <input name="{{ key }}" type="text" value="{% for item in value %}{% if item %}{{ item }}, {% endif %}{% endfor %}">
+      </div>
+    {% elif value|list and key == "keywords" %}
+      <div class="single_inputs">
+      <label title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Keywords</label>
       <input name="{{ key }}" type="text" value="{% for item in value %}{% if item %}{{ item }}, {% endif %}{% endfor %}">
       </div>
     {% elif value|is_dict and key == "copyrightHolder" %}
@@ -56,7 +59,7 @@
     {% endfor %}
     {% elif key == "contributor" %}
     <label for="{{ key }}" title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}"><h4>Contributor(s)</h4></label>
-    <table class="contributors-table">
+    <table class="contributors-table" id="dataTable">
       <thead>
           <tr>
               <th>Contributor</th>
@@ -65,7 +68,7 @@
               <th title="{% with descriptions=entered_data.description_dict %}{% if 'email' in descriptions %}{{ descriptions|get:'email' }}{% endif %}{% endwith %}">Email</th>
           </tr>
       </thead>
-      <tbody>
+      <tbody id="contributorsTableBody">
           {% for contributor in value %}
           <tr>
               <td>Contributor #{{ forloop.counter }}</td>
