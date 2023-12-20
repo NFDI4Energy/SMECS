@@ -43,11 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const key = input.name.split("[")[0];
       const subkey = input.name.split("[")[1]?.split("]")[0]; // use optional chaining to handle non-existent subkey
       if (subkey) {
-        if (subkey === "programmingLanguage") {
-          jsonObject[key][subkey] = input.value
-            .split(",")
-            .map((lang) => lang.trim()); // split input value by comma and trim each language
-        } else if (subkey.startsWith("contributor")) {
+        if (subkey.startsWith("contributor")) {
           const index = parseInt(subkey.split(".")[1]); // get the index of the contributor object in the array
           const field = subkey.split(".")[2]; // get the field to update in the contributor object
           jsonObject[key][index][field] = input.value;
@@ -60,19 +56,18 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         jsonObject[key] = input.value;
       }
-      // ensure programmingLanguage is always an array of strings without empty strings
-      if (jsonObject["programmingLanguage"]) {
-        if (typeof jsonObject["programmingLanguage"] === "string") {
-          jsonObject["programmingLanguage"] = jsonObject["programmingLanguage"]
-            .split(",")
-            .map((lang) => lang.trim())
-            .filter((lang) => lang !== "");
-        } else {
-          jsonObject["programmingLanguage"] = jsonObject[
-            "programmingLanguage"
-          ].filter((lang) => lang !== "");
+      ["programmingLanguage", "keywords"].forEach((prop) => {
+        if (jsonObject[prop]) {
+          if (typeof jsonObject[prop] === "string") {
+            jsonObject[prop] = jsonObject[prop]
+              .split(",")
+              .map((lang) => lang.trim())
+              .filter((lang) => lang !== "");
+          } else {
+            jsonObject[prop] = jsonObject[prop].filter((lang) => lang !== "");
+          }
         }
-      }
+      });
       // update the textarea with the updated JSON object
       metadataJson.value = JSON.stringify(jsonObject, null, 2);
     });
