@@ -75,23 +75,21 @@
               <td>{{ contributor.givenName }}</td>
               <td>{{ contributor.familyName }}</td>
               <td>{{ contributor.email }}</td>
+              <td>
+                <button onclick="deleteContributorevent(this)" data-action="delete">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </td>
           </tr>
           {% endfor %}
       </tbody>
   </table>
-    <!-- <label for="{{ key }}" title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}"><h4>Contributor(s)</h4></label>
-    {% for contributor in value %}
-    <fieldset class="fieldset_content">
-      <legend title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Contributor #{{ forloop.counter }}</legend>
-      <label for="{{ contributor.givenName }}" title="{% with descriptions=entered_data.description_dict %}{% if 'givenName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</label>
-      <p value="{{ contributor.givenName }}"><strong>Given Name:</strong></p>
-      <input type="text" name="contributor[{{ forloop.counter0 }}].givenName" value="{{ contributor.givenName }}"><br>
-      <label title="{% with descriptions=entered_data.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</label>
-      <input type="text" name="contributor[{{ forloop.counter0 }}].familyName" value="{{ contributor.familyName }}"><br>
-      <label title="{% with descriptions=entered_data.description_dict %}{% if 'email' in descriptions %}{{ descriptions|get:'email' }}{% endif %}{% endwith %}">Email</label>
-      <input type="text" name="contributor[{{ forloop.counter0 }}].email" value="{{ contributor.email }}"><br>
-    </fieldset>
-    {% endfor %} -->
+  <div class="input-container">
+    <input type="text" id="givenNameInput" name="contributor_givenName" placeholder="Given Name">
+    <input type="text" id="familyNameInput" name="contributor_familyName" placeholder="Family Name">
+    <input type="text" id="emailInput" name="contributor_email" placeholder="Email">
+  </div>
+  <button type="button" class="contributorBTN" id="addContributorButton">Add Contributor</button>
     {% elif value|list %}
     {% for item in value %}
     <div class="single_inputs">
