@@ -63,7 +63,7 @@ Documentation
          * On Unix/MacOS: Run ``python3 -m pip install -r requirements.txt``.       
      (for more details visit https://packaging.python.org/en/latest/tutorials/installing-packages/)
 
-
+|
 **Running the project**
 
 * Open the project in an editor. (e.g. VS code)
@@ -76,10 +76,21 @@ Documentation
 
 More information about this project: https://github.com/rl-institut/meta_tool
 
-
+|
 **Tip for developers**
 
 If the page does not refresh correctly, clear the browser cache. You can force Chrome to pull in new data and ignore the saved ("cached") data by using the keyboard shortcut ``Cmd+Shift+R`` on Mac, and ``Ctrl+F5`` or ``Ctrl+Shift+R`` on Windows. 
+
+|
+**Setting Up GitHub Token**
+
+To enhance the functionality of this program and ensure secure interactions with the GitHub API, users are required to provide their personal access token. Follow these steps to integrate your token:
+
+* Generate a GitHub Token:
+    * Visit `Managing your personal access tokens <https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens>`_ for more information on how to generate a new token.
+* Save Token:
+    * Copy and paste your generated token into the file ``GitHubToken.txt``.
+
 
 
 Collaboration

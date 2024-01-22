@@ -5,11 +5,126 @@
 // Display of changes made to the metadata in a text area
 // Possibility to download the modified metadata as a JSON file
 
+// document.addEventListener("DOMContentLoaded", function () {
+//   const downloadButton = document.getElementById("downloadButton");
+//   const metadataJson = document.getElementById("metadata-json");
+//   const inputs = document.querySelectorAll("#metadata-form input");
+
+//   // Set color based on JSON.ld validation result 
+//   var paragraph = document.getElementById("validate_extracted_data");
+//   var validation_result = paragraph.textContent.trim();
+//   if (validation_result == "The JSON data is a valid JSON-LD Codemeta object") {
+//     paragraph.style.backgroundColor = "#adf1af";
+//   } else {
+//     paragraph.style.backgroundColor = "red";
+//     paragraph.style.color = "white";
+//   }
+
+//   function validateInput(input) {
+//     if (input.value.trim() === "") {
+//       input.classList.add("invalid");
+//     } else {
+//       input.classList.remove("invalid");
+//     }
+//   }
+//   inputs.forEach((input) => {
+//     validateInput(input);
+
+//     input.addEventListener("input", function () {
+//       validateInput(input);
+//     });
+//   });
+
+//   inputs.forEach((input) => {
+//     input.addEventListener("input", () => {
+//       // get the JSON object from the textarea
+//       const jsonObject = JSON.parse(metadataJson.value);
+//       // update the JSON object with the new value
+//       const key = input.name.split("[")[0];
+//       const subkey = input.name.split("[")[1]?.split("]")[0]; // use optional chaining to handle non-existent subkey
+//       if (subkey) {
+//         if (subkey.startsWith("contributor")) {
+//           const index = parseInt(subkey.split(".")[1]); // get the index of the contributor object in the array
+//           const field = subkey.split(".")[2]; // get the field to update in the contributor object
+//           jsonObject[key][index][field] = input.value;
+//           if (field === "givenName" && index === 0) {
+//             updateContributorName(jsonObject);
+//           }
+//         } else {
+//           jsonObject[key][subkey] = input.value;
+//         }
+//       } else {
+//         jsonObject[key] = input.value;
+//       }
+//       ["programmingLanguage", "keywords"].forEach((prop) => {
+//         if (jsonObject[prop]) {
+//           if (typeof jsonObject[prop] === "string") {
+//             jsonObject[prop] = jsonObject[prop]
+//               .split(",")
+//               .map((lang) => lang.trim())
+//               .filter((lang) => lang !== "");
+//           } else {
+//             jsonObject[prop] = jsonObject[prop].filter((lang) => lang !== "");
+//           }
+//         }
+//       });
+//       // update the textarea with the updated JSON object
+//       metadataJson.value = JSON.stringify(jsonObject, null, 2);
+//     });
+//   });
+//   // define downloadFile function
+//   function downloadFile(event) {
+//     event.preventDefault(); // prevent the default behavior of the button
+//     const data = metadataJson.value;
+//     const fileName = "data.json";
+//     const blob = new Blob([data], { type: "application/json" });
+//     const link = document.createElement("a");
+//     link.href = URL.createObjectURL(blob);
+//     link.innerHTML = "Download JSON";
+//     link.setAttribute("download", fileName);
+//     downloadButton.parentNode.insertBefore(link, downloadButton.nextSibling);
+//     link.click(); // trigger the click event of the link to start the download
+//     setTimeout(() => {
+//       URL.revokeObjectURL(link.href); // revoke the object URL after the download is complete
+//       link.parentNode.removeChild(link); // remove the link element from the DOM
+//     }, 0);
+//   }
+//   // add event listener to download button
+//   downloadButton.addEventListener("click", (event) => {
+//     downloadFile(event);
+//   });
+// });
+// // function to update the JSON object with the new value of the first given name
+// function updateContributorName(jsonObject) {
+//   const givenNameInput = document.getElementById("givenName-0");
+//   if (jsonObject["contributor"].length > 0) {
+//     // Check if there is at least one contributor
+//     jsonObject["contributor"][0]["givenName"] = givenNameInput.value;
+//   }
+// }
+
 document.addEventListener("DOMContentLoaded", function () {
   const downloadButton = document.getElementById("downloadButton");
   const metadataJson = document.getElementById("metadata-json");
   const inputs = document.querySelectorAll("#metadata-form input");
+  const deleteButtons = document.querySelectorAll('[data-action="delete"]');
 
+  document.getElementById('addContributorButton').addEventListener('click', addContributor);
+
+  document.getElementById('contributorsTableBody').addEventListener('click', function (event) {
+    if (event.target.tagName === 'TD') {
+      // Check if the clicked cell is not the first column (Contributor #)
+      if (event.target.cellIndex !== 0) {
+        editContributor(event.target);
+      }
+    } else if (event.target.tagName === 'BUTTON' && event.target.textContent === 'Delete') {
+      event.preventDefault(); // Prevent form submission
+      var rowToDelete = event.target.closest('tr');
+      deleteContributor(rowToDelete);
+    }
+  });
+  
+  
   // Set color based on JSON.ld validation result 
   var paragraph = document.getElementById("validate_extracted_data");
   var validation_result = paragraph.textContent.trim();
@@ -20,6 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
     paragraph.style.color = "white";
   }
 
+  // var hasPlaceholder = input.hasAttribute("placeholder");
   function validateInput(input) {
     if (input.value.trim() === "") {
       input.classList.add("invalid");
@@ -27,6 +143,169 @@ document.addEventListener("DOMContentLoaded", function () {
       input.classList.remove("invalid");
     }
   }
+
+  ///////////////////////////////////////////// Working on Contributors ///////////////////////////////////////////////////////
+
+  function addContributor() {
+      var givenNameInput = document.getElementById('givenNameInput');
+      var familyNameInput = document.getElementById('familyNameInput');
+      var emailInput = document.getElementById('emailInput');
+  
+      // Check if any of the input fields are empty
+      if (!givenNameInput.value.trim() || !familyNameInput.value.trim() || !emailInput.value.trim()) {
+        alert('Please provide all required information.');
+        return;
+      }
+  
+      // Get the contributors table body
+      var contributorsTableBody = document.getElementById('contributorsTableBody');
+  
+      // Insert a new row at the end of the table
+      var newRow = contributorsTableBody.insertRow(contributorsTableBody.rows.length);
+  
+      // Insert cells into the new row
+      var cellIndex = 0;
+      newRow.insertCell(cellIndex++).textContent = 'Contributor #' + contributorsTableBody.rows.length;
+      newRow.insertCell(cellIndex++).textContent = givenNameInput.value;
+      newRow.insertCell(cellIndex++).textContent = familyNameInput.value;
+      newRow.insertCell(cellIndex++).textContent = emailInput.value;
+  
+      // Add new-row class to the newly created row
+      newRow.classList.add('new-row');
+  
+     // Add delete button with icon
+      var deleteButton = document.createElement('button');
+      deleteButton.onclick = function (event) {
+        event.stopPropagation(); // Prevent the click event from propagating to the row and triggering a page change
+        deleteContributor(newRow);
+      };
+  
+      // Create an icon element for the delete button
+      var deleteIcon = document.createElement('i');
+      deleteIcon.classList.add('fas', 'fa-trash-alt'); // Font Awesome delete icon class
+  
+      // Append the icon to the delete button
+      deleteButton.appendChild(deleteIcon);
+  
+      // Append the delete button to the cell
+      newRow.insertCell(cellIndex++).appendChild(deleteButton);
+
+      // Attach the event listener to the new delete button
+      deleteButton.addEventListener('click', function (event) {
+        deleteContributor(event, this);
+      });
+  
+      // Clear input values
+      givenNameInput.value = '';
+      familyNameInput.value = '';
+      emailInput.value = '';
+  
+      // Update JSON data
+      updateJson();
+    }
+
+
+  function editContributor(cell) {
+    // alert('edit contributor clicked');
+  // Check if the clicked cell is in the delete button column
+  if (cell.cellIndex === 4) {
+    return; // Skip editing for the delete button column
+  }
+
+  // Get the current content of the cell
+  var currentValue = cell.textContent;
+
+  // Create an input element
+  var inputElement = document.createElement('input');
+  inputElement.type = 'text';
+  inputElement.value = currentValue;
+
+  // Replace the cell content with the input element
+  cell.innerHTML = '';
+  cell.appendChild(inputElement);
+
+  // Focus on the input element
+  inputElement.focus();
+
+  // Add event listener to handle editing completion
+  inputElement.addEventListener('blur', function () {
+    // Update the cell content with the new value
+    cell.textContent = inputElement.value;
+
+    // Update JSON data
+    updateJson();
+  });
+}
+
+
+
+  function deleteContributor(event, button) {
+    event.stopPropagation();
+    // alert('delete contributor clicked');
+    // Get the closest row to the button clicked
+    const row = button.closest('tr');
+
+    // Check if a row is found
+    if (row) {
+      // Get the contributors table body
+      const contributorsTableBody = document.getElementById('contributorsTableBody');
+
+      // Get the index of the row to delete
+      const rowIndex = row.rowIndex;
+
+      // Remove the row from the table
+      row.remove();
+
+      // Update Contributor numbers for all remaining rows
+      for (let i = 0; i < contributorsTableBody.rows.length; i++) {
+        contributorsTableBody.rows[i].cells[0].textContent = 'Contributor #' + (i + 1);
+      }
+
+      // Update JSON data in the textarea
+      updateJson();
+    } else {
+      console.error("Unable to find the row associated with the button");
+    }
+  }
+
+  deleteButtons.forEach(function(button) {
+    button.addEventListener('click', function(event) {
+        deleteContributor(event, this);
+    });
+  });
+
+
+
+
+  function updateJson() {
+    var contributorsTableBody = document.getElementById('contributorsTableBody');
+    var contributors = [];
+
+    // Iterate through contributor rows and update JSON data
+    for (var i = 0; i < contributorsTableBody.rows.length; i++) {
+      var contributor = {
+        "@type": "Person",
+        givenName: contributorsTableBody.rows[i].cells[1].textContent,
+        familyName: contributorsTableBody.rows[i].cells[2].textContent,
+        email: contributorsTableBody.rows[i].cells[3].textContent
+      };
+      contributors.push(contributor);
+    }
+
+    // Get existing JSON data
+    var existingJson = JSON.parse(metadataJson.value);
+
+    // Update contributor property in existing JSON
+    existingJson.contributor = contributors;
+
+    // Update JSON data in the textarea
+    metadataJson.value = JSON.stringify(existingJson, null, 2);
+  }
+  ///////////////////////////////////////////////// End of Contributors handling process /////////////////////////////////////////////////////
+
+
+  // ******************************************************************************
+  
   inputs.forEach((input) => {
     validateInput(input);
 
@@ -35,6 +314,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
   inputs.forEach((input) => {
     input.addEventListener("input", () => {
       // get the JSON object from the textarea
@@ -42,19 +323,14 @@ document.addEventListener("DOMContentLoaded", function () {
       // update the JSON object with the new value
       const key = input.name.split("[")[0];
       const subkey = input.name.split("[")[1]?.split("]")[0]; // use optional chaining to handle non-existent subkey
-      if (subkey) {
-        if (subkey.startsWith("contributor")) {
-          const index = parseInt(subkey.split(".")[1]); // get the index of the contributor object in the array
-          const field = subkey.split(".")[2]; // get the field to update in the contributor object
-          jsonObject[key][index][field] = input.value;
-          if (field === "givenName" && index === 0) {
-            updateContributorName(jsonObject);
-          }
-        } else {
+      // Exclude specific inputs from being updated
+      const excludedInputs = ["contributor_givenName", "contributor_familyName", "contributor_email", "author.givenName", "author.familyName"];
+      if (!(excludedInputs.includes(input.name))) {
+        if (subkey) {
           jsonObject[key][subkey] = input.value;
+        } else {
+          jsonObject[key] = input.value;
         }
-      } else {
-        jsonObject[key] = input.value;
       }
       ["programmingLanguage", "keywords"].forEach((prop) => {
         if (jsonObject[prop]) {
@@ -72,36 +348,42 @@ document.addEventListener("DOMContentLoaded", function () {
       metadataJson.value = JSON.stringify(jsonObject, null, 2);
     });
   });
-  // define downloadFile function
-  function downloadFile(event) {
-    event.preventDefault(); // prevent the default behavior of the button
-    const data = metadataJson.value;
-    const fileName = "data.json";
-    const blob = new Blob([data], { type: "application/json" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.innerHTML = "Download JSON";
-    link.setAttribute("download", fileName);
-    downloadButton.parentNode.insertBefore(link, downloadButton.nextSibling);
-    link.click(); // trigger the click event of the link to start the download
-    setTimeout(() => {
-      URL.revokeObjectURL(link.href); // revoke the object URL after the download is complete
-      link.parentNode.removeChild(link); // remove the link element from the DOM
-    }, 0);
-  }
-  // add event listener to download button
-  downloadButton.addEventListener("click", (event) => {
-    downloadFile(event);
+
+
+  // Add event listener to input fields for real-time JSON update
+  inputs.forEach((input) => {
+    input.addEventListener("input", () => {
+      validateInput(input);
+      // updateJsonObject();
+    });
   });
-});
-// function to update the JSON object with the new value of the first given name
-function updateContributorName(jsonObject) {
-  const givenNameInput = document.getElementById("givenName-0");
-  if (jsonObject["contributor"].length > 0) {
-    // Check if there is at least one contributor
-    jsonObject["contributor"][0]["givenName"] = givenNameInput.value;
-  }
+
+
+function downloadFile(event) {
+  event.preventDefault(); // prevent the default behavior of the button
+  const data = metadataJson.value;
+  const fileName = "data.json";
+  const blob = new Blob([data], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.innerHTML = "Download JSON";
+  link.setAttribute("download", fileName);
+  downloadButton.parentNode.insertBefore(link, downloadButton.nextSibling);
+  link.click(); // trigger the click event of the link to start the download
+  setTimeout(() => {
+    URL.revokeObjectURL(link.href); // revoke the object URL after the download is complete
+    link.parentNode.removeChild(link); // remove the link element from the DOM
+  }, 0);
 }
+
+// add event listener to download button
+downloadButton.addEventListener("click", (event) => {
+  downloadFile(event);
+});
+
+
+});
+
 /* selection_page (when switching between tabs of versions & software codemeta) */
 function openDS(evt, dataSw) {
   var i, tabcontent, tablinks;
