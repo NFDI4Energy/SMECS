@@ -39,7 +39,7 @@
       </div>
     {% elif value|is_dict and key == "copyrightHolder" %}
     <fieldset class="copyrightHolder">
-      <legend title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Copyright Holder</legend>
+      <legend title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Copyright Holder Name</legend>
       {% for k, v in value.items %}
       {% if k == 'name' %}
       <label for="{{ key }}[{{ k }}]">{{ k }}</label>
@@ -47,22 +47,43 @@
       {% endif %}
       {% endfor %}
     </fieldset>
+
     {% elif key == "author" %}
-    {% for author in value %}
-    <fieldset class="fieldset_content">
-      <legend title="{% with descriptions=entered_data.description_dict %}{% if 'author' in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Author</legend>
-      <label title="{% with descriptions=entered_data.description_dict %}{% if 'givenName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</label>
-      <input type="text" key="author.givenName" name="author.givenName" value="{{ author.givenName }}"><br>
-      <label title="{% with descriptions=entered_data.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</label>
-      <input type="text" key="author.familyName" name="author.familyName" value="{{ author.familyName }}"><br>
-    </fieldset>
-    {% endfor %}
+    <table class="authors-table">
+      <thead>
+        <tr>
+          <th title="{% with descriptions=entered_data.description_dict %}{% if 'author' in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Author</th>
+          <th title="{% with descriptions=entered_data.description_dict %}{% if 'givenName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</th>
+          <th title="{% with descriptions=entered_data.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</th>
+        </tr>
+      </thead>
+      <tbody id="authorsTableBody">
+        {% for author in value %}
+        <tr>
+          <td>Author #{{ forloop.counter }}</td>
+          <td>{{ author.givenName }}</td>
+          <td>{{ author.familyName }}</td>
+          <td>
+            <button onclick="deletePerson(event, this, 'author')" data-action="delete">
+              <i class="fas fa-trash-alt"></i>
+          </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="input-container">
+      <input type="text" id="authorGivenNameInput" name="author_givenName" placeholder="Given Name">
+      <input type="text" id="authorFamilyNameInput" name="author_familyName" placeholder="Family Name">
+    </div>
+    <button type="button" class="authorBTN" id="addAuthorButton">Add Author</button>
+
     {% elif key == "contributor" %}
-    <label for="{{ key }}" title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}"><h4>Contributor(s)</h4></label>
     <table class="contributors-table" id="dataTable">
       <thead>
           <tr>
-              <th>Contributor</th>
+              <th title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Contributor</th>
               <th title="{% with descriptions=entered_data.description_dict %}{% if 'givenName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</th>
               <th title="{% with descriptions=entered_data.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</th>
               <th title="{% with descriptions=entered_data.description_dict %}{% if 'email' in descriptions %}{{ descriptions|get:'email' }}{% endif %}{% endwith %}">Email</th>
@@ -76,20 +97,22 @@
               <td>{{ contributor.familyName }}</td>
               <td>{{ contributor.email }}</td>
               <td>
-                <button onclick="deleteContributorevent(this)" data-action="delete">
+                <button onclick="deletePerson(event, this, 'contributor')" data-action="delete">
                   <i class="fas fa-trash-alt"></i>
-                </button>
+              </button>
               </td>
           </tr>
           {% endfor %}
       </tbody>
   </table>
+
   <div class="input-container">
-    <input type="text" id="givenNameInput" name="contributor_givenName" placeholder="Given Name">
-    <input type="text" id="familyNameInput" name="contributor_familyName" placeholder="Family Name">
-    <input type="text" id="emailInput" name="contributor_email" placeholder="Email">
+    <input type="text" id="contributorGivenNameInput" name="contributor_givenName" placeholder="Given Name">
+    <input type="text" id="contributorFamilyNameInput" name="contributor_familyName" placeholder="Family Name">
+    <input type="text" id="contributorEmailInput" name="contributor_email" placeholder="Email">
   </div>
   <button type="button" class="contributorBTN" id="addContributorButton">Add Contributor</button>
+
     {% elif value|list %}
     {% for item in value %}
     <div class="single_inputs">

@@ -459,9 +459,6 @@ def get_gitlab_metadata(gl_url, personal_token_key):
             "license": license_name,
             # "version": version,
             "programmingLanguage": [],
-            "author": [{"givenName": ownerGivenNames,
-                        "familyName": ownerFamilyNames,
-                        "@type": "Person"}],
             "copyrightHolder": {"@type": "Person", "name": namespaceName},
             "dateModified": dateModified,
             "dateCreated": dateCreated,
@@ -470,6 +467,10 @@ def get_gitlab_metadata(gl_url, personal_token_key):
             "downloadUrl": codeRepository,
             "permissions": permissions,
             "readme": readmeURL,
+            "author": [{"@type": "Person",
+                        "givenName": ownerGivenNames,
+                        "familyName": ownerFamilyNames
+                        }],
             "contributor": [],
         }
 
