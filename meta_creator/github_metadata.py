@@ -113,9 +113,6 @@ def get_github_metadata(url):
             "license": license_value,
             # "version": version,
             "programmingLanguage": programming_languages,  # List of all languages used
-            "author": [{"givenName": login,
-                        "familyName": "",
-                        "@type": "Person"}],
             "copyrightHolder": {"@type": "Person", "name": ""},
             "dateModified": dateModified,
             "dateCreated": dateCreated,
@@ -124,6 +121,10 @@ def get_github_metadata(url):
             "downloadUrl": download_url,
             "permissions": "",
             "readme": readme_url,
+            "author": [{"@type": "Person",
+                        "givenName": login,
+                        "familyName": ""
+                        }],
             "contributor": [],
         }
 

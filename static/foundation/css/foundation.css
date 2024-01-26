@@ -6148,7 +6148,7 @@ form.data-form3{
   margin-bottom:5px;
 }
 .form-group fieldset.copyrightHolder{
-  margin-top: -160;
+  /* margin-top: -160; */
 }
 
 
@@ -6282,14 +6282,15 @@ div.error-container a:hover {
 
 /********************************* Style for contributors table **********************************/
 /* contributors table */
-.contributors-table {
+.contributors-table, .authors-table {
+  margin-top: 3%;
   width: 100%;
   border-collapse: collapse;
   border: 1px solid #ddd;
 }
 
 /* table header cells */
-.contributors-table th {
+.contributors-table th, .authors-table th {
   background-color: #f2f2f2;
   padding: 10px;
   text-align: left;
@@ -6298,7 +6299,7 @@ div.error-container a:hover {
 }
 
 /* table data cells */
-.contributors-table td {
+.contributors-table td, .authors-table td {
   padding: 10px;
   border: 1px solid #ddd;
 }
@@ -6308,7 +6309,8 @@ div.error-container a:hover {
   background-color: #f2f2f2;
 }
 
-button.contributorBTN{
+button.contributorBTN, 
+button.authorBTN{
   background-color: #828983;
   color: white;
   padding: 10px 20px;
@@ -6322,7 +6324,7 @@ button.contributorBTN{
   width: auto;
   transition: background-color 0.3s; /* Smooth transition for background color */
 }
-button.contributorBTN:hover {
+button.contributorBTN:hover, button.authorBTN:hover {
   background-color: #6c6f7e; 
 }
 
