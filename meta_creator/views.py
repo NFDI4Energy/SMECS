@@ -50,6 +50,8 @@ def index(request):
             error_message_url = 'Invalid URL'
         if result == 'Invalid Personal Token Key':
             error_message_token = 'Invalid Personal Token Key'
+        if result == 'Invalid GitHub URL':
+            error_message_url = 'Invalid GitHub URL'
         errors = {
             "error_message_url": error_message_url,
             "error_message_token": error_message_token
@@ -58,7 +60,6 @@ def index(request):
         if error_message_url or error_message_token:
             return render(request , 'meta_creator/index.html', errors)
 
-        # if request.method == 'POST':
         my_json_str = {}
         # Extract metadata
         extracted_metadata, entered_data = result
@@ -84,15 +85,15 @@ def index(request):
         error_message = "Connection timed out."
     except ReadTimeout:
         error_message = "Read operation timed out."
+    except RequestException as e:
+        error_message = "Error fetching data from GitHub API"
     except ConnectionError as conn_error:
-        error_message = f"Could not establish a connection: {conn_error}"
-    except RequestException as api_error:
-        error_message = f"API request error: {api_error}"
+        error_message = f"Could not establish a connection: {conn_error}"      
     except PermissionDenied:  # Catch PermissionDenied instead of CsrfViewMiddleware
         error_message = "CSRF Error: This action is not allowed."
         return HttpResponseForbidden(error_message)
     except Exception as unexpected_exception: # pylint: disable=broad-except
         error_message = f"An unexpected error occurred: {str(unexpected_exception)}"
-        return HttpResponseServerError(error_message)  # Return 500 Internal Server Error
+        return HttpResponseServerError(error_message)  # Return 500 Internal Server Error   
 
     return render(request, 'meta_creator/error.html', {'error_message': error_message})

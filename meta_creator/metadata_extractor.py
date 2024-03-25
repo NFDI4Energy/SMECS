@@ -91,21 +91,22 @@ def data_extraction(request):
                     }
                 }
 
+        is_valid_github = validate_github_inputs(gl_url)
 
         is_valid_gitlab, error_messages = validate_gitlab_inputs(gl_url, personal_token_key)
-        is_valid_github = validate_github_inputs(gl_url)
 
         if is_valid_gitlab:
             metadata = get_gitlab_metadata(gl_url, personal_token_key)
             return (metadata, context)
 
-
         elif is_valid_github:
             metadata = get_github_metadata(gl_url)
             if metadata:
                 return (metadata, context)
-        elif not is_valid_gitlab:
-            if 'Invalid URL' in error_messages:
-                return 'Invalid URL'
-            if 'Invalid GitLab API token' in error_messages:
-                return 'Invalid Personal Token Key'
+
+        if 'Invalid URL' in error_messages:
+            return 'Invalid URL'
+        if 'Invalid GitLab API token' in error_messages:
+            return 'Invalid Personal Token Key'
+        if not is_valid_github:
+            return 'Invalid GitHub URL'

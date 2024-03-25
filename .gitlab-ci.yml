@@ -1,0 +1,41 @@
+stages:
+  - build
+  - test
+
+variables:
+  CI_PERSONAL_TOKEN_KEY_GL: $CI_PERSONAL_TOKEN_KEY_GL
+  GL_URL: $GL_URL
+  CI_PERSONAL_TOKEN_KEY_GH: $CI_PERSONAL_TOKEN_KEY_GH
+  GH_URL: $GH_URL
+
+cache:
+  key: "${CI_COMMIT_REF_SLUG}-pip-cache"
+  paths:
+    - env/lib/python3.9/site-packages
+
+before_script:
+  - python -m venv env
+  - source env/bin/activate
+  - echo $GL_URL
+  # - echo $CI_PERSONAL_TOKEN_KEY_GL
+  - echo "CI_PERSONAL_TOKEN_KEY_GL=$CI_PERSONAL_TOKEN_KEY_GL" >> .env
+
+install_dependencies:
+  stage: build
+  script:
+    - pip install -r requirements.txt
+
+run_server:
+  stage: build
+  script:
+    - python manage.py runserver 0.0.0.0:8000 &
+
+test_job:
+  stage: test
+  script:
+    - echo "$GL_URL"
+    - echo "$GH_URL"
+    # - echo "$CI_PERSONAL_TOKEN_KEY_GL"
+    - python manage.py test tests
+
+image: python:3.9
