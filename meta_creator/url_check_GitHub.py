@@ -1,20 +1,32 @@
 import re
-from urllib.parse import urlparse
 import requests
 
-# Check if the URL is a Valid GitHub URL
 def validate_github_inputs(url):
-    # Check if the URL matches the GitHub repository pattern
-    pattern = re.compile(r'https?://github\.com/([a-zA-Z0-9-]+)/([a-zA-Z0-9-_]+)')
-    match = pattern.match(url)
+    """
+    Validates both the GitHub repository URL and API token.
 
+    Args:
+        url (str): The GitHub repository URL to validate.
+        token (str): The GitHub API token (not used in GitHub validation).
+
+    Returns:
+        tuple: A tuple containing the validation result (bool) and the error messages (str).
+    """
+    # Regular expression pattern to match GitHub repository URLs
+    url_pattern = r'^https?://github\.com/([a-zA-Z0-9-]+)/([a-zA-Z0-9-_]+)'
+    error = ''
+
+    # Check if the URL matches the pattern
+    match = re.match(url_pattern, url)
     if not match:
-        return False  # URL doesn't match the GitHub repository pattern
+        error = 'Invalid GitHub URL'
 
-    # Check if the GitHub repository actually exists
-    try:
+    # Validate the URL by sending a GET request to GitHub API
+    if not error:
         response = requests.get(f'https://api.github.com/repos/{match.group(1)}/{match.group(2)}')
-        return response.status_code == 200
-    except requests.RequestException:
-        return False  # Unable to connect to GitHub API
-    
+        if response.status_code != 200:
+            error = 'Invalid GitHub URL'
+
+    if len(error) == 0:
+        return True, ''
+    return False
