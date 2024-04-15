@@ -303,6 +303,11 @@ def validate_codemeta(json):
     return same and not fail
 
 
+# Return raw data for readme
+def convert_to_raw_url(rm_url):
+    raw_url = rm_url.replace("/blob/", "/raw/")
+    return raw_url
+
 # Extract data from GitLab
 def get_gitlab_metadata(gl_url, personal_token_key):
         parsed_url = urlparse(gl_url)
@@ -432,6 +437,7 @@ def get_gitlab_metadata(gl_url, personal_token_key):
         dateCreated = dateCreated[0:dateCreated.find("T")]
         permissions = findWord("'visibility'", 15, projectString)
         readmeURL = findWord("'readme_url'", 15, projectString)
+        raw_readme_url = convert_to_raw_url(readmeURL)
         repositoryName = findWord("'name'", 9, projectString)
         topics = findTopics(projectString)
 
@@ -466,7 +472,8 @@ def get_gitlab_metadata(gl_url, personal_token_key):
             "keywords": [topics],
             "downloadUrl": codeRepository,
             "permissions": permissions,
-            "readme": readmeURL,
+            # "readme": readmeURL,
+            "readme": raw_readme_url,
             "author": [{"@type": "Person",
                         "givenName": ownerGivenNames,
                         "familyName": ownerFamilyNames
