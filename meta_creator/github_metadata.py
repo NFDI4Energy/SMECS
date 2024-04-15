@@ -45,7 +45,11 @@ def get_github_metadata(url):
 
     # Function to generate ReadME URL
     def read_me_url(url):
-        readme = f"https://github.com/{username}/{repo_name}/blob/main/README.md"
+        # This URL points to the README file within a GitHub repository. 
+        # readme = f"https://github.com/{username}/{repo_name}/blob/master/README.md"
+
+        # This URL points directly to the raw content of the README file hosted on GitHub's raw.githubusercontent.com domain. 
+        readme = f"https://raw.githubusercontent.com/{username}/{repo_name}/master/README.md"
         return readme
 
     # Specify the path to external text file containing the token
@@ -71,7 +75,8 @@ def get_github_metadata(url):
         description = ""
 
     code_repository = repo_data['html_url']
-    issue_tracker = repo_data['issues_url'].replace('{/number}', '')
+    # issue_tracker = repo_data['issues_url'].replace('{/number}', '')
+    issue_tracker = code_repository + '/issues'
     login = repo_data['owner']['login']
     topics = list(repo_data['topics'])
 
