@@ -1,7 +1,9 @@
 import re
 import requests
+import json
 
 from .common_functions import findWord
+from .read_tokens import read_token_from_file
 
 # Check the URL to be accessible or not
 def is_url_accessible(url):
@@ -23,13 +25,8 @@ def download_url_releases(url):
     else:
         return ""
 
-# Function to read token from external file
-def read_token_from_file(file_path):
-    with open(file_path, 'r') as file:
-        return file.read().strip()
 
-
-def get_github_metadata(url):
+def get_github_metadata(url, personal_token_key):
     # Check if the URL matches the modified GitHub repository pattern
     pattern = re.compile(r'https?://github\.com/([a-zA-Z0-9-]+)/([a-zA-Z0-9-_]+)')
     match = pattern.match(url)
@@ -43,26 +40,21 @@ def get_github_metadata(url):
     # Fetch repository information from GitHub API
     api_url = f'https://api.github.com/repos/{username}/{repo_name}'
 
-    # Function to generate ReadME URL
-    def read_me_url(url):
-        # This URL points to the README file within a GitHub repository. 
-        # readme = f"https://github.com/{username}/{repo_name}/blob/master/README.md"
+    # token_file_path = 'tokens.txt'  # Specify the path to external text file containing the default GH token
+    tokens = read_token_from_file('tokens.txt')
+    default_access_token = tokens.get('github_token') # Read the default GH token from the external text file
 
-        # This URL points directly to the raw content of the README file hosted on GitHub's raw.githubusercontent.com domain. 
-        readme = f"https://raw.githubusercontent.com/{username}/{repo_name}/master/README.md"
-        return readme
-
-    # Specify the path to external text file containing the token
-    token_file_path = 'GitHubToken.txt'
-        # Read the access token from the external text file
-    access_token = read_token_from_file(token_file_path)
-    if access_token:
-        headers = {'Authorization': f'token {access_token}'}
+    headers = {'Authorization': f'token {personal_token_key}'}
+    response = requests.get(api_url, headers=headers, timeout=5)
+     
+    if response.status_code != 200 or not personal_token_key:
+        # Using default token when user token is wrong or input is empty
+        headers = {'Authorization': f'token {default_access_token}'}
         response = requests.get(api_url, headers=headers, timeout=5)
+        default_access_token_response = response # check if default GH token is correct
+        if default_access_token_response.status_code != 200:
+            response = requests.get(api_url, timeout=5)
 
-    else:
-        print('Enter the valid GitHub token key in "GitHubToken.txt" file to avoid rate limits')
-        response = requests.get(api_url, timeout=5)
 
     response.raise_for_status()
     repo_data = response.json()
@@ -104,8 +96,10 @@ def get_github_metadata(url):
 
     license_value = repo_data['license']['name'] if repo_data['license'] else ""
     download_url = download_url_releases(url)
-    readme_url = read_me_url(url)
 
+    url_readme = code_repository.replace("https://github.com/", "")
+    # readme = f"https://github.com/{username}/{repo_name}/blob/master/README.md"
+    readme_url = f"https://raw.githubusercontent.com/{url_readme}/master/README.md"
 
     # Extract relevant metadata
     metadata_dict = {

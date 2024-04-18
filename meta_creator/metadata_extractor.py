@@ -7,6 +7,8 @@ from .url_check_GitLab import validate_gitlab_inputs
 from .url_check_GitHub import validate_github_inputs
 from .gitlab_metadata import get_gitlab_metadata
 from .github_metadata import get_github_metadata
+from .read_tokens import read_token_from_file
+import json
 
 #################### getting metadata from gitlab project ####################
 
@@ -93,14 +95,19 @@ def data_extraction(request):
 
         is_valid_github = validate_github_inputs(gl_url)
 
+        tokens = read_token_from_file('tokens.txt')
+        default_access_token_GL = tokens.get('gitlab_token')
         is_valid_gitlab, error_messages = validate_gitlab_inputs(gl_url, personal_token_key)
 
         if is_valid_gitlab:
             metadata = get_gitlab_metadata(gl_url, personal_token_key)
+            if not metadata:
+                metadata = get_gitlab_metadata(gl_url, default_access_token_GL)
             return (metadata, context)
+        
 
         elif is_valid_github:
-            metadata = get_github_metadata(gl_url)
+            metadata = get_github_metadata(gl_url, personal_token_key)
             if metadata:
                 return (metadata, context)
 

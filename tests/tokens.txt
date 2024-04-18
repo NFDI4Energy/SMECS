@@ -1,0 +1,4 @@
+{
+  "github_token": "",
+  "gitlab_token": ""
+}
