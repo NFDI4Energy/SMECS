@@ -1,6 +1,10 @@
 import re
-from urllib.parse import urlparse
 import requests
+import json
+
+from urllib.parse import urlparse
+from .read_tokens import read_token_from_file
+
 
 # Check if the URL is a Valid GitLab URL and a valid GitLab Token
 def validate_gitlab_inputs(url, token):
@@ -31,10 +35,16 @@ def validate_gitlab_inputs(url, token):
     api_url = f'https://{domain}/api/v4/user'
     headers = {'Authorization': f'Bearer {token}'}
 
+    tokens = read_token_from_file('tokens.txt')
+    default_access_token = tokens.get('gitlab_token') 
+
     try:
         api_response = requests.get(api_url, headers=headers, timeout=10)
         if api_response.status_code != 200:
-            errors.append('Invalid GitLab API token')
+            headers = {'Authorization': f'Bearer {default_access_token}'}
+            api_response_default = requests.get(api_url, headers=headers, timeout=10)
+            if api_response_default.status_code != 200:
+                errors.append('Invalid GitLab API token')
     except requests.RequestException:
         errors.append('Error occurred while validating GitLab API token')
 

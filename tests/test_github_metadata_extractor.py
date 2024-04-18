@@ -9,8 +9,10 @@ in extracting metadata from GitHub repositories.
 import os
 import unittest
 from meta_creator.github_metadata import get_github_metadata
+from unittest.mock import patch
 
 GitHub_url = os.getenv('GH_URL')
+personal_token_gh = os.getenv('CI_PERSONAL_TOKEN_KEY_GH')
 
 class test_github_metadata_extractor(unittest.TestCase):
     """
@@ -24,8 +26,12 @@ class test_github_metadata_extractor(unittest.TestCase):
         """
         Test the retrieval of GitHub metadata for a valid repository URL.
         """
+        # Mocking the file reading function used within get_github_metadata
+        with patch('__main__.open') as mock_open:
+            mock_open.return_value.__enter__.return_value.read.return_value = "tokens.txt"
+            
+            metadata = get_github_metadata(GitHub_url, personal_token_gh)
 
-        metadata = get_github_metadata(GitHub_url)
         self.assertIsNotNone(metadata)
         self.assertEqual(metadata["@type"], "SoftwareSourceCode")
 
@@ -34,7 +40,7 @@ class test_github_metadata_extractor(unittest.TestCase):
         """
         Test handling of successful GitHub API connection
         """
-        result = get_github_metadata(GitHub_url)
+        result = get_github_metadata(GitHub_url, personal_token_gh)
         self.assertIsNotNone(result)
 
 

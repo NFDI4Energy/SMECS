@@ -1,11 +1,13 @@
 import requests, re
 import gitlab
-from urllib.parse import urlparse
-import json
-from pyld import jsonld
 import copy
+import json
+
+from urllib.parse import urlparse
+from pyld import jsonld
 from django.views.decorators.csrf import csrf_exempt
 from .common_functions import findWord
+from .read_tokens import read_token_from_file
 
 
 # functions for data filtering #
@@ -204,7 +206,7 @@ def convertToJson(metadata_dict, projectname, fromTextBox):
 
 # --------------- working on License ---------------
 
-def extract_license_info(project_url, personal_token_key):
+def extract_license_info(project_url, token):
     """
     Extracts license information for a given project.
 
@@ -219,7 +221,8 @@ def extract_license_info(project_url, personal_token_key):
     domain = parsed_url.netloc
     host = parsed_url.scheme + '://' + parsed_url.netloc + '/'
     # Initialize the GitLab API client
-    git_client = gitlab.Gitlab(host, private_token=personal_token_key)
+    # git_client = gitlab.Gitlab(host, private_token=personal_token_key)
+    git_client = gitlab.Gitlab(host, private_token=token)
 
     # Standardizing the format of URL to make an API call
     gl_url_standard = project_url.replace(host, "")
@@ -313,17 +316,29 @@ def get_gitlab_metadata(gl_url, personal_token_key):
         parsed_url = urlparse(gl_url)
         domain = parsed_url.netloc
         host = parsed_url.scheme + '://' + parsed_url.netloc + '/'
-        # Initialize the GitLab API client
-        git_client = gitlab.Gitlab(host, private_token=personal_token_key)
+        api_url = f'https://{domain}/api/v4/user'
 
-        # Standardizing the format of URL to make an API call
+        tokens = read_token_from_file('tokens.txt')
+        default_access_token = tokens.get('gitlab_token') # Read the default GL access token from the external
+
         gl_url_standard = gl_url.replace(host, "")
+        headers = {'Authorization': f'Bearer {personal_token_key}'}
+        git_client = gitlab.Gitlab(host, private_token=personal_token_key)
+        response = requests.get(api_url, headers=headers, timeout=10)
+
+        if response.status_code == 200:
+            license_name = extract_license_info(gl_url, personal_token_key)
+        elif response.status_code == 401 or response.status_code != 200 or not personal_token_key or personal_token_key == '':
+            headers = {'Authorization': f'Bearer {default_access_token}'}
+            response = requests.get(api_url, headers=headers, timeout=10)
+            # Initialize the GitLab API client
+            git_client = gitlab.Gitlab(host, private_token=default_access_token)
+            # Extract license information
+            license_name = extract_license_info(gl_url, default_access_token)
 
         # Get a project by URL
         project = git_client.projects.get(gl_url_standard)
 
-        # Extract license information
-        license_name = extract_license_info(gl_url, personal_token_key)
 
     #################### attributes of the project ####################
     # getting project details
