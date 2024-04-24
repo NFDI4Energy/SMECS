@@ -26,6 +26,39 @@ def download_url_releases(url):
         return ""
 
 
+# Function to extract contributors from commit history
+def get_contributors_from_repo(owner, repo, token, url):
+    # url = f"https://api.github.com/repos/{owner}/{repo}/commits"
+    url_contributors = f"{url}/commits"
+    headers = {"Authorization": f"token {token}"}
+    response = requests.get(url_contributors, headers=headers)
+    if token == '':
+        response = requests.get(url_contributors)
+    
+    if response.status_code == 200:
+        commit_data = response.json()
+        metadata = []
+        seen_names = set()
+        for commit in commit_data:
+            contributor_name = commit["commit"]["author"]["name"]
+            contributor_email = commit["commit"]["author"]["email"]
+            if contributor_name not in seen_names: 
+                name_parts = contributor_name.split()
+                given_name = name_parts[0]
+                # Combine the rest of the name parts as the family name
+                family_name = ' '.join(name_parts[1:])
+                metadata.append({
+                    "givenName": given_name,
+                    "familyName": family_name,
+                    "email": contributor_email,
+                })
+                seen_names.add(contributor_name) # to return unique metadata
+        return metadata
+    else:
+        print(f"Failed to retrieve commit history: {response.status_code}")
+        return None
+
+
 def get_github_metadata(url, personal_token_key):
     # Check if the URL matches the modified GitHub repository pattern
     pattern = re.compile(r'https?://github\.com/([a-zA-Z0-9-]+)/([a-zA-Z0-9-_]+)')
@@ -101,6 +134,13 @@ def get_github_metadata(url, personal_token_key):
     # readme = f"https://github.com/{username}/{repo_name}/blob/master/README.md"
     readme_url = f"https://raw.githubusercontent.com/{url_readme}/master/README.md"
 
+    contributors_metadata = get_contributors_from_repo(username, repo_name, personal_token_key, api_url)
+    token = ''
+    if contributors_metadata is None:
+        contributors_metadata = get_contributors_from_repo(username, repo_name, default_access_token, api_url)
+        if not contributors_metadata:
+            contributors_metadata = get_contributors_from_repo(username, repo_name, token, api_url)
+
     # Extract relevant metadata
     metadata_dict = {
         "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
@@ -124,9 +164,9 @@ def get_github_metadata(url, personal_token_key):
         "permissions": "",
         "readme": readme_url,
         "author": [{"@type": "Person",
-                    "givenName": login,
+                    "givenName": "",
                     "familyName": ""
                     }],
-        "contributor": [],
+        "contributor": contributors_metadata,
     }
     return metadata_dict
