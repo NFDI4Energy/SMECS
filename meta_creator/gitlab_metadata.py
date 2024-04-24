@@ -8,6 +8,7 @@ from pyld import jsonld
 from django.views.decorators.csrf import csrf_exempt
 from .common_functions import findWord
 from .read_tokens import read_token_from_file
+from .count_extracted_metadata import count_non_empty_values
 
 
 # functions for data filtering #
@@ -252,19 +253,6 @@ def extract_license_info(project_url, token):
             license_name = license_text.splitlines()[0]
             return license_name
         return ""
-
-# Counting number of extracted metadata
-def count_non_empty_values(data):
-    count = 0
-    if isinstance(data, dict):
-        for value in data.values():
-            if value != "" and value is not None and value != ['']:
-                count += 1
-    elif isinstance(data, list):
-        for item in data:
-            if item != "" and item is not None and item != ['']:
-                count += 1
-    return count
 
 
 # Validating json.ld
