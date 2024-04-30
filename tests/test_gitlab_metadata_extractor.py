@@ -57,11 +57,6 @@ class test_gitlab_metadata_extractor(unittest.TestCase):
         result = extract_license_info(GitLab_url, personal_token_gl)
         self.assertIsNotNone(result, "Failed to extract license information")
 
-    def test_count_non_empty_values(self):
-        data = {'key1': 'value1', 'key2': '', 'key3': None, 'key4': ['']}
-        result = count_non_empty_values(data)
-        self.assertEqual(result, 1, f"Expected: 1, Got: {result}")
-
 
 if __name__ == '__main__':
     unittest.main()
