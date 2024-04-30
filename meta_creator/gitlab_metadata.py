@@ -1,13 +1,13 @@
 import requests, re
 import gitlab
-import copy
 import json
 
 from urllib.parse import urlparse
-from pyld import jsonld
 from django.views.decorators.csrf import csrf_exempt
 from .common_functions import findWord
 from .read_tokens import read_token_from_file
+from .count_extracted_metadata import count_non_empty_values
+from .validate_jsonLD import validate_codemeta
 
 
 # functions for data filtering #
@@ -252,58 +252,6 @@ def extract_license_info(project_url, token):
             license_name = license_text.splitlines()[0]
             return license_name
         return ""
-
-# Counting number of extracted metadata
-def count_non_empty_values(data):
-    count = 0
-    if isinstance(data, dict):
-        for value in data.values():
-            if value != "" and value is not None and value != ['']:
-                count += 1
-    elif isinstance(data, list):
-        for item in data:
-            if item != "" and item is not None and item != ['']:
-                count += 1
-    return count
-
-
-# Validating json.ld
-def validate_codemeta(json):
-    """Check whether a codemeta json object is valid"""
-    try:
-        original_context = json["@context"]
-        context = json["@context"]
-    except:
-        print("Not a JSON-LD file")
-        return False
-    
-    if context == "https://doi.org/10.5063/schema/codemeta-2.0":
-        # Temp replacement for https resolution issues for schema.org
-        context = "https://raw.githubusercontent.com/caltechlibrary/convert_codemeta/main/codemeta.jsonld"
-        json["@context"] = context
-    cp = copy.deepcopy(json)
-    # Expand and contract to check mapping
-    cp = jsonld.expand(cp)
-    cp = jsonld.compact(cp, context)
-    keys = cp.keys()
-    # Using len because @type elements get returned as type
-    same = len(set(keys)) == len(set(json.keys()))
-    if not same:
-        print("Unsupported terms in Codemeta file")
-        diff = set(json.keys()) - set(keys)
-        if "@type" in diff:
-            diff.remove("@type")
-        print(sorted(diff))
-    fail = ":" in keys
-    if fail:
-        print("Not in schema")
-        for k in keys:
-            if ":" in k:
-                print(k)
-
-    # Restore the original context
-    json["@context"] = original_context
-    return same and not fail
 
 
 # Return raw data for readme
