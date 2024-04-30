@@ -48,7 +48,7 @@ Documentation
          * On Unix/MacOS: Run ``python3 -m venv <name-of-virtual-environment>``.
      |  (for more details visit https://docs.python.org/3/library/venv.html)
      * Activate virtual environment.
-         * On Windows: Run ``env\Scripts\activate.bat``. 
+         * On Windows: Run ``env\Scripts\activate``. 
          * On Unix/MacOS: Run ``source env/bin/activate``.
      |  env is the selected name for the virtual environment.
      |  Note that activating the virtual environment change the shell's prompt and show what virtual
