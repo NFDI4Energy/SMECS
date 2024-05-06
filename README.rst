@@ -1,36 +1,14 @@
 =================
-RLI Metadata Tool
+Software Metadata Extraction and Curation Software (SMECS)
 =================
-
-**Generate and validate metadata strings following the Open Energy Metadata standard**
-
-.. list-table::
-   :widths: auto
-
-   * - License
-     - |badge_license|
-   * - Documentation
-     - 
-   * - Publication
-     - 
-   * - Development
-     - |badge_issue_open| |badge_issue_closes| |badge_pr_open| |badge_pr_closes|
-   * - Community
-     - |badge_contributing| |badge_contributors| |badge_repo_counts|
-
-.. contents::
-    :depth: 2
-    :local:
-    :backlinks: top
-
-Introduction
-============
-| A web application to create and validate metadata strings following the **Open Energy Metadata** (OEMetadata). 
-| The latest metadata version is `OEMetadata v1.5.1 <https://github.com/OpenEnergyPlatform/oemetadata>`_
-| The running instance can be accessed on: https://meta.rl-institut.de/meta_creator/
+| A web application to extract and curate software metadata following the `codemeta <https://codemeta.github.io/>`_ software metadata standard.
+|
+| SMECS facilitates the extraction of software metadata from repositories on GitHub/GitLab. It offers a user-friendly graphical user interface for visualizing the retrieved metadata. This empowers Research Software Engineers (RSE) to curate the extracted metadata according to their requirements. Ultimately, SMECS delivers the curated metadata in JSON format, enhancing usability and accessibility.
+|
+**Authors:** Stephan Ferenz, Aida Jafarbigloo
 
 
-Documentation
+Installation and Usage
 =============
 **Getting started**
 
@@ -63,7 +41,7 @@ Documentation
          * On Unix/MacOS: Run ``python3 -m pip install -r requirements.txt``.       
      (for more details visit https://packaging.python.org/en/latest/tutorials/installing-packages/)
 
-|
+
 **Running the project**
 
 * Open the project in an editor. (e.g. VS code)
@@ -74,34 +52,39 @@ Documentation
     * On Unix/MacOS: Run ``python3 manage.py runserver``.
 * To see the output on the browser follow the link shown in the terminal. (e.g. http://127.0.0.1:8000/)
 
-More information about this project: https://github.com/rl-institut/meta_tool
 
-|
 **Tip for developers**
 
 If the page does not refresh correctly, clear the browser cache. You can force Chrome to pull in new data and ignore the saved ("cached") data by using the keyboard shortcut ``Cmd+Shift+R`` on Mac, and ``Ctrl+F5`` or ``Ctrl+Shift+R`` on Windows. 
 
-|
-**Setting Up GitHub Token**
+**Setting Up GitLab/GitHub Personal Token**
 
-To enhance the functionality of this program and ensure secure interactions with the GitHub API, users are required to provide their personal access token. Follow these steps to integrate your token:
+To enhance the functionality of this program and ensure secure interactions with the GitLab/GitHub API, users are required to provide their personal access token. Follow these steps to integrate your token:
+
+* Generate a GitLab Token:
+    * Visit `Create a personal access token <https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#create-a-personal-access-token>`_ for more information on how to generate a new token.
+
 
 * Generate a GitHub Token:
     * Visit `Managing your personal access tokens <https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens>`_ for more information on how to generate a new token.
-* Save Token:
-    * Copy and paste your generated token into the file ``GitHubToken.txt``.
-
 
 
 Collaboration
 =============
-| Everyone is invited to develop this repository with good intentions.
+| We believe in the power of collaboration and welcome contributions from the community to enhance the SMECS workflow. Whether you have found a bug, have a feature idea, or want to share feedback, your contribution matters. Feel free to submit a pull request, open up an issue, or reach out with any questions or concerns.
+|
+To see upcoming features, please refer to our `open issues <https://gitlab.com/zdin-zle/zle-platform/repository/meta_tool/-/issues>`_.
+
 
 License and Citation
 ====================
 | The code is licensed under the **GNU Affero General Public License v3.0 or later** (AGPL-3.0-or-later).
 | See `LICENSE.txt <LICENSE.txt>`_ for further information.
-| Copyright: `© Reiner Lemoine Institut <https://reiner-lemoine-institut.de/>`_
+
+
+Acknowledgements
+====================
+We would like to thank `meta_tool <https://github.com/rl-institut/meta_tool>`_ for providing the foundational framework upon which this project is built.
 
 
 .. |badge_license| image:: https://img.shields.io/github/license/rl-institut/meta_tool
