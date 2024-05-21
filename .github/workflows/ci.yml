@@ -14,9 +14,9 @@ jobs:
 
     env:
       CI_PERSONAL_TOKEN_KEY_GL: ${{ secrets.CI_PERSONAL_TOKEN_KEY_GL }}
-      GL_URL: ${{ secrets.GL_URL }}
+      GL_URL: ${{ vars.GL_URL }}
       CI_PERSONAL_TOKEN_KEY_GH: ${{ secrets.CI_PERSONAL_TOKEN_KEY_GH }}
-      GH_URL: ${{ secrets.GH_URL }}
+      GH_URL: ${{ vars.GH_URL }}
 
     steps:
     - name: Checkout code
@@ -47,7 +47,7 @@ jobs:
         python manage.py runserver 0.0.0.0:8000 &
       env:
         CI_PERSONAL_TOKEN_KEY_GL: ${{ secrets.CI_PERSONAL_TOKEN_KEY_GL }}
-        GL_URL: ${{ secrets.GL_URL }}
+        GL_URL: ${{ vars.GL_URL }}
 
   test:
     runs-on: ubuntu-latest
@@ -55,9 +55,9 @@ jobs:
 
     env:
       CI_PERSONAL_TOKEN_KEY_GL: ${{ secrets.CI_PERSONAL_TOKEN_KEY_GL }}
-      GL_URL: ${{ secrets.GL_URL }}
+      GL_URL: ${{ vars.GL_URL }}
       CI_PERSONAL_TOKEN_KEY_GH: ${{ secrets.CI_PERSONAL_TOKEN_KEY_GH }}
-      GH_URL: ${{ secrets.GH_URL }}
+      GH_URL: ${{ vars.GH_URL }}
 
     steps:
     - name: Checkout code
