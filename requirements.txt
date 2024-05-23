@@ -1,4 +1,4 @@
-django==4.0
+django==4.1.13
 sqlalchemy==1.4.28
 sqlalchemy_utils==0.37.9
 sqlahelper==1.0
