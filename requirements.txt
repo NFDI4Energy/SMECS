@@ -2,7 +2,6 @@ django>=4.1.10
 sqlalchemy==1.4.28
 sqlalchemy_utils==0.37.9
 sqlahelper==1.0
-configobj==5.0.6
 psycopg2-binary==2.9.2
 django_jsonforms==1.1.2
 environs==9.3.5
