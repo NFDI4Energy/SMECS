@@ -19,16 +19,20 @@ def validate_gitlab_inputs(url, token):
         tuple: A tuple containing the validation result (bool) and the error messages (str).
     """
     # Regular expression pattern to match GitLab repository URLs
-    url_pattern = r'^https?://gitlab\.[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(/|$)'
+    original_url_pattern = r'^https?://gitlab\.[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(/|$)'
+    new_url_pattern = r'^https?://(?:[^./]+\.)*[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*(?::\d+)?/(?:[a-zA-Z0-9-]+/)*[a-zA-Z0-9-]+/?$'
     errors = []
     # Check if the URL matches the pattern
-    if not re.match(url_pattern, url):
-        errors.append('Invalid URL')
+    if not re.match(original_url_pattern, url):
+        if not re.match(new_url_pattern, url):
+            errors.append('Invalid URL')
 
-    # Validate the URL by sending a GET request
-    url_response = requests.get(url, timeout=10)
-    if url_response.status_code != 200:
-        errors.append('Invalid URL')
+    try:
+        url_response = requests.get(url, timeout=10)
+        if url_response.status_code != 200:
+            errors.append('Invalid URL')
+    except requests.RequestException:
+        errors.append('Error occurred while validating the URL')
 
     parsed_url = urlparse(url)
     domain = parsed_url.netloc
