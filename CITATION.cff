@@ -1,0 +1,39 @@
+# This CITATION.cff file was generated with cffinit.
+
+cff-version: 1.2.0
+title: Software Metadata Extraction and Curation Software (SMECS)
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Stephan
+    family-names: Ferenz
+    email: stephan.ferenz@uol.de
+  - given-names: Aida
+    family-names: Jafarbigloo
+    email: aida.jafarbigloo.274@gmail.com
+identifiers:
+  - type: url
+    value: 'https://github.com/NFDI4Energy/SMECS'
+    description: GitHub link to the project
+repository-code: 'https://github.com/NFDI4Energy/SMECS'
+abstract: >-
+  SMECS is a web-based tool designed to collect and organize
+  software metadata in alignment with the codemeta software
+  metadata standard. By leveraging repositories on platforms
+  like GitHub and GitLab, SMECS streamlines the process of
+  extracting metadata. Its intuitive graphical interface
+  allows Research Software Engineers (RSE) to easily
+  visualize and manage the retrieved metadata to suit their
+  needs. Ultimately, SMECS generates curated metadata in
+  JSON format, improving usability and accessibility for
+  users.
+keywords:
+  - software metadata
+  - extraction
+  - curation
+  - repository
+  - research software engineer
+  - codemeta standard
+license: GPL-3.0
