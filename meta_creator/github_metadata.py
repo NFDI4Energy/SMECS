@@ -7,6 +7,15 @@ from .read_tokens import read_token_from_file
 from .count_extracted_metadata import count_non_empty_values
 from .validate_jsonLD import validate_codemeta
 
+from urllib.parse import urlparse
+
+def get_api_url(owner, repo, url):
+    if url.endswith('.github.io'):
+        return f'https://api.github.com/repos/{owner}/{repo}.github.io'
+    else:
+        return f'https://api.github.com/repos/{owner}/{repo}'
+    
+
 # Check the URL to be accessible or not
 def is_url_accessible(url):
     try:
@@ -65,6 +74,7 @@ def get_github_metadata(url, personal_token_key):
     # Check if the URL matches the modified GitHub repository pattern
     pattern = re.compile(r'https?://github\.com/([a-zA-Z0-9-]+)/([a-zA-Z0-9-_]+)')
     match = pattern.match(url)
+    end = url.split('/')[-1]
 
     if not match:
         return None  # URL doesn't match the GitHub repository pattern
@@ -73,7 +83,7 @@ def get_github_metadata(url, personal_token_key):
     username, repo_name = match.group(1), match.group(2)
 
     # Fetch repository information from GitHub API
-    api_url = f'https://api.github.com/repos/{username}/{repo_name}'
+    api_url = get_api_url(username,repo_name,url)
 
     # token_file_path = 'tokens.txt'  # Specify the path to external text file containing the default GH token
     tokens = read_token_from_file('tokens.txt')
