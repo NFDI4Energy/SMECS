@@ -8,7 +8,7 @@ in extracting metadata from GitHub repositories.
 
 import os
 import unittest
-from meta_creator.github_metadata import get_github_metadata
+from meta_creator.github_metadata import get_github_metadata, get_api_url
 from unittest.mock import patch
 
 GitHub_url = os.getenv('GH_URL')
@@ -43,6 +43,16 @@ class test_github_metadata_extractor(unittest.TestCase):
         result = get_github_metadata(GitHub_url, personal_token_gh)
         self.assertIsNotNone(result)
 
+
+    def test_github_io_url(self):
+        """Test the conversion of a GitHub repository URL which ends with '.github.io' to its API endpoint URL"""
+        owner = "KnowledgeCaptureAndDiscovery"
+        repo = "knowledgecaptureanddiscovery"
+        url = "https://github.com/KnowledgeCaptureAndDiscovery/knowledgecaptureanddiscovery.github.io"
+        expected = "https://api.github.com/repos/KnowledgeCaptureAndDiscovery/knowledgecaptureanddiscovery.github.io"
+        result = get_api_url(owner, repo, url)
+        self.assertEqual(result, expected, 
+                         f"Expected API URL to be {expected} but got {result}.")    
 
 
 if __name__ == '__main__':
