@@ -1,12 +1,6 @@
 name: CI Pipeline
 
-on:
-  push:
-    branches:
-      - 88-setup-github-action
-  pull_request:
-    branches:
-      - 88-setup-github-action
+on: [push, pull_request]
 
 jobs:
   build:
