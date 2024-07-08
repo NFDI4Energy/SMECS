@@ -6,7 +6,17 @@ __________________________________________________________
 | SMECS facilitates the extraction of software metadata from repositories on GitHub/GitLab. It offers a user-friendly graphical user interface for visualizing the retrieved metadata. This empowers Research Software Engineers (RSE) to curate the extracted metadata according to their requirements. Ultimately, SMECS delivers the curated metadata in JSON format, enhancing usability and accessibility.
 |
 |
-**Authors:** Stephan Ferenz, Aida Jafarbigloo
+| The figure below illustrates the sequential processes and data flows within SMECS. First, users input data, triggering the tool to extract metadata associated with specific URLs. This metadata is then visualized, allowing users to review and interact with it. Users can curate, modify, and finalize the metadata according to their needs. Once satisfied, they can download the curated metadata in JSON format, providing an interoperable output for further use.
+|
+|
+.. image:: https://github.com/NFDI4Energy/SMECS/blob/63-add-flow-diagram-and-functionality-details-to-the-documentation/docs/diagram.png?raw=true
+   :alt: SMECS Workflow Visualization
+   :width: 1000px
+|
+| **Authors:** Stephan Ferenz, Aida Jafarbigloo
+|
+| 
+
 
 
 Installation and Usage
