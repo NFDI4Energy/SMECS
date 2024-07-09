@@ -13,12 +13,32 @@ __________________________________________________________
    :alt: SMECS Workflow Visualization
    :width: 1000px
 |
+|
+| **Key Stages in SMECS**
+
+#.  **Metadata Extraction Stage**
+     * **Metadata Extraction:** Gather metadata from various sources.
+     * **API Interactions:** Use GitHub and GitLab APIs to fetch relevant metadata.
+     * **Data Parsing:** Analyze and parse the retrieved metadata for further processing.
+#.  **Visualization and Curation Stage**
+     * **Visualization:** Extracted metadata is displayed in a structured form.
+     * **User Interface:** Interactive and simple UI for exploring the extracted and curated metadata.
+     * **Metadata Curation:** Refine the extracted metadata based on user preferences.
+     * **Missing Metadata Identification:** Identify and highlight fields where metadata is absent.
+     * **User Input for Missing Metadata:** Enable users to add missing metadata directly via the user interface.
+     * **Real-Time Metadata Curation:**  Enable the possibility of representing the JSON format of the metadata based on the CodeMeta standard in real time, allowing one-direction changes from form format to JSON to show real-time metadata curation.
+#.  **Export Stage**
+     * **Export Formats:** Save extracted and curated metadata in JSON format.
+|
+**Cross-Walk and Metadata Mapping:**
+     * **Standardization:** Align metadata fields from GitHub and GitLab to a common dictionary.
+     * **Field Matching:** Map equivalent fields between GitHub and GitLab. For example, mapping GitHub "topics" to GitLab "keywords".
+|
+**Sources and Types of Metadata:**
+     * Currently, SMECS extracts metadata from GitHub and GitLab repositories. For details on the specific metadata that SMECS can extract, please refer to `Metadata Terms in SMECS <https://github.com/NFDI4Energy/SMECS/blob/63-add-flow-diagram-and-functionality-details-to-the-documentation/docs/metadata-terms.md>`_
+|
 | **Authors:** Stephan Ferenz, Aida Jafarbigloo
 |
-| 
-
-
-
 Installation and Usage
 __________________________________________________________
 **Getting started**
