@@ -1,9 +1,9 @@
 
 Software Metadata Extraction and Curation Software (SMECS)
 __________________________________________________________
-| A web application to extract and curate software metadata following the `codemeta <https://codemeta.github.io/>`_ software metadata standard.
+| A web application to extract and curate research software metadata following the `codemeta <https://codemeta.github.io/>`_ software metadata standard.
 |
-| SMECS facilitates the extraction of software metadata from repositories on GitHub/GitLab. It offers a user-friendly graphical user interface for visualizing the retrieved metadata. This empowers Research Software Engineers (RSE) to curate the extracted metadata according to their requirements. Ultimately, SMECS delivers the curated metadata in JSON format, enhancing usability and accessibility.
+| SMECS facilitates the extraction of research software metadata from repositories on GitHub/GitLab. It offers a user-friendly graphical user interface for visualizing the retrieved metadata. This empowers researchers to create good metadata for their research software without reentering data which is already available elsewhere. Ultimately, SMECS delivers the curated metadata in JSON format, enhancing usability and accessibility.
 |
 |
 | The figure below illustrates the sequential processes and data flows within SMECS. First, users input data, triggering the tool to extract metadata associated with specific URLs. This metadata is then visualized, allowing users to review and interact with it. Users can curate, modify, and finalize the metadata according to their needs. Once satisfied, they can download the curated metadata in JSON format, providing an interoperable output for further use.
@@ -19,7 +19,7 @@ __________________________________________________________
 #.  **Metadata Extraction Stage**
      * **Metadata Extraction:** Gather metadata from various sources.
      * **API Interactions:** Use GitHub and GitLab APIs to fetch relevant metadata.
-     * **Data Parsing:** Analyze and parse the retrieved metadata for further processing.
+     * **Data Parsing:** Analyze the retrieved metadata and translate it into CodeMeta Metadata for further processing.
 #.  **Visualization and Curation Stage**
      * **Visualization:** Extracted metadata is displayed in a structured form.
      * **User Interface:** Interactive and simple UI for exploring the extracted and curated metadata.
