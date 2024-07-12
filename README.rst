@@ -36,7 +36,6 @@ __________________________________________________________
      * **Export Formats:** Save extracted and curated metadata in JSON format.
 |
 |
-|
 Installation and Usage
 __________________________________________________________
 **Getting started**
@@ -69,9 +68,8 @@ __________________________________________________________
          * On Windows: Run ``py -m pip install -r requirements.txt``.
          * On Unix/MacOS: Run ``python3 -m pip install -r requirements.txt``.
    | for more details visit `Installing Packages <https://packaging.python.org/en/latest/tutorials/installing-packages/>`_
-     
-
-
+|   
+|
 **Running the project**
 
 * Open the project in an editor. (e.g. VS code)
@@ -81,38 +79,31 @@ __________________________________________________________
     * On Windows: Run ``py manage.py runserver``.
     * On Unix/MacOS: Run ``python3 manage.py runserver``.
 * To see the output on the browser follow the link shown in the terminal. (e.g. http://127.0.0.1:8000/)
-
-
-**Tip for developers**
-
-If the page does not refresh correctly, clear the browser cache. You can force Chrome to pull in new data and ignore the saved ("cached") data by using the keyboard shortcut ``Cmd+Shift+R`` on Mac, and ``Ctrl+F5`` or ``Ctrl+Shift+R`` on Windows. 
-
-
-**Setting Up GitLab/GitHub Personal Token**
-
-To enhance the functionality of this program and ensure secure interactions with the GitLab/GitHub API, users are required to provide their personal access token. Follow these steps to integrate your token:
+|
+| **Setting Up GitLab/GitHub Personal Token**
+| To enhance the functionality of this program and ensure secure interactions with the GitLab/GitHub API, users are required to provide their personal access token. Follow these steps to integrate your token:
 
 * Generate a GitLab Token:
     * Visit `Create a personal access token <https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#create-a-personal-access-token>`_ for more information on how to generate a new token.
-
-
 * Generate a GitHub Token:
     * Visit `Managing your personal access tokens <https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens>`_ for more information on how to generate a new token.
-
-
+|
+| **Tip for developers**
+| If the page does not refresh correctly, clear the browser cache. You can force Chrome to pull in new data and ignore the saved ("cached") data by using the keyboard shortcut ``Cmd+Shift+R`` on Mac, and ``Ctrl+F5`` or ``Ctrl+Shift+R`` on Windows. 
+|
 Collaboration
 __________________________________________________________
 | We believe in the power of collaboration and welcome contributions from the community to enhance the SMECS workflow. Whether you have found a bug, have a feature idea, or want to share feedback, your contribution matters. Feel free to submit a pull request, open up an issue, or reach out with any questions or concerns.
 |
 To see upcoming features, please refer to our `open issues <https://github.com/NFDI4Energy/SMECS/issues?q=is%3Aopen+is%3Aissue>`_.
 
-
+|
 License and Citation
 __________________________________________________________
 | The code is licensed under the **GNU Affero General Public License v3.0 or later** (AGPL-3.0-or-later).
 | See `LICENSE.txt <LICENSE.txt>`_ for further information.
 
-
+|
 Acknowledgements
 __________________________________________________________
 We would like to thank `meta_tool <https://github.com/rl-institut/meta_tool>`_ for providing the foundational framework upon which this project is built.
