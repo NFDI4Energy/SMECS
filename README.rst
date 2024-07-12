@@ -6,6 +6,10 @@ __________________________________________________________
 | SMECS facilitates the extraction of research software metadata from repositories on GitHub/GitLab. It offers a user-friendly graphical user interface for visualizing the retrieved metadata. This empowers researchers to create good metadata for their research software without reentering data which is already available elsewhere. Ultimately, SMECS delivers the curated metadata in JSON format, enhancing usability and accessibility.
 |
 |
+| **Authors:** Stephan Ferenz, Aida Jafarbigloo
+|
+Key Stages in SMECS
+__________________________________________________________
 | The figure below illustrates the sequential processes and data flows within SMECS. First, users input data, triggering the tool to extract metadata associated with specific URLs. This metadata is then visualized, allowing users to review and interact with it. Users can curate, modify, and finalize the metadata according to their needs. Once satisfied, they can download the curated metadata in JSON format, providing an interoperable output for further use.
 |
 |
@@ -13,13 +17,14 @@ __________________________________________________________
    :alt: SMECS Workflow Visualization
    :width: 1000px
 |
-|
-| **Key Stages in SMECS**
-
 #.  **Metadata Extraction Stage**
-     * **Metadata Extraction:** Gather metadata from various sources.
+     * **Metadata Extraction**
+        * SMECS extracts metadata from GitHub and GitLab repositories. For details on the specific metadata that SMECS can extract, please refer to `Metadata Terms in SMECS <https://github.com/NFDI4Energy/SMECS/blob/63-add-flow-diagram-and-functionality-details-to-the-documentation/docs/metadata-terms.md>`_
      * **API Interactions:** Use GitHub and GitLab APIs to fetch relevant metadata.
-     * **Data Parsing:** Analyze the retrieved metadata and translate it into CodeMeta Metadata for further processing.
+     * **Data Parsing:** Analyze the retrieved metadata and translate it into CodeMeta metadata for further processing.
+     * **Cross-Walk and Metadata Mapping**
+        * **Standardization:** Align metadata fields from GitHub and GitLab to a common dictionary.
+        * **Field Matching:** Map equivalent fields between GitHub and GitLab. For example, mapping GitHub "topics" to GitLab "keywords".
 #.  **Visualization and Curation Stage**
      * **Visualization:** Extracted metadata is displayed in a structured form.
      * **User Interface:** Interactive and simple UI for exploring the extracted and curated metadata.
@@ -30,14 +35,7 @@ __________________________________________________________
 #.  **Export Stage**
      * **Export Formats:** Save extracted and curated metadata in JSON format.
 |
-**Cross-Walk and Metadata Mapping:**
-     * **Standardization:** Align metadata fields from GitHub and GitLab to a common dictionary.
-     * **Field Matching:** Map equivalent fields between GitHub and GitLab. For example, mapping GitHub "topics" to GitLab "keywords".
 |
-**Sources and Types of Metadata:**
-     * Currently, SMECS extracts metadata from GitHub and GitLab repositories. For details on the specific metadata that SMECS can extract, please refer to `Metadata Terms in SMECS <https://github.com/NFDI4Energy/SMECS/blob/63-add-flow-diagram-and-functionality-details-to-the-documentation/docs/metadata-terms.md>`_
-|
-| **Authors:** Stephan Ferenz, Aida Jafarbigloo
 |
 Installation and Usage
 __________________________________________________________
@@ -55,7 +53,7 @@ __________________________________________________________
      * Create the virtual environment by running this code in the command prompt.
          * On Windows: Run ``py -m venv <name-of-virtual-environment>``.
          * On Unix/MacOS: Run ``python3 -m venv <name-of-virtual-environment>``.
-       | for more details visit https://docs.python.org/3/library/venv.html
+       | for more details visit `Creation of virtual environments <https://docs.python.org/3/library/venv.html>`_
      * Activate virtual environment.
          * On Windows: Run ``env\Scripts\activate``. 
          * On Unix/MacOS: Run ``source env/bin/activate``.
@@ -70,7 +68,7 @@ __________________________________________________________
      * Install a list of requirements specified in a *Requirements.txt*.
          * On Windows: Run ``py -m pip install -r requirements.txt``.
          * On Unix/MacOS: Run ``python3 -m pip install -r requirements.txt``.
-   | for more details visit https://packaging.python.org/en/latest/tutorials/installing-packages/ 
+   | for more details visit `Installing Packages <https://packaging.python.org/en/latest/tutorials/installing-packages/>`_
      
 
 
@@ -106,7 +104,7 @@ Collaboration
 __________________________________________________________
 | We believe in the power of collaboration and welcome contributions from the community to enhance the SMECS workflow. Whether you have found a bug, have a feature idea, or want to share feedback, your contribution matters. Feel free to submit a pull request, open up an issue, or reach out with any questions or concerns.
 |
-To see upcoming features, please refer to our `open issues <https://gitlab.com/zdin-zle/zle-platform/repository/meta_tool/-/issues>`_.
+To see upcoming features, please refer to our `open issues <https://github.com/NFDI4Energy/SMECS/issues?q=is%3Aopen+is%3Aissue>`_.
 
 
 License and Citation
