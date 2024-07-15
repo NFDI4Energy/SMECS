@@ -13,13 +13,13 @@ __________________________________________________________
 | The figure below illustrates the sequential processes and data flows within SMECS. First, users input data, triggering the tool to extract metadata associated with specific URLs. This metadata is then visualized, allowing users to review and interact with it. Users can curate, modify, and finalize the metadata according to their needs. Once satisfied, they can download the curated metadata in JSON format, providing an interoperable output for further use.
 |
 |
-.. image:: https://github.com/NFDI4Energy/SMECS/blob/63-add-flow-diagram-and-functionality-details-to-the-documentation/docs/diagram.png?raw=true
+.. image:: https://github.com/NFDI4Energy/SMECS/blob/master/docs/diagram.png
    :alt: SMECS Workflow Visualization
    :width: 1000px
 |
 #.  **Metadata Extraction Stage**
      * **Metadata Extraction**
-        * SMECS extracts metadata from GitHub and GitLab repositories. For details on the specific metadata that SMECS can extract, please refer to `Metadata Terms in SMECS <https://github.com/NFDI4Energy/SMECS/blob/63-add-flow-diagram-and-functionality-details-to-the-documentation/docs/metadata-terms.md>`_
+        * SMECS extracts metadata from GitHub and GitLab repositories. For details on the specific metadata that SMECS can extract, please refer to `Metadata Terms in SMECS <https://github.com/NFDI4Energy/SMECS/blob/master/docs/metadata-terms.md>`_
      * **API Interactions:** Use GitHub and GitLab APIs to fetch relevant metadata.
      * **Data Parsing:** Analyze the retrieved metadata and translate it into CodeMeta metadata for further processing.
      * **Cross-Walk and Metadata Mapping**
