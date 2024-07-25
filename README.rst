@@ -38,7 +38,8 @@ __________________________________________________________
 |
 Installation and Usage
 __________________________________________________________
-**Getting started**
+Install from GitHub
+----------
 
 #. Cloning the repository
      * Copy URL of the project from Clone with HTTPS.
@@ -63,7 +64,6 @@ __________________________________________________________
      * Ensure you can run pip from command prompt.
          * On Windows: Run ``py -m pip --version``.
          * On Unix/MacOS: Run ``python3 -m pip --version``.
-     * Go to meta_tool directory. (``cd meta_tool``)
      * Install a list of requirements specified in a *Requirements.txt*.
          * On Windows: Run ``py -m pip install -r requirements.txt``.
          * On Unix/MacOS: Run ``python3 -m pip install -r requirements.txt``.
@@ -72,13 +72,47 @@ __________________________________________________________
 |
 **Running the project**
 
-* Open the project in an editor. (e.g. VS code)
-* Run the project in the editor. (Project runs on the virtual environment and activating the virtual environment will change shell’s prompt to show what virtual environment is being used)
-* Go down to **meta_tool** directory in command line or terminal. (``cd meta_tool``)
-* To run the project use subcommand **runserver**.
+* Open and run the project in an editor (e.g. VS code).
+* Run the project.
     * On Windows: Run ``py manage.py runserver``.
     * On Unix/MacOS: Run ``python3 manage.py runserver``.
 * To see the output on the browser follow the link shown in the terminal. (e.g. http://127.0.0.1:8000/)
+|
+|
+Install through Docker
+----------
+To get started with SMECS using Docker, follow the steps below:
+
+* Prerequisites
+   * Make sure `Docker <https://www.docker.com/products/docker-desktop/>`_  is installed on your local machine.
+
+* Cloning the Repository
+.. code-block:: shell
+
+   git clone https://github.com/NFDI4Energy/SMECS.git
+
+* Navigate to the Project Directory
+.. code-block:: shell
+
+   cd smecs
+
+* Building the Docker Images
+.. code-block:: shell
+
+   docker-compose build
+
+* Starting the Services
+.. code-block:: shell
+
+   docker-compose up
+
+* Accessing the Application
+   * Navigate to ``http://localhost:8000`` in your web browser.
+
+* Stopping the Services
+.. code-block:: shell
+
+   docker-compose down
 |
 | **Setting Up GitLab/GitHub Personal Token**
 | To enhance the functionality of this program and ensure secure interactions with the GitLab/GitHub API, users are required to provide their personal access token. Follow these steps to integrate your token:
