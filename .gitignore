@@ -22,3 +22,5 @@ meta_tool/__pycache__/__init__.cpython-310.pyc
 meta_tool/__pycache__/settings.cpython-310.pyc
 meta_tool/__pycache__/urls.cpython-310.pyc
 meta_tool/__pycache__/wsgi.cpython-310.pyc
+myenv/
+__pycache__/
