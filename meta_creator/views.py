@@ -28,6 +28,13 @@ class CreatorView(TemplateView):
     def get_context_data(self, **kwargs):
         return {'creator': CreatorForm(self.metapath.name)}
 
+# Thesis_navigation to homepage and information page_based on requiremment analysis 
+def homepage(request):
+    return render(request, 'index.html')
+
+def information(request):
+    return render(request, 'meta_creator/information.html')
+
 # Function for metadata extracting
 def index(request):
     """
