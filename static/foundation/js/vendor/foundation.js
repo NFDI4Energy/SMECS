@@ -1,4 +1,6 @@
 /******** AJB ********/
+// SMECS
+// Software Metadata Extraction and Curation Software
 // Metadata Editor and Downloader
 // This script sets up event listeners on input fields to update changes in the textarea and a download button to download a JSON object containing metadata.
 // Possibility of modifying the extracted metadata
@@ -7,19 +9,307 @@
 
 document.addEventListener("DOMContentLoaded", function () {
   const downloadButton = document.getElementById("downloadButton");
+  const downloadBtn = document.getElementById("downloadBtn");
   const metadataJson = document.getElementById("metadata-json");
+  let initialJson = metadataJson;
+  let previousJson = { ...initialJson };
   const inputs = document.querySelectorAll("#metadata-form input");
   const deleteButtons = document.querySelectorAll('[data-action="delete"]');
+  let tabs_ext = document.querySelectorAll('.tab-links_ext a');
+  let contents = document.querySelectorAll('.tab-content_ext .tab');
+  const urlInputs = document.querySelectorAll('.url-input');
+  const copyBtn = document.getElementById('copy-button');
+  const input_languages = document.getElementById("languageInput");
+  const inputLanguages = document.getElementById('languageInput');
+  const suggestionsBox = document.getElementById('suggestions');
+  const SPDX_URL = 'https://raw.githubusercontent.com/spdx/license-list-data/master/json/licenses.json';
+  let licenses = [];
+  const licenseInput = document.getElementById('license-input');
+  const licenseSuggestionsBox = document.getElementById('licenseSuggestions');
+  const languages = [
+    "JavaScript", "Java", "Python", "C", "C++", "C#", 
+    "Ruby", "Go", "Rust", "Swift", "Kotlin", "PHP",
+    "TypeScript", "R", "Dart", "Perl", "Scala", "Elixir",
+    "Haskell", "Lua", "Julia", "MATLAB", "Objective-C", 
+    "F#", "Shell", "Visual Basic", "Assembly", "Bash",
+    "Clojure", "CoffeeScript", "Crystal", "Delphi", 
+    "Erlang", "Fortran", "Groovy", "Haxe", "IDL", 
+    "J#", "LabVIEW", "Lisp", "Logo", "ML", "Nim",
+    "OCaml", "Pascal", "Prolog", "REXX", "Smalltalk",
+    "Solidity", "Tcl", "VHDL", "Verilog", "Vala"
+];
 
+
+let selectedLanguages = [];
+
+const data = metadataJson.value;
+const metadata = JSON.parse(data);
+const repoName = metadata.name;
+
+var contributorsTableBody = document.getElementById('contributorsTableBody');
+var authorsTableBody = document.getElementById('authorsTableBody');
+
+// pop-up message for Contributor and Author tabs
+function showPopup() {
+    document.getElementById('popup').style.display = 'block';
+}
+var closeBtn = document.getElementById('closePopup');
+closeBtn.onclick = function() {
+    document.getElementById('popup').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    if (event.target == document.getElementById('popup')) {
+        document.getElementById('popup').style.display = 'none';
+    }
+}
+
+// Function to check if the popup should be shown for a given tab and repo
+function checkAndShowPopup(tab, repo) {
+    const key = `popupShown-${repo}-${tab}`;
+    if (!localStorage.getItem(key)) {
+        showPopup();
+        localStorage.setItem(key, 'true');
+    }
+}
+
+// Add event listeners to the tab links
+document.querySelectorAll('.tab-links_ext a').forEach(function(tabLink) {
+    tabLink.addEventListener('click', function(event) {
+        var tabId = this.getAttribute('href');
+        if (tabId === '#tab2-contributors' || tabId === '#tab3-authors') {
+            checkAndShowPopup(tabId, repoName);
+        }
+    });
+});
+
+document.querySelectorAll('.custom-tooltip-metadata').forEach(function (element) {
+  element.addEventListener('mouseenter', function () {
+    const tooltip = element.querySelector('.tooltip-text-metadata');
+    tooltip.style.visibility = 'visible';
+    tooltip.style.opacity = '1';
+  });
+
+  element.addEventListener('mouseleave', function () {
+    const tooltip = element.querySelector('.tooltip-text-metadata');
+    tooltip.style.visibility = 'hidden';
+    tooltip.style.opacity = '0';
+  });
+});
+
+
+// Programming languagges
+inputLanguages.addEventListener("input", function() {
+  const query = inputLanguages.value.toLowerCase().split(',').pop().trim();
+  suggestionsBox.innerHTML = "";
+
+  if (query.length === 0) {
+    suggestionsBox.style.display = "none";
+    return;
+  }
+
+  let existingLanguages = inputLanguages.value.split(',').map(s => s.trim()).filter(Boolean);
+
+  const matchedLanguages = languages.filter(lang => 
+    lang.toLowerCase().startsWith(query) && !existingLanguages.includes(lang)
+  );
+
+  if (matchedLanguages.length > 0) {
+    suggestionsBox.style.display = "block";
+
+    matchedLanguages.forEach(lang => {
+      const div = document.createElement("div");
+      div.classList.add("suggestion-item");
+      div.textContent = lang;
+      div.addEventListener("click", function() {
+        existingLanguages[existingLanguages.length - 1] = lang;
+        inputLanguages.value = existingLanguages.join(', ') + ', ';
+        suggestionsBox.style.display = "none";
+        inputLanguages.focus();
+        const event = new Event('input', { bubbles: true });
+        inputLanguages.dispatchEvent(event);
+      });
+      suggestionsBox.appendChild(div);
+    });
+  } else {
+    suggestionsBox.style.display = "none";
+  }
+});
+
+document.addEventListener("click", function(e) {
+  if (!suggestionsBox.contains(e.target) && e.target !== inputLanguages) {
+    suggestionsBox.style.display = "none";
+  }
+});
+
+// License
+// Fetch the SPDX licenses
+fetch(SPDX_URL)
+  .then(response => response.json())
+  .then(data => {
+    licenses = data.licenses.map(license => license.licenseId);
+  })
+  .catch(error => console.error('Error fetching SPDX licenses:', error));
+
+licenseInput.addEventListener("input", function() {
+  const query = licenseInput.value.toLowerCase().split(',').pop().trim();
+  licenseSuggestionsBox.innerHTML = "";
+
+  if (query.length === 0) {
+    licenseSuggestionsBox.style.display = "none";
+    return;
+  }
+
+  let existingLicenses = licenseInput.value.split(',').map(s => s.trim()).filter(Boolean);
+
+  const matchedLicenses = licenses.filter(license => 
+    license.toLowerCase().startsWith(query) && !existingLicenses.includes(license)
+  );
+
+  if (matchedLicenses.length > 0) {
+    licenseSuggestionsBox.style.display = "block";
+
+    matchedLicenses.forEach(license => {
+      const div = document.createElement("div");
+      div.classList.add("suggestion-item");
+      div.textContent = license;
+      div.addEventListener("click", function() {
+        existingLicenses[existingLicenses.length - 1] = license;
+        licenseInput.value = existingLicenses;
+        // licenseInput.value = existingLicenses.join(', ') + ', ';
+        licenseSuggestionsBox.style.display = "none";
+        licenseInput.focus();
+        const event = new Event('input', { bubbles: true });
+        licenseInput.dispatchEvent(event);
+      });
+      licenseSuggestionsBox.appendChild(div);
+    });
+  } else {
+    licenseSuggestionsBox.style.display = "none";
+  }
+});
+
+// Hide suggestions box when clicking outside
+document.addEventListener("click", function(e) {
+  if (!licenseSuggestionsBox.contains(e.target) && e.target !== licenseInput) {
+    licenseSuggestionsBox.style.display = "none";
+  }
+});
+
+// copy button for json
+copyBtn.addEventListener('click', function(event) {
+  event.preventDefault();
+  metadataJson.select();
+  document.execCommand('copy');
+  var feedback = document.getElementById('copy-feedback');
+  feedback.style.display = 'inline'; 
+
+  setTimeout(function() {
+      feedback.style.display = 'none'; 
+  }, 2000);
+
+});
+
+  // Applying the yellow border for suggesting the user to change or review the extracted value
+  urlInputs.forEach(input => {
+    const initialValue = input.value;
+    if (initialValue !== "") {
+      input.style.border = '2px solid yellow';
+      input.style.backgroundColor = '#fef6da';
+    }
+    input.addEventListener('input', () => {
+        if (input.value !== initialValue) {
+            input.style.border = '';
+            input.style.backgroundColor = '';
+        } else if (initialValue !== "") {
+            // Reapply the yellow border if the value is reset to the initial value
+            input.style.border = '2px solid yellow';
+            input.style.backgroundColor = '#fef6da';
+        }
+    });
+});
+
+
+  // tabs_ext
+  tabs_ext.forEach(tab => {
+    tab.addEventListener('click', function (event) {
+        event.preventDefault();
+
+        tabs_ext.forEach(item => item.parentElement.classList.remove('active'));
+        contents.forEach(content => content.classList.remove('active'));
+
+        this.parentElement.classList.add('active');
+        let contentId = this.getAttribute('href');
+        document.querySelector(contentId).classList.add('active');
+    });
+ });
+  const forwardBtnCon = document.getElementById('forwardBtnCon');
+  const backwardBtn = document.getElementById('backwardBtn');
+  const forwardBtn = document.getElementById('forwardBtn');
+  const backwardBtnCon = document.getElementById('backwardBtnCon');
+  
+  
+  forwardBtnCon.addEventListener('click', function (event) {
+    event.preventDefault();
+    document.querySelector('a[href="#tab2-contributors"]').click();
+  });
+
+  backwardBtn.addEventListener('click', function (event) {
+    event.preventDefault();
+    document.querySelector('a[href="#tab1-sw-info"]').click();
+  });
+
+  forwardBtn.addEventListener('click', function (event) {
+    event.preventDefault();
+    document.querySelector('a[href="#tab3-authors"]').click();
+  });
+
+  backwardBtnCon.addEventListener('click', function (event) {
+    event.preventDefault();
+    document.querySelector('a[href="#tab2-contributors"]').click();
+  });
+
+
+  // toggle
+  function toggleSection() {
+  var formContainer = document.getElementById('formContainer');
+  var metadataFormDisplay = document.getElementById('metadataFormDisplay');
+  var toggleSwitch = document.getElementById('toggleSwitch');
+  var personInfoElements = document.querySelectorAll('.person-info'); // Select all elements with the class 'person-info'
+
+  if (toggleSwitch.checked) {
+      metadataFormDisplay.style.display = 'block';
+      formContainer.classList.remove('full-width');
+      formContainer.classList.add('half-width');
+      personInfoElements.forEach(function(element) {
+        element.style.width = '57%';
+    });
+  } else {
+      metadataFormDisplay.style.display = 'none';
+      formContainer.classList.remove('half-width');
+      formContainer.classList.add('full-width');
+      personInfoElements.forEach(function(element) {
+        element.style.width = '70%';
+    });
+  }
+ }
+// Initialize the state on page load
+ window.onload = function() {
+  toggleSection();
+  document.getElementById('toggleSwitch').addEventListener('change', toggleSection);
+};
+
+// contributor and author table
   document.getElementById('addContributorButton').addEventListener('click', function () {
     addPerson('contributor', 'contributorsTableBody', ['Email']);
   });
   
   document.getElementById('addAuthorButton').addEventListener('click', function () {
-    addPerson('author', 'authorsTableBody', []);
+    addPerson('author', 'authorsTableBody', ['Email']);
   });
-  
 
+  
+// Contributor/Author tables
   function handleTableClick(tableBody, editCallback, deleteCallback) {
     tableBody.addEventListener('click', function (event) {
       if (event.target.tagName === 'TD' && event.target.cellIndex !== 0) {
@@ -29,44 +319,50 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault(); // Prevent form submission
         var rowToDelete = event.target.closest('tr');
         deleteCallback(rowToDelete);
+      } else if (event.target.tagName === 'BUTTON' && event.target.textContent === 'Copy') {
+        event.preventDefault();
+        var rowToCopy = event.target.closest('tr');
+        copyCallback(rowToCopy);
       }
     });
   }
   
   // Usage for contributors table
-  var contributorsTableBody = document.getElementById('contributorsTableBody');
   handleTableClick(contributorsTableBody, (cell) => editCell(cell, 'contributor', ['email']), deletePerson);
 
   // Usage for authors table
-  var authorsTableBody = document.getElementById('authorsTableBody');
-  handleTableClick(authorsTableBody, (cell) => editCell(cell, 'author', []), deletePerson);
+  handleTableClick(authorsTableBody, (cell) => editCell(cell, 'author', ['email']), deletePerson);
 
 
-  // Set color based on JSON.ld validation result 
-  var paragraph = document.getElementById("validate_extracted_data");
-  var validation_result = paragraph.textContent.trim();
-  if (validation_result == "The JSON data is a valid JSON-LD Codemeta object") {
-    paragraph.style.backgroundColor = "#adf1af";
-  } else {
-    paragraph.style.backgroundColor = "red";
-    paragraph.style.color = "white";
-  }
+// Pinkish inputs, when no metadata is extracted
+function validateInput(input) {
+    const skipValidationIds = [
+        'contributorGivenNameInput',
+        'contributorFamilyNameInput',
+        'contributorEmailInput',
+        'authorGivenNameInput',
+        'authorFamilyNameInput',
+        'authorEmailInput'
+    ];
 
-  // var hasPlaceholder = input.hasAttribute("placeholder");
-  function validateInput(input) {
-    if (input.value.trim() === "") {
-      input.classList.add("invalid");
-    } else {
-      input.classList.remove("invalid");
+    if (skipValidationIds.includes(input.id)) {
+        return; // Skip validation for the specified inputs
     }
-  }
 
-  function addPerson(type, tableBodyId, properties) {
+    if (input.value.trim() === "") {
+        input.classList.add("invalid");
+    } else {
+        input.classList.remove("invalid");
+    }
+}
+
+function addPerson(type, tableBodyId, properties) {
     var givenNameInput = document.getElementById(`${type}GivenNameInput`);
     var familyNameInput = document.getElementById(`${type}FamilyNameInput`);
-  
+    var emailInput = document.getElementById(`${type}EmailInput`);
+    
     // Check if any of the input fields are empty
-    if (!givenNameInput.value.trim() && !familyNameInput.value.trim()) {
+    if (!givenNameInput.value.trim() && !familyNameInput.value.trim() && !emailInput.value.trim()) {
       alert('Please provide all required information.');
       return;
     }
@@ -79,7 +375,7 @@ document.addEventListener("DOMContentLoaded", function () {
   
     // Insert cells into the new row
     var cellIndex = 0;
-    newRow.insertCell(cellIndex++).textContent = `${type.charAt(0).toUpperCase()}${type.slice(1)} #${tableBody.rows.length}`;
+    newRow.insertCell(cellIndex++).textContent = `#${tableBody.rows.length}`;
     newRow.insertCell(cellIndex++).textContent = givenNameInput.value;
     newRow.insertCell(cellIndex++).textContent = familyNameInput.value;
   
@@ -93,54 +389,150 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   
     // Add delete button with icon
-    var deleteButton = document.createElement('button');
+    var deleteButton = document.createElement('i');
+    deleteButton.classList.add('fas', 'fa-trash-alt');
     deleteButton.onclick = function (event) {
-      event.stopPropagation(); // Prevent the click event from propagating to the row and triggering a page change
+      event.stopPropagation(); 
       deletePerson(newRow, type);
     };
   
-    // Create an icon element for the delete button
-    var deleteIcon = document.createElement('i');
-    deleteIcon.classList.add('fas', 'fa-trash-alt'); // Font Awesome delete icon class
-  
-    // Append the icon to the delete button
-    deleteButton.appendChild(deleteIcon);
-  
+    
     // Append the delete button to the cell
     newRow.insertCell(cellIndex++).appendChild(deleteButton);
-  
+
+    // Add copy button with icon (only for contributor table)
+    if (type === 'contributor') {
+      var copyButton = document.createElement('i');
+      copyButton.classList.add('fas', 'fa-copy');
+      copyButton.title = 'This contributor is also an author'; // Add title for tooltip
+      copyButton.onclick = function (event) {
+          event.stopPropagation();
+          copyRowToAuthorTable(event, newRow);
+      };
+      newRow.insertCell(cellIndex++).appendChild(copyButton);
+    }
+
+    
     // Attach the event listener to the new delete button
     deleteButton.addEventListener('click', function (event) {
       deletePerson(event, this, type);
     });
   
-    // Clear input values
     givenNameInput.value = '';
     familyNameInput.value = '';
+    emailInput.value = ''; 
 
-    // Clear additional property values
-    properties.forEach((prop) => {
-      var input = document.getElementById(`${type}${prop}Input`);
-      input.value = '';
-    });
-  
-    // Update Contributor/Author numbers for all remaining rows
+   
+     // Update Contributor/Author numbers for all remaining rows
     for (let i = 0; i < tableBody.rows.length; i++) {
-      tableBody.rows[i].cells[0].textContent = `${type.charAt(0).toUpperCase()}${type.slice(1)} #${i + 1}`;
+      tableBody.rows[i].cells[0].textContent = `#${i + 1}`;
     }
-  
-    // Update JSON data
     updateJsonData(`${type}sTableBody`, type, properties);
-  }
+    validateRowCells(newRow); 
+}
   
+
+// Copy row to author table
+function copyRowToAuthorTable(event, button) {
+  event.preventDefault();
+  const row = button.closest('tr');
+  if (!row) {
+      console.error("Row not found");
+      return;
+  }
+  const authorsTableBody = document.getElementById('authorsTableBody');
+  if (!authorsTableBody) {
+      console.error("Authors table body not found");
+      return;
+  }
+
+  // Extract metadata from the contributor row
+  const givenName = row.cells[1].textContent;
+  const familyName = row.cells[2].textContent;
+  const email = row.cells[3].textContent;
+
+  // Insert a new row into the authors table
+  const newRow = authorsTableBody.insertRow();
+
+  // Insert cells with the contributor metadata
+  newRow.insertCell(0).textContent = `#${authorsTableBody.rows.length}`;
+  newRow.insertCell(1).textContent = givenName;
+  newRow.insertCell(2).textContent = familyName;
+  newRow.insertCell(3).textContent = email;
+
+  // Create delete button
+  const deleteButton = document.createElement('i');
+  deleteButton.classList.add('fas', 'fa-trash-alt');
+  deleteButton.onclick = function (event) {
+      event.stopPropagation();
+      deletePerson(event, newRow, 'author');
+  };
+  newRow.insertCell(4).appendChild(deleteButton);
+
+  // Attach the event listener to the delete button in the new row
+  deleteButton.addEventListener('click', function(event) {
+      deletePerson(event, newRow, 'author');
+  });
+
+  // Update author row numbers
+  for (let i = 0; i < authorsTableBody.rows.length; i++) {
+      authorsTableBody.rows[i].cells[0].textContent = `#${i + 1}`;
+  }
+  validateRowCells(newRow);
+  updateJsonData('authorsTableBody', 'author', ['Email']);
+}
+
+
+// Initialize table with existing contributors and authors
+function initializeTables() {
+  const contributorsRows = document.getElementById('contributorsTableBody').rows;
+  for (let i = 0; i < contributorsRows.length; i++) {
+      attachCopyButton(contributorsRows[i]);
+      validateRowCells(contributorsRows[i]); // Validate each row during initialization
+  }
+  const authorsRows = document.getElementById('authorsTableBody').rows;
+  for (let i = 0; i < authorsRows.length; i++) {
+      validateRowCells(authorsRows[i]); // Validate each row during initialization
+  }
+}
+
+// Validate each cell in the row
+function validateRowCells(row) {
+  for (let i = 0; i < row.cells.length; i++) {
+      const cell = row.cells[i];
+      if (cell.querySelector('i.fas.fa-trash-alt') || cell.querySelector('i.fas.fa-copy')) {
+          continue;
+      }
+      // Check if the cell is empty and apply validation
+      if (cell.textContent.trim() === "") {  
+          cell.classList.add("invalid"); 
+      } else {
+          cell.classList.remove("invalid"); 
+      }
+  }
+}
+
+function attachCopyButton(row) {
+  const copyButton = document.createElement('i');
+  copyButton.classList.add('fas', 'fa-copy');
+  copyButton.title = 'This contributor is also an author'; 
+  copyButton.onclick = function (event) {
+    event.stopPropagation();
+    copyRowToAuthorTable(event, row);
+  };
+  row.insertCell(row.cells.length).appendChild(copyButton);
+}
+
+// Initialize tables on load
+initializeTables();
+
 
 function editCell(cell, type, properties) {
   // Check if the clicked cell is in the delete button column
-  if (cell.cellIndex === cell.parentElement.cells.length - 1) {
-    return; // Skip editing for the delete button column
+  if (cell.cellIndex === cell.parentElement.cells.length - 1 || cell.querySelector('i[data-action="delete"]')) {
+    return; 
   }
 
-  // Get the current content of the cell
   var currentValue = cell.textContent;
 
   // Create an input element
@@ -148,50 +540,62 @@ function editCell(cell, type, properties) {
   inputElement.type = 'text';
   inputElement.value = currentValue;
 
+  // Get the current dimensions of the cell before editing
+  var cellWidth = cell.offsetWidth;
+  var cellHeight = cell.offsetHeight;
+
+  // Apply styles to fix cell dimensions
+  cell.style.width = cellWidth + 'px';
+  cell.style.height = cellHeight + 'px';
+  cell.style.padding = '0'; // Remove padding to prevent resizing
+
   // Replace the cell content with the input element
   cell.innerHTML = '';
   cell.appendChild(inputElement);
 
+  // Apply the same dimensions to the input element
+  inputElement.style.width = cellWidth + 'px';
+  inputElement.style.height = cellHeight + 'px';
+  inputElement.style.boxSizing = 'border-box'; 
+
   // Focus on the input element
   inputElement.focus();
 
-  // Add event listener to handle editing completion
+  // Handle editing completion
   inputElement.addEventListener('blur', function () {
-    // Update the cell content with the new value
     cell.textContent = inputElement.value;
 
-    // Update JSON data
+    // Reset the cell's inline styles after editing is done
+    cell.style.width = '';
+    cell.style.height = '';
+    cell.style.padding = ''; 
+
+    validateRowCells(cell.parentElement);
     updateJsonData(`${type}sTableBody`, type, properties);
   });
 }
 
 
+
 function deletePerson(event, button, type) {
   event.stopPropagation();
-  // Get the closest row to the button clicked
   const row = button.closest('tr');
-
-  // Check if a row is found
   if (row) {
       // Get the table body based on the type (contributor or author)
       const tableBody = document.getElementById(`${type}sTableBody`);
-
-      // Get the index of the row to delete
       const rowIndex = row.rowIndex;
-
-      // Remove the row from the table
       row.remove();
 
       // Update Contributor/Author numbers for all remaining rows
       for (let i = 0; i < tableBody.rows.length; i++) {
-          tableBody.rows[i].cells[0].textContent = `${type.charAt(0).toUpperCase()}${type.slice(1)} #${i + 1}`;
+          tableBody.rows[i].cells[0].textContent = `#${i + 1}`;
       }
 
       // Update JSON data in the textarea
       if (type === 'contributor') {
           updateJsonData(`${type}sTableBody`, type, ['email']);
       } else if (type === 'author') {
-          updateJsonData(`${type}sTableBody`, type, []);
+          updateJsonData(`${type}sTableBody`, type, ['email']);
       } else {
           console.error("Unsupported type");
       }
@@ -200,7 +604,7 @@ function deletePerson(event, button, type) {
   }
 }
 
-  deleteButtons.forEach(function(button) {
+deleteButtons.forEach(function(button) {
     button.addEventListener('click', function(event) {
         deletePerson(event, this, 'contributor');
     });
@@ -222,7 +626,6 @@ function updateJsonData(tableBodyId, jsonDataProperty, additionalProperties) {
       "@type": "Person",
       givenName: tableBody.rows[i].cells[1].textContent,
       familyName: tableBody.rows[i].cells[2].textContent,
-      // Include additional properties dynamically
     };
 
     additionalProperties.forEach((prop, index) => {
@@ -232,93 +635,106 @@ function updateJsonData(tableBodyId, jsonDataProperty, additionalProperties) {
     data.push(rowData);
   }
 
-  // Get existing JSON data
+
   var existingJson = JSON.parse(metadataJson.value);
-
-  // Update specific property in existing JSON
   existingJson[jsonDataProperty] = data;
-
-  // Update JSON data in the textarea
   metadataJson.value = JSON.stringify(existingJson, null, 2);
 }
 
-  inputs.forEach((input) => {
-    validateInput(input);
+///////////////////////////////////////////////////////////////////////
 
-    input.addEventListener("input", function () {
-      validateInput(input);
-    });
-  });
+inputs.forEach((input) => {
+  validateInput(input);
 
-  inputs.forEach((input) => {
-    validateInput(input);
+  input.addEventListener("input", () => {
+      const jsonObject = JSON.parse(metadataJson.value);
 
-    input.addEventListener("input", () => {
-        // get the JSON object from the textarea
-        const jsonObject = JSON.parse(metadataJson.value);
+      // update the JSON object with the new value
+      const key = input.name.split("[")[0];
+      const subkey = input.name.split("[")[1]?.split("]")[0];
 
-        // update the JSON object with the new value
-        const key = input.name.split("[")[0];
-        const subkey = input.name.split("[")[1]?.split("]")[0]; // use optional chaining to handle non-existent subkey
+      // Exclude specific inputs from being updated
+      const excludedInputs = ["contributor_givenName", "contributor_familyName", "contributor_email", "author_givenName", "author_familyName", "author_email"];
 
-        // Exclude specific inputs from being updated
-        const excludedInputs = ["contributor_givenName", "contributor_familyName", "contributor_email", "author_givenName", "author_familyName"];
-
-        if (!(excludedInputs.includes(input.name))) {
-          if (subkey) {
-            jsonObject[key][subkey] = input.value;
-          } else {
-            jsonObject[key] = input.value;
-          }
+      if (!(excludedInputs.includes(input.name))) {
+        if (subkey) {
+          jsonObject[key][subkey] = input.value;
+        } else {
+          jsonObject[key] = input.value;
         }
+      }
+      
+      ["programmingLanguage", "keywords"].forEach((prop) => {
+          if (jsonObject[prop]) {
+              if (typeof jsonObject[prop] === "string") {
+                  jsonObject[prop] = jsonObject[prop]
+                      .split(",")
+                      .map((lang) => lang.trim())
+                      .filter((lang) => lang !== "");
+              } else {
+                  jsonObject[prop] = jsonObject[prop].filter((lang) => lang !== "");
+              }
+          }
+      });
 
-        ["programmingLanguage", "keywords"].forEach((prop) => {
-            if (jsonObject[prop]) {
-                if (typeof jsonObject[prop] === "string") {
-                    jsonObject[prop] = jsonObject[prop]
-                        .split(",")
-                        .map((lang) => lang.trim())
-                        .filter((lang) => lang !== "");
-                } else {
-                    jsonObject[prop] = jsonObject[prop].filter((lang) => lang !== "");
-                }
-            }
-        });
-        // update the textarea with the updated JSON object
-        metadataJson.value = JSON.stringify(jsonObject, null, 2);
-    });
+      metadataJson.value = JSON.stringify(jsonObject, null, 2);
   });
+});
 
-  // Add event listener to input fields for real-time JSON update
-  inputs.forEach((input) => {
-    input.addEventListener("input", () => {
-      validateInput(input);
-    });
+// Check if contributors are more than 10
+if (contributorsTableBody.rows.length > 10) {
+contributorsTableBody.parentElement.classList.add('scrollable-table');
+}
+
+
+// Add event listener to input fields for real-time JSON update
+inputs.forEach((input) => {
+  input.addEventListener("input", () => {
+    validateInput(input);
   });
+});
+
 
 function downloadFile(event) {
-  event.preventDefault(); // prevent the default behavior of the button
+  event.preventDefault(); 
   const data = metadataJson.value;
-  const fileName = "data.json";
+  
+  // Parse the JSON to extract the repository name
+  let repoName = "metadata"; // Default name 
+  try {
+    const metadata = JSON.parse(data);
+    if (metadata.name) {
+      repoName = metadata.name;
+    }
+  } catch (e) {
+    console.error("Failed to parse JSON:", e);
+  }
+  
+  const fileName = `${repoName}/codemeta.json`;
   const blob = new Blob([data], { type: "application/json" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.innerHTML = "Download JSON";
   link.setAttribute("download", fileName);
   downloadButton.parentNode.insertBefore(link, downloadButton.nextSibling);
-  link.click(); // trigger the click event of the link to start the download
+  downloadBtn.parentNode.insertBefore(link, downloadBtn.nextSibling);
+  link.click(); 
   setTimeout(() => {
-    URL.revokeObjectURL(link.href); // revoke the object URL after the download is complete
-    link.parentNode.removeChild(link); // remove the link element from the DOM
+    URL.revokeObjectURL(link.href); 
+    link.parentNode.removeChild(link); 
   }, 0);
 }
 
-// add event listener to download button
 downloadButton.addEventListener("click", (event) => {
+  downloadFile(event);
+});
+downloadBtn.addEventListener("click", (event) => {
   downloadFile(event);
 });
 
 });
+
+// SMECS _ END
 
 /* selection_page (when switching between tabs of versions & software codemeta) */
 function openDS(evt, dataSw) {
@@ -335,7 +751,8 @@ function openDS(evt, dataSw) {
   evt.currentTarget.className += " active";
 }
 /* end of selection_page */
-/******** AJB (END) ********/
+/************************ AJB (END) ************************/
+
 
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
