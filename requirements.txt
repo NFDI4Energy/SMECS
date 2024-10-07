@@ -9,3 +9,4 @@ gunicorn==22.0.0
 python-gitlab==3.13.0
 GitPython>=3.1.41
 pyld==2.0.3
+hermes==0.8.0
