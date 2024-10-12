@@ -11,14 +11,27 @@ document.addEventListener("DOMContentLoaded", function () {
   const inputs = document.querySelectorAll("#metadata-form input");
   const deleteButtons = document.querySelectorAll('[data-action="delete"]');
 
-  document.getElementById('addContributorButton').addEventListener('click', function () {
-    addPerson('contributor', 'contributorsTableBody', ['Email']);
-  });
   
+  document.getElementById('addContributorButton').addEventListener('click', function () {
+    // Get the email input value
+    var email = document.getElementById('contributorEmailInput').value;
+
+    // Regular expression for basic email validation
+    var emailPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    // Validate the email
+    if (emailPattern.test(email)) {
+        // If email is valid, proceed to add the person
+        addPerson('contributor', 'contributorsTableBody', ['Email']);
+    } else {
+        // If email is not valid, show an error message
+        alert('Please enter a valid email address.');
+    }
+});
   document.getElementById('addAuthorButton').addEventListener('click', function () {
     addPerson('author', 'authorsTableBody', []);
   });
-  
+
 
   function handleTableClick(tableBody, editCallback, deleteCallback) {
     tableBody.addEventListener('click', function (event) {
@@ -312,10 +325,59 @@ function downloadFile(event) {
     link.parentNode.removeChild(link); // remove the link element from the DOM
   }, 0);
 }
+function validateURL(id) {
+
+    // Get the input value
+    var url = document.getElementById(id).value;
+
+    // Regular expression for basic email validation
+    var urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
+  
+    if (urlPattern.test(url)) {
+        return true;
+    } else {
+    
+        return false;
+    }
+
+
+}
 
 // add event listener to download button
 downloadButton.addEventListener("click", (event) => {
-  downloadFile(event);
+  urlFieldID='url-';
+  codeRepository='codeRepository-';
+  issueTracker='issueTracker-';
+  downloadUrl='downloadUrl-'
+  readme='readme-';
+  if(validateURL(urlFieldID)==false){
+    alert('url in Url field is not correct');
+    return false;
+  }
+  else if (validateURL(codeRepository)==false){
+    alert('url in codeRepository field is not correct');
+    return false;
+  } 
+   else if (validateURL(issueTracker)==false){
+    alert('url in issueTracker field is not correct');
+    return false;
+  } 
+  else if (validateURL(codeRepository)==false){
+    alert('url in codeRepository field is not correct');
+    return false;
+  } 
+  else if (validateURL(downloadUrl)==false){
+    alert('url in downloadUrl field is not correct');
+    return false;
+  } 
+  else if (validateURL(readme)==false){
+    alert('url in readme field is not correct');
+    return false;
+  } 
+
+  else{
+    downloadFile(event);
+  }
 });
 
 });
