@@ -27,6 +27,7 @@
   {% csrf_token %}
   {% for key, value in extracted_metadata.items %}
   <div class="form-group">
+    
     {% if value|list and key == "programmingLanguage" %}
       <div class="single_inputs">
       <label title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Programming Language</label>
@@ -37,6 +38,7 @@
       <label title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Keywords</label>
       <input name="{{ key }}" type="text" value="{% for item in value %}{% if item %}{{ item }}, {% endif %}{% endfor %}">
       </div>
+    
     {% elif value|is_dict and key == "copyrightHolder" %}
     <fieldset class="copyrightHolder">
       <legend title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Copyright Holder Name</legend>
@@ -47,6 +49,12 @@
       {% endif %}
       {% endfor %}
     </fieldset>
+    
+    {% elif key == "dateCreated" or key == "dateModified"%}
+    <div class="single_inputs">
+    <label title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">{{key}}</label>
+    <input name="{{ key }}" type="date" value="{{value}}" placeholder="YYYY-MM-DD" >
+    </div>
 
     {% elif key == "author" %}
     <table class="authors-table">
@@ -141,7 +149,7 @@
   {% csrf_token %}
   <h4>Metadata</h4>
   <div class="metadata-container">
-    <button class="ExData" id="downloadButton" title="Download the JSON file." onclick="downloadFile()">Download JSON</button>
+    <button class="ExData" id="downloadButton" title="Download the JSON file.">Download JSON</button>
     <p>Metadata as JSON:</p>
     <textarea name="txtareaJSON" id="metadata-json">{{ my_json_str }}</textarea>
   </div>
