@@ -210,8 +210,8 @@
                       <th title="{% with descriptions=entered_data.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</th>
                       <th title="{% with descriptions=entered_data.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</th>
                       <th title="{% with descriptions=entered_data.description_dict %}{% if 'email' in descriptions %}{{ descriptions|get:'email' }}{% endif %}{% endwith %}">Email</th>
-                      <th title="">Action</th>
-                      <th title="">Copy</th>
+                      <th title="Delete the contributer">Delete</th>
+                      <th title="Add the contributor to authors' table">Add to Authors</th>
                   </tr>
               </thead>
               <tbody id="contributorsTableBody">
@@ -262,7 +262,7 @@
                   <th title="{% with descriptions=entered_data.description_dict %}{% if 'givenName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</th>
                   <th title="{% with descriptions=entered_data.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</th>
                   <th title="{% with descriptions=entered_data.description_dict %}{% if 'email' in descriptions %}{{ descriptions|get:'email' }}{% endif %}{% endwith %}">Email</th>
-                  <th title="">Action</th>
+                  <th title="Delete the author">Delete</th>
                 </tr>
               </thead>
               <tbody id="authorsTableBody">
