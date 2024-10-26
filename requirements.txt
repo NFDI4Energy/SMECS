@@ -9,3 +9,5 @@ gunicorn==22.0.0
 python-gitlab==3.13.0
 GitPython>=3.1.41
 pyld==2.0.3
+pyyaml
+git+https://github.com/Aidajafarbigloo/hermes@feature/276-harvesting-metadata-from-a-provided-repository-URL
