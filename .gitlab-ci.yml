@@ -38,4 +38,4 @@ test_job:
     # - echo "$CI_PERSONAL_TOKEN_KEY_GL"
     - python manage.py test tests
 
-image: python:3.9
+image: python:3.10
