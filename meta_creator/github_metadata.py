@@ -64,7 +64,8 @@ def get_contributors_from_repo(owner, repo, token, url):
                     "email": contributor_email,
                 })
                 seen_names.add(contributor_name) # to return unique metadata
-        return metadata
+                sorted_metadata = sorted(metadata, key=lambda x: x['givenName'].lower())
+        return sorted_metadata
     else:
         print(f"Failed to retrieve commit history: {response.status_code}")
         return None
@@ -173,7 +174,7 @@ def get_github_metadata(url, personal_token_key):
         # "publisher": namespaceName,
         "keywords": topics,
         "downloadUrl": download_url,
-        "permissions": "",
+        # "permissions": "",
         "readme": readme_url,
         "author": [{"@type": "Person",
                     "givenName": "",
