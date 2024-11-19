@@ -8,6 +8,7 @@ from .url_check_GitHub import validate_github_inputs
 from .gitlab_metadata import get_gitlab_metadata
 from .github_metadata import get_github_metadata
 from .read_tokens import read_token_from_file
+from .hermes_process import run_hermes_commands
 import json
 
 #################### getting metadata from gitlab project ####################
@@ -101,15 +102,17 @@ def data_extraction(request):
 
         if is_valid_gitlab:
             metadata = get_gitlab_metadata(gl_url, personal_token_key)
+            hermes_metadata = run_hermes_commands(gl_url)
             if not metadata:
                 metadata = get_gitlab_metadata(gl_url, default_access_token_GL)
-            return (metadata, context)
+            return (metadata, context, hermes_metadata)
         
 
         elif is_valid_github:
             metadata = get_github_metadata(gl_url, personal_token_key)
+            hermes_metadata = run_hermes_commands(gl_url)
             if metadata:
-                return (metadata, context)
+                return (metadata, context, hermes_metadata)
 
         if 'Invalid URL' in error_messages:
             return 'Invalid URL'

@@ -64,7 +64,7 @@
 
     <!-- tab1_software_info -->
     <div id="tab1-sw-info" class="tab active">
-      {% for key, value in extracted_metadata.items %}
+      {% for key, value in hermes_metadata.items %}
       <div class="form-group">
         {% if key != "contributor" and key != "author" %}
         {% if value|list and key == "programmingLanguage" %}
@@ -200,7 +200,7 @@
            <h5>Who is a Contributor?</h5>
            <p>A "contributor" refers to anyone who aids in software development in any capacity, from coding to testing, highlighting the collaborative nature of software projects​</p>
           </div>
-          {% for key, value in extracted_metadata.items %}
+          {% for key, value in hermes_metadata.items %}
           <div class="form-group">
             {% if key == "contributor" %}
             <table class="contributors-table" id="dataTable">
@@ -252,7 +252,7 @@
             <h5>Who is an Author?</h5>
             <p>An "author" in software authorship is someone who significantly contributes to the creation and development of software, including roles like coding, project management, and documentation.</p>
           </div>
-          {% for key, value in extracted_metadata.items %}
+          {% for key, value in hermes_metadata.items %}
           <div class="form-group">
             {% if key == "author" %}
             <table class="authors-table">

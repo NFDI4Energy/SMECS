@@ -69,8 +69,8 @@ def index(request):
 
         my_json_str = {}
         # Extract metadata
-        extracted_metadata, entered_data = result
-        count = count_non_empty_values(extracted_metadata)
+        extracted_metadata, entered_data, hermes_metadata = result
+        # count = count_non_empty_values(extracted_metadata)
         # Validate the JSON data
         is_valid_jsonld = validate_codemeta(extracted_metadata)
         if is_valid_jsonld:
@@ -82,10 +82,11 @@ def index(request):
         template = loader.get_template('meta_creator/showdata.html')
         return HttpResponse(template.render({
             "entered_data":entered_data,
-            "extracted_metadata":extracted_metadata,
+            # "extracted_metadata":extracted_metadata,
             "my_json_str": my_json_str,
-            "count": count,
-            "validation_result": validation_result,
+            # "count": count,
+            # "validation_result": validation_result,
+            "hermes_metadata": hermes_metadata,
             }, request))
 
     except ConnectTimeout:
