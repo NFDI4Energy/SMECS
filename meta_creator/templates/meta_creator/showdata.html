@@ -100,10 +100,10 @@
       <tbody id="contributorsTableBody">
           {% for contributor in value %}
           <tr>
-              <td>Contributor #{{ forloop.counter }}</td>
+              <td >Contributor #{{ forloop.counter }}</td>
               <td>{{ contributor.givenName }}</td>
               <td>{{ contributor.familyName }}</td>
-              <td>{{ contributor.email }}</td>
+              <td id="contributor_email">{{ contributor.email }}</td>
               <td>
                 <button onclick="deletePerson(event, this, 'contributor')" data-action="delete">
                   <i class="fas fa-trash-alt"></i>

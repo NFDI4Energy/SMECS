@@ -11,22 +11,63 @@ document.addEventListener("DOMContentLoaded", function () {
   const inputs = document.querySelectorAll("#metadata-form input");
   const deleteButtons = document.querySelectorAll('[data-action="delete"]');
 
+  function isValidEmail(email) {
+    const emailPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return emailPattern.test(email);
+}
+
+function validateTableEmails() {
+  const tableBody = document.getElementById("contributorsTableBody");
+  const rows = tableBody.getElementsByTagName("tr");
+  const invalidEmails = [];
+
+  for (let row of rows) {
+      const emailCell = row.cells[3]; // Email is in the 4th column (index 3)
+      if (emailCell) {
+          const email = emailCell.textContent.trim();
+
+          if (email && !isValidEmail(email)) {
+              emailCell.style.backgroundColor = "rgba(225, 94, 94, 0.377)"; // Highlight invalid email
+              invalidEmails.push(email);
+          } 
+          else {
+              emailCell.style.backgroundColor = ""; // Reset if valid
+          }
+      }
+  }
+
+  if (invalidEmails.length > 0) {
+      alert("Invalid emails in the table:\n" + invalidEmails.join("\n"));
+      return false;
+  }
+  return true;
+}
+
   
   document.getElementById('addContributorButton').addEventListener('click', function () {
-    // Get the email input value
-    var email = document.getElementById('contributorEmailInput').value;
+    const emailInput = document.getElementById('contributorEmailInput');
+    const familyName=document.getElementById("contributorFamilyNameInput");
+    const givenName=document.getElementById("contributorGivenNameInput");
+    const email = emailInput.value.trim();
 
-    // Regular expression for basic email validation
-    var emailPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (email && !isValidEmail(email)) {
+      // Show error message if invalid
+      alert('Please enter a valid email address.');
+      emailInput.focus(); // Focus the input for correction
+      return;
+    
+  } 
+   // Check if all fields are empty
+   if (!givenName && !familyName && !email) {
+    alert('All fields are empty. Please fill in at least one field.');
+    return;
+}
 
-    // Validate the email
-    if (emailPattern.test(email)) {
-        // If email is valid, proceed to add the person
-        addPerson('contributor', 'contributorsTableBody', ['Email']);
-    } else {
-        // If email is not valid, show an error message
-        alert('Please enter a valid email address.');
-    }
+    
+      // Add the person to the table if valid
+      addPerson('contributor', 'contributorsTableBody', ['Email']);
+      emailInput.value = ''; // Clear the input field after adding
+    
 });
   document.getElementById('addAuthorButton').addEventListener('click', function () {
     addPerson('author', 'authorsTableBody', []);
@@ -79,10 +120,10 @@ document.addEventListener("DOMContentLoaded", function () {
     var familyNameInput = document.getElementById(`${type}FamilyNameInput`);
   
     // Check if any of the input fields are empty
-    if (!givenNameInput.value.trim() && !familyNameInput.value.trim()) {
-      alert('Please provide all required information.');
-      return;
-    }
+    // if (!givenNameInput.value.trim() && !familyNameInput.value.trim()) {
+    //   alert('Please provide all required information.');
+    //   return;
+    // }
   
     // Get the table body
     var tableBody = document.getElementById(`${type}sTableBody`);
@@ -325,8 +366,11 @@ function downloadFile(event) {
     link.parentNode.removeChild(link); // remove the link element from the DOM
   }, 0);
 }
-function validateURL(id) {
 
+
+ // Url pattern check
+function validateURL(id) {
+ 
     // Get the input value
     var url = document.getElementById(id).value;
 
@@ -345,38 +389,35 @@ function validateURL(id) {
 
 // add event listener to download button
 downloadButton.addEventListener("click", (event) => {
-  urlFieldID='url-';
-  codeRepository='codeRepository-';
-  issueTracker='issueTracker-';
-  downloadUrl='downloadUrl-'
-  readme='readme-';
-  if(validateURL(urlFieldID)==false){
-    alert('url in Url field is not correct');
-    return false;
-  }
-  else if (validateURL(codeRepository)==false){
-    alert('url in codeRepository field is not correct');
-    return false;
-  } 
-   else if (validateURL(issueTracker)==false){
-    alert('url in issueTracker field is not correct');
-    return false;
-  } 
-  else if (validateURL(codeRepository)==false){
-    alert('url in codeRepository field is not correct');
-    return false;
-  } 
-  else if (validateURL(downloadUrl)==false){
-    alert('url in downloadUrl field is not correct');
-    return false;
-  } 
-  else if (validateURL(readme)==false){
-    alert('url in readme field is not correct');
-    return false;
-  } 
+  event.preventDefault(); // Prevent the default behavior of the button
 
-  else{
-    downloadFile(event);
+  const tableIsValid = validateTableEmails();
+  const fields = ['issueTracker-', 'readme-', 'url-', 'codeRepository-', 'downloadUrl-']; // List of field IDs
+  let urlsAreValid = true;
+
+  // Check optional URL fields if they are not empty
+  for (let id of fields) {
+      const fieldElement = document.getElementById(id);
+      if (fieldElement && fieldElement.value.trim() !== "") {
+          if (!validateURL(id)) {
+              alert(`The URL in the optional field "${id}" is incorrect.`);
+              urlsAreValid = false;
+              break; // Stop checking if an invalid URL is found
+          }
+      }
+  }
+
+  // If both email and URL validations pass, proceed with the download
+  if (tableIsValid && urlsAreValid) {
+      downloadFile(event);
+  } else {
+      // Show an error message if either validation fails
+      if (!tableIsValid) {
+          alert("Please fix invalid emails in the table before Downloading.");
+      }
+      if (!urlsAreValid) {
+          alert("Please fix invalid URLs before Downloading.");
+      }
   }
 });
 
