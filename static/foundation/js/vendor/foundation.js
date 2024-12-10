@@ -118,12 +118,13 @@ function validateTableEmails() {
   function addPerson(type, tableBodyId, properties) {
     var givenNameInput = document.getElementById(`${type}GivenNameInput`);
     var familyNameInput = document.getElementById(`${type}FamilyNameInput`);
+    const emailInput = document.getElementById(`${type}EmailInput`);
   
     // Check if any of the input fields are empty
-    // if (!givenNameInput.value.trim() && !familyNameInput.value.trim()) {
-    //   alert('Please provide all required information.');
-    //   return;
-    // }
+    if (!givenNameInput.value.trim() && !familyNameInput.value.trim() && !emailInput.value.trim()) {
+      alert('Please provide information.');
+      return;
+    }
   
     // Get the table body
     var tableBody = document.getElementById(`${type}sTableBody`);
@@ -386,39 +387,68 @@ function validateURL(id) {
 
 
 }
+//date validation
+function dateValidate(){
+  var dateCreatedField= document.querySelector('[name="dateCreated"]');
+  var dateModifiedField =document.querySelector('[name="dateModified"]');
+  var dateCreated = new Date(dateCreatedField.value);
+  var dateModified = new Date(dateModifiedField.value);
+  var today = new Date();
+  console.log(today);
+
+  // Check if dateCreated is later than dateModified or in future
+  if (dateCreated > today || dateCreated > dateModified) {
+    console.log("true");
+    dateCreatedField.style.backgroundColor= "rgba(225, 94, 94, 0.377)";
+    alert("The dateCreated cannot be set to a future date or later than dateModified.");
+}
+else{
+  dateCreatedField.style.backgroundColor= "";
+}
+
+// Check if dateModified is prior than dateCreated or in future
+if (dateModified > today || dateModified < dateCreated) {
+  dateModifiedField.style.backgroundColor= "rgba(225, 94, 94, 0.377)";
+    alert("The dateModified cannot be set to a future date or prior than  dateCreated.");
+}
+else{
+  dateModifiedField.style.backgroundColor="";
+}
+
+};
 
 // add event listener to download button
 downloadButton.addEventListener("click", (event) => {
   event.preventDefault(); // Prevent the default behavior of the button
-
+  dateValidate();
   const tableIsValid = validateTableEmails();
   const fields = ['issueTracker-', 'readme-', 'url-', 'codeRepository-', 'downloadUrl-']; // List of field IDs
   let urlsAreValid = true;
-
+  const invalidUrls = [];
   // Check optional URL fields if they are not empty
   for (let id of fields) {
       const fieldElement = document.getElementById(id);
       if (fieldElement && fieldElement.value.trim() !== "") {
           if (!validateURL(id)) {
-              alert(`The URL in the optional field "${id}" is incorrect.`);
+            idname=id.split("-");
+             invalidUrls.push(idname[0]);
               urlsAreValid = false;
-              break; // Stop checking if an invalid URL is found
+              fieldElement.style.backgroundColor = "rgba(225, 94, 94, 0.377)";
+
           }
       }
   }
-
+  if (invalidUrls.length > 0) {
+    console.log(invalidUrls);
+    alert("Invalid Urls in the form:\n" + invalidUrls.join("\n"));
+    return false;
+}
+ 
   // If both email and URL validations pass, proceed with the download
   if (tableIsValid && urlsAreValid) {
       downloadFile(event);
-  } else {
-      // Show an error message if either validation fails
-      if (!tableIsValid) {
-          alert("Please fix invalid emails in the table before Downloading.");
-      }
-      if (!urlsAreValid) {
-          alert("Please fix invalid URLs before Downloading.");
-      }
-  }
+  } 
+  
 });
 
 });
