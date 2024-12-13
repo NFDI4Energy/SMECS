@@ -389,18 +389,18 @@ function validateURL(id) {
 }
 //date validation
 function dateValidate(){
-  var dateCreatedField= document.querySelector('[name="dateCreated"]');
-  var dateModifiedField =document.querySelector('[name="dateModified"]');
-  var dateCreated = new Date(dateCreatedField.value);
-  var dateModified = new Date(dateModifiedField.value);
-  var today = new Date();
-  console.log(today);
+  const dateCreatedField= document.querySelector('[name="dateCreated"]');
+  const dateModifiedField =document.querySelector('[name="dateModified"]');
+  const dateCreated = new Date(dateCreatedField.value);
+  const dateModified = new Date(dateModifiedField.value);
+  const today = new Date();
+  
 
   // Check if dateCreated is later than dateModified or in future
   if (dateCreated > today || dateCreated > dateModified) {
-    console.log("true");
     dateCreatedField.style.backgroundColor= "rgba(225, 94, 94, 0.377)";
     alert("The dateCreated cannot be set to a future date or later than dateModified.");
+    return false;
 }
 else{
   dateCreatedField.style.backgroundColor= "";
@@ -410,17 +410,18 @@ else{
 if (dateModified > today || dateModified < dateCreated) {
   dateModifiedField.style.backgroundColor= "rgba(225, 94, 94, 0.377)";
     alert("The dateModified cannot be set to a future date or prior than  dateCreated.");
+    return false;
 }
 else{
   dateModifiedField.style.backgroundColor="";
 }
-
+return true;
 };
 
 // add event listener to download button
 downloadButton.addEventListener("click", (event) => {
   event.preventDefault(); // Prevent the default behavior of the button
-  dateValidate();
+  const isDateValid = dateValidate();
   const tableIsValid = validateTableEmails();
   const fields = ['issueTracker-', 'readme-', 'url-', 'codeRepository-', 'downloadUrl-']; // List of field IDs
   let urlsAreValid = true;
@@ -445,7 +446,7 @@ downloadButton.addEventListener("click", (event) => {
 }
  
   // If both email and URL validations pass, proceed with the download
-  if (tableIsValid && urlsAreValid) {
+  if (tableIsValid && urlsAreValid && isDateValid) {
       downloadFile(event);
   } 
   
