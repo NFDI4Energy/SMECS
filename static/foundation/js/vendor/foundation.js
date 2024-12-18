@@ -71,6 +71,18 @@ function validateTableEmails() {
     
 });
   document.getElementById('addAuthorButton').addEventListener('click', function () {
+    const authorFamilyName=document.getElementById("authorFamilyNameInput").value;
+    const authorGivenName=document.getElementById("authorGivenNameInput").value;
+
+   // Check if all fields are empty
+   if (!authorGivenName && !authorFamilyName) {
+    alert('Please fill in at least one field to add to the authors table');
+    return;
+}
+
+    
+      // Add the person to the table if valid
+
     addPerson('author', 'authorsTableBody', []);
   });
 
