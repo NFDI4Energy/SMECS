@@ -11,11 +11,12 @@ document.addEventListener("DOMContentLoaded", function () {
   const inputs = document.querySelectorAll("#metadata-form input");
   const deleteButtons = document.querySelectorAll('[data-action="delete"]');
 
+  //Email pattern checking
   function isValidEmail(email) {
     const emailPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return emailPattern.test(email);
 }
-
+// Email validation of contribution table
 function validateTableEmails() {
   const tableBody = document.getElementById("contributorsTableBody");
   const rows = tableBody.getElementsByTagName("tr");
@@ -43,7 +44,7 @@ function validateTableEmails() {
   return true;
 }
 
-  
+// Adding contributors in contribution table
   document.getElementById('addContributorButton').addEventListener('click', function () {
     const emailInput = document.getElementById('contributorEmailInput');
     const familyName=document.getElementById("contributorFamilyNameInput");
@@ -370,7 +371,7 @@ function downloadFile(event) {
 
 
  // Url pattern check
-function validateURL(id) {
+function validateURLPattern(id) {
  
     // Get the input value
     var url = document.getElementById(id).value;
@@ -384,7 +385,34 @@ function validateURL(id) {
     
         return false;
     }
+}
 
+function urlValidate() {
+  const fields = ['issueTracker-', 'readme-', 'url-', 'codeRepository-', 'downloadUrl-']; // List of field IDs
+  let isUrlValid = true;
+  const invalidUrls = [];
+  // Check optional URL fields if they are not empty
+  for (let id of fields) {
+      const fieldElement = document.getElementById(id);
+      if (fieldElement && fieldElement.value.trim() !== "") {
+          if (!validateURLPattern(id)) {
+            idname=id.split("-");
+             invalidUrls.push(idname[0]);
+             isUrlValid = false;
+              fieldElement.style.backgroundColor = "rgba(225, 94, 94, 0.377)";
+
+          }
+          else {
+            fieldElement.style.backgroundColor = "";
+
+          }
+      }
+  }
+  if (invalidUrls.length > 0) {
+    alert("Invalid Urls in the form:\n" + invalidUrls.join("\n"));
+    return false;
+}
+return true;
 
 }
 //date validation
@@ -423,29 +451,10 @@ downloadButton.addEventListener("click", (event) => {
   event.preventDefault(); // Prevent the default behavior of the button
   const isDateValid = dateValidate();
   const tableIsValid = validateTableEmails();
-  const fields = ['issueTracker-', 'readme-', 'url-', 'codeRepository-', 'downloadUrl-']; // List of field IDs
-  let urlsAreValid = true;
-  const invalidUrls = [];
-  // Check optional URL fields if they are not empty
-  for (let id of fields) {
-      const fieldElement = document.getElementById(id);
-      if (fieldElement && fieldElement.value.trim() !== "") {
-          if (!validateURL(id)) {
-            idname=id.split("-");
-             invalidUrls.push(idname[0]);
-              urlsAreValid = false;
-              fieldElement.style.backgroundColor = "rgba(225, 94, 94, 0.377)";
-
-          }
-      }
-  }
-  if (invalidUrls.length > 0) {
-    console.log(invalidUrls);
-    alert("Invalid Urls in the form:\n" + invalidUrls.join("\n"));
-    return false;
-}
+  const urlsAreValid=urlValidate();
+  
  
-  // If both email and URL validations pass, proceed with the download
+  // If email, URL validations and date pass, proceed with the download
   if (tableIsValid && urlsAreValid && isDateValid) {
       downloadFile(event);
   } 
