@@ -46,10 +46,10 @@ function validateTableEmails() {
 
 // Adding contributors in contribution table
   document.getElementById('addContributorButton').addEventListener('click', function () {
-    const emailInput = document.getElementById('contributorEmailInput');
-    const familyName=document.getElementById("contributorFamilyNameInput");
-    const givenName=document.getElementById("contributorGivenNameInput");
-    const email = emailInput.value.trim();
+    const emailInput = document.getElementById('contributorEmailInput').value;
+    const familyName=document.getElementById("contributorFamilyNameInput").value;
+    const givenName=document.getElementById("contributorGivenNameInput").value;
+    const email = emailInput.trim();
 
     if (email && !isValidEmail(email)) {
       // Show error message if invalid
@@ -60,7 +60,7 @@ function validateTableEmails() {
   } 
    // Check if all fields are empty
    if (!givenName && !familyName && !email) {
-    alert('All fields are empty. Please fill in at least one field.');
+    alert('Please fill in at least one field to add to the authors table');
     return;
 }
 
@@ -134,10 +134,10 @@ function validateTableEmails() {
     const emailInput = document.getElementById(`${type}EmailInput`);
   
     // Check if any of the input fields are empty
-    if (!givenNameInput.value.trim() && !familyNameInput.value.trim() && !emailInput.value.trim()) {
-      alert('Please provide information.');
-      return;
-    }
+    // if (!givenNameInput.value.trim() && !familyNameInput.value.trim() && !emailInput.value.trim()) {
+    //  // alert('Please provide information.');
+    //   return;
+    // }
   
     // Get the table body
     var tableBody = document.getElementById(`${type}sTableBody`);
