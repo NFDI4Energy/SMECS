@@ -60,7 +60,7 @@ function validateTableEmails() {
   } 
    // Check if all fields are empty
    if (!givenName && !familyName && !email) {
-    alert('Please fill in at least one field to add to the authors table');
+    alert('Please fill in at least one field to add to the contributors table');
     return;
 }
 
