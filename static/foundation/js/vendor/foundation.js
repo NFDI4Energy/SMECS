@@ -11,14 +11,81 @@ document.addEventListener("DOMContentLoaded", function () {
   const inputs = document.querySelectorAll("#metadata-form input");
   const deleteButtons = document.querySelectorAll('[data-action="delete"]');
 
+  //Email pattern checking
+  function isValidEmail(email) {
+    const emailPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return emailPattern.test(email);
+}
+// Email validation of contribution table
+function validateTableEmails() {
+  const tableBody = document.getElementById("contributorsTableBody");
+  const rows = tableBody.getElementsByTagName("tr");
+  const invalidEmails = [];
+
+  for (let row of rows) {
+      const emailCell = row.cells[3]; // Email is in the 4th column (index 3)
+      if (emailCell) {
+          const email = emailCell.textContent.trim();
+
+          if (email && !isValidEmail(email)) {
+              emailCell.style.backgroundColor = "rgba(225, 94, 94, 0.377)"; // Highlight invalid email
+              invalidEmails.push(email);
+          } 
+          else {
+              emailCell.style.backgroundColor = ""; // Reset if valid
+          }
+      }
+  }
+
+  if (invalidEmails.length > 0) {
+      alert("Invalid emails in the table:\n" + invalidEmails.join("\n"));
+      return false;
+  }
+  return true;
+}
+
+// Adding contributors in contribution table
   document.getElementById('addContributorButton').addEventListener('click', function () {
-    addPerson('contributor', 'contributorsTableBody', ['Email']);
-  });
-  
+    const emailInput = document.getElementById('contributorEmailInput').value;
+    const familyName=document.getElementById("contributorFamilyNameInput").value;
+    const givenName=document.getElementById("contributorGivenNameInput").value;
+    const email = emailInput.trim();
+
+    if (email && !isValidEmail(email)) {
+      // Show error message if invalid
+      alert('Please enter a valid email address.');
+      emailInput.focus(); // Focus the input for correction
+      return;
+    
+  } 
+   // Check if all fields are empty
+   if (!givenName && !familyName && !email) {
+    alert('Please fill in at least one field to add to the contributors table');
+    return;
+}
+
+    
+      // Add the person to the table if valid
+      addPerson('contributor', 'contributorsTableBody', ['Email']);
+      emailInput.value = ''; // Clear the input field after adding
+    
+});
   document.getElementById('addAuthorButton').addEventListener('click', function () {
+    const authorFamilyName=document.getElementById("authorFamilyNameInput").value;
+    const authorGivenName=document.getElementById("authorGivenNameInput").value;
+
+   // Check if all fields are empty
+   if (!authorGivenName && !authorFamilyName) {
+    alert('Please fill in at least one field to add to the authors table');
+    return;
+}
+
+    
+      // Add the person to the table if valid
+
     addPerson('author', 'authorsTableBody', []);
   });
-  
+
 
   function handleTableClick(tableBody, editCallback, deleteCallback) {
     tableBody.addEventListener('click', function (event) {
@@ -64,12 +131,13 @@ document.addEventListener("DOMContentLoaded", function () {
   function addPerson(type, tableBodyId, properties) {
     var givenNameInput = document.getElementById(`${type}GivenNameInput`);
     var familyNameInput = document.getElementById(`${type}FamilyNameInput`);
+    const emailInput = document.getElementById(`${type}EmailInput`);
   
     // Check if any of the input fields are empty
-    if (!givenNameInput.value.trim() && !familyNameInput.value.trim()) {
-      alert('Please provide all required information.');
-      return;
-    }
+    // if (!givenNameInput.value.trim() && !familyNameInput.value.trim() && !emailInput.value.trim()) {
+    //  // alert('Please provide information.');
+    //   return;
+    // }
   
     // Get the table body
     var tableBody = document.getElementById(`${type}sTableBody`);
@@ -313,9 +381,96 @@ function downloadFile(event) {
   }, 0);
 }
 
+
+ // Url pattern check
+function validateURLPattern(id) {
+ 
+    // Get the input value
+    var url = document.getElementById(id).value;
+
+    // Regular expression for basic email validation
+    var urlPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
+  
+    if (urlPattern.test(url)) {
+        return true;
+    } else {
+    
+        return false;
+    }
+}
+
+function urlValidate() {
+  const fields = ['issueTracker-', 'readme-', 'url-', 'codeRepository-', 'downloadUrl-']; // List of field IDs
+  let isUrlValid = true;
+  const invalidUrls = [];
+  // Check optional URL fields if they are not empty
+  for (let id of fields) {
+      const fieldElement = document.getElementById(id);
+      if (fieldElement && fieldElement.value.trim() !== "") {
+          if (!validateURLPattern(id)) {
+            idname=id.split("-");
+             invalidUrls.push(idname[0]);
+             isUrlValid = false;
+              fieldElement.style.backgroundColor = "rgba(225, 94, 94, 0.377)";
+
+          }
+          else {
+            fieldElement.style.backgroundColor = "";
+
+          }
+      }
+  }
+  if (invalidUrls.length > 0) {
+    alert("Invalid Urls in the form:\n" + invalidUrls.join("\n"));
+    return false;
+}
+return true;
+
+}
+//date validation
+function dateValidate(){
+  const dateCreatedField= document.querySelector('[name="dateCreated"]');
+  const dateModifiedField =document.querySelector('[name="dateModified"]');
+  const dateCreated = new Date(dateCreatedField.value);
+  const dateModified = new Date(dateModifiedField.value);
+  const today = new Date();
+  
+
+  // Check if dateCreated is later than dateModified or in future
+  if (dateCreated > today || dateCreated > dateModified) {
+    dateCreatedField.style.backgroundColor= "rgba(225, 94, 94, 0.377)";
+    alert("The dateCreated cannot be set to a future date or later than dateModified.");
+    return false;
+}
+else{
+  dateCreatedField.style.backgroundColor= "";
+}
+
+// Check if dateModified is prior than dateCreated or in future
+if (dateModified > today || dateModified < dateCreated) {
+  dateModifiedField.style.backgroundColor= "rgba(225, 94, 94, 0.377)";
+    alert("The dateModified cannot be set to a future date or prior than  dateCreated.");
+    return false;
+}
+else{
+  dateModifiedField.style.backgroundColor="";
+}
+return true;
+};
+
 // add event listener to download button
 downloadButton.addEventListener("click", (event) => {
-  downloadFile(event);
+  event.preventDefault(); // Prevent the default behavior of the button
+  const isDateValid = dateValidate();
+  const tableIsValid = validateTableEmails();
+  const urlsAreValid=urlValidate();
+  
+ 
+  // If email, URL validations and date pass, proceed with the download
+  if (tableIsValid && urlsAreValid && isDateValid) {
+      downloadFile(event);
+  } 
+  
 });
 
 });
