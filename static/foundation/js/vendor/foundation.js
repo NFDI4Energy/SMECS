@@ -481,7 +481,7 @@ function copyRowToAuthorTable(event, button) {
   validateRowCells(newRow);
   updateJsonData('authorsTableBody', 'author', ['Email']);
 }
-
+window.copyRowToAuthorTable=copyRowToAuthorTable;
 
 // Initialize table with existing contributors and authors
 function initializeTables() {
@@ -604,6 +604,7 @@ function deletePerson(event, button, type) {
   }
 }
 
+window.deletePerson=deletePerson;
 deleteButtons.forEach(function(button) {
     button.addEventListener('click', function(event) {
         deletePerson(event, this, 'contributor');
@@ -641,7 +642,7 @@ function updateJsonData(tableBodyId, jsonDataProperty, additionalProperties) {
   metadataJson.value = JSON.stringify(existingJson, null, 2);
 }
 
-///////////////////////////////////////////////////////////////////////
+
 
 inputs.forEach((input) => {
   validateInput(input);
@@ -679,7 +680,117 @@ inputs.forEach((input) => {
 
       metadataJson.value = JSON.stringify(jsonObject, null, 2);
   });
+
+  
 });
+// Update form from Json Update btn
+document.getElementById("updateFormBtn").addEventListener("click", function(event) {
+  event.preventDefault();
+  try {
+      const jsonObject = JSON.parse(metadataJson.value); // Parse the JSON
+      
+      if (jsonObject) {
+          // Make sure json is a valid object and then update the form
+         updateFormFromJson(jsonObject);
+         updateTable(jsonObject,'contributorsTableBody','contributor');
+         updateTable(jsonObject,'authorsTableBody','author');
+      } else {
+          throw new Error("Parsed JSON is invalid");
+      }
+  } catch (e) {
+      console.error("An unexpected error occurred:", e);
+      alert("Invalid JSON. Please check your syntax.");
+  }
+});
+
+
+function updateFormFromJson(jsonObject) {
+  inputs.forEach((input) => {
+    const key = input.name.split("[")[0];
+    const subkey = input.name.split("[")[1]?.split("]")[0];
+
+    // Exclude specific inputs from being updated
+    const excludedInputs = ["contributor_givenName", "contributor_familyName", "contributor_email", "author_givenName", "author_familyName", "author_email"];
+
+    if (!(excludedInputs.includes(input.name))) {
+      if (subkey) {
+        input.value = jsonObject[key][subkey];
+      } else {
+        input.value = jsonObject[key];
+      }
+    }
+    
+    ["programmingLanguage", "keywords"].forEach((prop) => {
+        if (jsonObject[prop]) {
+            if (typeof jsonObject[prop] === "string") {
+              jsonObject[prop] = jsonObject[prop]
+                    .split(",")
+                    .map((lang) => lang.trim())
+                    .filter((lang) => lang !== "");
+            } else {
+              jsonObject[prop] = jsonObject[prop].filter((lang) => lang !== "");
+            }
+        }
+    });
+  })
+}
+
+
+// Function to update the table with contributor data
+function updateTable(jsonObject,tableID,fieldName) {
+  const tableBody = document.getElementById(tableID);
+  tableBody.innerHTML = ''; // Clear previous table rows
+
+  // Loop through each contributor from jsonObject["contributor"] and create a row in the table
+  jsonObject[fieldName].forEach((fieldName,index) => {
+    // console.log(jsonObject['author']);
+    //  console.log(jsonObject['contributor'][index].email);
+      const row = document.createElement('tr');
+
+      const idCell=document.createElement("td");
+      idCell.textContent="#" + (index + 1);
+      row.appendChild(idCell);
+
+      const givenNameCell = document.createElement('td');
+      givenNameCell.textContent = fieldName.givenName || '';
+      row.appendChild(givenNameCell);
+
+      const familyNameCell = document.createElement('td');
+      familyNameCell.textContent = fieldName.familyName || ''; // Show 'N/A' if no family name
+      row.appendChild(familyNameCell);
+
+      const emailCell = document.createElement('td');
+      emailCell.textContent = fieldName.email || fieldName.Email || '';
+      row.appendChild(emailCell);
+
+      
+      
+      if(tableID!='authorsTableBody'){
+      //   const emailCell = document.createElement('td');
+      // emailCell.textContent = fieldName.email || '';
+      // row.appendChild(emailCell);
+
+        const deleteCell = document.createElement("td");
+        deleteCell.innerHTML= `<i title="Delete" class="fas fa-trash-alt" onclick="deletePerson(event, this, 'contributor')" data-action="delete"></i>`;
+        row.appendChild(deleteCell);
+
+        const copyCell = document.createElement("td");
+      copyCell.innerHTML= `<i class="fas fa-copy" onclick="copyRowToAuthorTable(event, this)" title="This contributor is also an author"></i>`;
+      row.appendChild(copyCell);
+
+      }
+      else{
+      //   const emailCell = document.createElement('td');
+      // emailCell.textContent = fieldName.Email || '';
+      // row.appendChild(emailCell);
+
+        const deleteCell = document.createElement("td");
+        deleteCell.innerHTML= `<i title="Delete" class="fas fa-trash-alt" onclick="deletePerson(event, this, 'author')" data-action="delete"></i>`;
+        row.appendChild(deleteCell);
+      };
+      tableBody.appendChild(row); // Add the row to the table body
+  });
+}
 
 // Check if contributors are more than 10
 if (contributorsTableBody.rows.length > 10) {
