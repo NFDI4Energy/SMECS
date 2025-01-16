@@ -54,7 +54,8 @@ def get_contributors_from_repo(owner, repo, token, url):
             contributor_name = commit["commit"]["author"]["name"]
             contributor_email = commit["commit"]["author"]["email"]
             if contributor_name not in seen_names: 
-                name_parts = contributor_name.split()
+                cleaned_name = re.sub(r'[^a-zA-Z\s]', '', contributor_name)
+                name_parts = cleaned_name.split()
                 given_name = name_parts[0]
                 # Combine the rest of the name parts as the family name
                 family_name = ' '.join(name_parts[1:])
