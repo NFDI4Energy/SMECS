@@ -4,50 +4,66 @@
 
 {% block content %}
 
-<!-- Software Tab -->
-  <!-- <div class="tabsp">
-    <button class="tablinks active" onclick="">Software</button>
-  </div> -->
-
-
 <!-- Initial Form to get information from user and extract metadata -->
 <div class="InitialFormContainer" id="firstpage">
-  <h3 class="mainHeader">Metadata Extractor Tool</h3>
-  <p>Get more information about elements by hovering</p>
+  <h3 class="mainHeader">SMECS</h3>
+  <p><b>S</b>oftware <b>M</b>etadata <b>E</b>xtraction and <b>C</b>uration <b>S</b>oftware</p>
+
   <form id="form1" method="post" action="{% url 'meta_creator:getdata' %}">
     {% csrf_token %}
-    <h6 title="(e.g.: GitLab/GitHub project URL)">Project URL</h6>
-    <input type="url" id="url_input" name="gl_url" placeholder="e.g.: https://gitlab.com/zdin-zle/zle-platform/repository/meta_tool"/>
-      <!-- Display the error message if it exists -->
+    <h6 class="custom-tooltip">
+      Project URL 
+      <span class="tooltip-text">
+        The repository URL e.g.: GitLab/GitHub project URL
+      </span>
+      <i class="fa fa-info-circle" aria-hidden="true"></i>
+    </h6>
+  
+    <input type="url" id="url_input" name="gl_url" placeholder="e.g.: https://gitlab.com/zdin-zle/zle-platform/repository/meta_tool" value="" />
     {% if error_message_url %}
       <span id="url_error" class="error_message">{{ error_message_url }}</span>
     {% endif %}
     <div class="tooltip-container">
-    <h6 title="You can use personal access tokens to authenticate with GitLab API or Git using HTTP Basic Authentication without needing to enter your password.&#10;&#10;To create a personal access token, navigate to:&#10;Edit profile -&gt; Access Tokens -&gt; select the desired scopes -&gt; click &quot;Create personal access token&quot;.&#10;For more information visit https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#personal-access-token-scopes" >Token Key</h6>
-      
-    <!-- tooltip block -->
-      <!-- <div class="tool-tip">
-        <i class="tool-tip__icon"><a
-            href="https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#personal-access-token-scopes">i</a></i>
-        <p class="tool-tip__info">
-          <span class="tooltiptext">
-            You can use personal access tokens to authenticate with GitLab API or Git using HTTP Basic Authentication
-            without needing to enter your password.<br><br> To create a personal access token, navigate to:<br> Edit
-            profile -&gt; Access
-            Tokens -&gt; select the desired scopes -&gt; click "Create personal access token".<br> If you need more
-            information,
-            click on the " i " icon above.
-          </span>
-        </p>
-      </div> -->
+    <h6 class="custom-tooltip">
+      Token Key
+      <span class="tooltip-text">
+          To extract metadata from GitLab repositories, a token is required.
+          This token is not needed for GitHub, 
+          however, using one resolves rate limitations and allows for additional metadata extraction.
+          <br><br>
+          How to Generate a Token?
+          <br><br>
+          GitLab: Visit <a href="https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#create-a-personal-access-token" target="_blank">Create a personal access token</a>
+          <br>
+          GitHub: Visit <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank">Managing your personal access tokens</a>
+      </span>
+      <i class="fa fa-info-circle" aria-hidden="true"></i>
+  </h6>
     </div>
-    <!-- End of tooltip block -->
-    <input type="text" id="token_input" name="personal_token_key" placeholder="Enter your personal token from GitLab/GitHub" />
+     <input type="text" id="token_input" name="personal_token_key" placeholder="Enter your personal token from GitLab/GitHub" value=""/>
     {% if error_message_token %}
       <span id="token_error" class="error_message">{{ error_message_token }}</span>
     {% endif %}
-    <button class="ExData" type="submit">Extract Metadata</button>
+    <button id="submitBtn" class="ExData" type="submit" title="Run the Extraction process">Extract Metadata</button>
   </form>
 </div>
 
+<!-- Pop-up modal overlay for loading spinner -->
+<div class="overlay" id="overlay">
+  <div class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Extracting...</p> 
+  </div>
+</div>
+
+<script>
+  document.getElementById('form1').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const formData = new FormData(document.getElementById('form1'));
+      document.getElementById('overlay').classList.add('active');
+      setTimeout(function() {
+          document.getElementById('form1').submit();
+      }, 2000);
+  });
+</script>
 {% endblock content %}
