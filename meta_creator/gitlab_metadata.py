@@ -415,7 +415,7 @@ def get_gitlab_metadata(gl_url, personal_token_key):
 
         # A Python object (dict) with the filtered metadata:
         metadata_dict = {
-            "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+            "@context": "https://w3id.org/codemeta/3.0",
             # "test": "test",
             "@type": "SoftwareSourceCode",
             "name": repositoryName,
