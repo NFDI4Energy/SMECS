@@ -8,6 +8,7 @@ from .common_functions import findWord
 from .read_tokens import read_token_from_file
 from .count_extracted_metadata import count_non_empty_values
 from .validate_jsonLD import validate_codemeta
+from operator import itemgetter
 
 
 # functions for data filtering #
@@ -140,6 +141,13 @@ def findContributors(searchString, metadata_dict):
         lastChar = len(contributorsStringTemp) + lastChar + 1
         metadata_dict = addContribution(contributor, metadata_dict)
         i = i + 1
+
+        # Sort contributors by givenName (case-insensitive)
+    if "contributor" in metadata_dict:
+            metadata_dict["contributor"] = sorted(
+                metadata_dict["contributor"], key=lambda x: x['givenName'].lower()
+            )
+
     return metadata_dict
 
 # Function to add new contributors to a dict object.
@@ -286,8 +294,7 @@ def get_gitlab_metadata(gl_url, personal_token_key):
 
         # Get a project by URL
         project = git_client.projects.get(gl_url_standard)
-
-
+    
     #################### attributes of the project ####################
     # getting project details
     # and storing in variables to convert them for the desired format
@@ -324,10 +331,10 @@ def get_gitlab_metadata(gl_url, personal_token_key):
         # Finds the description of the repository.
         findDescription = projectString.find("description")
         descriptionCut = projectString[findDescription +
-                                        15:findDescription + 1000]
+                                        14:findDescription + 1000]
         findDescriptionCut = descriptionCut.find("'")
         description = descriptionCut[0:findDescriptionCut]
-        if description == "":
+        if description == "" or description == "None, ":
             description = ""
 
         # ---------------codeRepository---------------
@@ -416,7 +423,6 @@ def get_gitlab_metadata(gl_url, personal_token_key):
         # A Python object (dict) with the filtered metadata:
         metadata_dict = {
             "@context": "https://w3id.org/codemeta/3.0",
-            # "test": "test",
             "@type": "SoftwareSourceCode",
             "name": repositoryName,
             "identifier": identifier,
@@ -426,7 +432,6 @@ def get_gitlab_metadata(gl_url, personal_token_key):
             # "id": codeRepository,
             "issueTracker": issueTrackerURL,
             "license": license_name,
-            # "version": version,
             "programmingLanguage": [],
             "copyrightHolder": {"@type": "Person", "name": namespaceName},
             "dateModified": dateModified,
@@ -434,12 +439,13 @@ def get_gitlab_metadata(gl_url, personal_token_key):
             # "publisher": namespaceName,
             "keywords": [topics],
             "downloadUrl": codeRepository,
-            "permissions": permissions,
+            # "permissions": permissions,
             # "readme": readmeURL,
             "readme": raw_readme_url,
             "author": [{"@type": "Person",
                         "givenName": ownerGivenNames,
-                        "familyName": ownerFamilyNames
+                        "familyName": ownerFamilyNames,
+                        "email": ownerFamilyNames
                         }],
             "contributor": [],
         }
