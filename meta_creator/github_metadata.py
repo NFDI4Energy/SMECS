@@ -155,7 +155,7 @@ def get_github_metadata(url, personal_token_key):
 
     # Extract relevant metadata
     metadata_dict = {
-        "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+        "@context": "https://w3id.org/codemeta/3.0",
         "@type": "SoftwareSourceCode",
         "name": full_name,
         "identifier": identifier,

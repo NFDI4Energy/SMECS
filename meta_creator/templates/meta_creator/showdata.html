@@ -210,8 +210,8 @@
                       <th title="{% with descriptions=entered_data.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</th>
                       <th title="{% with descriptions=entered_data.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</th>
                       <th title="{% with descriptions=entered_data.description_dict %}{% if 'email' in descriptions %}{{ descriptions|get:'email' }}{% endif %}{% endwith %}">Email</th>
-                      <th title="">Action</th>
-                      <th title="">Copy</th>
+                      <th title="Delete the contributer">Delete</th>
+                      <th title="Add the contributor to authors' table">Add to Authors</th>
                   </tr>
               </thead>
               <tbody id="contributorsTableBody">
@@ -262,7 +262,7 @@
                   <th title="{% with descriptions=entered_data.description_dict %}{% if 'givenName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</th>
                   <th title="{% with descriptions=entered_data.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</th>
                   <th title="{% with descriptions=entered_data.description_dict %}{% if 'email' in descriptions %}{{ descriptions|get:'email' }}{% endif %}{% endwith %}">Email</th>
-                  <th title="">Action</th>
+                  <th title="Delete the author">Delete</th>
                 </tr>
               </thead>
               <tbody id="authorsTableBody">
@@ -297,7 +297,7 @@
         <!-- </form> -->
         <div class="navigation-buttons">
           <button id="backwardBtnCon" class="backwardBtn"></button>
-          <button class="ExData" id="downloadBtn" title="Download the JSON file." onclick="downloadFile()">Download JSON</button>
+          <button class="ExData" id="downloadBtn" title="Download the JSON file.">Download JSON</button>
         </div>
     </div>
 </div>
@@ -310,11 +310,11 @@
 <form id="metadata-form-display">
   {% csrf_token %}
   <h4>Metdata in JSON format</h4>
-  <button  id="updateFormBtn">Update Form from JSON</button>
+  <button  id="updateFormBtn">Update Form from JSON</button> 
   <div class="metadata-container">
-    <i class="fas fa-download ExData" id="downloadButton" title="Download the JSON file." onclick="downloadFile()"></i>
-    <i id="copy-button" class="fa fa-copy" title="Copy the JSON"></i>
-    <span id="copy-feedback" class="feedback">Text copied!</span>
+    <i class="fas fa-download ExData" id="downloadButton" title="Download the JSON file."></i>
+    <i id="copy-button" class="fa fa-copy"  title="Copy the JSON"></i>
+    <span id="actionFeedback" class="feedback"></span>
    
     <textarea name="txtareaJSON" id="metadata-json">{{ my_json_str }}</textarea>
   </div>

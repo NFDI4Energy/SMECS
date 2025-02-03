@@ -10,6 +10,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const downloadButton = document.getElementById("downloadButton");
   const downloadBtn = document.getElementById("downloadBtn");
+  const updateJsonBtn=document.getElementById("updateFormBtn");
   const metadataJson = document.getElementById("metadata-json");
   let initialJson = metadataJson;
   let previousJson = { ...initialJson };
@@ -27,16 +28,97 @@ document.addEventListener("DOMContentLoaded", function () {
   const licenseInput = document.getElementById('license-input');
   const licenseSuggestionsBox = document.getElementById('licenseSuggestions');
   const languages = [
-    "JavaScript", "Java", "Python", "C", "C++", "C#", 
-    "Ruby", "Go", "Rust", "Swift", "Kotlin", "PHP",
-    "TypeScript", "R", "Dart", "Perl", "Scala", "Elixir",
-    "Haskell", "Lua", "Julia", "MATLAB", "Objective-C", 
-    "F#", "Shell", "Visual Basic", "Assembly", "Bash",
-    "Clojure", "CoffeeScript", "Crystal", "Delphi", 
-    "Erlang", "Fortran", "Groovy", "Haxe", "IDL", 
-    "J#", "LabVIEW", "Lisp", "Logo", "ML", "Nim",
-    "OCaml", "Pascal", "Prolog", "REXX", "Smalltalk",
-    "Solidity", "Tcl", "VHDL", "Verilog", "Vala"
+    "A# .NET", "A# (Axiom)", "A-0 System", "A+", "A++", "ABAP", "ABC", "ABC ALGOL",
+  "ABLE", "ABSET", "ABSYS", "ACC", "Accent", "Ace DASL", "ACL2", "ACT-III",
+  "Action!", "ActionScript", "Ada", "Adenine", "Agda", "Agilent VEE", "Agora",
+  "AIMMS", "Alef", "ALF", "ALGOL 58", "ALGOL 60", "ALGOL 68", "ALGOL W", "Alice",
+  "Alma-0", "AmbientTalk", "Amiga E", "AMOS", "AMPL", "APL",
+  "App Inventor for Android's visual block language", "AppleScript", "Arc", "ARexx",
+  "Argus", "AspectJ", "Assembly language", "ATS", "Ateji PX", "AutoHotkey",
+  "Autocoder", "AutoIt", "AutoLISP / Visual LISP", "Averest", "AWK", "Axum", "B",
+  "Babbage", "Bash", "BASIC", "bc", "BCPL", "BeanShell", "Batch (Windows/Dos)",
+  "Bertrand", "BETA", "Bigwig", "Bistro", "BitC", "BLISS", "Blue", "Bon", "Boo",
+  "Boomerang", "Bourne shell", "bash", "ksh", "BREW", "BPEL", "C", "C--", "C++",
+  "C#", "C/AL", "Caché ObjectScript", "C Shell", "Caml", "Candle", "Cayenne",
+  "CDuce", "Cecil", "Cel", "Cesil", "Ceylon", "CFEngine", "CFML", "Cg", "Ch",
+  "Chapel", "CHAIN", "Charity", "Charm", "Chef", "CHILL", "CHIP-8", "chomski",
+  "ChucK", "CICS", "Cilk", "CL", "Claire", "Clarion", "Clean", "Clipper", "CLIST",
+  "Clojure", "CLU", "CMS-2", "COBOL", "Cobra", "CODE", "CoffeeScript", "Cola",
+  "ColdC", "ColdFusion", "COMAL", "Combined Programming Language", "COMIT",
+  "Common Intermediate Language", "Common Lisp", "COMPASS", "Component Pascal",
+  "Constraint Handling Rules", "Converge", "Cool", "Coq", "Coral 66", "Corn",
+  "CorVision", "COWSEL", "CPL", "csh", "CSP", "Csound", "CUDA", "Curl", "Curry",
+  "Cyclone", "Cython", "D", "DASL", "DASL", "Dart", "DataFlex", "Datalog",
+  "DATATRIEVE", "dBase", "dc", "DCL", "Deesel", "Delphi", "DinkC", "DIBOL", "Dog",
+  "Draco", "DRAKON", "Dylan", "DYNAMO", "E", "E#", "Ease", "Easy PL/I",
+  "Easy Programming Language", "EASYTRIEVE PLUS", "ECMAScript", "Edinburgh IMP",
+  "EGL", "Eiffel", "ELAN", "Elixir", "Elm", "Emacs Lisp", "Emerald", "Epigram",
+  "EPL", "Erlang", "es", "Escapade", "Escher", "ESPOL", "Esterel", "Etoys", 
+  "Euclid", "Euler", "Euphoria", "EusLisp Robot Programming Language", 
+  "CMS EXEC", "EXEC 2", "Executable UML", "F", "F#", "Factor", "Falcon", "Fancy", 
+  "Fantom", "FAUST", "Felix", "Ferite", "FFP", "Fjölnir", "FL", "Flavors", 
+  "Flex", "FLOW-MATIC", "FOCAL", "FOCUS", "FOIL", "FORMAC", "@Formula", 
+  "Forth", "Fortran", "Fortress", "FoxBase", "FoxPro", "FP", "FPr", "Franz Lisp", 
+  "Frege", "F-Script", "FSProg", "G", "Google Apps Script", "Game Maker Language", 
+  "GameMonkey Script", "GAMS", "GAP", "G-code", "Genie", "GDL", "Gibiane", 
+  "GJ", "GEORGE", "GLSL", "GNU E", "GM", "Go", "Go!", "GOAL", "Gödel", "Godiva", 
+  "GOM (Good Old Mad)", "Goo", "Gosu", "GOTRAN", "GPSS", "GraphTalk", "GRASS", 
+  "Groovy", "Hack (programming language)", "HAL/S", "Hamilton C shell", "Harbour", 
+  "Hartmann pipelines", "Haskell", "Haxe", "High Level Assembly", "HLSL", "Hop", 
+  "Hope", "Hugo", "Hume", "HyperTalk", "IBM Basic assembly language", 
+  "IBM HAScript", "IBM Informix-4GL", "IBM RPG", "ICI", "Icon", "Id", "IDL", 
+  "Idris", "IMP", "Inform", "Io", "Ioke", "IPL", "IPTSCRAE", "ISLISP", "ISPF", 
+  "ISWIM", "J", "J#", "J++", "JADE", "Jako", "JAL", "Janus", "JASS", "Java", 
+  "JavaScript", "JCL", "JEAN", "Join Java", "JOSS", "Joule", "JOVIAL", "Joy", 
+  "JScript", "JScript .NET", "JavaFX Script", "Julia", "Jython", "K", 
+  "Kaleidoscope", "Karel", "Karel++", "KEE", "Kixtart", "KIF", "Kojo", "Kotlin", 
+  "KRC", "KRL", "KUKA", "KRYPTON", "ksh", "L", "L# .NET", "LabVIEW", "Ladder", 
+  "Lagoona", "LANSA", "Lasso", "LaTeX", "Lava", "LC-3", "Leda", "Legoscript", 
+  "LIL", "LilyPond", "Limbo", "Limnor", "LINC", "Lingo", "Linoleum", "LIS", 
+  "LISA", "Lisaac", "Lisp", "Lite-C", "Lithe", "Little b", "Logo", "Logtalk", 
+  "LPC", "LSE", "LSL", "LiveCode", "LiveScript", "Lua", "Lucid", "Lustre", 
+  "LYaPAS", "Lynx", "M2001", "M4", "Machine code", "MAD", "MAD/I", "Magik", 
+  "Magma", "make", "Maple", "MAPPER", "MARK-IV", "Mary", "MASM Microsoft Assembly x86", 
+  "Mathematica", "MATLAB", "Maxima", "Macsyma", "Max", "MaxScript", "Maya (MEL)", 
+  "MDL", "Mercury", "Mesa", "Metacard", "Metafont", "MetaL", "Microcode", 
+  "MicroScript", "MIIS", "MillScript", "MIMIC", "Mirah", "Miranda", "MIVA Script", 
+  "ML", "Moby", "Model 204", "Modelica", "Modula", "Modula-2", "Modula-3", 
+  "Mohol", "MOO", "Mortran", "Mouse", "MPD", "CIL", "MSL", "MUMPS", "NASM", 
+  "NATURAL", "Napier88", "Neko", "Nemerle", "nesC", "NESL", "Net.Data", 
+  "NetLogo", "NetRexx", "NewLISP", "NEWP", "Newspeak", "NewtonScript", "NGL", 
+  "Nial", "Nice", "Nickle", "Nim", "NPL", "Not eXactly C", "Not Quite C", 
+  "NSIS", "Nu", "NWScript", "NXT-G", "o:XML", "Oak", "Oberon", "Obix", "OBJ2", 
+  "Object Lisp", "ObjectLOGO", "Object REXX", "Object Pascal", "Objective-C", 
+  "Objective-J", "Obliq", "Obol", "OCaml", "occam", "occam-π", "Octave", 
+  "OmniMark", "Onyx", "OpenCL", "OpenEdge ABL", "OPL", "OpenVera", "OPRG", 
+  "OptimJ", "Orc", "ORCA/Modula-2", "Oriel", "Orwell", "Oxygene", "Oz", "P", 
+  "P4", "P#", "PARI/GP", "Pascal", "Pawn", "PCASTL", "PCF", "PEARL", "PeopleCode", 
+  "Perl", "PDL", "Pharo", "PHP", "PICT", "Pike", "PILOT", "Pipelines", "Pizza", 
+  "PL-11", "PL/0", "PL/B", "PL/C", "PL/I", "PL/M", "PL/P", "PL/SQL", "PL360", 
+  "PLEX", "PLEXIL", "Plus", "POP-11", "POP-2", "Pony", "Portable Game Notation", "PostScript", "POV-Ray SDL", "Powerhouse", "PowerBuilder", 
+  "PowerShell", "PPL", "Processing", "Prograph", "PROIV", "Prolog", "Promela", 
+  "PROSE modeling language", "PROTEL", "ProvideX", "Pure", "Pure Data", "PureBasic", 
+  "PureScript", "Python", "Q (equational programming language)", "Q (programming language from Kx Systems)", 
+  "Qalb", "QPL", "QtScript", "QuakeC", "QPL", "R", "R++", "Racket", "RAPID", 
+  "Raven", "RDL", "REBOL", "Red", "Redcode", "REFAL", "Reia", "Revolution", 
+  "REXX", "Ring", "Rlab", "ROOP", "RPG", "RPL", "RSL", "RTL/2", "Ruby", "RuneScript", 
+  "Rust", "S", "S-Lang", "S-PLUS", "S/SL", "S2", "SabreTalk", "SAIL", "SALSA", 
+  "SAM76", "SAS", "SASL", "Sather", "Sawzall", "Scala", "Scheme", "Scilab", 
+  "Scratch", "Script.NET", "Sed", "Seed7", "Self", "SenseTalk", "SequenceL", 
+  "SETL", "SIMPOL", "SIGNAL", "SiMPLE", "SIMSCRIPT", "Simula", "Simulink", "SISAL", 
+  "SLIP", "SMALL", "Smalltalk", "SML", "Snap!", "SNOBOL", "SPARK", "Speedcode", 
+  "SPIN", "SP/k", "SPSS", "SQR", "Squeak", "Squirrel", "SR", "S/SL", "Starlogo", 
+  "Strand", "Stateflow", "Subtext", "SuperCollider", "SuperTalk", "Swift", "SYMPL", 
+  "SystemVerilog", "T", "TACL", "TADS", "TAL", "Tcl", "Tea", "TECO", "TELCOMP", 
+  "TeX", "TEX", "TIE", "Toccata", "TOM", "TOM-Script", "Tool Command Language", 
+  "Turing", "TUTOR", "TXL", "TypeScript", "U-SQL", "Ubercode", "UCSD Pascal", 
+  "Umple", "Unicon", "Uniface", "UNITY", "Unix shell", "UnrealScript", "V", "Vala", 
+  "VBA", "VBScript", "Verilog", "VHDL", "Visual Basic", "Visual Basic .NET", "Visual DataFlex", 
+  "Visual DialogScript", "Visual FoxPro", "Visual J++", "Visual J#", "Visual Objects", 
+  "VSXu", "WATFIV", "WebDNA", "WebQL", "Whiley", "Winbatch", "Wolfram", "Wyvern", 
+  "X++", "X10", "XBase++", "XBase", "XC", "xHarbour", "XL", "Xojo", "XOTcl", 
+  "XPath", "XPL", "XPL0", "XQuery", "XSB", "XSLT", "Xtend", "Yorick", "Yoix", 
+  "YQL", "YUI", "Z notation", "ZPL", "Zig", "ZOPL", "ZPL"
 ];
 
 
@@ -201,15 +283,25 @@ copyBtn.addEventListener('click', function(event) {
   event.preventDefault();
   metadataJson.select();
   document.execCommand('copy');
-  var feedback = document.getElementById('copy-feedback');
-  feedback.style.display = 'inline'; 
+  actionFeedback ("Text copied!");
+  // var feedback = document.getElementById('copy-feedback');
+  // feedback.style.display = 'inline'; 
 
+  // setTimeout(function() {
+  //     feedback.style.display = 'none'; 
+  // }, 2000);
+
+});
+
+function actionFeedback (value){
+  var feedback = document.getElementById('actionFeedback');
+  feedback.innerHTML=value;
+  feedback.style.display = 'inline'; 
   setTimeout(function() {
       feedback.style.display = 'none'; 
   }, 2000);
 
-});
-
+}
   // Applying the yellow border for suggesting the user to change or review the extracted value
   urlInputs.forEach(input => {
     const initialValue = input.value;
@@ -505,7 +597,7 @@ function validateRowCells(row) {
       }
       // Check if the cell is empty and apply validation
       if (cell.textContent.trim() === "") {  
-          cell.classList.add("invalid"); 
+         cell.classList.add("invalid"); 
       } else {
           cell.classList.remove("invalid"); 
       }
@@ -684,22 +776,34 @@ inputs.forEach((input) => {
   
 });
 // Update form from Json Update btn
-document.getElementById("updateFormBtn").addEventListener("click", function(event) {
+updateJsonBtn.addEventListener("click", function(event) {
   event.preventDefault();
   try {
       const jsonObject = JSON.parse(metadataJson.value); // Parse the JSON
-      
-      if (jsonObject) {
-          // Make sure json is a valid object and then update the form
-         updateFormFromJson(jsonObject);
-         updateTable(jsonObject,'contributorsTableBody','contributor');
-         updateTable(jsonObject,'authorsTableBody','author');
+      const jsonKeys= Object.keys(jsonObject);
+
+      const expectedKeys = [
+          "@context", "@type", "name", "identifier", "description", "codeRepository",
+          "url", "issueTracker", "license", "programmingLanguage", "copyrightHolder",
+          "dateModified", "dateCreated", "keywords", "downloadUrl", "permissions",
+          "readme", "author", "contributor"
+      ];
+      // Compare keys
+      if (!keysMatch(expectedKeys, jsonKeys)) {
+        throw new Error("Parsed JSON is invalid");
       } else {
-          throw new Error("Parsed JSON is invalid");
+          // Make sure json is a valid object and then update the form
+          updateFormFromJson(jsonObject);
+          updateTable(jsonObject,'contributorsTableBody','contributor');
+          updateTable(jsonObject,'authorsTableBody','author');
+          initializeTables();
+          actionFeedback("Form Update!");
+         
       }
+      
   } catch (e) {
       console.error("An unexpected error occurred:", e);
-      alert("Invalid JSON. Please check your syntax.");
+      alert("Invalid JSON. Please check your syntax or Json keys");
   }
 });
 
@@ -736,15 +840,14 @@ function updateFormFromJson(jsonObject) {
 }
 
 
-// Function to update the table with contributor data
+// Function to update the table with contributor and authors data
 function updateTable(jsonObject,tableID,fieldName) {
   const tableBody = document.getElementById(tableID);
   tableBody.innerHTML = ''; // Clear previous table rows
 
-  // Loop through each contributor from jsonObject["contributor"] and create a row in the table
+  // Loop through from jsonObject and create a row in the table
   jsonObject[fieldName].forEach((fieldName,index) => {
-    // console.log(jsonObject['author']);
-    //  console.log(jsonObject['contributor'][index].email);
+   
       const row = document.createElement('tr');
 
       const idCell=document.createElement("td");
@@ -756,7 +859,7 @@ function updateTable(jsonObject,tableID,fieldName) {
       row.appendChild(givenNameCell);
 
       const familyNameCell = document.createElement('td');
-      familyNameCell.textContent = fieldName.familyName || ''; // Show 'N/A' if no family name
+      familyNameCell.textContent = fieldName.familyName || ''; 
       row.appendChild(familyNameCell);
 
       const emailCell = document.createElement('td');
@@ -766,24 +869,13 @@ function updateTable(jsonObject,tableID,fieldName) {
       
       
       if(tableID!='authorsTableBody'){
-      //   const emailCell = document.createElement('td');
-      // emailCell.textContent = fieldName.email || '';
-      // row.appendChild(emailCell);
 
         const deleteCell = document.createElement("td");
         deleteCell.innerHTML= `<i title="Delete" class="fas fa-trash-alt" onclick="deletePerson(event, this, 'contributor')" data-action="delete"></i>`;
         row.appendChild(deleteCell);
 
-        const copyCell = document.createElement("td");
-      copyCell.innerHTML= `<i class="fas fa-copy" onclick="copyRowToAuthorTable(event, this)" title="This contributor is also an author"></i>`;
-      row.appendChild(copyCell);
-
       }
       else{
-      //   const emailCell = document.createElement('td');
-      // emailCell.textContent = fieldName.Email || '';
-      // row.appendChild(emailCell);
-
         const deleteCell = document.createElement("td");
         deleteCell.innerHTML= `<i title="Delete" class="fas fa-trash-alt" onclick="deletePerson(event, this, 'author')" data-action="delete"></i>`;
         row.appendChild(deleteCell);
@@ -804,36 +896,77 @@ inputs.forEach((input) => {
     validateInput(input);
   });
 });
-
+// Function to check if both key sets match
+function keysMatch(expectedKeys, jsonKeys) {
+  
+  return expectedKeys.length === jsonKeys.length && expectedKeys.every(key => jsonKeys.includes(key));
+}
 
 function downloadFile(event) {
   event.preventDefault(); 
-  const data = metadataJson.value;
-  
-  // Parse the JSON to extract the repository name
-  let repoName = "metadata"; // Default name 
+
   try {
-    const metadata = JSON.parse(data);
-    if (metadata.name) {
-      repoName = metadata.name;
+      const data = metadataJson.value;
+      //console.log("Raw JSON Data:", data); // Debugging step
+      
+      const metadata = JSON.parse(data); // Move inside try block
+      const jsonKeys = Object.keys(metadata); // Extract keys from received JSON
+      console.log(jsonKeys);
+      let repoName = "metadata"; // Default name
+
+      const expectedKeys = [
+          "@context", "@type", "name", "identifier", "description", "codeRepository",
+          "url", "issueTracker", "license", "programmingLanguage", "copyrightHolder",
+          "dateModified", "dateCreated", "keywords", "downloadUrl", "permissions",
+          "readme", "author", "contributor"
+      ];
+      console.log(expectedKeys.every(key => jsonKeys.includes(key)));
+      // Compare keys
+      if (!keysMatch(expectedKeys, jsonKeys)) {
+          alert("Error: Metadata keys do not match!");
+      } else {
+          jsonPrettier(repoName, metadata);
+      }
+  } 
+  catch (e) {
+      alert("Invalid JSON. Please check your syntax.");
+      console.error("JSON Parsing Error:", e);
+  }
+}
+
+
+
+
+function jsonPrettier(repoName,metadata){
+  let validJson;
+  const values=Object.values(metadata).slice(0,2);
+      // Check the conditions
+  if (values[0] !== "https://w3id.org/codemeta/3.0" || values[1] !== "SoftwareSourceCode") {
+    // Update the first two keys in the object
+    const keys = Object.keys(metadata);
+    if (keys.length >= 2) {
+      metadata[keys[0]] = "https://w3id.org/codemeta/3.0" ; // Update the first key's value
+      metadata[keys[1]] = "SoftwareSourceCode"; // Update the second key's value
     }
-  } catch (e) {
-    console.error("Failed to parse JSON:", e);
   }
   
-  const fileName = `${repoName}/codemeta.json`;
-  const blob = new Blob([data], { type: "application/json" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.innerHTML = "Download JSON";
-  link.setAttribute("download", fileName);
-  downloadButton.parentNode.insertBefore(link, downloadButton.nextSibling);
-  downloadBtn.parentNode.insertBefore(link, downloadBtn.nextSibling);
-  link.click(); 
-  setTimeout(() => {
-    URL.revokeObjectURL(link.href); 
-    link.parentNode.removeChild(link); 
-  }, 0);
+      if (metadata.name) {
+        repoName = metadata.name;
+        validJson = JSON.stringify(metadata, null, 2);
+      }
+      const fileName = `${repoName}/codemeta.json`;
+      const blob = new Blob([validJson], { type: "application/json" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.innerHTML = "Download JSON";
+      link.setAttribute("download", fileName);
+      downloadButton.parentNode.insertBefore(link, downloadButton.nextSibling);
+      downloadBtn.parentNode.insertBefore(link, downloadBtn.nextSibling);
+      link.click(); 
+      setTimeout(() => {
+        URL.revokeObjectURL(link.href); 
+        link.parentNode.removeChild(link); 
+      }, 0);
 }
 
 downloadButton.addEventListener("click", (event) => {
