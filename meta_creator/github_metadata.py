@@ -105,8 +105,8 @@ def get_github_metadata(url, personal_token_key):
 
     response.raise_for_status()
     repo_data = response.json()
-
-    full_name = repo_data['full_name']
+    project_name = repo_data.get('name')
+    # full_name = repo_data['full_name']
     identifier = str(repo_data['id'])
 
     description = repo_data['description']
@@ -159,7 +159,7 @@ def get_github_metadata(url, personal_token_key):
     metadata_dict = {
         "@context": "https://w3id.org/codemeta/3.0",
         "@type": "SoftwareSourceCode",
-        "name": full_name,
+        "name": project_name,
         "identifier": identifier,
         "description": description,
         "codeRepository": code_repository,
