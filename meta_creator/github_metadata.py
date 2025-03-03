@@ -173,11 +173,12 @@ def get_github_metadata(url, personal_token_key):
         # "publisher": namespaceName,
         "keywords": topics,
         "downloadUrl": download_url,
-        "permissions": "",
+        # "permissions": "",
         "readme": readme_url,
         "author": [{"@type": "Person",
                     "givenName": "",
-                    "familyName": ""
+                    "familyName": "",
+                    "email":""
                     }],
         "contributor": contributors_metadata,
     }

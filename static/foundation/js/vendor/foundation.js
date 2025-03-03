@@ -775,35 +775,51 @@ inputs.forEach((input) => {
 
   
 });
-// Update form from Json Update btn
+function updateInputTitles() {
+  document.querySelectorAll("input[name]").forEach(input => {
+      input.title = input.value;  // Update title with the latest input value
+  });
+}
 updateJsonBtn.addEventListener("click", function(event) {
   event.preventDefault();
   try {
       const jsonObject = JSON.parse(metadataJson.value); // Parse the JSON
-      const jsonKeys= Object.keys(jsonObject);
+      const jsonKeys = Object.keys(jsonObject);
 
       const expectedKeys = [
           "@context", "@type", "name", "identifier", "description", "codeRepository",
           "url", "issueTracker", "license", "programmingLanguage", "copyrightHolder",
-          "dateModified", "dateCreated", "keywords", "downloadUrl", "permissions",
+          "dateModified", "dateCreated", "keywords", "downloadUrl",
           "readme", "author", "contributor"
       ];
-      // Compare keys
-      if (!keysMatch(expectedKeys, jsonKeys)) {
-        throw new Error("Parsed JSON is invalid");
+
+      const keyCheck = keysMatch(expectedKeys, jsonKeys, jsonObject);
+
+      if (!keyCheck.isMatch) {
+          let errorMessage = "Metadata keys do not match!\n\n";
+          if (keyCheck.missingKeys.length > 0) {
+              errorMessage += `Missing Keys: ${keyCheck.missingKeys.join(", ")}\n`;
+          }
+          if (keyCheck.extraKeys.length > 0) {
+              errorMessage += `Extra Keys: ${keyCheck.extraKeys.join(", ")}\n`;
+          }
+          if (keyCheck.nestedErrors.length > 0) {
+              errorMessage += `\nNested Errors:\n${keyCheck.nestedErrors.join("\n")}`;
+          }
+          alert(errorMessage);
       } else {
           // Make sure json is a valid object and then update the form
           updateFormFromJson(jsonObject);
-          updateTable(jsonObject,'contributorsTableBody','contributor');
-          updateTable(jsonObject,'authorsTableBody','author');
+          updateTable(jsonObject, 'contributorsTableBody', 'contributor');
+          updateTable(jsonObject, 'authorsTableBody', 'author');
           initializeTables();
+          updateInputTitles();
           actionFeedback("Form Update!");
-         
       }
-      
+
   } catch (e) {
       console.error("An unexpected error occurred:", e);
-      alert("Invalid JSON. Please check your syntax or Json keys");
+      alert("Invalid JSON. Please check your syntax or JSON keys");
   }
 });
 
@@ -844,43 +860,45 @@ function updateFormFromJson(jsonObject) {
 function updateTable(jsonObject,tableID,fieldName) {
   const tableBody = document.getElementById(tableID);
   tableBody.innerHTML = ''; // Clear previous table rows
-
+  
+ 
   // Loop through from jsonObject and create a row in the table
-  jsonObject[fieldName].forEach((fieldName,index) => {
-   
-      const row = document.createElement('tr');
+  jsonObject[fieldName].forEach((fieldName,index) => {    
+      if(fieldName.givenName || fieldName.familyName || (fieldName.email || fieldName.Email)){
 
-      const idCell=document.createElement("td");
-      idCell.textContent="#" + (index + 1);
-      row.appendChild(idCell);
+        const row = document.createElement('tr');
 
-      const givenNameCell = document.createElement('td');
-      givenNameCell.textContent = fieldName.givenName || '';
-      row.appendChild(givenNameCell);
+        const idCell=document.createElement("td");
+        idCell.textContent="#" + (index + 1);
+        row.appendChild(idCell);
+  
+        const givenNameCell = document.createElement('td');
+        givenNameCell.textContent = fieldName.givenName || '';
+        row.appendChild(givenNameCell);
+  
+        const familyNameCell = document.createElement('td');
+        familyNameCell.textContent = fieldName.familyName || ''; 
+        row.appendChild(familyNameCell);
+  
+        const emailCell = document.createElement('td');
+        emailCell.textContent = fieldName.email || fieldName.Email || '';
+        row.appendChild(emailCell);
 
-      const familyNameCell = document.createElement('td');
-      familyNameCell.textContent = fieldName.familyName || ''; 
-      row.appendChild(familyNameCell);
+        if(tableID!='authorsTableBody'){
 
-      const emailCell = document.createElement('td');
-      emailCell.textContent = fieldName.email || fieldName.Email || '';
-      row.appendChild(emailCell);
+          const deleteCell = document.createElement("td");
+          deleteCell.innerHTML= `<i title="Delete" class="fas fa-trash-alt" onclick="deletePerson(event, this, 'contributor')" data-action="delete"></i>`;
+          row.appendChild(deleteCell);
+  
+        }
+        else{
+          const deleteCell = document.createElement("td");
+          deleteCell.innerHTML= `<i title="Delete" class="fas fa-trash-alt" onclick="deletePerson(event, this, 'author')" data-action="delete"></i>`;
+          row.appendChild(deleteCell);
+        };
+        tableBody.appendChild(row); // Add the row to the table body
 
-      
-      
-      if(tableID!='authorsTableBody'){
-
-        const deleteCell = document.createElement("td");
-        deleteCell.innerHTML= `<i title="Delete" class="fas fa-trash-alt" onclick="deletePerson(event, this, 'contributor')" data-action="delete"></i>`;
-        row.appendChild(deleteCell);
-
-      }
-      else{
-        const deleteCell = document.createElement("td");
-        deleteCell.innerHTML= `<i title="Delete" class="fas fa-trash-alt" onclick="deletePerson(event, this, 'author')" data-action="delete"></i>`;
-        row.appendChild(deleteCell);
       };
-      tableBody.appendChild(row); // Add the row to the table body
   });
 }
 
@@ -896,11 +914,46 @@ inputs.forEach((input) => {
     validateInput(input);
   });
 });
-// Function to check if both key sets match
-function keysMatch(expectedKeys, jsonKeys) {
-  
-  return expectedKeys.length === jsonKeys.length && expectedKeys.every(key => jsonKeys.includes(key));
+function keysMatch(expectedKeys, jsonKeys, jsonObject) {
+  // Convert both expected and actual keys to lowercase for case-insensitive matching
+  const lowerExpectedKeys = expectedKeys.map(key => key.toLowerCase());
+  const lowerJsonKeys = jsonKeys.map(key => key.toLowerCase());
+
+  // Find missing and extra keys
+  const missingKeys = lowerExpectedKeys.filter(key => !lowerJsonKeys.includes(key));
+  const extraKeys = lowerJsonKeys.filter(key => !lowerExpectedKeys.includes(key));
+
+  // Expected keys for nested 'author' and 'contributor' objects
+  const nestedExpectedKeys = ["givenname", "familyname", "email"];
+  let nestedErrors = [];
+
+  ["author", "contributor"].forEach(section => {
+      if (Array.isArray(jsonObject[section])) {
+          jsonObject[section].forEach((item, index) => {
+              const itemKeys = Object.keys(item)
+                  .map(k => k.toLowerCase()) // Convert nested keys to lowercase
+                  .filter(k => k !== "@type"); // Ignore "@type"
+             
+              const missingNested = nestedExpectedKeys.filter(k => !itemKeys.includes(k.toLowerCase()));
+              const extraNested = itemKeys.filter(k => !nestedExpectedKeys.includes(k.toLowerCase()));
+             
+              if (missingNested.length > 0 || extraNested.length > 0) {
+                  nestedErrors.push(`In ${section}[${index}]: Missing Keys: ${missingNested.join(", ")}, Extra Keys: ${extraNested.join(", ")}`);
+              }
+          });
+      }
+  });
+
+  return {
+      isMatch: missingKeys.length === 0 && extraKeys.length === 0 && nestedErrors.length === 0,
+      missingKeys,
+      extraKeys,
+      nestedErrors
+  };
 }
+
+
+
 
 function downloadFile(event) {
   event.preventDefault(); 
@@ -911,19 +964,30 @@ function downloadFile(event) {
       
       const metadata = JSON.parse(data); // Move inside try block
       const jsonKeys = Object.keys(metadata); // Extract keys from received JSON
-      console.log(jsonKeys);
+     
       let repoName = "metadata"; // Default name
 
       const expectedKeys = [
           "@context", "@type", "name", "identifier", "description", "codeRepository",
           "url", "issueTracker", "license", "programmingLanguage", "copyrightHolder",
-          "dateModified", "dateCreated", "keywords", "downloadUrl", "permissions",
+          "dateModified", "dateCreated", "keywords", "downloadUrl",
           "readme", "author", "contributor"
       ];
-      console.log(expectedKeys.every(key => jsonKeys.includes(key)));
-      // Compare keys
-      if (!keysMatch(expectedKeys, jsonKeys)) {
-          alert("Error: Metadata keys do not match!");
+      // Get key comparison result
+      const keyCheck = keysMatch(expectedKeys, jsonKeys, metadata);
+
+      if (!keyCheck.isMatch) {
+          let errorMessage = "Metadata keys do not match!\n\n";
+          if (keyCheck.missingKeys.length > 0) {
+              errorMessage += `Missing Keys: ${keyCheck.missingKeys.join(", ")}\n`;
+          }
+          if (keyCheck.extraKeys.length > 0) {
+              errorMessage += `Extra Keys: ${keyCheck.extraKeys.join(", ")}\n`;
+          }
+          if (keyCheck.nestedErrors.length > 0) {
+              errorMessage += `\nNested Errors:\n${keyCheck.nestedErrors.join("\n")}`;
+          }
+          alert(errorMessage);
       } else {
           jsonPrettier(repoName, metadata);
       }
