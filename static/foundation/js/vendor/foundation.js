@@ -835,6 +835,9 @@ function updateFormFromJson(jsonObject) {
     if (!(excludedInputs.includes(input.name))) {
       if (subkey) {
         input.value = jsonObject[key][subkey];
+        if (input.value != ""){
+          input.classList.remove("invalid");
+        }
       } else {
         input.value = jsonObject[key];
       }
@@ -864,7 +867,7 @@ function updateTable(jsonObject,tableID,fieldName) {
  
   // Loop through from jsonObject and create a row in the table
   jsonObject[fieldName].forEach((fieldName,index) => {    
-      if(fieldName.givenName || fieldName.familyName || (fieldName.email || fieldName.Email)){
+      if(fieldName.givenName ||  fieldName.familyName ||  (fieldName.email || fieldName.Email)){
 
         const row = document.createElement('tr');
 
@@ -922,6 +925,14 @@ function keysMatch(expectedKeys, jsonKeys, jsonObject) {
   // Find missing and extra keys
   const missingKeys = lowerExpectedKeys.filter(key => !lowerJsonKeys.includes(key));
   const extraKeys = lowerJsonKeys.filter(key => !lowerExpectedKeys.includes(key));
+
+    // Check nested key in "copyrightHolder"
+    if (jsonObject.hasOwnProperty("copyrightHolder")) {
+      if (!jsonObject.copyrightHolder.hasOwnProperty("name")) {
+          missingKeys.push("copyrightHolder name key is missing");
+      }
+  } 
+
 
   // Expected keys for nested 'author' and 'contributor' objects
   const nestedExpectedKeys = ["givenname", "familyname", "email"];
