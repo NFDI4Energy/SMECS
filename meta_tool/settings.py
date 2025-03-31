@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django_jsonforms',
-    'meta_show',
     'meta_creator',
     'django.contrib.staticfiles',
 ]
