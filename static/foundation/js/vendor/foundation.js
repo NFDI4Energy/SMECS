@@ -826,6 +826,8 @@ updateJsonBtn.addEventListener("click", function(event) {
 
 function updateFormFromJson(jsonObject) {
   inputs.forEach((input) => {
+    
+    
     const key = input.name.split("[")[0];
     const subkey = input.name.split("[")[1]?.split("]")[0];
 
@@ -835,12 +837,11 @@ function updateFormFromJson(jsonObject) {
     if (!(excludedInputs.includes(input.name))) {
       if (subkey) {
         input.value = jsonObject[key][subkey];
-        if (input.value != ""){
-          input.classList.remove("invalid");
-        }
+        
       } else {
         input.value = jsonObject[key];
       }
+      validateInput(input);
     }
     
     ["programmingLanguage", "keywords"].forEach((prop) => {
