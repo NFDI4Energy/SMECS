@@ -2,8 +2,6 @@ from django.urls import path, re_path
 from django.contrib import admin
 
 from meta_creator import views
-from meta_creator.settings import META_VERSIONS, LATEST_META_VERSION
-
 
 app_name = "meta_creator"
 

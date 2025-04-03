@@ -11,22 +11,12 @@ from django.shortcuts import render
 from django.core.exceptions import PermissionDenied  # Import PermissionDenied
 from django.http import HttpResponseServerError, HttpResponseForbidden
 from requests.exceptions import ConnectTimeout, ReadTimeout, RequestException
-from meta_creator.settings import META_VERSIONS
-from meta_creator.forms import CreatorForm
 from .metadata_extractor import data_extraction
 from .gitlab_metadata import count_non_empty_values, validate_codemeta
 
 class IndexView(TemplateView):
     template_name = 'meta_creator/index.html'
-    extra_context = {"versions": META_VERSIONS.keys()}
 
-
-class CreatorView(TemplateView):
-    template_name = 'meta_creator/creator.html'
-    metapath = None
-
-    def get_context_data(self, **kwargs):
-        return {'creator': CreatorForm(self.metapath.name)}
 
 # Thesis_navigation to homepage and information page_based on requiremment analysis 
 def homepage(request):
