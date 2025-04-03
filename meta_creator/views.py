@@ -25,6 +25,9 @@ def homepage(request):
 def information(request):
     return render(request, 'meta_creator/information.html')
 
+def legals(request):
+    return render(request, 'meta_creator/legals.html')
+
 # Function for metadata extracting
 def index(request):
     """
