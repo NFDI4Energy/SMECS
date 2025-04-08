@@ -4,7 +4,18 @@
   "additionalProperties": false,
   "type": "object",
   "title": "CodeMeta",
-  "required": [],
+  "required": [
+    "name",
+    "programmingLanguage",
+    "description",
+    "keywords",
+    "developmentStatus",
+    "license",
+    "dateCreated",
+    "dataModified",
+    "contributor",
+    "codeRepository"
+  ],
   "properties": {
     "@context": { "$ref": "#/$defs/@context" },
     "name": {
