@@ -28,12 +28,21 @@
       <nav id="main-nav">
         <a href="https://github.com/NFDI4Energy/SMECS" title="Software Metadata Extraction and Curation Software" class="logo">SMECS</a>
         <ul class="nav-list">
-          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" 
-            href="{% url 'meta_creator:index' %}" 
-            title="Extract metadata from a repository URL">Home</a></li>
-          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'information' %}active{% endif %}" 
-            href="{% url 'meta_creator:information' %}" 
-            title="What is SMECS?">About SMECS</a></li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
+               href="{% url 'meta_creator:index' %}"
+               title="Extract metadata from a repository URL">Home</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'information' %}active{% endif %}"
+               href="{% url 'meta_creator:information' %}"
+               title="What is SMECS?">About SMECS</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'legals' %}active{% endif %}"
+               href="{% url 'meta_creator:legals' %}"
+               title="Detailed legal information">Legals/Impressum</a>
+        </li>
         </ul>
     </nav>
       {% block content %}{% endblock %}

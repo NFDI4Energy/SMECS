@@ -51,3 +51,7 @@ meta_show/__pycache__/apps.cpython-312.pyc
 meta_show/__pycache__/models.cpython-312.pyc
 meta_show/__pycache__/admin.cpython-312.pyc
 myenv
+myenv/
+__pycache__/
+.vs
+env/

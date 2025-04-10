@@ -411,7 +411,7 @@ function actionFeedback (value){
         event.preventDefault(); // Prevent form submission
         var rowToDelete = event.target.closest('tr');
         deleteCallback(rowToDelete);
-      } else if (event.target.tagName === 'BUTTON' && event.target.textContent === 'Copy') {
+      } else if (event.target.tagName === 'BUTTON' && event.target.textContent === 'Add to Authors') {
         event.preventDefault();
         var rowToCopy = event.target.closest('tr');
         copyCallback(rowToCopy);
