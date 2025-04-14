@@ -41,7 +41,7 @@ def download_url_releases(url):
 def get_contributors_from_repo(owner, repo, token, url):
     url_contributors = f"{url}/commits"
     headers = {"Authorization": f"token {token}"} if token else {}
-    
+
     all_commits = []
     page = 1
 
@@ -53,8 +53,7 @@ def get_contributors_from_repo(owner, repo, token, url):
             return None
         
         commit_data = response.json()
-        
-        if not commit_data:  # Stop when no more commits
+        if not commit_data:
             break
         
         all_commits.extend(commit_data)
@@ -62,30 +61,29 @@ def get_contributors_from_repo(owner, repo, token, url):
 
     # Extract metadata from all commits
     metadata = []
-    seen_names = set()
-    
+    seen_emails = set()
+
     for commit in all_commits:
         if "commit" in commit and "author" in commit["commit"]:
             contributor_name = commit["commit"]["author"]["name"]
-            contributor_email = commit["commit"]["author"]["email"]
+            contributor_email = commit["commit"]["author"]["email"].lower()
             
-            if contributor_name not in seen_names:
+            if contributor_email not in seen_emails:
                 cleaned_name = re.sub(r'[^a-zA-Z\s]', '', contributor_name)
                 name_parts = cleaned_name.split()
                 given_name = name_parts[0]
                 family_name = ' '.join(name_parts[1:]) if len(name_parts) > 1 else ''
-                
+
                 metadata.append({
                     "givenName": given_name,
                     "familyName": family_name,
                     "email": contributor_email,
                 })
-                seen_names.add(contributor_name)
+                seen_emails.add(contributor_email)
 
-    # Sort metadata by given name (case-insensitive)
     sorted_metadata = sorted(metadata, key=lambda x: x['givenName'].lower())
-    
     return sorted_metadata
+
 
 def get_github_metadata(url, personal_token_key):
     # Check if the URL matches the modified GitHub repository pattern
