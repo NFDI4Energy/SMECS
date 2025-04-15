@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const metadataJson = document.getElementById("metadata-json");
   let initialJson = metadataJson;
   let previousJson = { ...initialJson };
-  const inputs = document.querySelectorAll("#metadata-form input");
+  const inputs = document.querySelectorAll("#metadata-form input, #metadata-form select");
   const deleteButtons = document.querySelectorAll('[data-action="delete"]');
   let tabs_ext = document.querySelectorAll('.tab-links_ext a');
   let contents = document.querySelectorAll('.tab-content_ext .tab');
@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const inputLanguages = document.getElementById('languageInput');
   const suggestionsBox = document.getElementById('suggestions');
   const SPDX_URL = 'https://raw.githubusercontent.com/spdx/license-list-data/master/json/licenses.json';
+  const JsonSchema = '/static/schema/codemeta_schema.json';
   let licenses = [];
   const licenseInput = document.getElementById('license-input');
   const licenseSuggestionsBox = document.getElementById('licenseSuggestions');
@@ -222,6 +223,24 @@ document.addEventListener("click", function(e) {
     suggestionsBox.style.display = "none";
   }
 });
+
+// Fetch the JSON Schema and populate the dropdown
+fetch(JsonSchema)
+  .then(response => response.json())
+  .then(schema => {
+    const statusEnum = schema.properties?.developmentStatus?.enum || [];
+    const dropdown = document.getElementById('developmentStatusDropdown');
+    console.log(dropdown);
+    statusEnum.forEach(status => {
+      const option = document.createElement('option');
+      option.value = status;
+      option.textContent = status;
+      dropdown.appendChild(option);
+    });
+  })
+  .catch(error => {
+    console.error("Failed to load schema or populate dropdown:", error);
+  });
 
 // License
 // Fetch the SPDX licenses
@@ -725,41 +744,47 @@ function updateJsonData(tableBodyId, jsonDataProperty, additionalProperties) {
 ///////////////////////////////////////////////////////////////////////
 
 inputs.forEach((input) => {
-  validateInput(input);
+  const handleChange = () => {
+    validateInput(input); 
 
-  input.addEventListener("input", () => {
-      const jsonObject = JSON.parse(metadataJson.value);
+    const jsonObject = JSON.parse(metadataJson.value);
 
-      // update the JSON object with the new value
-      const key = input.name.split("[")[0];
-      const subkey = input.name.split("[")[1]?.split("]")[0];
+    const key = input.name.split("[")[0];
+    const subkey = input.name.split("[")[1]?.split("]")[0];
 
-      // Exclude specific inputs from being updated
-      const excludedInputs = ["contributor_givenName", "contributor_familyName", "contributor_email", "author_givenName", "author_familyName", "author_email"];
+    const excludedInputs = [
+      "contributor_givenName", "contributor_familyName", "contributor_email",
+      "author_givenName", "author_familyName", "author_email"
+    ];
 
-      if (!(excludedInputs.includes(input.name))) {
-        if (subkey) {
-          jsonObject[key][subkey] = input.value;
+    if (!excludedInputs.includes(input.name)) {
+      if (subkey) {
+        if (!jsonObject[key]) jsonObject[key] = {}; // make sure key exists
+        jsonObject[key][subkey] = input.value;
+      } else {
+        jsonObject[key] = input.value;
+      }
+    }
+
+    ["programmingLanguage", "keywords"].forEach((prop) => {
+      if (jsonObject[prop]) {
+        if (typeof jsonObject[prop] === "string") {
+          jsonObject[prop] = jsonObject[prop]
+            .split(",")
+            .map((lang) => lang.trim())
+            .filter((lang) => lang !== "");
         } else {
-          jsonObject[key] = input.value;
+          jsonObject[prop] = jsonObject[prop].filter((lang) => lang !== "");
         }
       }
-      
-      ["programmingLanguage", "keywords"].forEach((prop) => {
-          if (jsonObject[prop]) {
-              if (typeof jsonObject[prop] === "string") {
-                  jsonObject[prop] = jsonObject[prop]
-                      .split(",")
-                      .map((lang) => lang.trim())
-                      .filter((lang) => lang !== "");
-              } else {
-                  jsonObject[prop] = jsonObject[prop].filter((lang) => lang !== "");
-              }
-          }
-      });
+    });
 
-      metadataJson.value = JSON.stringify(jsonObject, null, 2);
-  });
+    metadataJson.value = JSON.stringify(jsonObject, null, 2);
+  };
+
+  // Attach event listeners for both inputs and selects
+  input.addEventListener("input", handleChange);
+  input.addEventListener("change", handleChange); // important for <select>
 });
 
 // Check if contributors are more than 10
@@ -768,12 +793,14 @@ contributorsTableBody.parentElement.classList.add('scrollable-table');
 }
 
 
-// Add event listener to input fields for real-time JSON update
-inputs.forEach((input) => {
-  input.addEventListener("input", () => {
-    validateInput(input);
-  });
-});
+// // Add event listener to input fields for real-time JSON update
+// inputs.forEach((input) => {
+//   input.addEventListener("input", () => {
+//     validateInput(input);
+//   });
+// });
+
+
 
 
 function downloadFile(event) {

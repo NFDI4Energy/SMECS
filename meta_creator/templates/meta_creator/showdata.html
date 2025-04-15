@@ -79,7 +79,7 @@
           <input title="{% for item in value %}{% if item %}{{ item }}, {% endif %}{% endfor %}" id="languageInput" name="{{ key }}" type="text" value="{% for item in value %}{% if item %}{{ item }}, {% endif %}{% endfor %}">
           <div id="suggestions"></div>
           </div>
-
+         
         {% elif value|list and key == "keywords" %}
           <div class="single_inputs" id="keywords">
           <label>Keywords</label>
@@ -171,7 +171,20 @@
         <input title="{{ value }}" id="license-input" name="{{ key }}[{{ k }}]" type="text" value="{{ value }}" class="input-field" autocomplete="off"><br>
         <div id="licenseSuggestions" class="suggestions"></div>
         </div>
-
+        {% elif key == "developmentStatus" %}
+        <div class="single_inputs">
+          <label>Development Status</label>
+          <div class="custom-tooltip-metadata">
+            <span class="tooltip-text-metadata">
+              {% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
+            </span>
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+          </div>
+          <select name="developmentStatus" id="developmentStatusDropdown">
+            <option value=""></option>
+          </select>
+          <div id="suggestions"></div>
+        </div>
         {% else %}
         <div class="single_inputs">
           <label for="{{ key }}">{{ key }}</label>

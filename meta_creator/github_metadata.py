@@ -169,6 +169,7 @@ def get_github_metadata(url, personal_token_key):
         "license": license_value,
         # "version": version,
         "programmingLanguage": programming_languages,  # List of all languages used
+        "developmentStatus": "",
         "copyrightHolder": {"@type": "Person", "name": ""},
         "dateModified": dateModified,
         "dateCreated": dateCreated,
