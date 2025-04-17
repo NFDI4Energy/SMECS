@@ -1,7 +1,7 @@
 {% load static %}
 
 <html class="no-js" lang="en">
-  <head>
+<head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +22,7 @@
     <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-  </head>
+</head>
 
   <body>
     <div class="{% block body-class %}l-bg-color u-vh--100{% endblock %}">
@@ -44,6 +44,7 @@
                href="{% url 'meta_creator:legals' %}"
                title="Detailed legal information">Legals/Impressum</a>
         </li>
+
         </ul>
     </nav>
       {% block content %}{% endblock %}

@@ -54,7 +54,8 @@ def get_contributors_from_repo(owner, repo, token, url):
             contributor_name = commit["commit"]["author"]["name"]
             contributor_email = commit["commit"]["author"]["email"]
             if contributor_name not in seen_names: 
-                name_parts = contributor_name.split()
+                cleaned_name = re.sub(r'[^a-zA-Z\s]', '', contributor_name)
+                name_parts = cleaned_name.split()
                 given_name = name_parts[0]
                 # Combine the rest of the name parts as the family name
                 family_name = ' '.join(name_parts[1:])
@@ -64,7 +65,8 @@ def get_contributors_from_repo(owner, repo, token, url):
                     "email": contributor_email,
                 })
                 seen_names.add(contributor_name) # to return unique metadata
-        return metadata
+                sorted_metadata = sorted(metadata, key=lambda x: x['givenName'].lower())
+        return sorted_metadata
     else:
         print(f"Failed to retrieve commit history: {response.status_code}")
         return None
@@ -103,8 +105,8 @@ def get_github_metadata(url, personal_token_key):
 
     response.raise_for_status()
     repo_data = response.json()
-
-    full_name = repo_data['full_name']
+    project_name = repo_data.get('name')
+    # full_name = repo_data['full_name']
     identifier = str(repo_data['id'])
 
     description = repo_data['description']
@@ -157,7 +159,7 @@ def get_github_metadata(url, personal_token_key):
     metadata_dict = {
         "@context": "https://w3id.org/codemeta/3.0",
         "@type": "SoftwareSourceCode",
-        "name": full_name,
+        "name": project_name,
         "identifier": identifier,
         "description": description,
         "codeRepository": code_repository,
