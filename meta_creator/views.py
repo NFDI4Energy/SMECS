@@ -28,6 +28,16 @@ def information(request):
 def legals(request):
     return render(request, 'meta_creator/legals.html')
 
+# Thesis_navigation to homepage and information page_based on requiremment analysis 
+def homepage(request):
+    return render(request, 'index.html')
+
+def information(request):
+    return render(request, 'meta_creator/information.html')
+
+def legals(request):
+    return render(request, 'meta_creator/legals.html')
+
 # Function for metadata extracting
 def index(request):
     """

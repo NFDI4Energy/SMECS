@@ -222,7 +222,7 @@
                       <td>{{ contributor.familyName }}</td>
                       <td>{{ contributor.email }}</td>
                       <td>
-                      <i title="Delete" class="fas fa-trash-alt" onclick="deletePerson(event, this, 'contributor')" data-action="delete"></i>
+                      <i title="Delete" class="fas fa-trash-alt" data-action="delete"></i>
                       </td>
                   </tr>
                   {% endfor %}
@@ -297,7 +297,7 @@
         <!-- </form> -->
         <div class="navigation-buttons">
           <button id="backwardBtnCon" class="backwardBtn"></button>
-          <button class="ExData" id="downloadBtn" title="Download the JSON file." onclick="downloadFile()">Download JSON</button>
+          <button class="ExData" id="downloadBtn" title="Download the JSON file.">Download JSON</button>
         </div>
     </div>
 </div>
@@ -310,12 +310,24 @@
 <form id="metadata-form-display">
   {% csrf_token %}
   <h4>Metdata in JSON format</h4>
+  
   <div class="metadata-container">
-    <i class="fas fa-download ExData" id="downloadButton" title="Download the JSON file." onclick="downloadFile()"></i>
-    <i id="copy-button" class="fa fa-copy" title="Copy the JSON"></i>
-    <span id="copy-feedback" class="feedback">Text copied!</span>
-    <textarea name="txtareaJSON" id="metadata-json">{{ my_json_str }}</textarea>
+    
+    <div class="left">
+      <span id="actionFeedback" class="feedback"></span>
+    </div>
+    
+    
+    
+    <div class="right">
+      <button  id="updateFormBtn">Update Form</button> 
+      <i class="fas fa-download ExData" id="downloadButton" title="Download the JSON file."></i>
+      
+      <i id="copy-button" class="fa fa-copy"  title="Copy the JSON"></i>
+
+    </div>
   </div>
+  <textarea name="txtareaJSON" id="metadata-json">{{ my_json_str }}</textarea>
 </form>
 </div><!-- metadataFormDisplay -->
 

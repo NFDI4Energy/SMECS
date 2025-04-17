@@ -7027,6 +7027,39 @@ input:checked + .slider:before {
   #form1 h6{
     font-size: 87%;
   }
+  .metadata-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+.left{
+  flex-grow: 1;
+  justify-content: flex-start;
+}
+.right{
+  display: flex;
+  justify-content: flex-end;
+  gap: 5px;
+  flex-grow: 2;
+}
+  button#updateFormBtn{
+    background-color: #055F82;
+    border: 1px solid white;
+    color: white;
+    padding: 5px 8px;
+    /* border: none; */
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 72%;
+    /* margin: 0 0 0 50%; */
+    font-weight: bold;
+    /* margin-top: 1.5rem; */
+    /* position: absolute;
+    left: 91.8%;
+    bottom: 91.5%; */
+
+  }
   button#new-url-extraction-page {
     background-color: #4BA0AF;
     border: 1px solid white;
