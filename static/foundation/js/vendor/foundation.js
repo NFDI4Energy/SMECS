@@ -27,102 +27,104 @@ document.addEventListener("DOMContentLoaded", function () {
   let licenses = [];
   const licenseInput = document.getElementById('license-input');
   const licenseSuggestionsBox = document.getElementById('licenseSuggestions');
-  const languages = [
-  "A# .NET", "A# (Axiom)", "A-0 System", "A+", "A++", "ABAP", "ABC", "ABC ALGOL",
-  "ABLE", "ABSET", "ABSYS", "ACC", "Accent", "Ace DASL", "ACL2", "ACT-III",
-  "Action!", "ActionScript", "Ada", "Adenine", "Agda", "Agilent VEE", "Agora",
-  "AIMMS", "Alef", "ALF", "ALGOL 58", "ALGOL 60", "ALGOL 68", "ALGOL W", "Alice",
-  "Alma-0", "AmbientTalk", "Amiga E", "AMOS", "AMPL", "APL",
-  "App Inventor for Android's visual block language", "AppleScript", "Arc", "ARexx",
-  "Argus", "AspectJ", "Assembly language", "ATS", "Ateji PX", "AutoHotkey",
-  "Autocoder", "AutoIt", "AutoLISP / Visual LISP", "Averest", "AWK", "Axum", "B",
-  "Babbage", "Bash", "BASIC", "bc", "BCPL", "BeanShell", "Batch (Windows/Dos)",
-  "Bertrand", "BETA", "Bigwig", "Bistro", "BitC", "BLISS", "Blue", "Bon", "Boo",
-  "Boomerang", "Bourne shell", "bash", "ksh", "BREW", "BPEL", "C", "C--", "C++",
-  "C#", "C/AL", "Caché ObjectScript", "C Shell", "Caml", "Candle", "Cayenne",
-  "CDuce", "Cecil", "Cel", "Cesil", "Ceylon", "CFEngine", "CFML", "Cg", "Ch",
-  "Chapel", "CHAIN", "Charity", "Charm", "Chef", "CHILL", "CHIP-8", "chomski",
-  "ChucK", "CICS", "Cilk", "CL", "Claire", "Clarion", "Clean", "Clipper", "CLIST",
-  "Clojure", "CLU", "CMS-2", "COBOL", "Cobra", "CODE", "CoffeeScript", "Cola",
-  "ColdC", "ColdFusion", "COMAL", "Combined Programming Language", "COMIT",
-  "Common Intermediate Language", "Common Lisp", "COMPASS", "Component Pascal",
-  "Constraint Handling Rules", "Converge", "Cool", "Coq", "Coral 66", "Corn",
-  "CorVision", "COWSEL", "CPL", "csh", "CSP", "Csound", "CUDA", "Curl", "Curry",
-  "Cyclone", "Cython", "D", "DASL", "DASL", "Dart", "DataFlex", "Datalog",
-  "DATATRIEVE", "dBase", "dc", "DCL", "Deesel", "Delphi", "DinkC", "DIBOL", "Dog",
-  "Draco", "DRAKON", "Dylan", "DYNAMO", "E", "E#", "Ease", "Easy PL/I",
-  "Easy Programming Language", "EASYTRIEVE PLUS", "ECMAScript", "Edinburgh IMP",
-  "EGL", "Eiffel", "ELAN", "Elixir", "Elm", "Emacs Lisp", "Emerald", "Epigram",
-  "EPL", "Erlang", "es", "Escapade", "Escher", "ESPOL", "Esterel", "Etoys", 
-  "Euclid", "Euler", "Euphoria", "EusLisp Robot Programming Language", 
-  "CMS EXEC", "EXEC 2", "Executable UML", "F", "F#", "Factor", "Falcon", "Fancy", 
-  "Fantom", "FAUST", "Felix", "Ferite", "FFP", "Fjölnir", "FL", "Flavors", 
-  "Flex", "FLOW-MATIC", "FOCAL", "FOCUS", "FOIL", "FORMAC", "@Formula", 
-  "Forth", "Fortran", "Fortress", "FoxBase", "FoxPro", "FP", "FPr", "Franz Lisp", 
-  "Frege", "F-Script", "FSProg", "G", "Google Apps Script", "Game Maker Language", 
-  "GameMonkey Script", "GAMS", "GAP", "G-code", "Genie", "GDL", "Gibiane", 
-  "GJ", "GEORGE", "GLSL", "GNU E", "GM", "Go", "Go!", "GOAL", "Gödel", "Godiva", 
-  "GOM (Good Old Mad)", "Goo", "Gosu", "GOTRAN", "GPSS", "GraphTalk", "GRASS", 
-  "Groovy", "Hack (programming language)", "HAL/S", "Hamilton C shell", "Harbour", 
-  "Hartmann pipelines", "Haskell", "Haxe", "High Level Assembly", "HLSL", "Hop", 
-  "Hope", "Hugo", "Hume", "HyperTalk", "IBM Basic assembly language", 
-  "IBM HAScript", "IBM Informix-4GL", "IBM RPG", "ICI", "Icon", "Id", "IDL", 
-  "Idris", "IMP", "Inform", "Io", "Ioke", "IPL", "IPTSCRAE", "ISLISP", "ISPF", 
-  "ISWIM", "J", "J#", "J++", "JADE", "Jako", "JAL", "Janus", "JASS", "Java", 
-  "JavaScript", "JCL", "JEAN", "Join Java", "JOSS", "Joule", "JOVIAL", "Joy", 
-  "JScript", "JScript .NET", "JavaFX Script", "Julia", "Jython", "K", 
-  "Kaleidoscope", "Karel", "Karel++", "KEE", "Kixtart", "KIF", "Kojo", "Kotlin", 
-  "KRC", "KRL", "KUKA", "KRYPTON", "ksh", "L", "L# .NET", "LabVIEW", "Ladder", 
-  "Lagoona", "LANSA", "Lasso", "LaTeX", "Lava", "LC-3", "Leda", "Legoscript", 
-  "LIL", "LilyPond", "Limbo", "Limnor", "LINC", "Lingo", "Linoleum", "LIS", 
-  "LISA", "Lisaac", "Lisp", "Lite-C", "Lithe", "Little b", "Logo", "Logtalk", 
-  "LPC", "LSE", "LSL", "LiveCode", "LiveScript", "Lua", "Lucid", "Lustre", 
-  "LYaPAS", "Lynx", "M2001", "M4", "Machine code", "MAD", "MAD/I", "Magik", 
-  "Magma", "make", "Maple", "MAPPER", "MARK-IV", "Mary", "MASM Microsoft Assembly x86", 
-  "Mathematica", "MATLAB", "Maxima", "Macsyma", "Max", "MaxScript", "Maya (MEL)", 
-  "MDL", "Mercury", "Mesa", "Metacard", "Metafont", "MetaL", "Microcode", 
-  "MicroScript", "MIIS", "MillScript", "MIMIC", "Mirah", "Miranda", "MIVA Script", 
-  "ML", "Moby", "Model 204", "Modelica", "Modula", "Modula-2", "Modula-3", 
-  "Mohol", "MOO", "Mortran", "Mouse", "MPD", "CIL", "MSL", "MUMPS", "NASM", 
-  "NATURAL", "Napier88", "Neko", "Nemerle", "nesC", "NESL", "Net.Data", 
-  "NetLogo", "NetRexx", "NewLISP", "NEWP", "Newspeak", "NewtonScript", "NGL", 
-  "Nial", "Nice", "Nickle", "Nim", "NPL", "Not eXactly C", "Not Quite C", 
-  "NSIS", "Nu", "NWScript", "NXT-G", "o:XML", "Oak", "Oberon", "Obix", "OBJ2", 
-  "Object Lisp", "ObjectLOGO", "Object REXX", "Object Pascal", "Objective-C", 
-  "Objective-J", "Obliq", "Obol", "OCaml", "occam", "occam-π", "Octave", 
-  "OmniMark", "Onyx", "OpenCL", "OpenEdge ABL", "OPL", "OpenVera", "OPRG", 
-  "OptimJ", "Orc", "ORCA/Modula-2", "Oriel", "Orwell", "Oxygene", "Oz", "P", 
-  "P4", "P#", "PARI/GP", "Pascal", "Pawn", "PCASTL", "PCF", "PEARL", "PeopleCode", 
-  "Perl", "PDL", "Pharo", "PHP", "PICT", "Pike", "PILOT", "Pipelines", "Pizza", 
-  "PL-11", "PL/0", "PL/B", "PL/C", "PL/I", "PL/M", "PL/P", "PL/SQL", "PL360", 
-  "PLEX", "PLEXIL", "Plus", "POP-11", "POP-2", "Pony", "Portable Game Notation", "PostScript", "POV-Ray SDL", "Powerhouse", "PowerBuilder", 
-  "PowerShell", "PPL", "Processing", "Prograph", "PROIV", "Prolog", "Promela", 
-  "PROSE modeling language", "PROTEL", "ProvideX", "Pure", "Pure Data", "PureBasic", 
-  "PureScript", "Python", "Q (equational programming language)", "Q (programming language from Kx Systems)", 
-  "Qalb", "QPL", "QtScript", "QuakeC", "QPL", "R", "R++", "Racket", "RAPID", 
-  "Raven", "RDL", "REBOL", "Red", "Redcode", "REFAL", "Reia", "Revolution", 
-  "REXX", "Ring", "Rlab", "ROOP", "RPG", "RPL", "RSL", "RTL/2", "Ruby", "RuneScript", 
-  "Rust", "S", "S-Lang", "S-PLUS", "S/SL", "S2", "SabreTalk", "SAIL", "SALSA", 
-  "SAM76", "SAS", "SASL", "Sather", "Sawzall", "Scala", "Scheme", "Scilab", 
-  "Scratch", "Script.NET", "Sed", "Seed7", "Self", "SenseTalk", "SequenceL", 
-  "SETL", "SIMPOL", "SIGNAL", "SiMPLE", "SIMSCRIPT", "Simula", "Simulink", "SISAL", 
-  "SLIP", "SMALL", "Smalltalk", "SML", "Snap!", "SNOBOL", "SPARK", "Speedcode", 
-  "SPIN", "SP/k", "SPSS", "SQR", "Squeak", "Squirrel", "SR", "S/SL", "Starlogo", 
-  "Strand", "Stateflow", "Subtext", "SuperCollider", "SuperTalk", "Swift", "SYMPL", 
-  "SystemVerilog", "T", "TACL", "TADS", "TAL", "Tcl", "Tea", "TECO", "TELCOMP", 
-  "TeX", "TEX", "TIE", "Toccata", "TOM", "TOM-Script", "Tool Command Language", 
-  "Turing", "TUTOR", "TXL", "TypeScript", "U-SQL", "Ubercode", "UCSD Pascal", 
-  "Umple", "Unicon", "Uniface", "UNITY", "Unix shell", "UnrealScript", "V", "Vala", 
-  "VBA", "VBScript", "Verilog", "VHDL", "Visual Basic", "Visual Basic .NET", "Visual DataFlex", 
-  "Visual DialogScript", "Visual FoxPro", "Visual J++", "Visual J#", "Visual Objects", 
-  "VSXu", "WATFIV", "WebDNA", "WebQL", "Whiley", "Winbatch", "Wolfram", "Wyvern", 
-  "X++", "X10", "XBase++", "XBase", "XC", "xHarbour", "XL", "Xojo", "XOTcl", 
-  "XPath", "XPL", "XPL0", "XQuery", "XSB", "XSLT", "Xtend", "Yorick", "Yoix", 
-  "YQL", "YUI", "Z notation", "ZPL", "Zig", "ZOPL", "ZPL"
-  ];
+  const tagsContainer = document.getElementById("languageTags");
+  const hiddenInput = document.getElementById("languageHiddenInput");
+  // const languages = [
+  // "A# .NET", "A# (Axiom)", "A-0 System", "A+", "A++", "ABAP", "ABC", "ABC ALGOL",
+  // "ABLE", "ABSET", "ABSYS", "ACC", "Accent", "Ace DASL", "ACL2", "ACT-III",
+  // "Action!", "ActionScript", "Ada", "Adenine", "Agda", "Agilent VEE", "Agora",
+  // "AIMMS", "Alef", "ALF", "ALGOL 58", "ALGOL 60", "ALGOL 68", "ALGOL W", "Alice",
+  // "Alma-0", "AmbientTalk", "Amiga E", "AMOS", "AMPL", "APL",
+  // "App Inventor for Android's visual block language", "AppleScript", "Arc", "ARexx",
+  // "Argus", "AspectJ", "Assembly language", "ATS", "Ateji PX", "AutoHotkey",
+  // "Autocoder", "AutoIt", "AutoLISP / Visual LISP", "Averest", "AWK", "Axum", "B",
+  // "Babbage", "Bash", "BASIC", "bc", "BCPL", "BeanShell", "Batch (Windows/Dos)",
+  // "Bertrand", "BETA", "Bigwig", "Bistro", "BitC", "BLISS", "Blue", "Bon", "Boo",
+  // "Boomerang", "Bourne shell", "bash", "ksh", "BREW", "BPEL", "C", "C--", "C++",
+  // "C#", "C/AL", "Caché ObjectScript", "C Shell", "Caml", "Candle", "Cayenne",
+  // "CDuce", "Cecil", "Cel", "Cesil", "Ceylon", "CFEngine", "CFML", "Cg", "Ch",
+  // "Chapel", "CHAIN", "Charity", "Charm", "Chef", "CHILL", "CHIP-8", "chomski",
+  // "ChucK", "CICS", "Cilk", "CL", "Claire", "Clarion", "Clean", "Clipper", "CLIST",
+  // "Clojure", "CLU", "CMS-2", "COBOL", "Cobra", "CODE", "CoffeeScript", "Cola",
+  // "ColdC", "ColdFusion", "COMAL", "Combined Programming Language", "COMIT",
+  // "Common Intermediate Language", "Common Lisp", "COMPASS", "Component Pascal",
+  // "Constraint Handling Rules", "Converge", "Cool", "Coq", "Coral 66", "Corn",
+  // "CorVision", "COWSEL", "CPL", "csh", "CSP", "Csound", "CUDA", "Curl", "Curry",
+  // "Cyclone", "Cython", "D", "DASL", "DASL", "Dart", "DataFlex", "Datalog",
+  // "DATATRIEVE", "dBase", "dc", "DCL", "Deesel", "Delphi", "DinkC", "DIBOL", "Dog",
+  // "Draco", "DRAKON", "Dylan", "DYNAMO", "E", "E#", "Ease", "Easy PL/I",
+  // "Easy Programming Language", "EASYTRIEVE PLUS", "ECMAScript", "Edinburgh IMP",
+  // "EGL", "Eiffel", "ELAN", "Elixir", "Elm", "Emacs Lisp", "Emerald", "Epigram",
+  // "EPL", "Erlang", "es", "Escapade", "Escher", "ESPOL", "Esterel", "Etoys", 
+  // "Euclid", "Euler", "Euphoria", "EusLisp Robot Programming Language", 
+  // "CMS EXEC", "EXEC 2", "Executable UML", "F", "F#", "Factor", "Falcon", "Fancy", 
+  // "Fantom", "FAUST", "Felix", "Ferite", "FFP", "Fjölnir", "FL", "Flavors", 
+  // "Flex", "FLOW-MATIC", "FOCAL", "FOCUS", "FOIL", "FORMAC", "@Formula", 
+  // "Forth", "Fortran", "Fortress", "FoxBase", "FoxPro", "FP", "FPr", "Franz Lisp", 
+  // "Frege", "F-Script", "FSProg", "G", "Google Apps Script", "Game Maker Language", 
+  // "GameMonkey Script", "GAMS", "GAP", "G-code", "Genie", "GDL", "Gibiane", 
+  // "GJ", "GEORGE", "GLSL", "GNU E", "GM", "Go", "Go!", "GOAL", "Gödel", "Godiva", 
+  // "GOM (Good Old Mad)", "Goo", "Gosu", "GOTRAN", "GPSS", "GraphTalk", "GRASS", 
+  // "Groovy", "Hack (programming language)", "HAL/S", "Hamilton C shell", "Harbour", 
+  // "Hartmann pipelines", "Haskell", "Haxe", "High Level Assembly", "HLSL", "Hop", 
+  // "Hope", "Hugo", "Hume", "HyperTalk", "IBM Basic assembly language", 
+  // "IBM HAScript", "IBM Informix-4GL", "IBM RPG", "ICI", "Icon", "Id", "IDL", 
+  // "Idris", "IMP", "Inform", "Io", "Ioke", "IPL", "IPTSCRAE", "ISLISP", "ISPF", 
+  // "ISWIM", "J", "J#", "J++", "JADE", "Jako", "JAL", "Janus", "JASS", "Java", 
+  // "JavaScript", "JCL", "JEAN", "Join Java", "JOSS", "Joule", "JOVIAL", "Joy", 
+  // "JScript", "JScript .NET", "JavaFX Script", "Julia", "Jython", "K", 
+  // "Kaleidoscope", "Karel", "Karel++", "KEE", "Kixtart", "KIF", "Kojo", "Kotlin", 
+  // "KRC", "KRL", "KUKA", "KRYPTON", "ksh", "L", "L# .NET", "LabVIEW", "Ladder", 
+  // "Lagoona", "LANSA", "Lasso", "LaTeX", "Lava", "LC-3", "Leda", "Legoscript", 
+  // "LIL", "LilyPond", "Limbo", "Limnor", "LINC", "Lingo", "Linoleum", "LIS", 
+  // "LISA", "Lisaac", "Lisp", "Lite-C", "Lithe", "Little b", "Logo", "Logtalk", 
+  // "LPC", "LSE", "LSL", "LiveCode", "LiveScript", "Lua", "Lucid", "Lustre", 
+  // "LYaPAS", "Lynx", "M2001", "M4", "Machine code", "MAD", "MAD/I", "Magik", 
+  // "Magma", "make", "Maple", "MAPPER", "MARK-IV", "Mary", "MASM Microsoft Assembly x86", 
+  // "Mathematica", "MATLAB", "Maxima", "Macsyma", "Max", "MaxScript", "Maya (MEL)", 
+  // "MDL", "Mercury", "Mesa", "Metacard", "Metafont", "MetaL", "Microcode", 
+  // "MicroScript", "MIIS", "MillScript", "MIMIC", "Mirah", "Miranda", "MIVA Script", 
+  // "ML", "Moby", "Model 204", "Modelica", "Modula", "Modula-2", "Modula-3", 
+  // "Mohol", "MOO", "Mortran", "Mouse", "MPD", "CIL", "MSL", "MUMPS", "NASM", 
+  // "NATURAL", "Napier88", "Neko", "Nemerle", "nesC", "NESL", "Net.Data", 
+  // "NetLogo", "NetRexx", "NewLISP", "NEWP", "Newspeak", "NewtonScript", "NGL", 
+  // "Nial", "Nice", "Nickle", "Nim", "NPL", "Not eXactly C", "Not Quite C", 
+  // "NSIS", "Nu", "NWScript", "NXT-G", "o:XML", "Oak", "Oberon", "Obix", "OBJ2", 
+  // "Object Lisp", "ObjectLOGO", "Object REXX", "Object Pascal", "Objective-C", 
+  // "Objective-J", "Obliq", "Obol", "OCaml", "occam", "occam-π", "Octave", 
+  // "OmniMark", "Onyx", "OpenCL", "OpenEdge ABL", "OPL", "OpenVera", "OPRG", 
+  // "OptimJ", "Orc", "ORCA/Modula-2", "Oriel", "Orwell", "Oxygene", "Oz", "P", 
+  // "P4", "P#", "PARI/GP", "Pascal", "Pawn", "PCASTL", "PCF", "PEARL", "PeopleCode", 
+  // "Perl", "PDL", "Pharo", "PHP", "PICT", "Pike", "PILOT", "Pipelines", "Pizza", 
+  // "PL-11", "PL/0", "PL/B", "PL/C", "PL/I", "PL/M", "PL/P", "PL/SQL", "PL360", 
+  // "PLEX", "PLEXIL", "Plus", "POP-11", "POP-2", "Pony", "Portable Game Notation", "PostScript", "POV-Ray SDL", "Powerhouse", "PowerBuilder", 
+  // "PowerShell", "PPL", "Processing", "Prograph", "PROIV", "Prolog", "Promela", 
+  // "PROSE modeling language", "PROTEL", "ProvideX", "Pure", "Pure Data", "PureBasic", 
+  // "PureScript", "Python", "Q (equational programming language)", "Q (programming language from Kx Systems)", 
+  // "Qalb", "QPL", "QtScript", "QuakeC", "QPL", "R", "R++", "Racket", "RAPID", 
+  // "Raven", "RDL", "REBOL", "Red", "Redcode", "REFAL", "Reia", "Revolution", 
+  // "REXX", "Ring", "Rlab", "ROOP", "RPG", "RPL", "RSL", "RTL/2", "Ruby", "RuneScript", 
+  // "Rust", "S", "S-Lang", "S-PLUS", "S/SL", "S2", "SabreTalk", "SAIL", "SALSA", 
+  // "SAM76", "SAS", "SASL", "Sather", "Sawzall", "Scala", "Scheme", "Scilab", 
+  // "Scratch", "Script.NET", "Sed", "Seed7", "Self", "SenseTalk", "SequenceL", 
+  // "SETL", "SIMPOL", "SIGNAL", "SiMPLE", "SIMSCRIPT", "Simula", "Simulink", "SISAL", 
+  // "SLIP", "SMALL", "Smalltalk", "SML", "Snap!", "SNOBOL", "SPARK", "Speedcode", 
+  // "SPIN", "SP/k", "SPSS", "SQR", "Squeak", "Squirrel", "SR", "S/SL", "Starlogo", 
+  // "Strand", "Stateflow", "Subtext", "SuperCollider", "SuperTalk", "Swift", "SYMPL", 
+  // "SystemVerilog", "T", "TACL", "TADS", "TAL", "Tcl", "Tea", "TECO", "TELCOMP", 
+  // "TeX", "TEX", "TIE", "Toccata", "TOM", "TOM-Script", "Tool Command Language", 
+  // "Turing", "TUTOR", "TXL", "TypeScript", "U-SQL", "Ubercode", "UCSD Pascal", 
+  // "Umple", "Unicon", "Uniface", "UNITY", "Unix shell", "UnrealScript", "V", "Vala", 
+  // "VBA", "VBScript", "Verilog", "VHDL", "Visual Basic", "Visual Basic .NET", "Visual DataFlex", 
+  // "Visual DialogScript", "Visual FoxPro", "Visual J++", "Visual J#", "Visual Objects", 
+  // "VSXu", "WATFIV", "WebDNA", "WebQL", "Whiley", "Winbatch", "Wolfram", "Wyvern", 
+  // "X++", "X10", "XBase++", "XBase", "XC", "xHarbour", "XL", "Xojo", "XOTcl", 
+  // "XPath", "XPL", "XPL0", "XQuery", "XSB", "XSLT", "Xtend", "Yorick", "Yoix", 
+  // "YQL", "YUI", "Z notation", "ZPL", "Zig", "ZOPL", "ZPL"
+  // ];
 
 
-let selectedLanguages = [];
+// let selectedLanguages = [];
 
 const data = metadataJson.value;
 const metadata = JSON.parse(data);
@@ -180,57 +182,136 @@ document.querySelectorAll('.custom-tooltip-metadata').forEach(function (element)
 });
 
 
-// Programming languagges
-inputLanguages.addEventListener("input", function() {
-  const query = inputLanguages.value.toLowerCase().split(',').pop().trim();
-  suggestionsBox.innerHTML = "";
+// programming and keywords tag logic
+function setupTagging({
+  containerId,
+  hiddenInputId,
+  inputId,
+  suggestionsId = null,
+  jsonKey,
+  useAutocomplete = false,
+  autocompleteSource = []
+}) {
+  const container = document.getElementById(containerId);
+  const hiddenInput = document.getElementById(hiddenInputId);
+  const input = document.getElementById(inputId);
+  const suggestionsBox = suggestionsId ? document.getElementById(suggestionsId) : null;
 
-  if (query.length === 0) {
-    suggestionsBox.style.display = "none";
-    return;
-  }
+  let selectedTags = hiddenInput.value
+    .split(",")
+    .map(v => v.trim())
+    .filter(Boolean);
 
-  let existingLanguages = inputLanguages.value.split(',').map(s => s.trim()).filter(Boolean);
+  if (useAutocomplete && suggestionsBox) {
+    input.addEventListener("input", () => {
+      const query = input.value.trim().toLowerCase();
+      suggestionsBox.innerHTML = "";
 
-  const matchedLanguages = languages.filter(lang => 
-    lang.toLowerCase().startsWith(query) && !existingLanguages.includes(lang)
-  );
+      if (!query) return (suggestionsBox.style.display = "none");
 
-  if (matchedLanguages.length > 0) {
-    suggestionsBox.style.display = "block";
+      const filtered = autocompleteSource.filter(
+        tag => tag.toLowerCase().startsWith(query) && !selectedTags.includes(tag)
+      );
 
-    matchedLanguages.forEach(lang => {
-      const div = document.createElement("div");
-      div.classList.add("suggestion-item");
-      div.textContent = lang;
-      div.addEventListener("click", function() {
-        existingLanguages[existingLanguages.length - 1] = lang;
-        inputLanguages.value = existingLanguages.join(', ') + ', ';
+      if (filtered.length === 0) {
         suggestionsBox.style.display = "none";
-        inputLanguages.focus();
-        const event = new Event('input', { bubbles: true });
-        inputLanguages.dispatchEvent(event);
+        return;
+      }
+
+      filtered.forEach(tag => {
+        const div = document.createElement("div");
+        div.classList.add("suggestion-item");
+        div.textContent = tag;
+        div.onclick = () => addTag(tag);
+        suggestionsBox.appendChild(div);
       });
-      suggestionsBox.appendChild(div);
+
+      suggestionsBox.style.display = "block";
     });
-  } else {
-    suggestionsBox.style.display = "none";
+
+    document.addEventListener("click", (e) => {
+      if (!suggestionsBox.contains(e.target) && e.target !== input) {
+        suggestionsBox.style.display = "none";
+      }
+    });
   }
+
+  function addTag(tagValue) {
+    if (!tagValue || selectedTags.includes(tagValue)) return;
+
+    selectedTags.push(tagValue);
+
+    const tag = document.createElement("span");
+    tag.classList.add("tag");
+    tag.innerHTML = `${tagValue}<span class="remove-tag" data-value="${tagValue}">×</span>`;
+    container.insertBefore(tag, input);
+
+    updateHidden();
+    input.value = "";
+    if (suggestionsBox) suggestionsBox.style.display = "none";
+  }
+
+  container.addEventListener("click", (e) => {
+    if (e.target.classList.contains("remove-tag")) {
+      const value = e.target.dataset.value;
+      selectedTags = selectedTags.filter(tag => tag !== value);
+      e.target.parentElement.remove();
+      updateHidden();
+    }
+  });
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const newTag = input.value.trim();
+      if (newTag && !selectedTags.includes(newTag)) {
+        addTag(newTag);
+      }
+      input.value = "";
+      if (suggestionsBox) suggestionsBox.style.display = "none";
+    }
+  });
+
+  function updateHidden() {
+    hiddenInput.value = selectedTags.join(", ");
+    const jsonObject = JSON.parse(metadataJson.value);
+    jsonObject[jsonKey] = selectedTags;
+    metadataJson.value = JSON.stringify(jsonObject, null, 2);
+  }
+}
+
+// Initialize programmingLanguage with autocomplete
+fetch(JsonSchema)
+  .then(res => res.json())
+  .then(schema => {
+    const availableLanguages = schema.properties?.programmingLanguage?.items?.enum || [];
+
+    setupTagging({
+      containerId: "languageTags",
+      hiddenInputId: "languageHiddenInput",
+      inputId: "languageInput",
+      suggestionsId: "suggestions",
+      jsonKey: "programmingLanguage",
+      useAutocomplete: true,
+      autocompleteSource: availableLanguages
+    });
+  });
+
+// Initialize keywords without autocomplete
+setupTagging({
+  containerId: "keywordsTags",
+  hiddenInputId: "keywordsHiddenInput",
+  inputId: "keywordsInput",
+  jsonKey: "keywords",
+  useAutocomplete: false
 });
 
-document.addEventListener("click", function(e) {
-  if (!suggestionsBox.contains(e.target) && e.target !== inputLanguages) {
-    suggestionsBox.style.display = "none";
-  }
-});
-
-// Fetch the JSON Schema and populate the dropdown
+// Fetch the JSON Schema and populate the development Status Dropdown
 fetch(JsonSchema)
   .then(response => response.json())
   .then(schema => {
     const statusEnum = schema.properties?.developmentStatus?.enum || [];
     const dropdown = document.getElementById('developmentStatusDropdown');
-    console.log(dropdown);
     statusEnum.forEach(status => {
       const option = document.createElement('option');
       option.value = status;
@@ -426,12 +507,72 @@ copyBtn.addEventListener('click', function(event) {
       }
     });
   }
-  
-  // Usage for contributors table
-  handleTableClick(contributorsTableBody, (cell) => editCell(cell, 'contributor', ['email']), deletePerson);
+//   document.getElementById("metadata-form").addEventListener("submit", function(event) {
+//     event.preventDefault(); 
+// });
+// For both checkboxes: Author and Contributor
+contributorsTableBody.addEventListener('change', function (event) {
+  if (event.target.classList.contains('checkbox-contributor') || event.target.classList.contains('checkbox-author')) {
+    updateContributorsAndAuthorsJson();
+  }
+});
 
-  // Usage for authors table
-  handleTableClick(authorsTableBody, (cell) => editCell(cell, 'author', ['email']), deletePerson);
+
+// Handle row deletion and update JSON accordingly
+window.handleDelete = function (event) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const button = event.target;
+  const row = button.closest('tr');
+  if (!row) {
+    console.error("Row not found for deletion");
+    return;
+  }
+
+  row.remove(); // Remove the row visually
+  updateContributorsAndAuthorsJson(); // Sync JSON
+};
+
+// Update JSON for contributors and authors based on checkbox state
+function updateContributorsAndAuthorsJson() {
+  const contributorsTableBody = document.getElementById('contributorsTableBody');
+  const rows = contributorsTableBody.querySelectorAll('tr');
+  const existingJson = JSON.parse(metadataJson.value);
+  let contributors = [];
+  let authors = [];
+
+  rows.forEach(row => {
+    const givenName = row.cells[1]?.textContent.trim();
+    const familyName = row.cells[2]?.textContent.trim();
+    const email = row.cells[3]?.textContent.trim();
+
+    const contributorCheckbox = row.querySelector('.checkbox-contributor');
+    const authorCheckbox = row.querySelector('.checkbox-author');
+
+    if (contributorCheckbox && contributorCheckbox.checked) {
+      contributors.push({
+        "@type": "Person",
+        givenName,
+        familyName,
+        email
+      });
+    }
+
+    if (authorCheckbox && authorCheckbox.checked) {
+      authors.push({
+        "@type": "Person",
+        givenName,
+        familyName,
+        email
+      });
+    }
+  });
+
+  existingJson.contributor = contributors;
+  existingJson.author = authors;
+  metadataJson.value = JSON.stringify(existingJson, null, 2);
+}
 
 
 // Pinkish inputs, when no metadata is extracted
@@ -455,7 +596,7 @@ function validateInput(input) {
         input.classList.remove("invalid");
     }
 }
-
+//add person to the table
 function addPerson(type, tableBodyId, properties) {
     var givenNameInput = document.getElementById(`${type}GivenNameInput`);
     var familyNameInput = document.getElementById(`${type}FamilyNameInput`);
@@ -487,36 +628,50 @@ function addPerson(type, tableBodyId, properties) {
       var input = document.getElementById(`${type}${prop}Input`);
       newRow.insertCell(cellIndex++).textContent = input.value;
     });
-  
+    // Checkbox cell for Contributor
+      const contributorCell = newRow.insertCell(cellIndex++);
+      const contributorCheckbox = document.createElement("input");
+      contributorCheckbox.type = "checkbox";
+      contributorCheckbox.classList.add("checkbox-contributor");
+      contributorCell.appendChild(contributorCheckbox);
+
+    // Checkbox cell for Author
+      const authorCell = newRow.insertCell(cellIndex++);
+      const authorCheckbox = document.createElement("input");
+      authorCheckbox.type = "checkbox";
+      authorCheckbox.classList.add("checkbox-author");
+      authorCell.appendChild(authorCheckbox);
+      
     // Add delete button with icon
-    var deleteButton = document.createElement('i');
+    const deletecell = newRow.insertCell(cellIndex++);
+    const deleteButton = document.createElement('i');
     deleteButton.classList.add('fas', 'fa-trash-alt');
-    deleteButton.onclick = function (event) {
-      event.stopPropagation(); 
-      deletePerson(newRow, type);
-    };
+    deleteButton.setAttribute('data-action', 'delete');
+    deleteButton.onclick = function (event) { handleDelete(event);};
+    deletecell.appendChild(deleteButton);
+
   
     
     // Append the delete button to the cell
-    newRow.insertCell(cellIndex++).appendChild(deleteButton);
+    // newRow.insertCell(cellIndex++).appendChild(deleteButton);
 
     // Add copy button with icon (only for contributor table)
-    if (type === 'contributor') {
-      var copyButton = document.createElement('i');
-      copyButton.classList.add('fas', 'fa-copy');
-      copyButton.title = 'This contributor is also an author'; // Add title for tooltip
-      copyButton.onclick = function (event) {
-          event.stopPropagation();
-          copyRowToAuthorTable(event, newRow);
-      };
-      newRow.insertCell(cellIndex++).appendChild(copyButton);
-    }
+    // if (type === 'contributor') {
+    //   var copyButton = document.createElement('i');
+    //   copyButton.classList.add('fas', 'fa-copy');
+    //   copyButton.title = 'This contributor is also an author'; // Add title for tooltip
+    //   copyButton.onclick = function (event) {
+    //       event.stopPropagation();
+    //       copyRowToAuthorTable(event, newRow);
+    //   };
+    //   newRow.insertCell(cellIndex++).appendChild(copyButton);
+    // }
 
     
     // Attach the event listener to the new delete button
-    deleteButton.addEventListener('click', function (event) {
-      deletePerson(event, this, type);
-    });
+    // deleteButton.addEventListener('click', function (event) {
+    //   deletePerson(event, this, type);
+    // });
   
     givenNameInput.value = '';
     familyNameInput.value = '';
@@ -527,76 +682,77 @@ function addPerson(type, tableBodyId, properties) {
     for (let i = 0; i < tableBody.rows.length; i++) {
       tableBody.rows[i].cells[0].textContent = `#${i + 1}`;
     }
-    updateJsonData(`${type}sTableBody`, type, properties);
+    
+    // updateJsonData(`${type}sTableBody`, type, properties);
     validateRowCells(newRow); 
 }
   
 
-// Copy row to author table
-function copyRowToAuthorTable(event, button) {
-  event.preventDefault();
-  const row = button.closest('tr');
-  if (!row) {
-      console.error("Row not found");
-      return;
-  }
-  const authorsTableBody = document.getElementById('authorsTableBody');
-  if (!authorsTableBody) {
-      console.error("Authors table body not found");
-      return;
-  }
+// // Copy row to author table
+// function copyRowToAuthorTable(event, button) {
+//   event.preventDefault();
+//   const row = button.closest('tr');
+//   if (!row) {
+//       console.error("Row not found");
+//       return;
+//   }
+//   const contributorsTableBody = document.getElementById('contributorsTableBody');
+//   if (!contributorsTableBody) {
+//       console.error("table body not found");
+//       return;
+//   }
 
-  // Extract metadata from the contributor row
-  const givenName = row.cells[1].textContent;
-  const familyName = row.cells[2].textContent;
-  const email = row.cells[3].textContent;
+//   // Extract metadata from the contributor row
+//   const givenName = row.cells[1].textContent;
+//   const familyName = row.cells[2].textContent;
+//   const email = row.cells[3].textContent;
 
-  // Insert a new row into the authors table
-  const newRow = authorsTableBody.insertRow();
+//   // Insert a new row into the authors table
+//   const newRow = authorsTableBody.insertRow();
 
-  // Insert cells with the contributor metadata
-  newRow.insertCell(0).textContent = `#${authorsTableBody.rows.length}`;
-  newRow.insertCell(1).textContent = givenName;
-  newRow.insertCell(2).textContent = familyName;
-  newRow.insertCell(3).textContent = email;
+//   // Insert cells with the contributor metadata
+//   newRow.insertCell(0).textContent = `#${authorsTableBody.rows.length}`;
+//   newRow.insertCell(1).textContent = givenName;
+//   newRow.insertCell(2).textContent = familyName;
+//   newRow.insertCell(3).textContent = email;
 
-  // Create delete button
-  const deleteButton = document.createElement('i');
-  deleteButton.classList.add('fas', 'fa-trash-alt');
-  deleteButton.onclick = function (event) {
-      event.stopPropagation();
-      deletePerson(event, newRow, 'author');
-  };
-  newRow.insertCell(4).appendChild(deleteButton);
+//   // Create delete button
+//   const deleteButton = document.createElement('i');
+//   deleteButton.classList.add('fas', 'fa-trash-alt');
+//   deleteButton.onclick = function (event) {
+//       event.stopPropagation();
+//       deletePerson(event, newRow, 'author');
+//   };
+//   newRow.insertCell(4).appendChild(deleteButton);
 
-  // Attach the event listener to the delete button in the new row
-  deleteButton.addEventListener('click', function(event) {
-      deletePerson(event, newRow, 'author');
-  });
+//   // Attach the event listener to the delete button in the new row
+//   deleteButton.addEventListener('click', function(event) {
+//       deletePerson(event, newRow, 'author');
+//   });
 
-  // Update author row numbers
-  for (let i = 0; i < authorsTableBody.rows.length; i++) {
-      authorsTableBody.rows[i].cells[0].textContent = `#${i + 1}`;
-  }
-  validateRowCells(newRow);
-  updateJsonData('authorsTableBody', 'author', ['Email']);
-}
+//   // Update author row numbers
+//   for (let i = 0; i < authorsTableBody.rows.length; i++) {
+//       authorsTableBody.rows[i].cells[0].textContent = `#${i + 1}`;
+//   }
+//   validateRowCells(newRow);
+//   updateJsonData('authorsTableBody', 'author', ['Email']);
+// }
 
 
 // Initialize table with existing contributors and authors
 function initializeTables() {
   const contributorsRows = document.getElementById('contributorsTableBody').rows;
   for (let i = 0; i < contributorsRows.length; i++) {
-      attachCopyButton(contributorsRows[i]);
+      // attachCopyButton(contributorsRows[i]);
       validateRowCells(contributorsRows[i]); // Validate each row during initialization
   }
-  const authorsRows = document.getElementById('authorsTableBody').rows;
-  for (let i = 0; i < authorsRows.length; i++) {
-      validateRowCells(authorsRows[i]); // Validate each row during initialization
-  }
+  // const authorsRows = document.getElementById('authorsTableBody').rows;
+  // for (let i = 0; i < authorsRows.length; i++) {
+  //     validateRowCells(authorsRows[i]); // Validate each row during initialization
+  // }
 }
 
-// Validate each cell in the row
+// Validate each cell in the row in table
 function validateRowCells(row) {
   for (let i = 0; i < row.cells.length; i++) {
       const cell = row.cells[i];
@@ -612,16 +768,16 @@ function validateRowCells(row) {
   }
 }
 
-function attachCopyButton(row) {
-  const copyButton = document.createElement('i');
-  copyButton.classList.add('fas', 'fa-copy');
-  copyButton.title = 'This contributor is also an author'; 
-  copyButton.onclick = function (event) {
-    event.stopPropagation();
-    copyRowToAuthorTable(event, row);
-  };
-  row.insertCell(row.cells.length).appendChild(copyButton);
-}
+// function attachCopyButton(row) {
+//   const copyButton = document.createElement('i');
+//   copyButton.classList.add('fas', 'fa-copy');
+//   copyButton.title = 'This contributor is also an author'; 
+//   copyButton.onclick = function (event) {
+//     event.stopPropagation();
+//     copyRowToAuthorTable(event, row);
+//   };
+//   row.insertCell(row.cells.length).appendChild(copyButton);
+// }
 
 // Initialize tables on load
 initializeTables();
@@ -677,44 +833,44 @@ function editCell(cell, type, properties) {
 
 
 
-function deletePerson(event, button, type) {
-  event.stopPropagation();
-  const row = button.closest('tr');
-  if (row) {
-      // Get the table body based on the type (contributor or author)
-      const tableBody = document.getElementById(`${type}sTableBody`);
-      const rowIndex = row.rowIndex;
-      row.remove();
+// function deletePerson(event, button, type) {
+//   event.stopPropagation();
+//   const row = button.closest('tr');
+//   if (row) {
+//       // Get the table body based on the type (contributor or author)
+//       const tableBody = document.getElementById(`${type}sTableBody`);
+//       const rowIndex = row.rowIndex;
+//       row.remove();
 
-      // Update Contributor/Author numbers for all remaining rows
-      for (let i = 0; i < tableBody.rows.length; i++) {
-          tableBody.rows[i].cells[0].textContent = `#${i + 1}`;
-      }
+//       // Update Contributor/Author numbers for all remaining rows
+//       for (let i = 0; i < tableBody.rows.length; i++) {
+//           tableBody.rows[i].cells[0].textContent = `#${i + 1}`;
+//       }
 
-      // Update JSON data in the textarea
-      if (type === 'contributor') {
-          updateJsonData(`${type}sTableBody`, type, ['email']);
-      } else if (type === 'author') {
-          updateJsonData(`${type}sTableBody`, type, ['email']);
-      } else {
-          console.error("Unsupported type");
-      }
-  } else {
-      console.error("Unable to find the row associated with the button");
-  }
-}
+//       // Update JSON data in the textarea
+//       if (type === 'contributor') {
+//           updateJsonData(`${type}sTableBody`, type, ['email']);
+//       } else if (type === 'author') {
+//           updateJsonData(`${type}sTableBody`, type, ['email']);
+//       } else {
+//           console.error("Unsupported type");
+//       }
+//   } else {
+//       console.error("Unable to find the row associated with the button");
+//   }
+// }
 
-deleteButtons.forEach(function(button) {
-    button.addEventListener('click', function(event) {
-        deletePerson(event, this, 'contributor');
-    });
-});
+// deleteButtons.forEach(function(button) {
+//     button.addEventListener('click', function(event) {
+//         deletePerson(event, this, 'contributor');
+//     });
+// });
 
-deleteButtons.forEach(function(button) {
-    button.addEventListener('click', function(event) {
-        deletePerson(event, this, 'author');
-    });
-});
+// deleteButtons.forEach(function(button) {
+//     button.addEventListener('click', function(event) {
+//         deletePerson(event, this, 'author');
+//     });
+// });
 
 function updateJsonData(tableBodyId, jsonDataProperty, additionalProperties) {
   var tableBody = document.getElementById(tableBodyId);
@@ -746,7 +902,7 @@ function updateJsonData(tableBodyId, jsonDataProperty, additionalProperties) {
 inputs.forEach((input) => {
   const handleChange = () => {
     validateInput(input); 
-
+   
     const jsonObject = JSON.parse(metadataJson.value);
 
     const key = input.name.split("[")[0];
@@ -766,25 +922,24 @@ inputs.forEach((input) => {
       }
     }
 
-    ["programmingLanguage", "keywords"].forEach((prop) => {
-      if (jsonObject[prop]) {
-        if (typeof jsonObject[prop] === "string") {
-          jsonObject[prop] = jsonObject[prop]
-            .split(",")
-            .map((lang) => lang.trim())
-            .filter((lang) => lang !== "");
-        } else {
-          jsonObject[prop] = jsonObject[prop].filter((lang) => lang !== "");
-        }
-      }
-    });
-
+    // ["programmingLanguage", "keywords"].forEach((prop) => {
+    //   if (jsonObject[prop]) {
+    //     if (typeof jsonObject[prop] === "string") {
+    //       jsonObject[prop] = jsonObject[prop]
+    //         .split(",")
+    //         .map((lang) => lang.trim())
+    //         .filter((lang) => lang !== "");
+    //     } else {
+    //       jsonObject[prop] = jsonObject[prop].filter((lang) => lang !== "");
+    //     }
+    //   }
+    // });
     metadataJson.value = JSON.stringify(jsonObject, null, 2);
   };
 
   // Attach event listeners for both inputs and selects
-  input.addEventListener("input", handleChange);
-  input.addEventListener("change", handleChange); // important for <select>
+   input.addEventListener("input", handleChange);
+   input.addEventListener("change", handleChange); // important for <select>
 });
 
 // Check if contributors are more than 10
@@ -5246,30 +5401,30 @@ var Abide = function (_Plugin) {
      */
 
   }, {
-    key: 'requiredCheck',
-    value: function requiredCheck($el) {
-      if (!$el.attr('required')) return true;
+    // key: 'requiredCheck',
+    // value: function requiredCheck($el) {
+    //   if (!$el.attr('required')) return true;
 
-      var isGood = true;
+    //   var isGood = true;
 
-      switch ($el[0].type) {
-        case 'checkbox':
-          isGood = $el[0].checked;
-          break;
+    //   switch ($el[0].type) {
+    //     case 'checkbox':
+    //       isGood = $el[0].checked;
+    //       break;
 
-        case 'select':
-        case 'select-one':
-        case 'select-multiple':
-          var opt = $el.find('option:selected');
-          if (!opt.length || !opt.val()) isGood = false;
-          break;
+    //     case 'select':
+    //     case 'select-one':
+    //     case 'select-multiple':
+    //       var opt = $el.find('option:selected');
+    //       if (!opt.length || !opt.val()) isGood = false;
+    //       break;
 
-        default:
-          if (!$el.val() || !$el.val().length) isGood = false;
-      }
+    //     default:
+    //       if (!$el.val() || !$el.val().length) isGood = false;
+    //   }
 
-      return isGood;
-    }
+    //   return isGood;
+    // }
 
     /**
      * Get:
@@ -5430,79 +5585,79 @@ var Abide = function (_Plugin) {
      * @returns {Boolean} goodToGo - If the input is valid or not.
      */
 
-  }, {
-    key: 'validateInput',
-    value: function validateInput($el) {
-      var _this5 = this;
+  // }, {
+  //   key: 'validateInput',
+  //   value: function validateInput($el) {
+  //     var _this5 = this;
 
-      var clearRequire = this.requiredCheck($el),
-          validated = false,
-          customValidator = true,
-          validator = $el.attr('data-validator'),
-          equalTo = true;
+  //     var clearRequire = this.requiredCheck($el),
+  //         validated = false,
+  //         customValidator = true,
+  //         validator = $el.attr('data-validator'),
+  //         equalTo = true;
 
-      // don't validate ignored inputs or hidden inputs or disabled inputs
-      if ($el.is('[data-abide-ignore]') || $el.is('[type="hidden"]') || $el.is('[disabled]')) {
-        return true;
-      }
+  //     // don't validate ignored inputs or hidden inputs or disabled inputs
+  //     if ($el.is('[data-abide-ignore]') || $el.is('[type="hidden"]') || $el.is('[disabled]')) {
+  //       return true;
+  //     }
 
-      switch ($el[0].type) {
-        case 'radio':
-          validated = this.validateRadio($el.attr('name'));
-          break;
+  //     switch ($el[0].type) {
+  //       case 'radio':
+  //         validated = this.validateRadio($el.attr('name'));
+  //         break;
 
-        case 'checkbox':
-          validated = clearRequire;
-          break;
+  //       case 'checkbox':
+  //         validated = clearRequire;
+  //         break;
 
-        case 'select':
-        case 'select-one':
-        case 'select-multiple':
-          validated = clearRequire;
-          break;
+  //       case 'select':
+  //       case 'select-one':
+  //       case 'select-multiple':
+  //         validated = clearRequire;
+  //         break;
 
-        default:
-          validated = this.validateText($el);
-      }
+  //       default:
+  //         validated = this.validateText($el);
+  //     }
 
-      if (validator) {
-        customValidator = this.matchValidation($el, validator, $el.attr('required'));
-      }
+  //     if (validator) {
+  //       customValidator = this.matchValidation($el, validator, $el.attr('required'));
+  //     }
 
-      if ($el.attr('data-equalto')) {
-        equalTo = this.options.validators.equalTo($el);
-      }
+  //     if ($el.attr('data-equalto')) {
+  //       equalTo = this.options.validators.equalTo($el);
+  //     }
 
-      var goodToGo = [clearRequire, validated, customValidator, equalTo].indexOf(false) === -1;
-      var message = (goodToGo ? 'valid' : 'invalid') + '.zf.abide';
+  //     var goodToGo = [clearRequire, validated, customValidator, equalTo].indexOf(false) === -1;
+  //     var message = (goodToGo ? 'valid' : 'invalid') + '.zf.abide';
 
-      if (goodToGo) {
-        // Re-validate inputs that depend on this one with equalto
-        var dependentElements = this.$element.find('[data-equalto="' + $el.attr('id') + '"]');
-        if (dependentElements.length) {
-          (function () {
-            var _this = _this5;
-            dependentElements.each(function () {
-              if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).val()) {
-                _this.validateInput(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this));
-              }
-            });
-          })();
-        }
-      }
+  //     if (goodToGo) {
+  //       // Re-validate inputs that depend on this one with equalto
+  //       var dependentElements = this.$element.find('[data-equalto="' + $el.attr('id') + '"]');
+  //       if (dependentElements.length) {
+  //         (function () {
+  //           var _this = _this5;
+  //           dependentElements.each(function () {
+  //             if (__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).val()) {
+  //               _this.validateInput(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(this));
+  //             }
+  //           });
+  //         })();
+  //       }
+  //     }
 
-      this[goodToGo ? 'removeErrorClasses' : 'addErrorClasses']($el);
+  //     this[goodToGo ? 'removeErrorClasses' : 'addErrorClasses']($el);
 
-      /**
-       * Fires when the input is done checking for validation. Event trigger is either `valid.zf.abide` or `invalid.zf.abide`
-       * Trigger includes the DOM element of the input.
-       * @event Abide#valid
-       * @event Abide#invalid
-       */
-      $el.trigger(message, [$el]);
+  //     /**
+  //      * Fires when the input is done checking for validation. Event trigger is either `valid.zf.abide` or `invalid.zf.abide`
+  //      * Trigger includes the DOM element of the input.
+  //      * @event Abide#valid
+  //      * @event Abide#invalid
+  //      */
+  //     $el.trigger(message, [$el]);
 
-      return goodToGo;
-    }
+  //     return goodToGo;
+  //   }
 
     /**
      * Goes through a form and if there are any invalid inputs, it will display the form error element
@@ -5632,25 +5787,25 @@ var Abide = function (_Plugin) {
      * @fires Abide#formreset
      */
 
-  }, {
-    key: 'resetForm',
-    value: function resetForm() {
-      var $form = this.$element,
-          opts = this.options;
+  // }, {
+  //   key: 'resetForm',
+  //   value: function resetForm() {
+  //     var $form = this.$element,
+  //         opts = this.options;
 
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.' + opts.labelErrorClass, $form).not('small').removeClass(opts.labelErrorClass);
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.' + opts.inputErrorClass, $form).not('small').removeClass(opts.inputErrorClass);
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(opts.formErrorSelector + '.' + opts.formErrorClass).removeClass(opts.formErrorClass);
-      $form.find('[data-abide-error]').css('display', 'none');
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(':input', $form).not(':button, :submit, :reset, :hidden, :radio, :checkbox, [data-abide-ignore]').val('').removeAttr('data-invalid');
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(':input:radio', $form).not('[data-abide-ignore]').prop('checked', false).removeAttr('data-invalid');
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(':input:checkbox', $form).not('[data-abide-ignore]').prop('checked', false).removeAttr('data-invalid');
-      /**
-       * Fires when the form has been reset.
-       * @event Abide#formreset
-       */
-      $form.trigger('formreset.zf.abide', [$form]);
-    }
+  //     __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.' + opts.labelErrorClass, $form).not('small').removeClass(opts.labelErrorClass);
+  //     __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.' + opts.inputErrorClass, $form).not('small').removeClass(opts.inputErrorClass);
+  //     __WEBPACK_IMPORTED_MODULE_0_jquery___default()(opts.formErrorSelector + '.' + opts.formErrorClass).removeClass(opts.formErrorClass);
+  //     $form.find('[data-abide-error]').css('display', 'none');
+  //     __WEBPACK_IMPORTED_MODULE_0_jquery___default()(':input', $form).not(':button, :submit, :reset, :hidden, :radio, :checkbox, [data-abide-ignore]').val('').removeAttr('data-invalid');
+  //     __WEBPACK_IMPORTED_MODULE_0_jquery___default()(':input:radio', $form).not('[data-abide-ignore]').prop('checked', false).removeAttr('data-invalid');
+  //     __WEBPACK_IMPORTED_MODULE_0_jquery___default()(':input:checkbox', $form).not('[data-abide-ignore]').prop('checked', false).removeAttr('data-invalid');
+  //     /**
+  //      * Fires when the form has been reset.
+  //      * @event Abide#formreset
+  //      */
+  //     $form.trigger('formreset.zf.abide', [$form]);
+  //   }
 
     /**
      * Destroys an instance of Abide.
