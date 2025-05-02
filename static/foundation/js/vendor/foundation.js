@@ -910,7 +910,7 @@ inputs.forEach((input) => {
 
     const excludedInputs = [
       "contributor_givenName", "contributor_familyName", "contributor_email",
-      "author_givenName", "author_familyName", "author_email"
+      "author_givenName", "author_familyName", "author_email", "checkbox-contributor", "checkbox-author"
     ];
 
     if (!excludedInputs.includes(input.name)) {
