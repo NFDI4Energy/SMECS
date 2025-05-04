@@ -491,22 +491,17 @@ copyBtn.addEventListener('click', function(event) {
 
   
 // Contributor/Author tables
-  function handleTableClick(tableBody, editCallback, deleteCallback) {
+  function handleTableClick(tableBody, editCallback) {
     tableBody.addEventListener('click', function (event) {
-      if (event.target.tagName === 'TD' && event.target.cellIndex !== 0) {
+      if (event.target.tagName === 'TD' && event.target.cellIndex !== 0 && !event.target.querySelector('input[type="checkbox"]')) {
         // Check if the clicked cell is not the first column
         editCallback(event.target);
-      } else if (event.target.tagName === 'BUTTON' && event.target.textContent === 'Delete') {
-        event.preventDefault(); // Prevent form submission
-        var rowToDelete = event.target.closest('tr');
-        deleteCallback(rowToDelete);
-      } else if (event.target.tagName === 'BUTTON' && event.target.textContent === 'Add to Authors') {
-        event.preventDefault();
-        var rowToCopy = event.target.closest('tr');
-        copyCallback(rowToCopy);
-      }
+      } 
     });
   }
+    // Usage for contributors table
+    handleTableClick(contributorsTableBody, (cell) => editCell(cell, 'contributor', ['email']));
+    
 //   document.getElementById("metadata-form").addEventListener("submit", function(event) {
 //     event.preventDefault(); 
 // });
