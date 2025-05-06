@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const licenseSuggestionsBox = document.getElementById('licenseSuggestions');
   const tagsContainer = document.getElementById("languageTags");
   const hiddenInput = document.getElementById("languageHiddenInput");
+  setMandatoryFieldsFromSchema();
   // const languages = [
   // "A# .NET", "A# (Axiom)", "A-0 System", "A+", "A++", "ABAP", "ABC", "ABC ALGOL",
   // "ABLE", "ABSET", "ABSYS", "ACC", "Accent", "Ace DASL", "ACL2", "ACT-III",
@@ -125,6 +126,72 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 // let selectedLanguages = [];
+
+// Function to dynamically mark mandatory fields based on required key in JSON schema
+function setMandatoryFieldsFromSchema() {
+  fetch(JsonSchema)
+    .then(response => response.json())
+    .then(data => {
+      const requiredFields = data.required || [];  // Extract the required field names
+
+      requiredFields.forEach(function (fieldKey) {
+        // Find all inputs where the name matches the required field
+
+        inputs.forEach(function (input) {
+          // Add the 'required' attribute to the input field
+          input.setAttribute('required', true);
+
+          // Add a red asterisk to the corresponding label
+          const label = document.querySelector(`label[for="${fieldKey}"]`);
+          if (label && !label.innerHTML.includes('*')) {
+            const asterisk = document.createElement('span');
+            asterisk.style.color = 'red';
+            asterisk.style.fontSize = '18px';
+            asterisk.textContent = '*';
+            label.appendChild(document.createTextNode(' '));  // Add space before asterisk
+            label.appendChild(asterisk);  // Add the asterisk after the label text
+          }
+        });
+      });
+    })
+    .catch(error => {
+      console.error('Error loading the JSON schema:', error);
+    });
+}
+
+// Function to check if all mandatory fields are filled
+function validateMandatoryFields() {
+  let isValid = true;
+
+  // Loop through each required field and check if it is filled
+  fetch(JsonSchema)
+    .then(response => response.json())
+    .then(data => {
+      const requiredFields = data.required || [];
+
+      requiredFields.forEach(function (fieldKey) {
+
+        inputs.forEach(function (input) {
+          if (input.value.trim() === "") {
+            isValid = false;  // If any field is empty, set isValid to false
+            
+            // input.style.borderColor = 'red';  // Optional: highlight empty field in red
+          } 
+        });
+      });
+
+      if (!isValid) {
+        alert("mandatory field is empty");  // Show error message
+      }
+
+      return isValid;
+    })
+    .catch(error => {
+      console.error('Error loading the JSON schema:', error);
+    });
+
+  return isValid;
+}
 
 const data = metadataJson.value;
 const metadata = JSON.parse(data);
@@ -502,9 +569,7 @@ copyBtn.addEventListener('click', function(event) {
     // Usage for contributors table
     handleTableClick(contributorsTableBody, (cell) => editCell(cell, 'contributor', ['email']));
     
-//   document.getElementById("metadata-form").addEventListener("submit", function(event) {
-//     event.preventDefault(); 
-// });
+
 // For both checkboxes: Author and Contributor
 contributorsTableBody.addEventListener('change', function (event) {
   if (event.target.classList.contains('checkbox-contributor') || event.target.classList.contains('checkbox-author')) {
@@ -984,7 +1049,10 @@ function downloadFile(event) {
 }
 
 downloadButton.addEventListener("click", (event) => {
-  downloadFile(event);
+  if(!validateMandatoryFields()){
+    downloadFile(event);
+  }
+  
 });
 downloadBtn.addEventListener("click", (event) => {
   downloadFile(event);

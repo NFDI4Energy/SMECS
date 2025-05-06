@@ -87,13 +87,13 @@
           <div id="languageTags" class="tags-container">
             {% for item in value %}
               {% if item %}
-                <span class="tag" name="programmingLanguage">
+                <span class="tag" name="{{ key }}" >
                   {{ item }}
                   <span class="remove-tag" data-value="{{ item }}">×</span>
                 </span>
               {% endif %}
             {% endfor %}
-            <input type="text" id="languageInput" name="programmingLanguage" placeholder="Type to add..." />
+            <input type="text" id="languageInput" name="{{ key }}" placeholder="Type to add..." />
           </div>
       
           <div id="suggestions"></div>
@@ -115,13 +115,13 @@
           <div id="keywordsTags" class="tags-container">
             {% for item in value %}
               {% if item %}
-                <span class="tag">
+                <span class="tag" name="{{ key }}">
                   {{ item }}
                   <span class="remove-tag" data-value="{{ item }}">×</span>
                 </span>
               {% endif %}
             {% endfor %}
-            <input type="text" id="keywordsInput" placeholder="Type to add..." />
+            <input type="text" id="keywordsInput" name="{{ key }}"  placeholder="Type to add..." />
           </div>
         </div>
         {% elif value|is_dict and key == "copyrightHolder" %}
@@ -244,7 +244,10 @@
           <div class="person-info" id="contributor-explanation">
            <h5>Who is a Contributor?</h5>
            <p>A "contributor" refers to anyone who aids in software development in any capacity, from coding to testing, highlighting the collaborative nature of software projects​</p>
-          </div>
+           <h5>Who is an Author?</h5>
+           <p>An "author" in software authorship is someone who significantly contributes to the creation and development of software, including roles like coding, project management, and documentation.</p>
+         </div>
+          
           {% for key, value in extracted_metadata.items %}
           <div class="form-group">
             {% if key == "contributor" %}
@@ -287,7 +290,7 @@
             <input type="text" id="contributorFamilyNameInput" name="contributor_familyName" placeholder="Family Name">
             <input type="text" id="contributorEmailInput" name="contributor_email" placeholder="Email">
           </div>
-          <button type="button" class="contributorBTN" id="addContributorButton">Add Contributor</button>
+          <button type="button" class="contributorBTN" id="addContributorButton">Add Person</button>
             {% endif %}
           </div>
           
