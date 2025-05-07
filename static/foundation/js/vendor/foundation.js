@@ -159,38 +159,26 @@ function setMandatoryFieldsFromSchema() {
     });
 }
 
-// Function to check if all mandatory fields are filled
-function validateMandatoryFields() {
-  let isValid = true;
-
-  // Loop through each required field and check if it is filled
-  fetch(JsonSchema)
-    .then(response => response.json())
-    .then(data => {
-      const requiredFields = data.required || [];
-
-      requiredFields.forEach(function (fieldKey) {
-
-        inputs.forEach(function (input) {
-          if (input.value.trim() === "") {
-            isValid = false;  // If any field is empty, set isValid to false
-            
-            // input.style.borderColor = 'red';  // Optional: highlight empty field in red
-          } 
+function validateMandatoryFields(formData) {
+  return new Promise((resolve, reject) => {
+    fetch(JsonSchema)
+      .then(response => response.json())
+      .then(schema => {
+        const requiredFields = schema.required || [];
+        let isValid = true;
+        requiredFields.forEach(field => {
+          if (!formData[field] || formData[field].trim() === "") {
+            isValid = false;
+          }
         });
+
+        resolve(isValid);
+      })
+      .catch(error => {
+        console.error('Error loading the JSON schema:', error);
+        reject(error);
       });
-
-      if (!isValid) {
-        alert("mandatory field is empty");  // Show error message
-      }
-
-      return isValid;
-    })
-    .catch(error => {
-      console.error('Error loading the JSON schema:', error);
-    });
-
-  return isValid;
+  });
 }
 
 const data = metadataJson.value;
@@ -1048,15 +1036,28 @@ function downloadFile(event) {
   }, 0);
 }
 
-downloadButton.addEventListener("click", (event) => {
-  if(!validateMandatoryFields()){
-    downloadFile(event);
-  }
+// downloadButton.addEventListener("click", (event) => {
+//   if(!validateMandatoryFields()){
+//     downloadFile(event);
+//   }
   
-});
-downloadBtn.addEventListener("click", (event) => {
-  downloadFile(event);
-});
+// });
+// downloadBtn.addEventListener("click", (event) => {
+//   downloadFile(event);
+// });
+
+async function handleDownloadClick(event) {
+  const isValid = await validateMandatoryFields(metadataJson.value);  // Wait for validation to complete
+  if (!isValid) {  // Show the alert only if validation fails
+    alert(metadataJson.value)
+    alert("Fill mandatory elements");
+    return;
+  }
+  downloadFile(event);  // Only proceed if validation is successful
+}
+
+downloadButton.addEventListener("click", handleDownloadClick);
+downloadBtn.addEventListener("click", handleDownloadClick);
 
 });
 
