@@ -10,6 +10,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const downloadButton = document.getElementById("downloadButton");
   const downloadBtn = document.getElementById("downloadBtn");
+  const updateJsonBtn=document.getElementById("updateFormBtn");
   const metadataJson = document.getElementById("metadata-json");
   let initialJson = metadataJson;
   let previousJson = { ...initialJson };
@@ -27,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const licenseInput = document.getElementById('license-input');
   const licenseSuggestionsBox = document.getElementById('licenseSuggestions');
   const languages = [
-  "A# .NET", "A# (Axiom)", "A-0 System", "A+", "A++", "ABAP", "ABC", "ABC ALGOL",
+    "A# .NET", "A# (Axiom)", "A-0 System", "A+", "A++", "ABAP", "ABC", "ABC ALGOL",
   "ABLE", "ABSET", "ABSYS", "ACC", "Accent", "Ace DASL", "ACL2", "ACT-III",
   "Action!", "ActionScript", "Ada", "Adenine", "Agda", "Agilent VEE", "Agora",
   "AIMMS", "Alef", "ALF", "ALGOL 58", "ALGOL 60", "ALGOL 68", "ALGOL W", "Alice",
@@ -118,7 +119,7 @@ document.addEventListener("DOMContentLoaded", function () {
   "X++", "X10", "XBase++", "XBase", "XC", "xHarbour", "XL", "Xojo", "XOTcl", 
   "XPath", "XPL", "XPL0", "XQuery", "XSB", "XSLT", "Xtend", "Yorick", "Yoix", 
   "YQL", "YUI", "Z notation", "ZPL", "Zig", "ZOPL", "ZPL"
-  ];
+];
 
 
 let selectedLanguages = [];
@@ -282,15 +283,25 @@ copyBtn.addEventListener('click', function(event) {
   event.preventDefault();
   metadataJson.select();
   document.execCommand('copy');
-  var feedback = document.getElementById('copy-feedback');
-  feedback.style.display = 'inline'; 
+  actionFeedback ("Text copied!");
+  // var feedback = document.getElementById('copy-feedback');
+  // feedback.style.display = 'inline'; 
 
+  // setTimeout(function() {
+  //     feedback.style.display = 'none'; 
+  // }, 2000);
+
+});
+
+function actionFeedback (value){
+  var feedback = document.getElementById('actionFeedback');
+  feedback.innerHTML=value;
+  feedback.style.display = 'inline'; 
   setTimeout(function() {
       feedback.style.display = 'none'; 
   }, 2000);
 
-});
-
+}
   // Applying the yellow border for suggesting the user to change or review the extracted value
   urlInputs.forEach(input => {
     const initialValue = input.value;
@@ -562,7 +573,7 @@ function copyRowToAuthorTable(event, button) {
   validateRowCells(newRow);
   updateJsonData('authorsTableBody', 'author', ['Email']);
 }
-
+window.copyRowToAuthorTable=copyRowToAuthorTable;
 
 // Initialize table with existing contributors and authors
 function initializeTables() {
@@ -586,7 +597,7 @@ function validateRowCells(row) {
       }
       // Check if the cell is empty and apply validation
       if (cell.textContent.trim() === "") {  
-          cell.classList.add("invalid"); 
+         cell.classList.add("invalid"); 
       } else {
           cell.classList.remove("invalid"); 
       }
@@ -685,6 +696,7 @@ function deletePerson(event, button, type) {
   }
 }
 
+window.deletePerson=deletePerson;
 deleteButtons.forEach(function(button) {
     button.addEventListener('click', function(event) {
         deletePerson(event, this, 'contributor');
@@ -722,7 +734,7 @@ function updateJsonData(tableBodyId, jsonDataProperty, additionalProperties) {
   metadataJson.value = JSON.stringify(existingJson, null, 2);
 }
 
-///////////////////////////////////////////////////////////////////////
+
 
 inputs.forEach((input) => {
   validateInput(input);
@@ -760,7 +772,139 @@ inputs.forEach((input) => {
 
       metadataJson.value = JSON.stringify(jsonObject, null, 2);
   });
+
+  
 });
+function updateInputTitles() {
+  document.querySelectorAll("input[name]").forEach(input => {
+      input.title = input.value;  // Update title with the latest input value
+  });
+}
+updateJsonBtn.addEventListener("click", function(event) {
+  event.preventDefault();
+  try {
+      const jsonObject = JSON.parse(metadataJson.value); // Parse the JSON
+      const jsonKeys = Object.keys(jsonObject);
+
+      const expectedKeys = [
+          "@context", "@type", "name", "identifier", "description", "codeRepository",
+          "url", "issueTracker", "license", "programmingLanguage", "copyrightHolder",
+          "dateModified", "dateCreated", "keywords", "downloadUrl",
+          "readme", "author", "contributor"
+      ];
+
+      const keyCheck = keysMatch(expectedKeys, jsonKeys, jsonObject);
+
+      if (!keyCheck.isMatch) {
+          let errorMessage = "Metadata keys do not match!\n\n";
+          if (keyCheck.missingKeys.length > 0) {
+              errorMessage += `Missing Keys: ${keyCheck.missingKeys.join(", ")}\n`;
+          }
+          if (keyCheck.extraKeys.length > 0) {
+              errorMessage += `Extra Keys: ${keyCheck.extraKeys.join(", ")}\n`;
+          }
+          if (keyCheck.nestedErrors.length > 0) {
+              errorMessage += `\nNested Errors:\n${keyCheck.nestedErrors.join("\n")}`;
+          }
+          alert(errorMessage);
+      } else {
+          // Make sure json is a valid object and then update the form
+          updateFormFromJson(jsonObject);
+          updateTable(jsonObject, 'contributorsTableBody', 'contributor');
+          updateTable(jsonObject, 'authorsTableBody', 'author');
+          initializeTables();
+          updateInputTitles();
+          actionFeedback("Form Update!");
+      }
+
+  } catch (e) {
+      console.error("An unexpected error occurred:", e);
+      alert("Invalid JSON. Please check your syntax or JSON keys");
+  }
+});
+
+
+function updateFormFromJson(jsonObject) {
+  inputs.forEach((input) => {
+    
+    
+    const key = input.name.split("[")[0];
+    const subkey = input.name.split("[")[1]?.split("]")[0];
+
+    // Exclude specific inputs from being updated
+    const excludedInputs = ["contributor_givenName", "contributor_familyName", "contributor_email", "author_givenName", "author_familyName", "author_email"];
+
+    if (!(excludedInputs.includes(input.name))) {
+      if (subkey) {
+        input.value = jsonObject[key][subkey];
+        
+      } else {
+        input.value = jsonObject[key];
+      }
+      validateInput(input);
+    }
+    
+    ["programmingLanguage", "keywords"].forEach((prop) => {
+        if (jsonObject[prop]) {
+            if (typeof jsonObject[prop] === "string") {
+              jsonObject[prop] = jsonObject[prop]
+                    .split(",")
+                    .map((lang) => lang.trim())
+                    .filter((lang) => lang !== "");
+            } else {
+              jsonObject[prop] = jsonObject[prop].filter((lang) => lang !== "");
+            }
+        }
+    });
+  })
+}
+
+
+// Function to update the table with contributor and authors data
+function updateTable(jsonObject,tableID,fieldName) {
+  const tableBody = document.getElementById(tableID);
+  tableBody.innerHTML = ''; // Clear previous table rows
+  
+ 
+  // Loop through from jsonObject and create a row in the table
+  jsonObject[fieldName].forEach((fieldName,index) => {    
+      if(fieldName.givenName ||  fieldName.familyName ||  (fieldName.email || fieldName.Email)){
+
+        const row = document.createElement('tr');
+
+        const idCell=document.createElement("td");
+        idCell.textContent="#" + (index + 1);
+        row.appendChild(idCell);
+  
+        const givenNameCell = document.createElement('td');
+        givenNameCell.textContent = fieldName.givenName || '';
+        row.appendChild(givenNameCell);
+  
+        const familyNameCell = document.createElement('td');
+        familyNameCell.textContent = fieldName.familyName || ''; 
+        row.appendChild(familyNameCell);
+  
+        const emailCell = document.createElement('td');
+        emailCell.textContent = fieldName.email || fieldName.Email || '';
+        row.appendChild(emailCell);
+
+        if(tableID!='authorsTableBody'){
+
+          const deleteCell = document.createElement("td");
+          deleteCell.innerHTML= `<i title="Delete" class="fas fa-trash-alt" onclick="deletePerson(event, this, 'contributor')" data-action="delete"></i>`;
+          row.appendChild(deleteCell);
+  
+        }
+        else{
+          const deleteCell = document.createElement("td");
+          deleteCell.innerHTML= `<i title="Delete" class="fas fa-trash-alt" onclick="deletePerson(event, this, 'author')" data-action="delete"></i>`;
+          row.appendChild(deleteCell);
+        };
+        tableBody.appendChild(row); // Add the row to the table body
+
+      };
+  });
+}
 
 // Check if contributors are more than 10
 if (contributorsTableBody.rows.length > 10) {
@@ -774,36 +918,131 @@ inputs.forEach((input) => {
     validateInput(input);
   });
 });
+function keysMatch(expectedKeys, jsonKeys, jsonObject) {
+  // Convert both expected and actual keys to lowercase for case-insensitive matching
+  const lowerExpectedKeys = expectedKeys.map(key => key.toLowerCase());
+  const lowerJsonKeys = jsonKeys.map(key => key.toLowerCase());
+
+  // Find missing and extra keys
+  const missingKeys = lowerExpectedKeys.filter(key => !lowerJsonKeys.includes(key));
+  const extraKeys = lowerJsonKeys.filter(key => !lowerExpectedKeys.includes(key));
+
+    // Check nested key in "copyrightHolder"
+    if (jsonObject.hasOwnProperty("copyrightHolder")) {
+      if (!jsonObject.copyrightHolder.hasOwnProperty("name")) {
+          missingKeys.push("copyrightHolder name key is missing");
+      }
+  } 
+
+
+  // Expected keys for nested 'author' and 'contributor' objects
+  const nestedExpectedKeys = ["givenname", "familyname", "email"];
+  let nestedErrors = [];
+
+  ["author", "contributor"].forEach(section => {
+      if (Array.isArray(jsonObject[section])) {
+          jsonObject[section].forEach((item, index) => {
+              const itemKeys = Object.keys(item)
+                  .map(k => k.toLowerCase()) // Convert nested keys to lowercase
+                  .filter(k => k !== "@type"); // Ignore "@type"
+             
+              const missingNested = nestedExpectedKeys.filter(k => !itemKeys.includes(k.toLowerCase()));
+              const extraNested = itemKeys.filter(k => !nestedExpectedKeys.includes(k.toLowerCase()));
+             
+              if (missingNested.length > 0 || extraNested.length > 0) {
+                  nestedErrors.push(`In ${section}[${index}]: Missing Keys: ${missingNested.join(", ")}, Extra Keys: ${extraNested.join(", ")}`);
+              }
+          });
+      }
+  });
+
+  return {
+      isMatch: missingKeys.length === 0 && extraKeys.length === 0 && nestedErrors.length === 0,
+      missingKeys,
+      extraKeys,
+      nestedErrors
+  };
+}
+
+
 
 
 function downloadFile(event) {
   event.preventDefault(); 
-  const data = metadataJson.value;
-  
-  // Parse the JSON to extract the repository name
-  let repoName = "metadata"; // Default name 
+
   try {
-    const metadata = JSON.parse(data);
-    if (metadata.name) {
-      repoName = metadata.name;
+      const data = metadataJson.value;
+      //console.log("Raw JSON Data:", data); // Debugging step
+      
+      const metadata = JSON.parse(data); // Move inside try block
+      const jsonKeys = Object.keys(metadata); // Extract keys from received JSON
+     
+      let repoName = "metadata"; // Default name
+
+      const expectedKeys = [
+          "@context", "@type", "name", "identifier", "description", "codeRepository",
+          "url", "issueTracker", "license", "programmingLanguage", "copyrightHolder",
+          "dateModified", "dateCreated", "keywords", "downloadUrl",
+          "readme", "author", "contributor"
+      ];
+      // Get key comparison result
+      const keyCheck = keysMatch(expectedKeys, jsonKeys, metadata);
+
+      if (!keyCheck.isMatch) {
+          let errorMessage = "Metadata keys do not match!\n\n";
+          if (keyCheck.missingKeys.length > 0) {
+              errorMessage += `Missing Keys: ${keyCheck.missingKeys.join(", ")}\n`;
+          }
+          if (keyCheck.extraKeys.length > 0) {
+              errorMessage += `Extra Keys: ${keyCheck.extraKeys.join(", ")}\n`;
+          }
+          if (keyCheck.nestedErrors.length > 0) {
+              errorMessage += `\nNested Errors:\n${keyCheck.nestedErrors.join("\n")}`;
+          }
+          alert(errorMessage);
+      } else {
+          jsonPrettier(repoName, metadata);
+      }
+  } 
+  catch (e) {
+      alert("Invalid JSON. Please check your syntax.");
+      console.error("JSON Parsing Error:", e);
+  }
+}
+
+
+
+
+function jsonPrettier(repoName,metadata){
+  let validJson;
+  const values=Object.values(metadata).slice(0,2);
+      // Check the conditions
+  if (values[0] !== "https://w3id.org/codemeta/3.0" || values[1] !== "SoftwareSourceCode") {
+    // Update the first two keys in the object
+    const keys = Object.keys(metadata);
+    if (keys.length >= 2) {
+      metadata[keys[0]] = "https://w3id.org/codemeta/3.0" ; // Update the first key's value
+      metadata[keys[1]] = "SoftwareSourceCode"; // Update the second key's value
     }
-  } catch (e) {
-    console.error("Failed to parse JSON:", e);
   }
   
-  const fileName = `${repoName}/codemeta.json`;
-  const blob = new Blob([data], { type: "application/json" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.innerHTML = "Download JSON";
-  link.setAttribute("download", fileName);
-  downloadButton.parentNode.insertBefore(link, downloadButton.nextSibling);
-  downloadBtn.parentNode.insertBefore(link, downloadBtn.nextSibling);
-  link.click(); 
-  setTimeout(() => {
-    URL.revokeObjectURL(link.href); 
-    link.parentNode.removeChild(link); 
-  }, 0);
+      if (metadata.name) {
+        repoName = metadata.name;
+        validJson = JSON.stringify(metadata, null, 2);
+      }
+      const fileName = `${repoName}/codemeta.json`;
+      const blob = new Blob([validJson], { type: "application/json" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.innerHTML = "Download JSON";
+      link.setAttribute("download", fileName);
+      downloadButton.parentNode.insertBefore(link, downloadButton.nextSibling);
+      downloadBtn.parentNode.insertBefore(link, downloadBtn.nextSibling);
+      link.click(); 
+      setTimeout(() => {
+        URL.revokeObjectURL(link.href); 
+        link.parentNode.removeChild(link); 
+      }, 0);
 }
 
 downloadButton.addEventListener("click", (event) => {
