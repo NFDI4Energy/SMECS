@@ -166,8 +166,18 @@ function validateMandatoryFields(formData) {
       .then(schema => {
         const requiredFields = schema.required || [];
         let isValid = true;
+        let parsedData;
+
+        try {
+          parsedData = JSON.parse(formData);
+        } catch (e) {
+          console.error("Invalid JSON in formData:", e);
+          reject("Invalid JSON");
+          return;
+        }
+
         requiredFields.forEach(field => {
-          if (!formData[field] || formData[field].trim() === "") {
+          if (!parsedData[field] || parsedData[field].trim() === "") {
             isValid = false;
           }
         });
@@ -1049,7 +1059,6 @@ function downloadFile(event) {
 async function handleDownloadClick(event) {
   const isValid = await validateMandatoryFields(metadataJson.value);  // Wait for validation to complete
   if (!isValid) {  // Show the alert only if validation fails
-    alert(metadataJson.value)
     alert("Fill mandatory elements");
     return;
   }
