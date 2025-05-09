@@ -37,39 +37,52 @@ def download_url_releases(url):
         return ""
 
 
-# Function to extract contributors from commit history
+# Function to extract contributors from commit history with pagination
 def get_contributors_from_repo(owner, repo, token, url):
-    # url = f"https://api.github.com/repos/{owner}/{repo}/commits"
     url_contributors = f"{url}/commits"
-    headers = {"Authorization": f"token {token}"}
-    response = requests.get(url_contributors, headers=headers)
-    if token == '':
-        response = requests.get(url_contributors)
-    
-    if response.status_code == 200:
+    headers = {"Authorization": f"token {token}"} if token else {}
+
+    all_commits = []
+    page = 1
+
+    while True:
+        response = requests.get(f"{url_contributors}?per_page=100&page={page}", headers=headers)
+        
+        if response.status_code != 200:
+            print(f"Failed to retrieve commit history: {response.status_code}")
+            return None
+        
         commit_data = response.json()
-        metadata = []
-        seen_names = set()
-        for commit in commit_data:
+        if not commit_data:
+            break
+        
+        all_commits.extend(commit_data)
+        page += 1
+
+    # Extract metadata from all commits
+    metadata = []
+    seen_emails = set()
+
+    for commit in all_commits:
+        if "commit" in commit and "author" in commit["commit"]:
             contributor_name = commit["commit"]["author"]["name"]
-            contributor_email = commit["commit"]["author"]["email"]
-            if contributor_name not in seen_names: 
+            contributor_email = commit["commit"]["author"]["email"].lower()
+            
+            if contributor_email not in seen_emails:
                 cleaned_name = re.sub(r'[^a-zA-Z\s]', '', contributor_name)
                 name_parts = cleaned_name.split()
                 given_name = name_parts[0]
-                # Combine the rest of the name parts as the family name
-                family_name = ' '.join(name_parts[1:])
+                family_name = ' '.join(name_parts[1:]) if len(name_parts) > 1 else ''
+
                 metadata.append({
                     "givenName": given_name,
                     "familyName": family_name,
                     "email": contributor_email,
                 })
-                seen_names.add(contributor_name) # to return unique metadata
-                sorted_metadata = sorted(metadata, key=lambda x: x['givenName'].lower())
-        return sorted_metadata
-    else:
-        print(f"Failed to retrieve commit history: {response.status_code}")
-        return None
+                seen_emails.add(contributor_email)
+
+    sorted_metadata = sorted(metadata, key=lambda x: x['givenName'].lower())
+    return sorted_metadata
 
 
 def get_github_metadata(url, personal_token_key):
@@ -105,8 +118,8 @@ def get_github_metadata(url, personal_token_key):
 
     response.raise_for_status()
     repo_data = response.json()
-    project_name = repo_data.get('name')
-    # full_name = repo_data['full_name']
+
+    full_name = repo_data['full_name']
     identifier = str(repo_data['id'])
 
     description = repo_data['description']
@@ -159,7 +172,7 @@ def get_github_metadata(url, personal_token_key):
     metadata_dict = {
         "@context": "https://w3id.org/codemeta/3.0",
         "@type": "SoftwareSourceCode",
-        "name": project_name,
+        "name": full_name,
         "identifier": identifier,
         "description": description,
         "codeRepository": code_repository,
@@ -190,7 +203,8 @@ def get_github_metadata(url, personal_token_key):
         "readme": readme_url,
         "author": [{"@type": "Person",
                     "givenName": "",
-                    "familyName": ""
+                    "familyName": "",
+                    "email":""
                     }],
         "contributor": contributors_metadata,
     }
