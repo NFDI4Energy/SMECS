@@ -1108,6 +1108,55 @@ contributorsTableBody.parentElement.classList.add('scrollable-table');
 //   });
 // });
 
+function keysMatch(expectedKeys, jsonKeys, jsonObject) {
+  // Convert both expected and actual keys to lowercase for case-insensitive matching
+  const lowerExpectedKeys = expectedKeys.map(key => key.toLowerCase());
+  const lowerJsonKeys = jsonKeys.map(key => key.toLowerCase());
+
+  // Find missing and extra keys
+  const missingKeys = lowerExpectedKeys.filter(key => !lowerJsonKeys.includes(key));
+  const extraKeys = lowerJsonKeys.filter(key => !lowerExpectedKeys.includes(key));
+
+    // Check nested key in "copyrightHolder"
+    if (jsonObject.hasOwnProperty("copyrightHolder")) {
+      if (!jsonObject.copyrightHolder.hasOwnProperty("name")) {
+          missingKeys.push("copyrightHolder name key is missing");
+      }
+  } 
+
+
+  // Expected keys for nested 'author' and 'contributor' objects
+  const nestedExpectedKeys = ["givenname", "familyname", "email"];
+  let nestedErrors = [];
+
+  ["author", "contributor"].forEach(section => {
+      if (Array.isArray(jsonObject[section])) {
+          jsonObject[section].forEach((item, index) => {
+              const itemKeys = Object.keys(item)
+                  .map(k => k.toLowerCase()) // Convert nested keys to lowercase
+                  .filter(k => k !== "@type"); // Ignore "@type"
+             
+              const missingNested = nestedExpectedKeys.filter(k => !itemKeys.includes(k.toLowerCase()));
+              const extraNested = itemKeys.filter(k => !nestedExpectedKeys.includes(k.toLowerCase()));
+             
+              if (missingNested.length > 0 || extraNested.length > 0) {
+                  nestedErrors.push(`In ${section}[${index}]: Missing Keys: ${missingNested.join(", ")}, Extra Keys: ${extraNested.join(", ")}`);
+              }
+          });
+      }
+  });
+
+  return {
+      isMatch: missingKeys.length === 0 && extraKeys.length === 0 && nestedErrors.length === 0,
+      missingKeys,
+      extraKeys,
+      nestedErrors
+  };
+}
+
+
+
+
 function downloadFile(event) {
   event.preventDefault(); 
 
@@ -1124,7 +1173,9 @@ function downloadFile(event) {
           "@context", "@type", "name", "identifier", "description", "codeRepository",
           "url", "issueTracker", "license", "programmingLanguage", "copyrightHolder",
           "dateModified", "dateCreated", "keywords", "downloadUrl",
-          "readme", "author", "contributor"
+          "readme", "author", "contributor", "developmentStatus", "applicationCategory",
+          "referencePublication", "funding", "funder", "reviewAspect", "reviewBody", "continuousIntegration",
+          "runtimePlatform", "operatingSystem", "otherSoftwareRequirements"
       ];
       // Get key comparison result
       const keyCheck = keysMatch(expectedKeys, jsonKeys, metadata);
@@ -1186,29 +1237,121 @@ function jsonPrettier(repoName,metadata){
       }, 0);
 }
 
-// downloadButton.addEventListener("click", (event) => {
-//   if(!validateMandatoryFields()){
-//     downloadFile(event);
-//   }
-  
-// });
-// downloadBtn.addEventListener("click", (event) => {
-//   downloadFile(event);
-// });
-
-async function handleDownloadClick(event) {
-  const isValid = await validateMandatoryFields(metadataJson.value);  // Wait for validation to complete
-  if (!isValid) {  // Show the alert only if validation fails
-    alert("Fill mandatory elements");
-    return;
-  }
-  downloadFile(event);  // Only proceed if validation is successful
-}
-
-downloadButton.addEventListener("click", handleDownloadClick);
-downloadBtn.addEventListener("click", handleDownloadClick);
+downloadButton.addEventListener("click", (event) => {
+  downloadFile(event);
+});
+downloadBtn.addEventListener("click", (event) => {
+  downloadFile(event);
+});
 
 });
+
+// SMECS _ END
+
+
+// function downloadFile(event) {
+//   event.preventDefault(); 
+
+//   try {
+//       const data = metadataJson.value;
+//       //console.log("Raw JSON Data:", data); // Debugging step
+      
+//       const metadata = JSON.parse(data); // Move inside try block
+//       const jsonKeys = Object.keys(metadata); // Extract keys from received JSON
+     
+//       let repoName = "metadata"; // Default name
+
+//       const expectedKeys = [
+//           "@context", "@type", "name", "identifier", "description", "codeRepository",
+//           "url", "issueTracker", "license", "programmingLanguage", "copyrightHolder",
+//           "dateModified", "dateCreated", "keywords", "downloadUrl",
+//           "readme", "author", "contributor"
+//       ];
+//       // Get key comparison result
+//       const keyCheck = keysMatch(expectedKeys, jsonKeys, metadata);
+//       alert(keyCheck);
+
+//       if (!keyCheck.isMatch) {
+//           let errorMessage = "Metadata keys do not match!\n\n";
+//           if (keyCheck.missingKeys.length > 0) {
+//               errorMessage += `Missing Keys: ${keyCheck.missingKeys.join(", ")}\n`;
+//           }
+//           if (keyCheck.extraKeys.length > 0) {
+//               errorMessage += `Extra Keys: ${keyCheck.extraKeys.join(", ")}\n`;
+//           }
+//           if (keyCheck.nestedErrors.length > 0) {
+//               errorMessage += `\nNested Errors:\n${keyCheck.nestedErrors.join("\n")}`;
+//           }
+//           alert(errorMessage);
+//       } else {
+//           jsonPrettier(repoName, metadata);
+//       }
+//   } 
+//   catch (e) {
+//       alert("Invalid JSON. Please check your syntax.");
+//       alert(e);
+//       console.error("JSON Parsing Error:", e);
+//   }
+// }
+
+
+
+
+// function jsonPrettier(repoName,metadata){
+//   let validJson;
+//   const values=Object.values(metadata).slice(0,2);
+//       // Check the conditions
+//   if (values[0] !== "https://w3id.org/codemeta/3.0" || values[1] !== "SoftwareSourceCode") {
+//     // Update the first two keys in the object
+//     const keys = Object.keys(metadata);
+//     if (keys.length >= 2) {
+//       metadata[keys[0]] = "https://w3id.org/codemeta/3.0" ; // Update the first key's value
+//       metadata[keys[1]] = "SoftwareSourceCode"; // Update the second key's value
+//     }
+//   }
+  
+//       if (metadata.name) {
+//         repoName = metadata.name;
+//         validJson = JSON.stringify(metadata, null, 2);
+//       }
+//       const fileName = `${repoName}/codemeta.json`;
+//       const blob = new Blob([validJson], { type: "application/json" });
+//       const link = document.createElement("a");
+//       link.href = URL.createObjectURL(blob);
+//       link.innerHTML = "Download JSON";
+//       link.setAttribute("download", fileName);
+//       downloadButton.parentNode.insertBefore(link, downloadButton.nextSibling);
+//       downloadBtn.parentNode.insertBefore(link, downloadBtn.nextSibling);
+//       link.click(); 
+//       setTimeout(() => {
+//         URL.revokeObjectURL(link.href); 
+//         link.parentNode.removeChild(link); 
+//       }, 0);
+// }
+
+// // downloadButton.addEventListener("click", (event) => {
+// //   if(!validateMandatoryFields()){
+// //     downloadFile(event);
+// //   }
+  
+// // });
+// // downloadBtn.addEventListener("click", (event) => {
+// //   downloadFile(event);
+// // });
+
+// async function handleDownloadClick(event) {
+//   const isValid = await validateMandatoryFields(metadataJson.value);  // Wait for validation to complete
+//   if (!isValid) {  // Show the alert only if validation fails
+//     alert("Fill mandatory elements");
+//     return;
+//   }
+//   downloadFile(event);  // Only proceed if validation is successful
+// }
+
+// downloadButton.addEventListener("click", handleDownloadClick);
+// downloadBtn.addEventListener("click", handleDownloadClick);
+
+// });
 
 // SMECS _ END
 
