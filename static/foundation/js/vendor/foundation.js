@@ -516,10 +516,10 @@ function actionFeedback (value){
     document.querySelector('a[href="#tab1-sw-info"]').click();
   });
 
-  forwardBtn.addEventListener('click', function (event) {
-    event.preventDefault();
-    document.querySelector('a[href="#tab3-authors"]').click();
-  });
+  // forwardBtn.addEventListener('click', function (event) {
+  //   event.preventDefault();
+  //   document.querySelector('a[href="#tab3-authors"]').click();
+  // });
 
   backwardBtnCon.addEventListener('click', function (event) {
     event.preventDefault();
