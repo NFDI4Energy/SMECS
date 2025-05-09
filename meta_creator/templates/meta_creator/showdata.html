@@ -125,11 +125,14 @@
           </div>
         </div>
         {% elif value|is_dict and key == "copyrightHolder" %}
-        <fieldset class="copyrightHolder">
-          <legend title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Copyright Holder</legend>
+        <div class="single_inputs">
+        {% comment %} <fieldset class="copyrightHolder"> {% endcomment %}
+          {% comment %} <legend title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Copyright Holder</legend> {% endcomment %}
           {% for k, v in value.items %}
           {% if k == 'name' %}
-          <label for="{{ key }}[{{ k }}]">{{ k }}</label>
+          {% comment %} <label for="{{ key }}[{{ k }}]">{{ k }}</label> {% endcomment %}
+          <label for="{{ key }}">Copyright Holder</label>
+          {% comment %} <label>Copyright Holder</label> {% endcomment %}
           <div class="custom-tooltip-metadata">
             <span class="tooltip-text-metadata">
               {% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
@@ -139,7 +142,8 @@
           <input title="{{ v }}" name="{{ key }}[{{ k }}]" type="text" value="{{ v }}"><br>
           {% endif %}
           {% endfor %}
-        </fieldset>
+        </div>
+        {% comment %} </fieldset> {% endcomment %}
 
         {% elif value|list %}
         {% for item in value %}

@@ -447,7 +447,7 @@ body {
   background: #fefefe;
   font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
   font-weight: normal;
-  line-height: 1.5;
+  line-height: 2.5;
 
   /* color: #0a0a0a; */
   -webkit-font-smoothing: antialiased;
@@ -5843,39 +5843,6 @@ a.thumbnail {
   animation-delay: 700ms !important; }
 
 
-/* Style the tab */
-/* div.tabsp {
-  overflow: hidden;
-  border: 1px solid #ccc;
-  background-color: #f1f1f1;
-}
-
-button.tablinks {
-  background-color: inherit;
-  float: left;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  transition: 0.3s;
-  font-size: 17px;
-}
-
-.tabsp button:hover {
-  background-color: #ddd;
-}
-
-.tabsp button.active {
-  background-color: #ccc;
-}
-
-div.tabcontent {
-  display: none;
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-top: none;
-} */
-
 /******************** Initial Form of the software metadata Extractor (index.html) ********************/
 .InitialFormContainer {
   max-width: 60%;
@@ -6104,7 +6071,7 @@ form.data-form2{
 
 form.data-form3{
   overflow: auto;
-  height: 84.5%;
+  height: 82.5%;
   border-radius: 2px;
 }
 
@@ -6146,7 +6113,7 @@ form.data-form3{
 }
 
 #description, #programmingLanguage, #keywords{
-  width: 83%;
+  width: 82%;
   margin-bottom: 2%;
 }
 
@@ -6728,7 +6695,7 @@ button.TrySMECS:hover {
   border: 1px solid #ccc;
   background-color: #fff;
   z-index: 1000;
-  width: 118%; 
+  width: 98%; 
   max-height: 200px; 
   overflow-y: auto; 
   display: none; 
@@ -6896,13 +6863,15 @@ input:checked + .slider:before {
 .person-info{
   position: absolute;
   height: auto; 
+  width: 44%;
+  top: 15%;
   margin: 0 auto;
   padding: 2px;
   border-radius: 5px; 
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
   text-align: left;
   left: 15%;
-  font-size: 0.8em;
+  font-size: large;
 }
 
 .person-info h5 {
@@ -7076,10 +7045,6 @@ input:checked + .slider:before {
     left: 91.8%;
     bottom: 91.5%;
   }
-  .person-info{
-   top: 24%;
-   width: 56%;
-  }
 
   .contributors-table, .authors-table {
    margin-top: 8%;
@@ -7150,11 +7115,6 @@ input:checked + .slider:before {
   }
   .tab-links_ext a{
     font-size: 58%;
-  }
-  .person-info {
-    width: 50%;
-    top: 16%;
-    font-size: 1.1em;
   }
   .color-code-container{
     height: 12%;
@@ -7312,7 +7272,7 @@ input:checked + .slider:before {
 }
 /* *********************Tags*********************** */
 .tags-container {
-  width: 100%;
+  width: 98%;
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
@@ -7368,4 +7328,8 @@ input:checked + .slider:before {
   margin-right: 10%;
   margin-bottom: 1.5%;
   float: left;
+}
+
+div#contributor-explanation{
+  width: 47%;
 }
