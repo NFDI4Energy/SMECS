@@ -7343,3 +7343,18 @@ div div p#contributor-explanation{
   font-weight: bold;
   text-align: left;
 }
+
+.highlight-tag {
+  background-color: #fef6da;
+  padding: 5px 10px;
+  margin: 5px;
+  border-radius: 4px;
+  display: inline-block;
+  font-weight: bold;
+}
+.highlight-tag .acknowledge-tag {
+  margin-left: 10px;
+  color: #055F82;
+  cursor: pointer;
+  text-decoration: underline;
+}

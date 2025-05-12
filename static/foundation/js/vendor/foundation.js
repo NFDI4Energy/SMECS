@@ -247,6 +247,13 @@ document.querySelectorAll('.custom-tooltip-metadata').forEach(function (element)
   });
 });
 
+// show highlighted tag for keywords
+function showKeywordHighlight(tagValue) {
+  const highlightTag = document.createElement("span");
+  highlightTag.classList.add("highlight-tag");
+  highlightTag.innerHTML = `⚠️ ${tagValue} <span class="acknowledge-tag" data-value="${tagValue}">Got it</span>`;
+  container.insertBefore(highlightTag, input);
+}
 
 // programming and keywords tag logic
 function setupTagging({
@@ -267,6 +274,13 @@ function setupTagging({
     .split(",")
     .map(v => v.trim())
     .filter(Boolean);
+  // Show yellow tag once if any keyword exists
+  if (jsonKey === "keywords" && selectedTags.length > 0) {
+    const highlightTag = document.createElement("span");
+    highlightTag.classList.add("highlight-tag");
+    highlightTag.innerHTML = `⚠️ Suggestion: Curate the keywords <span class="acknowledge-tag">Got it!</span>`;
+    container.insertBefore(highlightTag, input);
+  }
 
   if (useAutocomplete && suggestionsBox) {
     input.addEventListener("input", () => {
@@ -323,6 +337,10 @@ function setupTagging({
       selectedTags = selectedTags.filter(tag => tag !== value);
       e.target.parentElement.remove();
       updateHidden();
+    }
+
+    if (e.target.classList.contains("acknowledge-tag")) {
+      e.target.parentElement.remove();  // Remove the yellow tag
     }
   });
 
