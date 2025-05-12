@@ -539,7 +539,7 @@ function actionFeedback (value){
       formContainer.classList.remove('full-width');
       formContainer.classList.add('half-width');
       personInfoElements.forEach(function(element) {
-        element.style.width = '57%';
+        // element.style.width = '57%';
     });
   } else {
       metadataFormDisplay.style.display = 'none';
@@ -1154,7 +1154,13 @@ function keysMatch(expectedKeys, jsonKeys, jsonObject) {
   };
 }
 
-
+function toggleCollapse() {
+  const content = document.getElementById('contributor-explanation');
+  if (content) {
+    content.style.display = (content.style.display === 'none' || content.style.display === '') ? 'block' : 'none';
+  }
+}
+window.toggleCollapse = toggleCollapse;
 
 
 function downloadFile(event) {

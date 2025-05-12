@@ -7,7 +7,7 @@
 <!-- Initial Form to get information from user and extract metadata -->
 <div class="InitialFormContainer" id="firstpage">
   <h3 class="mainHeader">SMECS</h3>
-  <p><b>S</b>oftware <b>M</b>etadata <b>E</b>xtraction and <b>C</b>uration <b>S</b>oftware</p>
+  <p id="smecsSubtitle"><b>S</b>oftware <b>M</b>etadata <b>E</b>xtraction and <b>C</b>uration <b>S</b>oftware</p>
 
   <form id="form1" method="post" action="{% url 'meta_creator:getdata' %}">
     {% csrf_token %}

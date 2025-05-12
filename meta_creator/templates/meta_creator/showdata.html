@@ -245,9 +245,11 @@
 
     <!-- tab2_contributors -->
     <div id="tab2-contributors" class="tab">
-          <div class="person-info" id="contributor-explanation">
+         <button type="button" class="collapsible-button" onclick="toggleCollapse()">Who are Contributors and Authors?</button>
+
+         <div class="person-info collapsible-content" id="contributor-explanation">
            <h5>Who is a Contributor?</h5>
-           <p>A "contributor" refers to anyone who aids in software development in any capacity, from coding to testing, highlighting the collaborative nature of software projects​</p>
+           <p>A "contributor" refers to anyone who aids in software development in any capacity, from coding to testing, highlighting the collaborative nature of software projects.</p>
            <h5>Who is an Author?</h5>
            <p>An "author" in software authorship is someone who significantly contributes to the creation and development of software, including roles like coding, project management, and documentation.</p>
          </div>
@@ -264,7 +266,7 @@
                       <th title="{% with descriptions=entered_data.description_dict %}{% if 'email' in descriptions %}{{ descriptions|get:'email' }}{% endif %}{% endwith %}">Email</th>
                       <th>Contributor</th>
                       <th>Author</th>
-                      <th title="Delete the contributer">Delete</th>
+                      <th title="Delete the contributer">Action</th>
                       <!-- <th title="Add the contributor to authors' table">Add to Authors</th> -->
                   </tr>
               </thead>
