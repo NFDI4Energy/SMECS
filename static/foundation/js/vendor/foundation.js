@@ -1199,7 +1199,7 @@ function downloadFile(event) {
           "dateModified", "dateCreated", "keywords", "downloadUrl",
           "readme", "author", "contributor", "developmentStatus", "applicationCategory",
           "referencePublication", "funding", "funder", "reviewAspect", "reviewBody", "continuousIntegration",
-          "runtimePlatform", "operatingSystem", "otherSoftwareRequirements"
+          "runtimePlatform", "operatingSystem", "softwareRequirements"
       ];
       // Get key comparison result
       const keyCheck = keysMatch(expectedKeys, jsonKeys, metadata);
