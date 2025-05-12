@@ -200,7 +200,7 @@ def get_github_metadata(url, personal_token_key):
         "continuousIntegration":"",
         "runtimePlatform":"",
         "operatingSystem":"",
-        "otherSoftwareRequirements":"",
+        "softwareRequirements":"",
         "author": [{"@type": "Person",
                     "givenName": "",
                     "familyName": "",

@@ -452,7 +452,7 @@ def get_gitlab_metadata(gl_url, personal_token_key):
             "continuousIntegration":"",
             "runtimePlatform":"",
             "operatingSystem":"",
-            "otherSoftwareRequirements":"",
+            "softwareRequirements":"",
             "author": [{"@type": "Person",
                         "givenName": ownerGivenNames,
                         "familyName": ownerFamilyNames,
