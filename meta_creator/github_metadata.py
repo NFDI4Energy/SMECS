@@ -1,44 +1,70 @@
 import re
 import requests
-import json
 
 from .common_functions import findWord
 from .read_tokens import read_token_from_file
-from .count_extracted_metadata import count_non_empty_values
-from .validate_jsonLD import validate_codemeta
 
-from urllib.parse import urlparse
 
 def get_api_url(owner, repo, url):
-    if url.endswith('.github.io'):
-        return f'https://api.github.com/repos/{owner}/{repo}.github.io'
-    else:
-        return f'https://api.github.com/repos/{owner}/{repo}'
-    
+    """
+    Returns the appropriate GitHub API URL for a given repository.
+
+    If the URL ends with '.github.io', it's assumed to be a GitHub Pages repository.
+    """
+    repo_name = f"{repo}.github.io" if url.rstrip('/').endswith('.github.io') else repo
+    return f"https://api.github.com/repos/{owner}/{repo_name}"
+
 
 # Check the URL to be accessible or not
-def is_url_accessible(url):
+def is_url_accessible(url: str, timeout: int = 5) -> bool:
+    """
+    Checks if a URL is accessible by sending a HEAD request.
+
+    Args:
+        url (str): The URL to check.
+        timeout (int): Timeout in seconds for the request.
+
+    Returns:
+        bool: True if the URL is accessible (status code 200), False otherwise.
+    """
     try:
-        response = requests.head(url, timeout=5)
+        response = requests.head(url, allow_redirects=True, timeout=timeout)
         return response.status_code == 200
     except requests.ConnectionError:
         return False
 
+
 # Creating download_URL of the Repository
-def download_url_releases(url):
-    if url.endswith('/'):
-        url = url[:-1]
+def download_url_releases(url: str) -> str:
+    """
+    Constructs a releases URL for the given base GitHub repository URL
+    and checks if it is accessible.
 
-    download_url = f"{url}/releases"
+    Args:
+        url (str): The base GitHub repository URL.
 
-    if is_url_accessible(download_url):
-        return download_url
-    else:
-        return ""
+    Returns:
+        str: The releases URL if accessible, otherwise an empty string.
+    """
+    normalized_url = url.rstrip('/')
+    releases_url = f"{normalized_url}/releases"
+    return releases_url if is_url_accessible(releases_url) else ""
 
 
 # Function to extract contributors from commit history with pagination
 def get_contributors_from_repo(owner, repo, token, url):
+    """
+    Retrieves unique contributors from a GitHub repository by analyzing the commit history.
+
+    Args:
+        owner (str): Repository owner's username.
+        repo (str): Repository name.
+        token (Optional[str]): GitHub personal access token for authenticated requests.
+        url (str): Base GitHub API URL for the repository.
+
+    Returns:
+        A list of dictionaries with contributor metadata or None on failure.
+    """
     url_contributors = f"{url}/commits"
     headers = {"Authorization": f"token {token}"} if token else {}
 
@@ -86,6 +112,17 @@ def get_contributors_from_repo(owner, repo, token, url):
 
 
 def get_github_metadata(url, personal_token_key):
+    """
+    Fetches metadata from a GitHub repository and returns it in CodeMeta format.
+
+    Args:
+        url (str): The GitHub repository URL (e.g., https://github.com/user/repo).
+        personal_token_key (Optional[str]): A personal GitHub token for authentication.
+
+    Returns:
+        A dictionary representing the metadata in CodeMeta format,
+        or None if the repository is inaccessible or invalid.
+    """
     # Check if the URL matches the modified GitHub repository pattern
     pattern = re.compile(r'https?://github\.com/([a-zA-Z0-9-]+)/([a-zA-Z0-9-_]+)')
     match = pattern.match(url)
@@ -127,7 +164,6 @@ def get_github_metadata(url, personal_token_key):
         description = ""
 
     code_repository = repo_data['html_url']
-    # issue_tracker = repo_data['issues_url'].replace('{/number}', '')
     issue_tracker = code_repository + '/issues'
     login = repo_data['owner']['login']
     topics = list(repo_data['topics'])
@@ -177,18 +213,14 @@ def get_github_metadata(url, personal_token_key):
         "description": description,
         "codeRepository": code_repository,
         "url": code_repository,
-        # "id": code_repository,
         "issueTracker": issue_tracker,
         "license": license_value,
-        # "version": version,
-        "programmingLanguage": programming_languages,  # List of all languages used
+        "programmingLanguage": programming_languages,
         "dateModified": dateModified,
         "dateCreated": dateCreated,
          "copyrightHolder": {"@type": "Person", "name": ""},
-        # "publisher": namespaceName,
         "keywords": topics,
         "downloadUrl": download_url,
-        # "permissions": "",
         "readme": readme_url,
         "developmentStatus": "",
         "applicationCategory":"",
