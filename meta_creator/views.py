@@ -72,7 +72,7 @@ def index(request):
 
         my_json_str = {}
         # Extract metadata
-        extracted_metadata, entered_data = result
+        extracted_metadata, description_metadata, type_metadata = result
         count = count_non_empty_values(extracted_metadata)
         # Validate the JSON data
         is_valid_jsonld = validate_codemeta(extracted_metadata)
@@ -84,7 +84,8 @@ def index(request):
         my_json_str = json.dumps(extracted_metadata, indent=4)
         template = loader.get_template('meta_creator/showdata.html')
         return HttpResponse(template.render({
-            "entered_data":entered_data,
+            "type_metadata": type_metadata,
+            "description_metadata":description_metadata,
             "extracted_metadata":extracted_metadata,
             "my_json_str": my_json_str,
             "count": count,
