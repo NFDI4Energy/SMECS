@@ -371,13 +371,6 @@ copyBtn.addEventListener('click', function(event) {
   metadataJson.select();
   document.execCommand('copy');
   actionFeedback ("Text copied!");
-  // var feedback = document.getElementById('copy-feedback');
-  // feedback.style.display = 'inline'; 
-
-  // setTimeout(function() {
-  //     feedback.style.display = 'none'; 
-  // }, 2000);
-
 });
 
 function actionFeedback (value){
@@ -641,29 +634,6 @@ function addPerson(type, tableBodyId, properties) {
     deleteButton.onclick = function (event) { handleDelete(event);};
     deletecell.appendChild(deleteButton);
 
-  
-    
-    // Append the delete button to the cell
-    // newRow.insertCell(cellIndex++).appendChild(deleteButton);
-
-    // Add copy button with icon (only for contributor table)
-    // if (type === 'contributor') {
-    //   var copyButton = document.createElement('i');
-    //   copyButton.classList.add('fas', 'fa-copy');
-    //   copyButton.title = 'This contributor is also an author'; // Add title for tooltip
-    //   copyButton.onclick = function (event) {
-    //       event.stopPropagation();
-    //       copyRowToAuthorTable(event, newRow);
-    //   };
-    //   newRow.insertCell(cellIndex++).appendChild(copyButton);
-    // }
-
-    
-    // Attach the event listener to the new delete button
-    // deleteButton.addEventListener('click', function (event) {
-    //   deletePerson(event, this, type);
-    // });
-  
     givenNameInput.value = '';
     familyNameInput.value = '';
     emailInput.value = ''; 
@@ -679,69 +649,12 @@ function addPerson(type, tableBodyId, properties) {
 }
   
 
-
-// // Copy row to author table
-// function copyRowToAuthorTable(event, button) {
-//   event.preventDefault();
-//   const row = button.closest('tr');
-//   if (!row) {
-//       console.error("Row not found");
-//       return;
-//   }
-//   const contributorsTableBody = document.getElementById('contributorsTableBody');
-//   if (!contributorsTableBody) {
-//       console.error("table body not found");
-//       return;
-//   }
-
-//   // Extract metadata from the contributor row
-//   const givenName = row.cells[1].textContent;
-//   const familyName = row.cells[2].textContent;
-//   const email = row.cells[3].textContent;
-
-//   // Insert a new row into the authors table
-//   const newRow = authorsTableBody.insertRow();
-
-//   // Insert cells with the contributor metadata
-//   newRow.insertCell(0).textContent = `#${authorsTableBody.rows.length}`;
-//   newRow.insertCell(1).textContent = givenName;
-//   newRow.insertCell(2).textContent = familyName;
-//   newRow.insertCell(3).textContent = email;
-
-//   // Create delete button
-//   const deleteButton = document.createElement('i');
-//   deleteButton.classList.add('fas', 'fa-trash-alt');
-//   deleteButton.onclick = function (event) {
-//       event.stopPropagation();
-//       deletePerson(event, newRow, 'author');
-//   };
-//   newRow.insertCell(4).appendChild(deleteButton);
-
-//   // Attach the event listener to the delete button in the new row
-//   deleteButton.addEventListener('click', function(event) {
-//       deletePerson(event, newRow, 'author');
-//   });
-
-//   // Update author row numbers
-//   for (let i = 0; i < authorsTableBody.rows.length; i++) {
-//       authorsTableBody.rows[i].cells[0].textContent = `#${i + 1}`;
-//   }
-//   validateRowCells(newRow);
-//   updateJsonData('authorsTableBody', 'author', ['Email']);
-// }
-
-
 // Initialize table with existing contributors and authors
 function initializeTables() {
   const contributorsRows = document.getElementById('contributorsTableBody').rows;
   for (let i = 0; i < contributorsRows.length; i++) {
-      // attachCopyButton(contributorsRows[i]);
       validateRowCells(contributorsRows[i]); // Validate each row during initialization
   }
-  // const authorsRows = document.getElementById('authorsTableBody').rows;
-  // for (let i = 0; i < authorsRows.length; i++) {
-  //     validateRowCells(authorsRows[i]); // Validate each row during initialization
-  // }
 }
 
 // Validate each cell in the row in table
@@ -759,17 +672,6 @@ function validateRowCells(row) {
       }
   }
 }
-
-// function attachCopyButton(row) {
-//   const copyButton = document.createElement('i');
-//   copyButton.classList.add('fas', 'fa-copy');
-//   copyButton.title = 'This contributor is also an author'; 
-//   copyButton.onclick = function (event) {
-//     event.stopPropagation();
-//     copyRowToAuthorTable(event, row);
-//   };
-//   row.insertCell(row.cells.length).appendChild(copyButton);
-// }
 
 // Initialize tables on load
 initializeTables();
@@ -823,47 +725,6 @@ function editCell(cell, type, properties) {
   });
 }
 
-
-// function deletePerson(event, button, type) {
-//   event.stopPropagation();
-//   const row = button.closest('tr');
-//   if (row) {
-//       // Get the table body based on the type (contributor or author)
-//       const tableBody = document.getElementById(`${type}sTableBody`);
-//       const rowIndex = row.rowIndex;
-//       row.remove();
-
-//       // Update Contributor/Author numbers for all remaining rows
-//       for (let i = 0; i < tableBody.rows.length; i++) {
-//           tableBody.rows[i].cells[0].textContent = `#${i + 1}`;
-//       }
-
-//       // Update JSON data in the textarea
-//       if (type === 'contributor') {
-//           updateJsonData(`${type}sTableBody`, type, ['email']);
-//       } else if (type === 'author') {
-//           updateJsonData(`${type}sTableBody`, type, ['email']);
-//       } else {
-//           console.error("Unsupported type");
-//       }
-//   } else {
-//       console.error("Unable to find the row associated with the button");
-//   }
-// }
-
-// deleteButtons.forEach(function(button) {
-//     button.addEventListener('click', function(event) {
-//         deletePerson(event, this, 'contributor');
-//     });
-// });
-
-// deleteButtons.forEach(function(button) {
-//     button.addEventListener('click', function(event) {
-//         deletePerson(event, this, 'author');
-//     });
-// });
-
-
 function updateJsonData(tableBodyId, jsonDataProperty, additionalProperties) {
   var tableBody = document.getElementById(tableBodyId);
   var data = [];
@@ -890,7 +751,6 @@ function updateJsonData(tableBodyId, jsonDataProperty, additionalProperties) {
 }
 
 
-
 inputs.forEach((input) => {
   const handleChange = () => {
     validateInput(input); 
@@ -914,18 +774,6 @@ inputs.forEach((input) => {
       }
     }
 
-    // ["programmingLanguage", "keywords"].forEach((prop) => {
-    //   if (jsonObject[prop]) {
-    //     if (typeof jsonObject[prop] === "string") {
-    //       jsonObject[prop] = jsonObject[prop]
-    //         .split(",")
-    //         .map((lang) => lang.trim())
-    //         .filter((lang) => lang !== "");
-    //     } else {
-    //       jsonObject[prop] = jsonObject[prop].filter((lang) => lang !== "");
-    //     }
-    //   }
-    // });
     metadataJson.value = JSON.stringify(jsonObject, null, 2);
   };
 
@@ -1023,13 +871,6 @@ contributorsTableBody.parentElement.classList.add('scrollable-table');
 }
 
 
-// // Add event listener to input fields for real-time JSON update
-// inputs.forEach((input) => {
-//   input.addEventListener("input", () => {
-//     validateInput(input);
-//   });
-// });
-
 function keysMatch(expectedKeys, jsonKeys, jsonObject) {
   // Convert both expected and actual keys to lowercase for case-insensitive matching
   const lowerExpectedKeys = expectedKeys.map(key => key.toLowerCase());
@@ -1090,7 +931,6 @@ function downloadFile(event) {
 
   try {
       const data = metadataJson.value;
-      //console.log("Raw JSON Data:", data); // Debugging step
       
       const metadata = JSON.parse(data); // Move inside try block
       const jsonKeys = Object.keys(metadata); // Extract keys from received JSON
@@ -1129,8 +969,6 @@ function downloadFile(event) {
       console.error("JSON Parsing Error:", e);
   }
 }
-
-
 
 
 function jsonPrettier(repoName,metadata){
