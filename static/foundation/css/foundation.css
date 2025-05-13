@@ -447,7 +447,7 @@ body {
   background: #fefefe;
   font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
   font-weight: normal;
-  line-height: 1.5;
+  line-height: 2.5;
 
   /* color: #0a0a0a; */
   -webkit-font-smoothing: antialiased;
@@ -2194,7 +2194,6 @@ h5,
 h6,
 pre,
 form,
-p,
 blockquote,
 th,
 td {
@@ -5843,39 +5842,6 @@ a.thumbnail {
   animation-delay: 700ms !important; }
 
 
-/* Style the tab */
-/* div.tabsp {
-  overflow: hidden;
-  border: 1px solid #ccc;
-  background-color: #f1f1f1;
-}
-
-button.tablinks {
-  background-color: inherit;
-  float: left;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  transition: 0.3s;
-  font-size: 17px;
-}
-
-.tabsp button:hover {
-  background-color: #ddd;
-}
-
-.tabsp button.active {
-  background-color: #ccc;
-}
-
-div.tabcontent {
-  display: none;
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-top: none;
-} */
-
 /******************** Initial Form of the software metadata Extractor (index.html) ********************/
 .InitialFormContainer {
   max-width: 60%;
@@ -5891,7 +5857,12 @@ div.tabcontent {
 .mainHeader {
   text-align: center;
   margin-bottom: 0;
-  font-size: 100%;
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+#smecsSubtitle{
+  font-size: 1.3rem;
 }
 
 #form1 {
@@ -5919,20 +5890,20 @@ div.tabcontent {
   font-size: 16px;
 }
 
-button.ExData {
+button.ExData, button.TrySMECS {
   background-color: #055F82;
   color: white;
-  padding: 10px 20px;
+  padding: 1% 2%;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 1rem;
   margin: auto;
   font-weight: bold;
-  margin-top:1.5rem;
+  margin-top:3.5rem;
 }
 
-button.ExData:hover {
+button.ExData:hover, button.TrySMECS:hover {
   background-color: #4BA0AF;
   cursor: pointer;
 }
@@ -6104,8 +6075,14 @@ form.data-form2{
 
 form.data-form3{
   overflow: auto;
-  height: 84.5%;
+  height: 80.5%;
   border-radius: 2px;
+  margin-top: 0;
+}
+
+form.data-form3 div#tab1-sw-info
+{
+  margin-top: 0;
 }
 
 .data-form3::after {
@@ -6115,9 +6092,9 @@ form.data-form3{
 }
 
 .tab .form-group{
-  width: 65%;
-  margin: 0 auto;
-  margin-top: 3%;
+  width: 90%;
+  margin: 0px 0% 1% 9%;
+  /* margin-top: 3%; */
 }
 
 .form-group label {
@@ -6125,7 +6102,7 @@ form.data-form3{
   font-weight: bold;
 }
 
-.form-group input[type="text"] {
+.form-group input[type="text"] , select{
   width: 118%;
   padding: 8px;
   border-radius: 4px;
@@ -6140,13 +6117,13 @@ form.data-form3{
   margin-bottom: 0.5%;
 }
 
-.form-group input[type="text"]:focus {
+.form-group input[type="text"]:focus , select:focus{
   outline: none;
   border-color: #0088cc;
 }
 
 #description, #programmingLanguage, #keywords{
-  width: 83%;
+  width: 82%;
   margin-bottom: 2%;
 }
 
@@ -6222,7 +6199,7 @@ form.data-form3{
 
 #metadata-json {
   width: 100%;
-  height:  94%;
+  height:  92%;
   padding: 8px;
   border-radius: 4px;
   margin-bottom:2px;
@@ -6292,8 +6269,10 @@ div.error-container a:hover {
 /********************************* Style for contributors table **********************************/
 /* contributors table */
 .contributors-table, .authors-table {
-  margin-top: 5%;
-  width: 100%;
+  margin: 0 auto;
+  /* margin-top: 14%; */
+  margin-bottom: 4%;
+  width: 80%;
   border-collapse: collapse;
   border: 1px solid #ddd;
 }
@@ -6477,19 +6456,8 @@ div.input-container input::placeholder {
 }
 
 button.TrySMECS {
-  display: block;
-  margin: 30px auto;
-  padding: 10px 20px;
-  background-color: #007BFF;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  transition: background-color 0.3s ease;
-}
-button.TrySMECS:hover {
-  background-color: #0056b3;
+  margin: 10% auto;
+  padding: 1% 2%;
 }
 
 @media (max-width: 992px) {
@@ -6680,13 +6648,13 @@ button.TrySMECS:hover {
     align-items: center;
     cursor: pointer;
     transition: background-color 0.3s;
-    margin-top: 3%;
+    /* margin-top: 3%; */
   }
   .navigation-buttons .backwardBtn{
-    margin-left: 10%;
+    margin-left: 9%;
     display: block;
     float: left;
-    margin-top: 0;
+    margin-bottom: 2%;
   }
   .navigation-buttons .forwardBtn{
     margin-left: 88%;
@@ -6728,7 +6696,7 @@ button.TrySMECS:hover {
   border: 1px solid #ccc;
   background-color: #fff;
   z-index: 1000;
-  width: 118%; 
+  width: 98%; 
   max-height: 200px; 
   overflow-y: auto; 
   display: none; 
@@ -6777,7 +6745,7 @@ body, html {
   border: 1px solid #ccc;
   border-radius: 5px;
   transition: all 0.3s ease;
-  height: 99%;
+  height: 96%;
   overflow: hidden;
   margin: 2px;
 }
@@ -6896,13 +6864,16 @@ input:checked + .slider:before {
 .person-info{
   position: absolute;
   height: auto; 
+  width: 52%;
+  top: 21%;
   margin: 0 auto;
-  padding: 2px;
+  padding: 0.5%;
   border-radius: 5px; 
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
   text-align: left;
   left: 15%;
-  font-size: 0.8em;
+  font-size: large;
+  background-color: #ccc;
 }
 
 .person-info h5 {
@@ -6913,11 +6884,12 @@ input:checked + .slider:before {
 .person-info p {
   margin: 0;
   line-height: 1.5; 
+  margin-bottom: 2%;
 }
 
 /********************* Contributor table when more than 10 people  **********************/
 .scrollable-table {
-  max-height: 400px; 
+  max-height: 55%; 
   overflow-y: auto;
   display: block;
 }
@@ -7074,27 +7046,18 @@ input:checked + .slider:before {
     margin-top: 1.5rem;
     position: absolute;
     left: 91.8%;
-    bottom: 91.5%;
-  }
-  .person-info{
-   top: 24%;
-   width: 56%;
+    bottom: 93.5%;
   }
 
-  .contributors-table, .authors-table {
-   margin-top: 8%;
-  }
   .fa-copy:before, .fa-download:before {
    font-size: 80%;
   }
-  .form-container, .metadata-form-display{
-   height: 93%;
-  }
+
   form.data-form3{
-   height: 77.5%;
+   height: 80.5%;
   }
   #metadata-json{
-   height: 88.5%;
+   /* height: 88.5%; */
    font-size: 74%;
   }
   #metadata-form-display h4
@@ -7112,7 +7075,7 @@ input:checked + .slider:before {
     margin-left: 2%;
     margin-top: 4%;
   }
-  #form1 input[type=url] , .form-group input[type="text"],
+  #form1 input[type=url] , .form-group input[type="text"], select
   .form-group fieldset label, .data-form3 label{
     font-size: 74%;
   }
@@ -7151,22 +7114,14 @@ input:checked + .slider:before {
   .tab-links_ext a{
     font-size: 58%;
   }
-  .person-info {
-    width: 50%;
-    top: 16%;
-    font-size: 1.1em;
-  }
   .color-code-container{
     height: 12%;
   }
-  .form-container, .metadata-form-display {
-    height: 99%;
-  }
-  form.data-form3{
+
+  /* form.data-form3{
     height: 75%;
-  }
+  } */
   .contributors-table, .authors-table{
-    margin-top: 10%;
     font-size:60%;
   }
   .navigation-buttons .backwardBtn, .navigation-buttons .forwardBtn {
@@ -7187,7 +7142,7 @@ input:checked + .slider:before {
   .fa-trash-alt:before, .fa-trash-can:before, .fa-copy:before, .fa-download:before {
     font-size: 110%;
   }
-  .form-group input[type="text"]{
+  .form-group input[type="text"], select{
     padding: 6px;
     height: 6%;
     font-size: 1em;
@@ -7201,9 +7156,6 @@ input:checked + .slider:before {
   }
   form.data-form2, form.data-form3{
     padding: 0px;
-  }
-  form.data-form3{
-    height: 84.5%;
   }
   .navigation-buttons {
     margin-bottom: 20px;
@@ -7230,7 +7182,7 @@ input:checked + .slider:before {
     width: 100%;
   }
   .scrollable-table{
-    max-height: 49%;
+    max-height: 50%;
   }
   .custom-tooltip .tooltip-text {
     transform: translateY(-18%);
@@ -7309,4 +7261,100 @@ input:checked + .slider:before {
   100% {
     transform: rotate(360deg);
   }
+}
+/* *********************Tags*********************** */
+.tags-container {
+  width: 98%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+  padding: 5px;
+}
+
+.tag {
+  background-color: #dddddd;
+  color: rgb(34, 34, 34);
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+}
+
+.remove-tag {
+  margin-left: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#languageInput {
+  border: none;
+  outline: none;
+  flex-grow: 1;
+  min-width: 120px;
+}
+
+#suggestions {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+  display: none;
+  z-index: 1000;
+}
+
+.suggestion-item {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.suggestion-item:hover {
+  background-color: #f0f0f0;
+}
+
+.form-group #programmingLanguageWrapper,.form-group #keywordsWrapper{
+
+  width: 100%;
+  margin-right: 10%;
+  margin-bottom: 1.5%;
+  float: left;
+}
+
+div div p#contributor-explanation{
+  width: 52%;
+}
+
+.collapsible-content {
+  display: none;
+  margin-top: 10px;
+}
+
+.collapsible-button {
+  position: absolute;
+  top: 19%;
+  left: 14%;
+  width: fit-content;
+  cursor: pointer;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.highlight-tag {
+  background-color: #fef6da;
+  padding: 5px 10px;
+  margin: 5px;
+  border-radius: 4px;
+  display: inline-block;
+  font-weight: bold;
+}
+.highlight-tag .acknowledge-tag {
+  margin-left: 10px;
+  color: #055F82;
+  cursor: pointer;
+  text-decoration: underline;
 }
