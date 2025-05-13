@@ -204,7 +204,6 @@ def convertToJson(metadata_dict, projectname, fromTextBox):
     fileName = "Metadata " + projectname + ".json"
     # utf_16 encoding, because some names are otherwise not rightfully encoded.
     file = open(fileName, 'wt', encoding="utf_16")
-    file.write(gitlab_metadata)
     file.close()
     return gitlab_metadata
 
