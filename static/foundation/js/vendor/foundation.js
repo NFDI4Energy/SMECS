@@ -1013,7 +1013,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-
+    // Provide metadata as download
     function jsonPrettier(repoName, metadata) {
         let validJson;
         const values = Object.values(metadata).slice(0, 2);
@@ -1029,7 +1029,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (metadata.name) {
             repoName = metadata.name;
-            validJson = JSON.stringify(metadata, null, 2);
+            const cleanedMetadata = getCleanedMetadata(metadata);
+            validJson = JSON.stringify(cleanedMetadata, null, 2);
         }
         const fileName = `${repoName}/codemeta.json`;
         const blob = new Blob([validJson], { type: "application/json" });
@@ -1044,6 +1045,30 @@ document.addEventListener("DOMContentLoaded", function () {
             URL.revokeObjectURL(link.href);
             link.parentNode.removeChild(link);
         }, 0);
+    }
+
+    // Function to create a cleaned copy of an object by removing empty entries
+    function getCleanedMetadata(obj) {
+        const cleanedObj = Array.isArray(obj) ? [] : {};
+        Object.keys(obj).forEach(key => {
+            if (obj[key] && typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+                // Recursively clean nested objects
+                const cleanedNested = getCleanedMetadata(obj[key]);
+                if (Object.keys(cleanedNested).length > 0) {
+                    cleanedObj[key] = cleanedNested;
+                }
+            } else if (Array.isArray(obj[key])) {
+                // Remove empty elements from arrays
+                const cleanedArray = obj[key].filter(item => item !== null && item !== undefined && item !== '');
+                if (cleanedArray.length > 0) {
+                    cleanedObj[key] = cleanedArray;
+                }
+            } else if (obj[key] !== null && obj[key] !== undefined && obj[key] !== '') {
+                // Copy non-empty values
+                cleanedObj[key] = obj[key];
+            }
+        });
+        return cleanedObj;
     }
 
     downloadButton.addEventListener("click", (event) => {
