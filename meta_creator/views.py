@@ -17,17 +17,6 @@ from .validate_jsonLD import validate_codemeta
 class IndexView(TemplateView):
     template_name = 'meta_creator/index.html'
 
-
-# Thesis_navigation to homepage and information page_based on requiremment analysis 
-def homepage(request):
-    return render(request, 'index.html')
-
-def information(request):
-    return render(request, 'meta_creator/information.html')
-
-def legals(request):
-    return render(request, 'meta_creator/legals.html')
-
 # Thesis_navigation to homepage and information page_based on requiremment analysis 
 def homepage(request):
     return render(request, 'index.html')
@@ -72,15 +61,15 @@ def index(request):
 
         my_json_str = {}
         # Extract metadata
-        extracted_metadata, description_metadata, type_metadata = result
+        extracted_metadata, description_metadata, type_metadata, joined_metadata = result
         # Validate the JSON data
-        is_valid_jsonld = validate_codemeta(extracted_metadata)
+        is_valid_jsonld = validate_codemeta(joined_metadata)
         if is_valid_jsonld:
             validation_result = "The JSON data is a valid JSON-LD Codemeta object"
         else:
             validation_result = "The JSON data is not a valid JSON-LD Codemeta object"
         # Convert the dictionary to JSON
-        my_json_str = json.dumps(extracted_metadata, indent=4)
+        my_json_str = json.dumps(joined_metadata, indent=4)
         template = loader.get_template('meta_creator/showdata.html')
         return HttpResponse(template.render({
             "type_metadata": type_metadata,

@@ -11,24 +11,6 @@ from .url_check_GitHub import validate_github_inputs
 from .gitlab_metadata import get_gitlab_metadata
 from .github_metadata import get_github_metadata
 from .read_tokens import read_token_from_file
-import json
-import os
-
-
-# Load descriptions from the Schema
-def load_description_dict_from_schema():
-    schema_path = os.path.join(settings.BASE_DIR, 'static', 'schema', 'codemeta_schema.json')
-    with open(schema_path, 'r', encoding='utf-8') as f:
-        schema = json.load(f)
-
-    properties = schema.get("properties", {})
-    description_dict = {}
-
-    for key, value in properties.items():
-        if "description" in value:
-            description_dict[key] = value["description"]
-
-    return description_dict
 
 #################### getting metadata from gitlab project ####################
 
@@ -54,11 +36,11 @@ def data_extraction(request):
         elif is_valid_github:
             extracted_metadata = get_github_metadata(gl_url, personal_token_key)
 
-        if 'Invalid URL' in error_messages:
-            return 'Invalid URL'
-        if 'Invalid GitLab API token' in error_messages:
-            return 'Invalid Personal Token Key'
-        if not is_valid_github:
+        else:
+            if 'Invalid URL' in error_messages:
+                return 'Invalid URL'
+            if 'Invalid GitLab API token' in error_messages:
+                return 'Invalid Personal Token Key'
             return 'Invalid GitHub URL'
 
         return init_curated_metadata(extracted_metadata)

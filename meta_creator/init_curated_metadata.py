@@ -1,11 +1,9 @@
 # Intilize curated metadata
 # Within the file all relevant metadata elements for the curation page are defined
 
-from importlib import metadata
 from django.conf import settings
 import json
 import os
-
 
 def load_schema(schema_name: str) -> dict:
     schema_path = os.path.join(settings.BASE_DIR, 'static', 'schema', schema_name)
@@ -89,15 +87,16 @@ def create_empty_metadata_dict_from_properties_list(
         else:
             metadata[property] = ""
 
+    return metadata
+
 # Create a empty metadata dict with multiple tabs by defining the range for each tab
 def create_empty_metadata(schema: str) -> dict[str, dict[str, str]]:
     properties_list = load_properties_list_from_schema(schema)
-    metadata = {"General Information": create_empty_metadata_dict_from_properties_list(properties_list, schema, "name", "url"),
+    metadata = {"GeneralInformation": create_empty_metadata_dict_from_properties_list(properties_list, schema, "name", "url"),
                 "Provernance": create_empty_metadata_dict_from_properties_list(properties_list, schema, "softwareVersion", "funding"),
-                "Contributors and Authors": create_empty_metadata_dict_from_properties_list(properties_list, schema, "author", "contributor"),
-                "Technical Aspects": create_empty_metadata_dict_from_properties_list(properties_list, schema, "downloadUrl", "targetProduct")
+                "ContributorsAndAuthors": create_empty_metadata_dict_from_properties_list(properties_list, schema, "author", "contributor"),
+                "TechnicalAspects": create_empty_metadata_dict_from_properties_list(properties_list, schema, "downloadUrl", "targetProduct")
         }
-
     return metadata
 
 # Fill the empty metadata dict with the extracted metadata
@@ -108,15 +107,30 @@ def fill_empty_metadata( empty_metadata: dict[str, dict[str, str]], extracted_me
            if metadata_field_name in extracted_metadata:
                 empty_metadata[metadata_tab_name][metadata_field_name] = extracted_metadata[metadata_field_name]
 
-    return metadata
+    return empty_metadata
+
+# Join different tabs to one dict
+def join_tabs_to_dict(filled_metadata: dict[str, dict]) -> dict:
+    output_metadata = {
+            "@context": "https://w3id.org/codemeta/3.0",
+            "@type": "SoftwareSourceCode",
+        }
+    for _, tab_data in filled_metadata.items():
+        output_metadata.update(tab_data)
+
+    return output_metadata
+
+
 
 # Create curated metadata
 def init_curated_metadata(extract_metadata):
     schema_name = 'codemeta_schema.json'
     full_schema = load_schema(schema_name)
     empty_metadata = create_empty_metadata(full_schema)
-    metadata = fill_empty_metadata(empty_metadata, extract_metadata)
+    filled_metadata = fill_empty_metadata(empty_metadata, extract_metadata)
 
     metadata_description = load_description_dict_from_schema(full_schema)
     metadata_field_types = define_field_type(full_schema)
-    return metadata, metadata_description, metadata_field_types
+    
+    joined_metadata = join_tabs_to_dict(filled_metadata)
+    return filled_metadata, metadata_description, metadata_field_types, joined_metadata
