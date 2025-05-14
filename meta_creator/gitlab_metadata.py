@@ -1,14 +1,10 @@
-import requests, re
+import requests
 import gitlab
 import json
 
 from urllib.parse import urlparse
-from django.views.decorators.csrf import csrf_exempt
 from .common_functions import findWord
 from .read_tokens import read_token_from_file
-from .count_extracted_metadata import count_non_empty_values
-from .validate_jsonLD import validate_codemeta
-from operator import itemgetter
 
 
 # functions for data filtering #
@@ -208,7 +204,6 @@ def convertToJson(metadata_dict, projectname, fromTextBox):
     fileName = "Metadata " + projectname + ".json"
     # utf_16 encoding, because some names are otherwise not rightfully encoded.
     file = open(fileName, 'wt', encoding="utf_16")
-    file.write(gitlab_metadata)
     file.close()
     return gitlab_metadata
 
@@ -429,18 +424,14 @@ def get_gitlab_metadata(gl_url, personal_token_key):
             "description": description,
             "codeRepository": codeRepository,
             "url": codeRepository,
-            # "id": codeRepository,
             "issueTracker": issueTrackerURL,
             "license": license_name,
             "programmingLanguage": [],
             "copyrightHolder": {"@type": "Person", "name": namespaceName},
             "dateModified": dateModified,
             "dateCreated": dateCreated,
-            # "publisher": namespaceName,
             "keywords": [topics],
             "downloadUrl": codeRepository,
-            # "permissions": permissions,
-            # "readme": readmeURL,
             "readme": raw_readme_url,
             "developmentStatus": "",
             "applicationCategory":"",
@@ -464,8 +455,5 @@ def get_gitlab_metadata(gl_url, personal_token_key):
         # Adds metadata in groups to the dict object.
         metadata_dict = filLanguages(languageName, metadata_dict)
         metadata_dict = findContributors(contributorsString, metadata_dict)
-
-        # Converting the data to JSON. (creating a json file based on the codemeta)
-        gitlab_metadata = convertToJson(metadata_dict, repositoryName, False)
 
         return metadata_dict

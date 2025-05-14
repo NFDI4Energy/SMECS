@@ -12,7 +12,7 @@ from django.core.exceptions import PermissionDenied  # Import PermissionDenied
 from django.http import HttpResponseServerError, HttpResponseForbidden
 from requests.exceptions import ConnectTimeout, ReadTimeout, RequestException
 from .metadata_extractor import data_extraction
-from .gitlab_metadata import count_non_empty_values, validate_codemeta
+from .validate_jsonLD import validate_codemeta
 
 class IndexView(TemplateView):
     template_name = 'meta_creator/index.html'
@@ -73,7 +73,6 @@ def index(request):
         my_json_str = {}
         # Extract metadata
         extracted_metadata, description_metadata, type_metadata = result
-        count = count_non_empty_values(extracted_metadata)
         # Validate the JSON data
         is_valid_jsonld = validate_codemeta(extracted_metadata)
         if is_valid_jsonld:
@@ -88,7 +87,6 @@ def index(request):
             "description_metadata":description_metadata,
             "extracted_metadata":extracted_metadata,
             "my_json_str": my_json_str,
-            "count": count,
             "validation_result": validation_result,
             }, request))
 

@@ -31,16 +31,20 @@
   </div>
 
 <!-- Displaying the color coding -->
-<div class="color-code-container">
-  <div class="color-code">
-      <span class="red"></span>
-      <span class="color-code-text">Missed metadata</span>
+  <div class="color-code-container">
+      <div class="color-code">
+          <span class="red"></span>
+          <span class="color-code-text">Missed metadata</span>
+      </div>
+      <div class="color-code">
+          <span class="yellow"></span>
+          <span class="color-code-text">Better to curate the metadata</span>
+      </div>
+      <div class="color-code">
+          <span class="symbol"></span>
+          <span class="color-code-text">Mandatory elements</span>
+      </div>
   </div>
-  <div class="color-code">
-      <span class="yellow"></span>
-      <span class="color-code-text">Better to curate the metadata</span>
-  </div>
-</div>
 
 <!-- Pop-up message for new repository URL on Contributor and Author tabs -->
 <div id="popup" class="popup">
@@ -197,42 +201,42 @@
                     <input title="{{ value }}" id="{{ key }}-{{ k }}" name="{{ key }}[{{ k }}]" type="text" value="{{ value }}" class="input-field"><br>
                 </div>
 
-                {% elif key == "license" %}
-                <div class="single_inputs">
-                    <label for="{{ key }}">{{ key }}</label>
-                    <div class="custom-tooltip-metadata">
-                        <span class="tooltip-text-metadata">
-                            {% with descriptions=description_metadata %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
-                        </span>
-                        <i class="fa fa-info-circle" aria-hidden="true"></i>
-                    </div>
-                    <input title="{{ value }}" id="license-input" name="{{ key }}[{{ k }}]" type="text" value="{{ value }}" class="input-field" autocomplete="off"><br>
-                    <div id="licenseSuggestions" class="suggestions"></div>
-                </div>
-                {% elif key == "developmentStatus" %}
-                <div class="single_inputs">
-                    <label>Development Status</label>
-                    <div class="custom-tooltip-metadata">
-                        <span class="tooltip-text-metadata">
-                            {% with descriptions=description_metadata %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
-                        </span>
-                        <i class="fa fa-info-circle" aria-hidden="true"></i>
-                    </div>
-                    <select name="developmentStatus" id="developmentStatusDropdown">
-                        <option value=""></option>
-                    </select>
-                    <div id="suggestions"></div>
-                </div>
-                {% else %}
-                <div class="single_inputs">
-                    <label for="{{ key }}">{{ key }}</label>
-                    <div class="custom-tooltip-metadata">
-                        <span class="tooltip-text-metadata">
-                            {% with descriptions=description_metadata %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
-                        </span>
-                        <i class="fa fa-info-circle" aria-hidden="true"></i>
-                    </div>
-                    <input title="{{ value }}" id="{{ key }}-{{ k }}" name="{{ key }}[{{ k }}]" type="text" value="{{ value }}"><br>
+        {% elif key == "license" %}
+        <div class="single_inputs">
+        <label for="{{ key }}">{{ key }}</label>
+        <div class="custom-tooltip-metadata">
+          <span class="tooltip-text-metadata">
+            {% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
+          </span>
+          <i class="fa fa-info-circle" aria-hidden="true"></i>
+        </div>
+        <input title="{{ value }}" id="license-input" name="{{ key }}[{{ k }}]" type="text" value="{{ value }}" class="input-field" autocomplete="off"><br>
+        <div id="licenseSuggestions" class="suggestions"></div>
+        </div>
+        {% elif key == "developmentStatus" %}
+        <div class="single_inputs">
+          <label>Development Status</label>
+          <div class="custom-tooltip-metadata">
+            <span class="tooltip-text-metadata">
+              {% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
+            </span>
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+          </div>
+          <select name="developmentStatus" id="developmentStatusDropdown" data-dropdown-schema="developmentStatus">
+            <option value=""></option>
+          </select>
+          <div id="suggestions"></div>
+        </div>
+        {% else %}
+        <div class="single_inputs">
+          <label for="{{ key }}">{{ key }}</label>
+          <div class="custom-tooltip-metadata">
+            <span class="tooltip-text-metadata">
+              {% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
+            </span>
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+          </div>
+          <input title="{{ value }}" id="{{ key }}-{{ k }}" name="{{ key }}[{{ k }}]" type="text" value="{{ value }}"><br>
 
                 </div>
                 {% endif %}
@@ -402,7 +406,7 @@
     
     
     <div class="right">
-      <button  id="updateFormBtn">Update Form</button> 
+      {% comment %} <button  id="updateFormBtn">Update Form</button>  {% endcomment %}
       <i class="fas fa-download ExData" id="downloadButton" title="Download the JSON file."></i>
       
       <i id="copy-button" class="fa fa-copy"  title="Copy the JSON"></i>

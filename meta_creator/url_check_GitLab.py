@@ -1,6 +1,5 @@
 import re
 import requests
-import json
 
 from urllib.parse import urlparse
 from .read_tokens import read_token_from_file
