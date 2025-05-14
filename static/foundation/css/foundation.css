@@ -1209,6 +1209,22 @@ input:checked + .slider:before {
   background-color: #fef6da;
   border: yellow solid 1px;
 }
+.color-code > span:first-child.symbol {
+    width: 15px;
+    height: 15px;
+    border-radius: 0; /* Remove the circle shape */
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    background-color: transparent; /* No background for the symbol */
+    font-size: 18px; /* Match the size of the circle */
+    color: #e15e5e; /* Match the color of the circle */
+    font-weight: bold; /* Make the * bold */
+    line-height: 1; /* Ensure proper vertical alignment */
+}
+
+.color-code > span:first-child.symbol::before {
+    content: "*"; /* Add the * symbol */
+}
 
 /********************* Responsiveness  **********************/
 
