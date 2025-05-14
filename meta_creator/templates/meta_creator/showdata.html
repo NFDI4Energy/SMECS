@@ -31,16 +31,20 @@
   </div>
 
 <!-- Displaying the color coding -->
-<div class="color-code-container">
-  <div class="color-code">
-      <span class="red"></span>
-      <span class="color-code-text">Missed metadata</span>
+  <div class="color-code-container">
+      <div class="color-code">
+          <span class="red"></span>
+          <span class="color-code-text">Missed metadata</span>
+      </div>
+      <div class="color-code">
+          <span class="yellow"></span>
+          <span class="color-code-text">Better to curate the metadata</span>
+      </div>
+      <div class="color-code">
+          <span class="symbol"></span>
+          <span class="color-code-text">Mandatory elements</span>
+      </div>
   </div>
-  <div class="color-code">
-      <span class="yellow"></span>
-      <span class="color-code-text">Better to curate the metadata</span>
-  </div>
-</div>
 
 <!-- Pop-up message for new repository URL on Contributor and Author tabs -->
 <div id="popup" class="popup">
@@ -216,7 +220,7 @@
             </span>
             <i class="fa fa-info-circle" aria-hidden="true"></i>
           </div>
-          <select name="developmentStatus" id="developmentStatusDropdown">
+          <select name="developmentStatus" id="developmentStatusDropdown" data-dropdown-schema="developmentStatus">
             <option value=""></option>
           </select>
           <div id="suggestions"></div>

@@ -1175,6 +1175,7 @@ input:checked + .slider:before {
 }
 
 /************************************Color-code-info**************************************/
+/* Create info strings to explain color and other codes */
 .color-code-container {
   align-items: center;
   background-color: #ccc;
@@ -1208,6 +1209,24 @@ input:checked + .slider:before {
 .yellow {
   background-color: #fef6da;
   border: yellow solid 1px;
+}
+
+/* Create info string for the '*' symbol */
+.color-code > span:first-child.symbol {
+    width: 15px;
+    height: 15px;
+    border-radius: 0; /* Remove the circle shape */
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    background-color: transparent; /* No background for the symbol */
+    font-size: 18px; /* Match the size of the circle */
+    color: #e15e5e; /* Match the color of the circle */
+    font-weight: bold; /* Make the * bold */
+    line-height: 1; /* Ensure proper vertical alignment */
+}
+
+.color-code > span:first-child.symbol::before {
+    content: "*"; /* Add the * symbol */
 }
 
 /********************* Responsiveness  **********************/
