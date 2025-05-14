@@ -4,7 +4,6 @@ import json
 
 from .common_functions import findWord
 from .read_tokens import read_token_from_file
-from .count_extracted_metadata import count_non_empty_values
 from .validate_jsonLD import validate_codemeta
 
 from urllib.parse import urlparse
