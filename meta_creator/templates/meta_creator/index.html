@@ -7,7 +7,7 @@
 <!-- Initial Form to get information from user and extract metadata -->
 <div class="InitialFormContainer" id="firstpage">
   <h3 class="mainHeader">SMECS</h3>
-  <p><b>S</b>oftware <b>M</b>etadata <b>E</b>xtraction and <b>C</b>uration <b>S</b>oftware</p>
+  <p id="smecsSubtitle"><b>S</b>oftware <b>M</b>etadata <b>E</b>xtraction and <b>C</b>uration <b>S</b>oftware</p>
 
   <form id="form1" method="post" action="{% url 'meta_creator:getdata' %}">
     {% csrf_token %}
@@ -19,7 +19,7 @@
       <i class="fa fa-info-circle" aria-hidden="true"></i>
     </h6>
   
-    <input type="url" id="url_input" name="gl_url" placeholder="e.g.: https://gitlab.com/zdin-zle/zle-platform/repository/meta_tool" value="" />
+    <input type="url" id="url_input" name="gl_url" placeholder="e.g.: https://github.com/NFDI4Energy/SMECS" value="" />
     {% if error_message_url %}
       <span id="url_error" class="error_message">{{ error_message_url }}</span>
     {% endif %}
@@ -40,7 +40,7 @@
       <i class="fa fa-info-circle" aria-hidden="true"></i>
   </h6>
     </div>
-     <input type="text" id="token_input" name="personal_token_key" placeholder="Enter your personal token from GitLab/GitHub" value=""/>
+     <input type="text" id="token_input" name="personal_token_key" placeholder="Enter your personal token key from GitHub/GitLab" value=""/>
     {% if error_message_token %}
       <span id="token_error" class="error_message">{{ error_message_token }}</span>
     {% endif %}

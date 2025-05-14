@@ -1,0 +1,512 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "This metadata schema includes general metadata elements for research software.",
+  "additionalProperties": false,
+  "type": "object",
+  "title": "CodeMeta",
+  "required": [
+     "name",
+     "programmingLanguage",
+     "description",
+     "keywords",
+     "developmentStatus",
+     "license",
+     "dateCreated",
+     "dateModified",
+     "contributor",
+     "codeRepository"],
+  "properties": {
+    "@context": { "$ref": "#/$defs/@context" },
+    "name": {
+      "description": "The name of the item (software, Organization)",
+      "type": "string",
+      "title": "name"
+    },
+    "identifier": {
+      "description": "The identifier property represents any kind of identifier for any kind of Thing, such as ISBNs, GTIN codes, UUIDs etc. Schema.org provides dedicated properties for representing many of these, either as textual strings or as URL (URI) links. See background notes for more details.",
+      "type": "string",
+      "title": "identifier"
+    },
+    "softwareVersion": {
+      "description": "Version of the software instance.",
+      "type": "string",
+      "title": "softwareVersion"
+    },
+    "programmingLanguage": {
+      "description": "The computer programming language.",
+      "title": "programmingLanguage",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum":["A# .NET", "A# (Axiom)", "A-0 System", "A+", "A++", "ABAP", "ABC", "ABC ALGOL",
+        "ABLE", "ABSET", "ABSYS", "ACC", "Accent", "Ace DASL", "ACL2", "ACT-III",
+        "Action!", "ActionScript", "Ada", "Adenine", "Agda", "Agilent VEE", "Agora",
+        "AIMMS", "Alef", "ALF", "ALGOL 58", "ALGOL 60", "ALGOL 68", "ALGOL W", "Alice",
+        "Alma-0", "AmbientTalk", "Amiga E", "AMOS", "AMPL", "APL",
+        "App Inventor for Android's visual block language", "AppleScript", "Arc", "ARexx",
+        "Argus", "AspectJ", "Assembly language", "ATS", "Ateji PX", "AutoHotkey",
+        "Autocoder", "AutoIt", "AutoLISP / Visual LISP", "Averest", "AWK", "Axum", "B",
+        "Babbage", "Bash", "BASIC", "bc", "BCPL", "BeanShell", "Batch (Windows/Dos)",
+        "Bertrand", "BETA", "Bigwig", "Bistro", "BitC", "BLISS", "Blue", "Bon", "Boo",
+        "Boomerang", "Bourne shell", "bash", "ksh", "BREW", "BPEL", "C", "C--", "C++",
+        "C#", "C/AL", "Caché ObjectScript", "C Shell", "Caml", "Candle", "Cayenne",
+        "CDuce", "Cecil", "Cel", "Cesil", "Ceylon", "CFEngine", "CFML", "Cg", "Ch",
+        "Chapel", "CHAIN", "Charity", "Charm", "Chef", "CHILL", "CHIP-8", "chomski",
+        "ChucK", "CICS", "Cilk", "CL", "Claire", "Clarion", "Clean", "Clipper", "CLIST",
+        "Clojure", "CLU", "CMS-2", "COBOL", "Cobra", "CODE", "CoffeeScript", "Cola",
+        "ColdC", "ColdFusion", "COMAL", "Combined Programming Language", "COMIT",
+        "Common Intermediate Language", "Common Lisp", "COMPASS", "Component Pascal",
+        "Constraint Handling Rules", "Converge", "Cool", "Coq", "Coral 66", "Corn",
+        "CorVision", "COWSEL", "CPL", "csh", "CSP", "Csound", "CUDA", "Curl", "Curry",
+        "Cyclone", "Cython", "D", "DASL", "DASL", "Dart", "DataFlex", "Datalog",
+        "DATATRIEVE", "dBase", "dc", "DCL", "Deesel", "Delphi", "DinkC", "DIBOL", "Dog",
+        "Draco", "DRAKON", "Dylan", "DYNAMO", "E", "E#", "Ease", "Easy PL/I",
+        "Easy Programming Language", "EASYTRIEVE PLUS", "ECMAScript", "Edinburgh IMP",
+        "EGL", "Eiffel", "ELAN", "Elixir", "Elm", "Emacs Lisp", "Emerald", "Epigram",
+        "EPL", "Erlang", "es", "Escapade", "Escher", "ESPOL", "Esterel", "Etoys", 
+        "Euclid", "Euler", "Euphoria", "EusLisp Robot Programming Language", 
+        "CMS EXEC", "EXEC 2", "Executable UML", "F", "F#", "Factor", "Falcon", "Fancy", 
+        "Fantom", "FAUST", "Felix", "Ferite", "FFP", "Fjölnir", "FL", "Flavors", 
+        "Flex", "FLOW-MATIC", "FOCAL", "FOCUS", "FOIL", "FORMAC", "@Formula", 
+        "Forth", "Fortran", "Fortress", "FoxBase", "FoxPro", "FP", "FPr", "Franz Lisp", 
+        "Frege", "F-Script", "FSProg", "G", "Google Apps Script", "Game Maker Language", 
+        "GameMonkey Script", "GAMS", "GAP", "G-code", "Genie", "GDL", "Gibiane", 
+        "GJ", "GEORGE", "GLSL", "GNU E", "GM", "Go", "Go!", "GOAL", "Gödel", "Godiva", 
+        "GOM (Good Old Mad)", "Goo", "Gosu", "GOTRAN", "GPSS", "GraphTalk", "GRASS", 
+        "Groovy", "Hack (programming language)", "HAL/S", "Hamilton C shell", "Harbour", 
+        "Hartmann pipelines", "Haskell", "Haxe", "High Level Assembly", "HLSL", "Hop", 
+        "Hope", "Hugo", "Hume", "HyperTalk", "IBM Basic assembly language", 
+        "IBM HAScript", "IBM Informix-4GL", "IBM RPG", "ICI", "Icon", "Id", "IDL", 
+        "Idris", "IMP", "Inform", "Io", "Ioke", "IPL", "IPTSCRAE", "ISLISP", "ISPF", 
+        "ISWIM", "J", "J#", "J++", "JADE", "Jako", "JAL", "Janus", "JASS", "Java", 
+        "JavaScript", "JCL", "JEAN", "Join Java", "JOSS", "Joule", "JOVIAL", "Joy", 
+        "JScript", "JScript .NET", "JavaFX Script", "Julia", "Jython", "K", 
+        "Kaleidoscope", "Karel", "Karel++", "KEE", "Kixtart", "KIF", "Kojo", "Kotlin", 
+        "KRC", "KRL", "KUKA", "KRYPTON", "ksh", "L", "L# .NET", "LabVIEW", "Ladder", 
+        "Lagoona", "LANSA", "Lasso", "LaTeX", "Lava", "LC-3", "Leda", "Legoscript", 
+        "LIL", "LilyPond", "Limbo", "Limnor", "LINC", "Lingo", "Linoleum", "LIS", 
+        "LISA", "Lisaac", "Lisp", "Lite-C", "Lithe", "Little b", "Logo", "Logtalk", 
+        "LPC", "LSE", "LSL", "LiveCode", "LiveScript", "Lua", "Lucid", "Lustre", 
+        "LYaPAS", "Lynx", "M2001", "M4", "Machine code", "MAD", "MAD/I", "Magik", 
+        "Magma", "make", "Maple", "MAPPER", "MARK-IV", "Mary", "MASM Microsoft Assembly x86", 
+        "Mathematica", "MATLAB", "Maxima", "Macsyma", "Max", "MaxScript", "Maya (MEL)", 
+        "MDL", "Mercury", "Mesa", "Metacard", "Metafont", "MetaL", "Microcode", 
+        "MicroScript", "MIIS", "MillScript", "MIMIC", "Mirah", "Miranda", "MIVA Script", 
+        "ML", "Moby", "Model 204", "Modelica", "Modula", "Modula-2", "Modula-3", 
+        "Mohol", "MOO", "Mortran", "Mouse", "MPD", "CIL", "MSL", "MUMPS", "NASM", 
+        "NATURAL", "Napier88", "Neko", "Nemerle", "nesC", "NESL", "Net.Data", 
+        "NetLogo", "NetRexx", "NewLISP", "NEWP", "Newspeak", "NewtonScript", "NGL", 
+        "Nial", "Nice", "Nickle", "Nim", "NPL", "Not eXactly C", "Not Quite C", 
+        "NSIS", "Nu", "NWScript", "NXT-G", "o:XML", "Oak", "Oberon", "Obix", "OBJ2", 
+        "Object Lisp", "ObjectLOGO", "Object REXX", "Object Pascal", "Objective-C", 
+        "Objective-J", "Obliq", "Obol", "OCaml", "occam", "occam-π", "Octave", 
+        "OmniMark", "Onyx", "OpenCL", "OpenEdge ABL", "OPL", "OpenVera", "OPRG", 
+        "OptimJ", "Orc", "ORCA/Modula-2", "Oriel", "Orwell", "Oxygene", "Oz", "P", 
+        "P4", "P#", "PARI/GP", "Pascal", "Pawn", "PCASTL", "PCF", "PEARL", "PeopleCode", 
+        "Perl", "PDL", "Pharo", "PHP", "PICT", "Pike", "PILOT", "Pipelines", "Pizza", 
+        "PL-11", "PL/0", "PL/B", "PL/C", "PL/I", "PL/M", "PL/P", "PL/SQL", "PL360", 
+        "PLEX", "PLEXIL", "Plus", "POP-11", "POP-2", "Pony", "Portable Game Notation", "PostScript", "POV-Ray SDL", "Powerhouse", "PowerBuilder", 
+        "PowerShell", "PPL", "Processing", "Prograph", "PROIV", "Prolog", "Promela", 
+        "PROSE modeling language", "PROTEL", "ProvideX", "Pure", "Pure Data", "PureBasic", 
+        "PureScript", "Python", "Q (equational programming language)", "Q (programming language from Kx Systems)", 
+        "Qalb", "QPL", "QtScript", "QuakeC", "QPL", "R", "R++", "Racket", "RAPID", 
+        "Raven", "RDL", "REBOL", "Red", "Redcode", "REFAL", "Reia", "Revolution", 
+        "REXX", "Ring", "Rlab", "ROOP", "RPG", "RPL", "RSL", "RTL/2", "Ruby", "RuneScript", 
+        "Rust", "S", "S-Lang", "S-PLUS", "S/SL", "S2", "SabreTalk", "SAIL", "SALSA", 
+        "SAM76", "SAS", "SASL", "Sather", "Sawzall", "Scala", "Scheme", "Scilab", 
+        "Scratch", "Script.NET", "Sed", "Seed7", "Self", "SenseTalk", "SequenceL", 
+        "SETL", "SIMPOL", "SIGNAL", "SiMPLE", "SIMSCRIPT", "Simula", "Simulink", "SISAL", 
+        "SLIP", "SMALL", "Smalltalk", "SML", "Snap!", "SNOBOL", "SPARK", "Speedcode", 
+        "SPIN", "SP/k", "SPSS", "SQR", "Squeak", "Squirrel", "SR", "S/SL", "Starlogo", 
+        "Strand", "Stateflow", "Subtext", "SuperCollider", "SuperTalk", "Swift", "SYMPL", 
+        "SystemVerilog", "T", "TACL", "TADS", "TAL", "Tcl", "Tea", "TECO", "TELCOMP", 
+        "TeX", "TEX", "TIE", "Toccata", "TOM", "TOM-Script", "Tool Command Language", 
+        "Turing", "TUTOR", "TXL", "TypeScript", "U-SQL", "Ubercode", "UCSD Pascal", 
+        "Umple", "Unicon", "Uniface", "UNITY", "Unix shell", "UnrealScript", "V", "Vala", 
+        "VBA", "VBScript", "Verilog", "VHDL", "Visual Basic", "Visual Basic .NET", "Visual DataFlex", 
+        "Visual DialogScript", "Visual FoxPro", "Visual J++", "Visual J#", "Visual Objects", 
+        "VSXu", "WATFIV", "WebDNA", "WebQL", "Whiley", "Winbatch", "Wolfram", "Wyvern", 
+        "X++", "X10", "XBase++", "XBase", "XC", "xHarbour", "XL", "Xojo", "XOTcl", 
+        "XPath", "XPL", "XPL0", "XQuery", "XSB", "XSLT", "Xtend", "Yorick", "Yoix", 
+        "YQL", "YUI", "Z notation", "ZPL", "Zig", "ZOPL", "ZPL"]
+      }
+    },
+    "description": {
+      "description": "A description of the item.",
+      "type": "string",
+      "title": "description"
+    },
+    "keywords": {
+      "description": "Keywords or tags used to describe this content. Multiple entries in a keywords list are typically delimited by commas.",
+      "title": "keywords",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "url": {
+      "description": "URL of the item.",
+      "title": "url",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "developmentStatus": {
+      "description": "Description of development status, e.g. Active, inactive, suspended. See repostatus.org",
+      "title": "developmentStatus",
+      "enum": [
+        "Abandoned",
+        "Inactive",
+        "Concept",
+        "Active",
+        "Unsupported",
+        "Moved",
+        "WIP",
+        "Suspended"
+      ]
+    },
+    "issueTracker": {
+      "description": "Link to software bug reporting or issue tracking system",
+      "type": "string",
+      "title": "issueTracker"
+    },
+    "referencePublication": {
+      "minItems": 1,
+      "description": "Any academic publication which describes the software.",
+      "type": "array",
+      "title": "referencePublication",
+      "items": { "$ref": "#/$defs/ScholarlyArticle" }
+    },
+    "license": {
+      "description": "A license document that applies to this content, typically indicated by URL.",
+      "type": "array",
+      "title": "license",
+      "items": { "$ref": "#/$defs/CreativeWork" }
+    },
+    "copyrightHolder": {
+      "description": "The party holding the legal copyright to the CreativeWork.",
+      "type": "array",
+      "title": "copyrightHolder",
+      "items": { "$ref": "#/$defs/Organization" }
+    },
+    "isAccessibleForFree": {
+      "description": "A flag to signal that the publication is accessible for free.",
+      "type": "boolean",
+      "title": "isAccessibleForFree"
+    },
+    "dateCreated": {
+      "format": "date",
+      "description": "The date on which the CreativeWork was created or the item was added to a DataFeed.",
+      "type": "string",
+      "title": "dateCreated"
+    },
+    "dateModified": {
+      "format": "date",
+      "description": "The date on which the CreativeWork was most recently modified or when the item's entry was modified within a DataFeed.",
+      "type": "string",
+      "title": "dateModified"
+    },
+    "contributor": {
+      "description": "A secondary contributor to the CreativeWork or Event.",
+      "type": "array",
+      "title": "contributor",
+      "items": { "$ref": "#/$defs/Person" }
+    },
+    "author": {
+      "description": "The author of this content or rating. Please note that author is special in that HTML 5 provides a special mechanism for indicating authorship via the rel tag. That is equivalent to this and may be used interchangeably.",
+      "type": "array",
+      "title": "author",
+      "items": { "$ref": "#/$defs/Person" }
+    },
+    "maintainer": {
+      "description": "Individual responsible for maintaining the software.",
+      "title": "maintainer",
+      "$ref": "#/$defs/Person"
+    },
+    "funding": {
+      "description": "Information on the funding which was used to develop the software.",
+      "type": "array",
+      "title": "funding",
+      "items": {
+        "type": "string"
+      }
+    },
+    "downloadUrl": {
+      "description": "If the file can be downloaded, URL to download the binary.",
+      "type": "string",
+      "title": "downloadUrl"
+    },
+    "codeRepository": {
+      "description": "Link to the repository where the un-compiled, human readable code and related code is located (SVN, GitHub, CodePlex, institutional GitLab instance, etc.).",
+      "type": "string",
+      "title": "codeRepository"
+    },
+    "readme": {
+      "description": "Link to the documentation describing the code and is usful for developers.",
+      "type": "string",
+      "title": "readme"
+    },
+    "buildInstruction": {
+      "description": "Link to installation instructions/documentation.",
+      "type": "string",
+      "title": "buildInstruction"
+    },
+    "datePublished": {
+      "format": "date",
+      "description": "Date of first broadcast/publication.",
+      "type": "string",
+      "title": "datePublished"
+    },
+    "applicationCategory": {
+      "description": "Type of software application, e.g. 'Game, Multimedia'.",
+      "type": "string",
+      "title": "applicationCategory"
+    },
+    "applicationSubCategory": {
+      "description": "Subcategory of the application, e.g. 'Arcade Game'.",
+      "type": "string",
+      "title": "applicationSubCategory"
+    },
+    "citation": {
+      "description": "A citation or reference to another creative work, such as another publication, web page, scholarly article, etc.",
+      "type": "string",
+      "$ref": "#/$defs/CreativeWork"
+    },
+    "copyrightYear": {
+      "description": "The year during which the claimed copyright for the CreativeWork was first asserted.",
+      "type": "number",
+      "title": "copyrightYear"
+    },
+    "editor": {
+      "description": "Specifies the Person who edited the CreativeWork.",
+      "$ref": "#/$defs/Person",
+      "title": "editor"
+    },
+    "encoding": {
+      "description": "A media object that encodes this CreativeWork. This property is a synonym for associatedMedia. Supersedes encodings.",
+      "type": "string",
+      "title": "encoding"
+    },
+    "fileFormat": {
+      "description": "Media type, typically MIME format (see IANA site) of the content e.g. application/zip of a SoftwareApplication binary. In cases where a CreativeWork has several media type representations, 'encoding' can be used to indicate each MediaObject alongside particular fileFormat information. Unregistered or niche file formats can be indicated instead via the most appropriate URL, e.g. defining Web page or a Wikipedia entry.",
+      "type": "string",
+      "title": "fileFormat"
+    },
+    "hasPart": {
+      "description": "Indicates a CreativeWork that is (in some sense) a part of this CreativeWork. Reverse property isPartOf",
+      "$ref": "#/$defs/CreativeWork",
+      "title": "hasPart"
+    },
+    "installUrl": {
+      "description": "URL at which the app may be installed, if different from the URL of the item.",
+      "type": "string",
+      "title": "installUrl"
+    },
+    "isPartOf": {
+      "description": "Indicates a CreativeWork that this CreativeWork is (in some sense) part of. Reverse property hasPart",
+      "$ref": "#/$defs/CreativeWork",
+      "title": "isPartOf"
+    },
+    "permissions": {
+      "description": "Permission(s) required to run the app (for example, a mobile app may require full internet access or may run only on wifi).",
+      "type": "string",
+      "title": "permissions"
+    },
+    "position": {
+      "description": "The position of an item in a series or sequence of items. (While schema.org considers this a property of CreativeWork, it is also the way to indicate ordering in any list (e.g. the Authors list). By default arrays are unordered in JSON-LD",
+      "type": "string",
+      "title": "position"
+    },
+    "producer": {
+      "description": "The person or organization who produced the work (e.g. music album, movie, tv/radio series etc.).",
+      "$ref": "#/$defs/Person",
+      "title": "producer"
+    },
+    "provider": {
+      "description": "The service provider, service operator, or service performer; the goods producer. Another party (a seller) may offer those services or goods on behalf of the provider. A provider may also serve as the seller. Supersedes carrier.",
+      "$ref": "#/$defs/Organization",
+      "title": "provider"
+    },
+    "publisher": {
+      "description": "The publisher of the creative work.",
+      "$ref": "#/$defs/Organization",
+      "title": "publisher"
+    },
+    "relatedLink": {
+      "description": "A link related to this object, e.g. related web pages",
+      "type": "string",
+      "title": "relatedLink"
+    },
+    "releaseNotes": {
+      "description": "Description of what changed in this version.",
+      "type": "string",
+      "title": "releaseNotes"
+    },
+    "runtimePlatform": {
+      "description": "Runtime platform or script interpreter dependencies (Example - Java v1, Python2.3, .Net Framework 3.0). Supersedes runtime.",
+      "type": "string",
+      "title": "runtimePlatform"
+    },
+    "sameAs": {
+      "description": "URL of a reference Web page that unambiguously indicates the item's identity. E.g. the URL of the item's Wikipedia page, Wikidata entry, or official website.",
+      "type": "string",
+      "title": "sameAs"
+    },
+    "softwareHelp": {
+      "description": "Software application help.",
+      "$ref": "#/$defs/CreativeWork",
+      "title": "softwareHelp"
+    },
+    "softwareSuggestions": {
+      "description": "Optional dependencies , e.g. for optional features, code development, etc.",
+      "type": "string",
+      "title": "softwareSuggestions"
+    },
+    "sponsor": {
+      "description": "A person or organization that supports a thing through a pledge, promise, or financial contribution. e.g. a sponsor of a Medical Study or a corporate sponsor of an event.",
+      "$ref": "#/$defs/Organization",
+      "title": "sponsor"
+    },
+    "supportingData": {
+      "description": "Supporting data for a SoftwareApplication.",
+      "type": "string",
+      "title": "supportingData"
+    },
+    "targetProduct": {
+      "description": "Target Operating System / Product to which the code applies. If applies to several versions, just the product name can be used.",
+      "type": "string",
+      "title": "targetProduct"
+    },
+    "version": {
+      "description": "The version of the CreativeWork embodied by a specified resource.",
+      "type": "string",
+      "title": "version"
+    },
+    "endDate": {
+      "description": "The end date and time of the item",
+      "type": "string",
+      "title": "endDate"
+    },
+    "startDate": {
+      "description": "The start date and time of the item",
+      "type": "string",
+      "title": "startDate"
+    },
+    "continuousIntegration": {
+      "description": "link to continuous integration service",
+      "type": "string",
+      "title": "continuousIntegration"
+    },
+    "embargoEndDate": {
+      "description": "Software may be embargoed from public access until a specified date (e.g. pending publication, 1 year from publication)",
+      "type": "string",
+      "title": "embargoEndDate"
+    },
+    "hasSourceCode": {
+      "description": "Link that states where the software code is for a given software. For example a software registry may indicate that one of its software entries hasSourceCode in a GitHub repository.",
+      "type": "string",
+      "title": "hasSourceCode"
+    },
+    "isSourceCodeOf": {
+      "description": "Link that states where software application is built from a given source code. This is the reverse property of 'hasSourceCode'.",
+      "type": "string",
+      "title": "isSourceCodeOf"
+    }
+  },
+  "$defs": {
+    "@context": {
+      "format": "iri-reference",
+      "$comment": "The URL of the JSON-LD @context",
+      "type": "string"
+    },
+    "Organization": {
+      "description": "An organization such as a school, NGO, corporation, club, etc.",
+      "type": "object",
+      "title": "Organization",
+      "required": [],
+      "properties": {
+        "legalName": {
+          "description": "The official name of the organization, e.g. the registered company name.",
+          "type": "string",
+          "title": "legalName"
+        },
+        "identifier": {
+          "description": "URL identifier, ideally a ROR for institutions.",
+          "type": "string",
+          "title": "identifier"
+        }
+      }
+    },
+    "CreativeWork": {
+      "description": "The most generic kind of creative work, including books, movies, photographs, software programs, etc.",
+      "type": "object",
+      "title": "CreativeWork",
+      "required": [],
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "description": "The identifier property represents any kind of identifier for any kind of Thing, such as ISBNs, GTIN codes, UUIDs etc.",
+          "title": "identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the item.",
+          "title": "name"
+        }
+      }
+    },
+    "ScholarlyArticle": {
+      "description": "A scholarly article.",
+      "type": "object",
+      "title": "ScholarlyArticle",
+      "required": [],
+      "properties": {
+        "identifier": {
+          "description": "URL identifier, ideally a DOI for a publication.",
+          "type": "string",
+          "title": "identifier"
+        }
+      }
+    },
+    "Person": {
+      "description": "A person (alive, dead, undead, or fictional).",
+      "type": "object",
+      "title": "Person",
+      "required": [
+        "givenName",
+        "familyName"
+      ],
+      "properties": {
+        "identifier": {
+          "description": "URL identifier, ideally an ORCID ID for individuals, a FundRef ID for funders.",
+          "type": "string",
+          "title": "identifier"
+        },
+        "givenName": {
+          "description": "Given name. In the U.S., the first name of a Person. This can be used along with familyName instead of the name property.",
+          "type": "string",
+          "title": "givenName"
+        },
+        "familyName": {
+          "description": "Family name. In the U.S., the last name of an Person. This can be used along with givenName instead of the name property.",
+          "type": "string",
+          "title": "familyName"
+        },
+        "email": {
+          "description": "Email address.",
+          "title": "email",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "affiliation": {
+          "description": "An organization that this person is affiliated with. For example, a school/university",
+          "type": "string",
+          "title": "affiliation"
+        }
+      }
+    }
+  }
+}

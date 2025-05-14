@@ -25,22 +25,26 @@
   <div class="tab-links_ext">
     <ul class="tab-links_ext">
       <li class="active"><a href="#tab1-sw-info">Software Info</a></li>
-      <li><a href="#tab2-contributors">Contributors</a></li>
-      <li><a href="#tab3-authors">Authors</a></li>
+      <li><a href="#tab2-contributors">Contributors/Authors</a></li>
+      {% comment %} <li><a href="#tab3-authors">Authors</a></li> {% endcomment %}
     </ul>
   </div>
 
 <!-- Displaying the color coding -->
-<div class="color-code-container">
-  <div class="color-code">
-      <span class="red"></span>
-      <span class="color-code-text">Missed metadata</span>
+  <div class="color-code-container">
+      <div class="color-code">
+          <span class="red"></span>
+          <span class="color-code-text">Missed metadata</span>
+      </div>
+      <div class="color-code">
+          <span class="yellow"></span>
+          <span class="color-code-text">Better to curate the metadata</span>
+      </div>
+      <div class="color-code">
+          <span class="symbol"></span>
+          <span class="color-code-text">Mandatory elements</span>
+      </div>
   </div>
-  <div class="color-code">
-      <span class="yellow"></span>
-      <span class="color-code-text">Better to curate the metadata</span>
-  </div>
-</div>
 
 <!-- Pop-up message for new repository URL on Contributor and Author tabs -->
 <div id="popup" class="popup">
@@ -68,36 +72,71 @@
       <div class="form-group">
         {% if key != "contributor" and key != "author" %}
         {% if value|list and key == "programmingLanguage" %}
-          <div class="single_inputs" id="programmingLanguage">
+        <div class="single_inputs" id="programmingLanguageWrapper">
           <label>Programming Language</label>
+      
           <div class="custom-tooltip-metadata">
             <span class="tooltip-text-metadata">
-              {% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
+              {% with descriptions=entered_data.description_dict %}
+                {% if key in descriptions %}{{ descriptions|get:key }}{% endif %}
+              {% endwith %}
             </span>
             <i class="fa fa-info-circle" aria-hidden="true"></i>
           </div>
-          <input title="{% for item in value %}{% if item %}{{ item }}, {% endif %}{% endfor %}" id="languageInput" name="{{ key }}" type="text" value="{% for item in value %}{% if item %}{{ item }}, {% endif %}{% endfor %}">
-          <div id="suggestions"></div>
+      
+          <!-- Hidden input to store actual value as JSON or comma-separated for backend -->
+          <input type="hidden" id="languageHiddenInput" name="{{ key }}" value='{{ value|join:", " }}'>
+      
+          <!-- Tag display and input -->
+          <div id="languageTags" class="tags-container">
+            {% for item in value %}
+              {% if item %}
+                <span class="tag" name="{{ key }}" >
+                  {{ item }}
+                  <span class="remove-tag" data-value="{{ item }}">×</span>
+                </span>
+              {% endif %}
+            {% endfor %}
+            <input type="text" id="languageInput" name="{{ key }}" placeholder="Type to add..." />
           </div>
-
+      
+          <div id="suggestions"></div>
+        </div>
         {% elif value|list and key == "keywords" %}
-          <div class="single_inputs" id="keywords">
+        <div class="single_inputs" id="keywordsWrapper">
           <label>Keywords</label>
           <div class="custom-tooltip-metadata">
             <span class="tooltip-text-metadata">
-              {% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
+              {% with descriptions=entered_data.description_dict %}
+                {% if key in descriptions %}{{ descriptions|get:key }}{% endif %}
+              {% endwith %}
             </span>
             <i class="fa fa-info-circle" aria-hidden="true"></i>
           </div>
-          <input title="{% for item in value %}{% if item %}{{ item }}, {% endif %}{% endfor %}" name="{{ key }}" type="text" value="{% for item in value %}{% if item %}{{ item }}, {% endif %}{% endfor %}" class="url-input">
+        
+          <input type="hidden" id="keywordsHiddenInput" name="{{ key }}" value='{{ value|join:", " }}'>
+        
+          <div id="keywordsTags" class="tags-container">
+            {% for item in value %}
+              {% if item %}
+                <span class="tag" name="{{ key }}">
+                  {{ item }}
+                  <span class="remove-tag" data-value="{{ item }}">×</span>
+                </span>
+              {% endif %}
+            {% endfor %}
+            <input type="text" id="keywordsInput" name="{{ key }}"  placeholder="Type to add..." />
           </div>
-
+        </div>
         {% elif value|is_dict and key == "copyrightHolder" %}
-        <fieldset class="copyrightHolder">
-          <legend title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Copyright Holder</legend>
+        <div class="single_inputs">
+        {% comment %} <fieldset class="copyrightHolder"> {% endcomment %}
+          {% comment %} <legend title="{% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">Copyright Holder</legend> {% endcomment %}
           {% for k, v in value.items %}
           {% if k == 'name' %}
-          <label for="{{ key }}[{{ k }}]">{{ k }}</label>
+          {% comment %} <label for="{{ key }}[{{ k }}]">{{ k }}</label> {% endcomment %}
+          <label for="{{ key }}">Copyright Holder</label>
+          {% comment %} <label>Copyright Holder</label> {% endcomment %}
           <div class="custom-tooltip-metadata">
             <span class="tooltip-text-metadata">
               {% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
@@ -107,7 +146,8 @@
           <input title="{{ v }}" name="{{ key }}[{{ k }}]" type="text" value="{{ v }}"><br>
           {% endif %}
           {% endfor %}
-        </fieldset>
+        </div>
+        {% comment %} </fieldset> {% endcomment %}
 
         {% elif value|list %}
         {% for item in value %}
@@ -171,7 +211,20 @@
         <input title="{{ value }}" id="license-input" name="{{ key }}[{{ k }}]" type="text" value="{{ value }}" class="input-field" autocomplete="off"><br>
         <div id="licenseSuggestions" class="suggestions"></div>
         </div>
-
+        {% elif key == "developmentStatus" %}
+        <div class="single_inputs">
+          <label>Development Status</label>
+          <div class="custom-tooltip-metadata">
+            <span class="tooltip-text-metadata">
+              {% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
+            </span>
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+          </div>
+          <select name="developmentStatus" id="developmentStatusDropdown" data-dropdown-schema="developmentStatus">
+            <option value=""></option>
+          </select>
+          <div id="suggestions"></div>
+        </div>
         {% else %}
         <div class="single_inputs">
           <label for="{{ key }}">{{ key }}</label>
@@ -196,10 +249,15 @@
 
     <!-- tab2_contributors -->
     <div id="tab2-contributors" class="tab">
-          <div class="person-info" id="contributor-explanation">
+         <button type="button" class="collapsible-button" onclick="toggleCollapse()">Who are Contributors and Authors?</button>
+
+         <div class="person-info collapsible-content" id="contributor-explanation">
            <h5>Who is a Contributor?</h5>
-           <p>A "contributor" refers to anyone who aids in software development in any capacity, from coding to testing, highlighting the collaborative nature of software projects​</p>
-          </div>
+           <p>A "contributor" refers to anyone who aids in software development in any capacity, from coding to testing, highlighting the collaborative nature of software projects.</p>
+           <h5>Who is an Author?</h5>
+           <p>An "author" in software authorship is someone who significantly contributes to the creation and development of software, including roles like coding, project management, and documentation.</p>
+         </div>
+          
           {% for key, value in hermes_metadata.items %}
           <div class="form-group">
             {% if key == "contributor" %}
@@ -210,8 +268,10 @@
                       <th title="{% with descriptions=entered_data.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</th>
                       <th title="{% with descriptions=entered_data.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</th>
                       <th title="{% with descriptions=entered_data.description_dict %}{% if 'email' in descriptions %}{{ descriptions|get:'email' }}{% endif %}{% endwith %}">Email</th>
-                      <th title="Delete the contributer">Delete</th>
-                      <th title="Add the contributor to authors' table">Add to Authors</th>
+                      <th>Contributor</th>
+                      <th>Author</th>
+                      <th title="Delete the contributer">Action</th>
+                      <!-- <th title="Add the contributor to authors' table">Add to Authors</th> -->
                   </tr>
               </thead>
               <tbody id="contributorsTableBody">
@@ -222,7 +282,13 @@
                       <td>{{ contributor.familyName }}</td>
                       <td>{{ contributor.email }}</td>
                       <td>
-                      <i title="Delete" class="fas fa-trash-alt" onclick="deletePerson(event, this, 'contributor')" data-action="delete"></i>
+                        <input type="checkbox" class="checkbox-contributor" name="checkbox-contributor" checked>
+                      </td>
+                      <td>
+                        <input type="checkbox" class="checkbox-author" name="checkbox-author">
+                      </td>
+                      <td>
+                      <i title="Delete" class="fas fa-trash-alt" onclick="handleDelete(event)" data-action="delete"></i>
                       </td>
                   </tr>
                   {% endfor %}
@@ -234,13 +300,17 @@
             <input type="text" id="contributorFamilyNameInput" name="contributor_familyName" placeholder="Family Name">
             <input type="text" id="contributorEmailInput" name="contributor_email" placeholder="Email">
           </div>
-          <button type="button" class="contributorBTN" id="addContributorButton">Add Contributor</button>
+          <button type="button" class="contributorBTN" id="addContributorButton">Add Person</button>
             {% endif %}
           </div>
+          
           {% endfor %}
+          
+        
           <div class="navigation-buttons">
             <button id="backwardBtn" class="backwardBtn"></button>
-            <button id="forwardBtn" class="forwardBtn"></button>
+            {% comment %} <button id="forwardBtn" class="forwardBtn"></button> {% endcomment %}
+            <button class="ExData" id="downloadBtn" title="Download the JSON file.">Download JSON</button>
           </div>
         <!-- </form> -->
     </div>
@@ -248,10 +318,6 @@
     <!-- tab3_authors -->
     <div id="tab3-authors" class="tab">
           <!-- {% csrf_token %} -->
-          <div class="person-info">
-            <h5>Who is an Author?</h5>
-            <p>An "author" in software authorship is someone who significantly contributes to the creation and development of software, including roles like coding, project management, and documentation.</p>
-          </div>
           {% for key, value in hermes_metadata.items %}
           <div class="form-group">
             {% if key == "author" %}
@@ -263,6 +329,7 @@
                   <th title="{% with descriptions=entered_data.description_dict %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</th>
                   <th title="{% with descriptions=entered_data.description_dict %}{% if 'email' in descriptions %}{{ descriptions|get:'email' }}{% endif %}{% endwith %}">Email</th>
                   <th title="Delete the author">Delete</th>
+                  <th>authors</th>
                 </tr>
               </thead>
               <tbody id="authorsTableBody">
@@ -273,6 +340,7 @@
                   <td>{{ author.givenName }}</td>
                   <td>{{ author.familyName }}</td>
                   <td>{{ author.email }}</td>
+                  <td><input type="checkbox" name="" id=""></td>
                   <td>
                     <!-- <button onclick="deletePerson(event, this, 'author')" data-action="delete">
                       <i class="fas fa-trash-alt"></i>
@@ -297,7 +365,7 @@
         <!-- </form> -->
         <div class="navigation-buttons">
           <button id="backwardBtnCon" class="backwardBtn"></button>
-          <button class="ExData" id="downloadBtn" title="Download the JSON file." onclick="downloadFile()">Download JSON</button>
+          <button class="ExData" id="downloadBtn" title="Download the JSON file.">Download JSON</button>
         </div>
     </div>
 </div>
@@ -305,17 +373,29 @@
  
 </div> <!-- tabs -->
 
+
 <!-- Showing extracted metadata as JSON format in the textarea -->
 <div id="metadataFormDisplay" class="metadata-form-display"><!-- metadataFormDisplay -->
 <form id="metadata-form-display">
   {% csrf_token %}
   <h4>Metdata in JSON format</h4>
+  
   <div class="metadata-container">
-    <i class="fas fa-download ExData" id="downloadButton" title="Download the JSON file." onclick="downloadFile()"></i>
-    <i id="copy-button" class="fa fa-copy" title="Copy the JSON"></i>
-    <span id="copy-feedback" class="feedback">Text copied!</span>
-    <textarea name="txtareaJSON" id="metadata-json">{{ my_json_str }}</textarea>
+    
+    <div class="left">
+      <span id="actionFeedback" class="feedback"></span>
+    </div>
+    
+    <div class="right">
+      {% comment %} <button  id="updateFormBtn">Update Form</button>  {% endcomment %}
+      <i class="fas fa-download ExData" id="downloadButton" title="Download the JSON file."></i>
+      
+      <i id="copy-button" class="fa fa-copy"  title="Copy the JSON"></i>
+
+    </div>
+
   </div>
+  <textarea name="txtareaJSON" id="metadata-json">{{ my_json_str }}</textarea>
 </form>
 </div><!-- metadataFormDisplay -->
 

@@ -1,8 +1,8 @@
 
 import os
 import unittest
-from meta_creator.gitlab_metadata import addContribution, filLanguages, addLang, convertToJson, validate_codemeta, get_gitlab_metadata, extract_license_info, count_non_empty_values
-
+from meta_creator.gitlab_metadata import addContribution, filLanguages, addLang, convertToJson, get_gitlab_metadata, extract_license_info
+from meta_creator.validate_jsonLD import validate_codemeta
 
 GitLab_url = os.getenv('GL_URL')
 personal_token_gl = os.getenv('CI_PERSONAL_TOKEN_KEY_GL')
