@@ -252,20 +252,18 @@
                             </div>
                             {% endfor %}
                             <div class="navigation-buttons">
+                                {% if not forloop.first %}
+                                <button id="backwardBtn" class="backwardBtn"></button>
+                                {% endif %}
                                 {% if not forloop.last %}
-                                <button id="forwardBtnCon" class="forwardBtn">Next</button>
+                                <button id="forwardBtnCon" class="forwardBtn"></button>
                                 {% else %}
                                 <button class="ExData" id="downloadBtn" title="Download the JSON file.">Download JSON</button>
                                 {% endif %}
-                                {% if not forloop.first %}
-                                <button id="backwardBtn" class="backwardBtn">Previous</button>
-                                {% endif %}
                             </div>
-                        </div>
-                        {% endif %}
-
-                        {% if tab_name == "ContributorsAndAuthors" %}
-                        <!-- tab2_contributors -->
+                    </div>
+                    {% elif tab_name == "ContributorsAndAuthors" %}
+                    <!-- tab2_contributors -->
                     <div id="{{tab_name}}" class="tab">
                         <button type="button" class="collapsible-button" onclick="toggleCollapse()">Who are Contributors and Authors?</button>
 
@@ -326,20 +324,20 @@
 
 
                         <div class="navigation-buttons">
+                            {% if not forloop.first %}
+                            <button id="backwardBtn" class="backwardBtn"></button>
+                            {% endif %}
                             {% if not forloop.last %}
-                            <button id="forwardBtnCon" class="forwardBtn">Next</button>
+                            <button id="forwardBtnCon" class="forwardBtn"></button>
                             {% else %}
                             <button class="ExData" id="downloadBtn" title="Download the JSON file.">Download JSON</button>
                             {% endif %}
-                            {% if not forloop.first %}
-                            <button id="backwardBtn" class="backwardBtn">Previous</button>
-                            {% endif %}
                         </div>
-                        <!-- </form> -->
+                    <!-- </form> -->
                     </div>
 
-                        <!-- tab3_authors -->
-                        <div id="tab3-authors" class="tab">
+                    <!-- tab3_authors -->
+                    <div id="tab3-authors" class="tab">
                             <!-- {% csrf_token %} -->
                             {% for key, value in extracted_metadata.items %}
                             <div class="form-group">
@@ -387,19 +385,19 @@
                             {% endfor %}
                             <!-- </form> -->
                             <div class="navigation-buttons">
+                                {% if not forloop.first %}
+                                <button id="backwardBtn" class="backwardBtn"></button>
+                                {% endif %}
                                 {% if not forloop.last %}
-                                <button id="forwardBtnCon" class="forwardBtn">Next</button>
+                                <button id="forwardBtnCon" class="forwardBtn"></button>
                                 {% else %}
                                 <button class="ExData" id="downloadBtn" title="Download the JSON file.">Download JSON</button>
                                 {% endif %}
-                                {% if not forloop.first %}
-                                <button id="backwardBtn" class="backwardBtn">Previous</button>
-                                {% endif %}
                             </div>
-                        </div>
-                        {% endif %}
-                        {% endfor %}
                     </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
             </form>
 
         </div> <!-- tabs -->
