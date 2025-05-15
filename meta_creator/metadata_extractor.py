@@ -47,7 +47,9 @@ def data_extraction(request):
         is_valid_github, error_messages = validate_github_inputs(gl_url)
 
         tokens = read_token_from_file('tokens.txt')
-        default_access_token_GL = tokens.get('gitlab_token')
+        # default_access_token_GL = tokens.get('gitlab_token')
+        default_access_token_GH = tokens.get('github_token')
+
         # is_valid_gitlab, error_messages = validate_gitlab_inputs(gl_url, personal_token_key)
 
         # if is_valid_gitlab:
@@ -62,8 +64,8 @@ def data_extraction(request):
             metadata = get_github_metadata(gl_url, personal_token_key)
             hermes_metadata = run_hermes_commands(gl_url)
             if not hermes_metadata:
-                metadata = get_gitlab_metadata(gl_url, default_access_token_GL)
-                hermes_metadata = run_hermes_commands(gl_url, default_access_token_GL)
+                metadata = get_github_metadata(gl_url, default_access_token_GH)
+                hermes_metadata = run_hermes_commands(gl_url, default_access_token_GH)
             return (metadata, context, hermes_metadata)
 
         if 'Invalid URL' in error_messages:
