@@ -33,18 +33,42 @@ class TestDataExtraction(unittest.TestCase):
     #     self.assertEqual(context['gl_url'], GitLab_url)
 
 
+    # def test_valid_github_input(self):
+    #     """
+    #     This function tests the validity of input parameters for extracting metadata from GitHub repositories (using GitLab environmental variables).
+    #     """
+    #     request = MagicMock(method='POST', POST={'gl_url': GitHub_url})
+    #     result = data_extraction(request)
+    #     self.assertIsInstance(result, tuple)
+    #     self.assertEqual(len(result), 3)
+    #     metadata, context, hermes_metadata = result
+    #     self.assertIsInstance(metadata, dict)
+    #     self.assertIsInstance(context, dict)
+    #     self.assertIsInstance(hermes_metadata, dict) 
+    #     self.assertIn('gl_url', context)
+    #     self.assertEqual(context['gl_url'], GitHub_url)
+        
     def test_valid_github_input(self):
         """
-        This function tests the validity of input parameters for extracting metadata from GitHub repositories (using GitLab environmental variables).
+        This function tests the validity of input parameters for extracting metadata from GitHub repositories.
+        It asserts that only one of metadata or hermes_metadata is returned as a dict.
         """
-        request = MagicMock(method='POST', POST={'gl_url': GitHub_url, 'personal_token_key': personal_token_gh})
+        request = MagicMock(method='POST', POST={'gl_url': GitHub_url})
         result = data_extraction(request)
+        
         self.assertIsInstance(result, tuple)
         self.assertEqual(len(result), 3)
+        
         metadata, context, hermes_metadata = result
-        self.assertIsInstance(metadata, dict)
+
+        # only one of metadata or hermes_metadata is a dict, the other is None
+        self.assertTrue(
+            (isinstance(metadata, dict) and hermes_metadata is None) or 
+            (metadata is None and isinstance(hermes_metadata, dict)),
+            "Only one of metadata or hermes_metadata should be a dict, the other can be None."
+        )
+
         self.assertIsInstance(context, dict)
-        self.assertIsInstance(hermes_metadata, dict) 
         self.assertIn('gl_url', context)
         self.assertEqual(context['gl_url'], GitHub_url)
 
