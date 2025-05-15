@@ -76,6 +76,8 @@ def run_hermes_commands(url):
     ]
 
     hermes_metadata_dict = {
+        "@context": "https://w3id.org/codemeta/3.0",
+        "@type": "SoftwareSourceCode",
         "name": full_name,
         "identifier": identifier,
         "description": description,

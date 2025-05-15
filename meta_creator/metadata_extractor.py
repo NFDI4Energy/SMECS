@@ -45,6 +45,12 @@ def data_extraction(request):
                 }
 
         is_valid_github, error_messages = validate_github_inputs(gl_url)
+        
+        if not is_valid_github:
+            return {
+                'success': False,
+                'error_message': error_messages
+            }
 
         tokens = read_token_from_file('tokens.txt')
         # default_access_token_GL = tokens.get('gitlab_token')
@@ -59,18 +65,11 @@ def data_extraction(request):
         #         metadata = get_gitlab_metadata(gl_url, default_access_token_GL)
         #     return (metadata, context, hermes_metadata)
         
-
-        if is_valid_github:
-            metadata = get_github_metadata(gl_url, personal_token_key)
-            hermes_metadata = run_hermes_commands(gl_url)
-            # if not hermes_metadata:
-            #     metadata = get_github_metadata(gl_url, default_access_token_GH)
-            #     hermes_metadata = run_hermes_commands(gl_url, default_access_token_GH)
-            return (metadata, context, hermes_metadata)
-
-        if 'Invalid URL' in error_messages:
-            return 'Invalid GitHub URL'
-        if 'Invalid GitLab API token' in error_messages:
-            return 'Invalid Personal Token Key'
-        # if not is_valid_github:
-        #     return 'Invalid GitHub URL'
+        metadata = get_github_metadata(gl_url, personal_token_key)
+        hermes_metadata = run_hermes_commands(gl_url)
+        return {
+            'success': True,
+            'metadata': metadata,
+            'context': context,
+            'hermes_metadata': hermes_metadata
+        }

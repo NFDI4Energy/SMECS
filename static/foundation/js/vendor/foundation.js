@@ -986,7 +986,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "dateModified", "dateCreated", "keywords", "downloadUrl",
                 "readme", "author", "contributor", "developmentStatus", "applicationCategory",
                 "referencePublication", "funding", "funder", "reviewAspect", "reviewBody", "continuousIntegration",
-                "runtimePlatform", "operatingSystem", "softwareRequirements"
+                "runtimePlatform", "operatingSystem", "softwareRequirements", "citation", "version"
             ];
             // Get key comparison result
             const keyCheck = keysMatch(expectedKeys, jsonKeys, metadata);
