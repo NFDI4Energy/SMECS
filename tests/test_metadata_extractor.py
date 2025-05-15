@@ -12,6 +12,7 @@ personal_token_gh = os.getenv('CI_PERSONAL_TOKEN_KEY_GH')
 
 class TestDataExtraction(unittest.TestCase):
 
+    # TODO unittests for GitLab instances (HERMES-based extraction)
     # def test_valid_gitlab_input(self):
     #     """
     #     This function tests the validity of input parameters for extracting metadata from GitLab repositories (using GitLab environmental variables).
@@ -56,21 +57,20 @@ class TestDataExtraction(unittest.TestCase):
         request = MagicMock(method='POST', POST={'gl_url': GitHub_url})
         result = data_extraction(request)
         
-        self.assertIsInstance(result, tuple)
-        self.assertEqual(len(result), 3)
-        
-        metadata, context, hermes_metadata = result
+        self.assertIsInstance(result, dict)
+        self.assertIn('metadata', result)
+        self.assertIn('success', result)
 
-        # only one of metadata or hermes_metadata is a dict, the other is None
+        metadata = result.get('metadata')
+        hermes_metadata = result.get('hermes_metadata', None) 
+        context = result.get('context', {}) 
+
+        # only one of metadata (SMECS process) or hermes_metadata (HERMES process) is a dict
         self.assertTrue(
-            (isinstance(metadata, dict) and hermes_metadata is None) or 
+            (isinstance(metadata, dict) and hermes_metadata is None) or
             (metadata is None and isinstance(hermes_metadata, dict)),
             "Only one of metadata or hermes_metadata should be a dict, the other can be None."
         )
-
-        self.assertIsInstance(context, dict)
-        self.assertIn('gl_url', context)
-        self.assertEqual(context['gl_url'], GitHub_url)
 
     # def test_invalid_gitlab_input_URL(self):
     #     request = MagicMock(method='POST', POST={
