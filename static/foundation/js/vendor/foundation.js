@@ -707,6 +707,15 @@ document.addEventListener("DOMContentLoaded", function () {
             if (cell.querySelector('i.fas.fa-trash-alt') || cell.querySelector('i.fas.fa-copy')) {
                 continue;
             }
+            // Skip delete icons or copy buttons
+            if (cell.querySelector('i.fas.fa-trash-alt') || cell.querySelector('i.fas.fa-copy')) {
+                continue;
+            }
+
+            // Skip cells that contain contributor/author checkboxes
+            if (cell.querySelector('.checkbox-contributor') || cell.querySelector('.checkbox-author')) {
+                continue;
+            }
             // Check if the cell is empty and apply validation
             if (cell.textContent.trim() === "") {
                 cell.classList.add("invalid");
