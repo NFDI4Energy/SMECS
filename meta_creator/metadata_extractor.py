@@ -63,9 +63,9 @@ def data_extraction(request):
         if is_valid_github:
             metadata = get_github_metadata(gl_url, personal_token_key)
             hermes_metadata = run_hermes_commands(gl_url)
-            if not hermes_metadata:
-                metadata = get_github_metadata(gl_url, default_access_token_GH)
-                hermes_metadata = run_hermes_commands(gl_url, default_access_token_GH)
+            # if not hermes_metadata:
+            #     metadata = get_github_metadata(gl_url, default_access_token_GH)
+            #     hermes_metadata = run_hermes_commands(gl_url, default_access_token_GH)
             return (metadata, context, hermes_metadata)
 
         if 'Invalid URL' in error_messages:
