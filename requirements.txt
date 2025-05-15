@@ -1,14 +1,15 @@
-django>=4.1.10
-sqlalchemy==1.4.28
-sqlalchemy_utils==0.37.9
-sqlahelper==1.0
-psycopg2-binary==2.9.2
+# Core Django and JSON handling
+django==4.1.10
 django_jsonforms==1.1.2
 environs==9.3.5
-marshmallow<3.20
-gunicorn==22.0.0
+marshmallow>=3.10,<3.20
+pyyaml>=6.0
+pyld==2.0.3
+
+# Git integration libraries
 python-gitlab==3.13.0
 GitPython>=3.1.41
-pyld==2.0.3
-pyyaml
-git+https://github.com/Aidajafarbigloo/hermes@feature/276-harvesting-metadata-from-a-provided-repository-URL
+
+# Git-based packages pinned to specific commits/branches
+git+https://github.com/softwarepub/hermes-plugin-github-gitlab@e6e93a9616642e0f7a2f60a48a0572cb4299aadf#egg=hermes_plugin_git
+git+https://github.com/Aidajafarbigloo/hermes@1bd4d1f8e17e6e5a5e39c385abfb400323d824cc#egg=hermes

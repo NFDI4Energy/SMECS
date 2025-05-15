@@ -12,7 +12,7 @@ def run_hermes_commands(url):
 
     # Step 2: Run hermes harvest with the specified URL
     print("Running hermes harvest with URL...")
-    harvest_process = subprocess.run(['hermes', 'harvest', '--url', url], capture_output=True, text=True)
+    harvest_process = subprocess.run(['hermes', 'harvest', '--path', url], capture_output=True, text=True)
     if harvest_process.returncode != 0:
         print(f"Error in harvest with URL: {harvest_process.stderr}")
         return None
@@ -76,29 +76,35 @@ def run_hermes_commands(url):
     ]
 
     hermes_metadata_dict = {
-        "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-        "@type": "SoftwareSourceCode",
         "name": full_name,
         "identifier": identifier,
         "description": description,
         "codeRepository": code_repository,
         "url": url,
-        # "id": code_repository,
         "issueTracker": issue_tracker,
         "license": license_value,
         "programmingLanguage": programming_languages,  
         "copyrightHolder": {"@type": "Person", "name": copyright_holder},
         "dateModified": dateModified,
         "dateCreated": dateCreated,
-        # "publisher": namespaceName,
         "keywords": topics,
         "downloadUrl": download_url,
-        # "permissions": "",
         "readme": readme_url,
-        "author": authors_metadata, 
-        "contributor": contributors_metadata,
+        "developmentStatus": "",
         "version": version,
-        "citation": citation,          
+        "citation": citation,
+        "applicationCategory":"",
+        "referencePublication":"",
+        "funding":"",
+        "funder":"",
+        "reviewAspect":"",
+        "reviewBody":"",
+        "continuousIntegration":"",
+        "runtimePlatform":"",
+        "operatingSystem":"",
+        "softwareRequirements":"",
+        "author": authors_metadata, 
+        "contributor": contributors_metadata,    
     }
   
     return hermes_metadata_dict 
