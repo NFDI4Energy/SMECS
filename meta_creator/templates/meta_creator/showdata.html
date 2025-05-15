@@ -27,9 +27,9 @@
                 <ul class="tab-links_ext">
                     {% for tab_name, metadata_dict in extracted_metadata.items %}
                     {% if forloop.first %}
-                    <li class="active"><a href="#{{tab_name}}">{{tab_name}}</a></li>
+                    <li class="active"><a href="#{{tab_name}}">{{tab_name|camel_to_spaces_lower}}</a></li>
                     {% else %}
-                    <li><a href="#{{tab_name}}">{{tab_name}}</a></li>
+                    <li><a href="#{{tab_name}}">{{tab_name|camel_to_spaces_lower}}</a></li>
                     {% endif %}
                     {% endfor %}
                 </ul>
@@ -188,7 +188,7 @@
 
                                 {% elif key == "url" %}
                                 <div class="single_inputs" id="change_suggestion">
-                                    <label for="{{ key }}" title="">{{ key }}</label>
+                                    <label for="{{ key }}" title="">{{ key|camel_to_spaces_lower }}</label>
                                     <div class="custom-tooltip-metadata">
                                         <span class="tooltip-text-metadata">
                                             {% with descriptions=description_metadata %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
@@ -238,7 +238,7 @@
                                 </div>
                                 {% else %}
                                 <div class="single_inputs">
-                                    <label for="{{ key }}">{{ key }}</label>
+                                    <label for="{{ key }}">{{ key|camel_to_spaces_lower }}</label>
                                     <div class="custom-tooltip-metadata">
                                         <span class="tooltip-text-metadata">
                                             {% with descriptions=description_metadata %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
