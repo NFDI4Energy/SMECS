@@ -458,30 +458,48 @@ document.addEventListener("DOMContentLoaded", function () {
             document.querySelector(contentId).classList.add('active');
         });
     });
-    const forwardBtnCon = document.getElementById('forwardBtnCon');
-    const backwardBtn = document.getElementById('backwardBtn');
-    const forwardBtn = document.getElementById('forwardBtn');
-    const backwardBtnCon = document.getElementById('backwardBtnCon');
 
+    // Attach event listeners to all forward buttons
+    document.querySelectorAll('.forwardBtn').forEach(function (forwardBtn) {
+        forwardBtn.addEventListener('click', function (event) {
+            event.preventDefault();
 
-    forwardBtnCon.addEventListener('click', function (event) {
-        event.preventDefault();
-        document.querySelector('a[href="#tab2-contributors"]').click();
+            // Find the currently active tab link
+            const tabLinks = Array.from(document.querySelectorAll('.tab-links_ext a'));
+            const activeTab = tabLinks.find(link => link.parentElement.classList.contains('active'));
+
+            if (!activeTab) return;
+
+            // Find the index of the current tab
+            const currentIndex = tabLinks.indexOf(activeTab);
+
+            // Go to the next tab if it exists
+            if (currentIndex !== -1 && currentIndex < tabLinks.length - 1) {
+                tabLinks[currentIndex + 1].click();
+            }
+        });
     });
 
-    backwardBtn.addEventListener('click', function (event) {
-        event.preventDefault();
-        document.querySelector('a[href="#tab1-sw-info"]').click();
-    });
+    // Attach event listeners to all backward buttons
+    document.querySelectorAll('.backwardBtn').forEach(function (backwardBtn) {
+        backwardBtn.addEventListener('click', function (event) {
+            event.preventDefault();
 
-    // forwardBtn.addEventListener('click', function (event) {
-    //   event.preventDefault();
-    //   document.querySelector('a[href="#tab3-authors"]').click();
-    // });
+            // Find all tab links
+            const tabLinks = Array.from(document.querySelectorAll('.tab-links_ext a'));
+            // Find the currently active tab link
+            const activeTab = tabLinks.find(link => link.parentElement.classList.contains('active'));
 
-    backwardBtnCon.addEventListener('click', function (event) {
-        event.preventDefault();
-        document.querySelector('a[href="#tab2-contributors"]').click();
+            if (!activeTab) return;
+
+            // Find the index of the current tab
+            const currentIndex = tabLinks.indexOf(activeTab);
+
+            // Go to the previous tab if it exists
+            if (currentIndex > 0) {
+                tabLinks[currentIndex - 1].click();
+            }
+        });
     });
 
 
