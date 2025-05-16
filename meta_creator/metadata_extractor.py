@@ -5,6 +5,7 @@ This module provides functions for extracting metadata from GitHub repositories 
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from .url_check_GitHub import validate_github_inputs
+from .github_metadata import get_github_metadata
 from .read_tokens import read_token_from_file
 from .hermes_process import run_hermes_commands
 import json
@@ -53,6 +54,8 @@ def data_extraction(request):
         default_access_token_GH = tokens.get('github_token')
 
         hermes_metadata = run_hermes_commands(gl_url)
+        if hermes_metadata == None:
+            hermes_metadata = get_github_metadata(gl_url, default_access_token_GH)
         return {
             'success': True,
             'context': context,
