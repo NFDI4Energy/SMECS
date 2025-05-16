@@ -1083,7 +1083,7 @@ input:checked + .slider {
     display: flex;
     justify-content: flex-start;
     margin: 0 auto;
-    width: 56%;
+    width: 80%;
     justify-content: space-between;
     font-size: x-large;
     font-family: Arial, sans-serif;
