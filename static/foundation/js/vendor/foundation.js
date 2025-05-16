@@ -932,14 +932,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    function keysMatch(expectedKeys, jsonKeys, jsonObject) {
+    function keysMatch(allowedKeys, requiredKeys, jsonKeys, jsonObject) {
         // Convert both expected and actual keys to lowercase for case-insensitive matching
-        const lowerExpectedKeys = expectedKeys.map(key => key.toLowerCase());
+        const lowerAllowedKeys = allowedKeys.map(key => key.toLowerCase());
+        const lowerRequiredKeys = requiredKeys.map(key => key.toLowerCase());
         const lowerJsonKeys = jsonKeys.map(key => key.toLowerCase());
 
-        // Find missing and extra keys
-        const missingKeys = lowerExpectedKeys.filter(key => !lowerJsonKeys.includes(key));
-        const extraKeys = lowerJsonKeys.filter(key => !lowerExpectedKeys.includes(key));
+        // Find missing: required keys which are not present in json
+        const missingKeys = lowerRequiredKeys.filter(key => !lowerJsonKeys.includes(key));
+        // Find extra: keys present in json, which are not part of allowed
+        const extraKeys = lowerJsonKeys.filter(key => !lowerAllowedKeys.includes(key));
 
         // Check nested key in "copyrightHolder"
         if (jsonObject.hasOwnProperty("copyrightHolder")) {
@@ -998,35 +1000,40 @@ document.addEventListener("DOMContentLoaded", function () {
 
             let repoName = "metadata"; // Default name
 
-            const expectedKeys = [
-                "@context", "@type", "name", "identifier", "description", "codeRepository",
-                "url", "issueTracker", "license", "programmingLanguage", "copyrightHolder",
-                "dateModified", "dateCreated", "keywords", "downloadUrl",
-                "readme", "author", "contributor", "developmentStatus", "applicationCategory",
-                "referencePublication", "funding", "funder", "reviewAspect", "reviewBody", "continuousIntegration",
-                "runtimePlatform", "operatingSystem", "softwareRequirements"
-            ];
-            // Get key comparison result
-            const keyCheck = keysMatch(expectedKeys, jsonKeys, metadata);
+            fetch(JsonSchema)
+                .then(response => response.json())
+                .then(schema => {
+                    // Extract all property keys
+                    const allowedKeys = Object.keys(schema.properties || {});
+                    const requiredKeys = schema.required || [];
 
-            if (!keyCheck.isMatch) {
-                let errorMessage = "Metadata keys do not match!\n\n";
-                if (keyCheck.missingKeys.length > 0) {
-                    errorMessage += `Missing Keys: ${keyCheck.missingKeys.join(", ")}\n`;
-                }
-                if (keyCheck.extraKeys.length > 0) {
-                    errorMessage += `Extra Keys: ${keyCheck.extraKeys.join(", ")}\n`;
-                }
-                if (keyCheck.nestedErrors.length > 0) {
-                    errorMessage += `\nNested Errors:\n${keyCheck.nestedErrors.join("\n")}`;
-                }
-                alert(errorMessage);
-            } else {
-                jsonPrettier(repoName, metadata);
-            }
+                    // Get key comparison result
+                    const keyCheck = keysMatch(allowedKeys, requiredKeys, jsonKeys, metadata);
+
+                    if (!keyCheck.isMatch) {
+                        let errorMessage = "Metadata keys do not match!\n\n";
+                        if (keyCheck.missingKeys.length > 0) {
+                            errorMessage += `Missing Keys: ${keyCheck.missingKeys.join(", ")}\n`;
+                        }
+                        if (keyCheck.extraKeys.length > 0) {
+                            errorMessage += `Extra Keys: ${keyCheck.extraKeys.join(", ")}\n`;
+                        }
+                        if (keyCheck.nestedErrors.length > 0) {
+                            errorMessage += `\nNested Errors:\n${keyCheck.nestedErrors.join("\n")}`;
+                        }
+                        alert(errorMessage);
+                    } else {
+                        jsonPrettier(repoName, metadata);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading schema:', error);
+                });
         }
         catch (e) {
-            alert("Invalid JSON. Please check your syntax.");
+            let errorMessage = `\n\nCurrent Metadata:\n${JSON.stringify(metadata, null, 2)}`;
+            alert(errorMessage);
+            alert("Invalid JSON. Please check your syntax:metadata");
             console.error("JSON Parsing Error:", e);
         }
     }
@@ -1056,13 +1063,14 @@ document.addEventListener("DOMContentLoaded", function () {
         link.href = URL.createObjectURL(blob);
         link.innerHTML = "Download JSON";
         link.setAttribute("download", fileName);
-        downloadButton.parentNode.insertBefore(link, downloadButton.nextSibling);
-        downloadBtn.parentNode.insertBefore(link, downloadBtn.nextSibling);
+        //downloadButton.parentNode.insertBefore(link, downloadButton.nextSibling);
+        //downloadBtn.parentNode.insertBefore(link, downloadBtn.nextSibling);
+        document.body.appendChild(link);
         link.click();
         setTimeout(() => {
             URL.revokeObjectURL(link.href);
             link.parentNode.removeChild(link);
-        }, 0);
+        }, 100);
     }
 
     // Function to create a cleaned copy of an object by removing empty entries

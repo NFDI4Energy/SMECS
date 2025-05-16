@@ -17,6 +17,7 @@
      "codeRepository"],
   "properties": {
     "@context": { "$ref": "#/$defs/@context" },
+    "@type": { "$ref": "#/type" },
     "name": {
       "description": "The name of the item (software, Organization)",
       "type": "string",
