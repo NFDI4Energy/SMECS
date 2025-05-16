@@ -12,7 +12,6 @@ from django.core.exceptions import PermissionDenied  # Import PermissionDenied
 from django.http import HttpResponseServerError, HttpResponseForbidden
 from requests.exceptions import ConnectTimeout, ReadTimeout, RequestException
 from .metadata_extractor import data_extraction
-from .validate_jsonLD import validate_codemeta
 
 class IndexView(TemplateView):
     template_name = 'meta_creator/index.html'
@@ -55,7 +54,7 @@ def index(request):
         return HttpResponse(template.render({
             "entered_data": result['context'],
             "my_json_str": my_json_str,
-            "hermes_metadata": result['hermes_metadata'],
+            "extracted_metadata": result['hermes_metadata'],
         }, request))
 
     except ConnectTimeout:

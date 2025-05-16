@@ -1,13 +1,10 @@
 """
-This module provides functions for extracting metadata from GitLab requests.
+This module provides functions for extracting metadata from GitHub repositories through HERMES processes.
 """
 
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-from .url_check_GitLab import validate_gitlab_inputs
 from .url_check_GitHub import validate_github_inputs
-from .gitlab_metadata import get_gitlab_metadata
-from .github_metadata import get_github_metadata
 from .read_tokens import read_token_from_file
 from .hermes_process import run_hermes_commands
 import json
@@ -29,8 +26,7 @@ def load_description_dict_from_schema():
 
     return description_dict
 
-#################### getting metadata from gitlab project ####################
-
+# Harvesting metadata via HERMES 
 @csrf_exempt
 def data_extraction(request):
     if request.method == 'POST':
@@ -53,23 +49,12 @@ def data_extraction(request):
             }
 
         tokens = read_token_from_file('tokens.txt')
-        # default_access_token_GL = tokens.get('gitlab_token')
+        # TODO we need to pass the token to hermes_process
         default_access_token_GH = tokens.get('github_token')
 
-        # is_valid_gitlab, error_messages = validate_gitlab_inputs(gl_url, personal_token_key)
-
-        # if is_valid_gitlab:
-        #     metadata = get_gitlab_metadata(gl_url, personal_token_key)
-        #     hermes_metadata = run_hermes_commands(gl_url)
-        #     if not metadata:
-        #         metadata = get_gitlab_metadata(gl_url, default_access_token_GL)
-        #     return (metadata, context, hermes_metadata)
-        
-        metadata = get_github_metadata(gl_url, personal_token_key)
         hermes_metadata = run_hermes_commands(gl_url)
         return {
             'success': True,
-            'metadata': metadata,
             'context': context,
             'hermes_metadata': hermes_metadata
         }

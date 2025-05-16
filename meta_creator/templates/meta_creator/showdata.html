@@ -24,7 +24,7 @@
 <div id="formContainer" class="form-container full-width"><!-- tabs -->
   <div class="tab-links_ext">
     <ul class="tab-links_ext">
-      <li class="active"><a href="#tab1-sw-info">Software Info</a></li>
+      <li class="active"><a href="#tab1-sw-info">Software Information</a></li>
       <li><a href="#tab2-contributors">Contributors/Authors</a></li>
       {% comment %} <li><a href="#tab3-authors">Authors</a></li> {% endcomment %}
     </ul>
@@ -68,7 +68,7 @@
 
     <!-- tab1_software_info -->
     <div id="tab1-sw-info" class="tab active">
-      {% for key, value in hermes_metadata.items %}
+      {% for key, value in extracted_metadata.items %}
       <div class="form-group">
         {% if key != "contributor" and key != "author" %}
         {% if value|list and key == "programmingLanguage" %}
@@ -247,7 +247,7 @@
       </div>
     </div>
 
-    <!-- tab2_contributors -->
+    <!-- tab2_contributors and authors -->
     <div id="tab2-contributors" class="tab">
          <button type="button" class="collapsible-button" onclick="toggleCollapse()">Who are Contributors and Authors?</button>
 
@@ -258,7 +258,7 @@
            <p>An "author" in software authorship is someone who significantly contributes to the creation and development of software, including roles like coding, project management, and documentation.</p>
          </div>
           
-          {% for key, value in hermes_metadata.items %}
+          {% for key, value in extracted_metadata.items %}
           <div class="form-group">
             {% if key == "contributor" %}
             <table class="contributors-table" id="dataTable">
@@ -318,7 +318,7 @@
     <!-- tab3_authors -->
     <div id="tab3-authors" class="tab">
           <!-- {% csrf_token %} -->
-          {% for key, value in hermes_metadata.items %}
+          {% for key, value in extracted_metadata.items %}
           <div class="form-group">
             {% if key == "author" %}
             <table class="authors-table">
