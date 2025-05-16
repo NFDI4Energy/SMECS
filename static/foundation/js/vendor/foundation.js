@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         if (label && !label.innerHTML.includes('*')) {
                             const asterisk = document.createElement('span');
                             asterisk.style.color = 'red';
-                            asterisk.style.fontSize = '18px';
+                            // asterisk.style.fontSize = '18px';
                             asterisk.textContent = '*';
                             label.appendChild(document.createTextNode(' '));  // Add space before asterisk
                             label.appendChild(asterisk);  // Add the asterisk after the label text
