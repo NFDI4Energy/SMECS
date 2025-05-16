@@ -24,7 +24,7 @@ class TestDataExtraction(unittest.TestCase):
         request = MagicMock(method='POST', POST={'gl_url': GitLab_url, 'personal_token_key': personal_token_gl})
         result = data_extraction(request)
         self.assertIsInstance(result, tuple)
-        self.assertEqual(len(result), 2)
+        self.assertEqual(len(result), 4)
         metadata, context = result
         self.assertIsInstance(metadata, dict)
         self.assertIsInstance(context, dict)
@@ -39,7 +39,7 @@ class TestDataExtraction(unittest.TestCase):
         request = MagicMock(method='POST', POST={'gl_url': GitHub_url, 'personal_token_key': personal_token_gh})
         result = data_extraction(request)
         self.assertIsInstance(result, tuple)
-        self.assertEqual(len(result), 2)
+        self.assertEqual(len(result), 4)
         metadata, context = result
         self.assertIsInstance(metadata, dict)
         self.assertIsInstance(context, dict)   
