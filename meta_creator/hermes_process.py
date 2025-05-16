@@ -36,22 +36,8 @@ def run_hermes_commands(url):
         print("hermes.json file does not exist.")
         return None
     
-    full_name = hermes_metadata_dict.get('name', '')
-    identifier = hermes_metadata_dict.get('identifier', '')
-    description = hermes_metadata_dict.get('description', '')
-    code_repository = hermes_metadata_dict.get('codeRepository', '')
-    url = hermes_metadata_dict.get('url', '')
-    issue_tracker = hermes_metadata_dict.get('issueTracker', '')
-    license_value = hermes_metadata_dict.get('license', '')
-    version = hermes_metadata_dict.get('version', '')
-    programming_languages = hermes_metadata_dict.get('programmingLanguage', [''])
-    dateModified = hermes_metadata_dict.get('dateModified', '')
-    dateCreated = hermes_metadata_dict.get('dateCreated', '')
-    topics = hermes_metadata_dict.get('keywords', '')
-    download_url = hermes_metadata_dict.get('downloadUrl', '')
-    readme_url = hermes_metadata_dict.get('readme', '')
+    # TODO Refactor person metadata extraction into a reusable function for different roles (author, contributor, etc.)
     copyright_holder = hermes_metadata_dict.get('copyrightHolder', {}).get('name', '')
-    citation = hermes_metadata_dict.get('citation', '')
 
     # Authors
     author_info = hermes_metadata_dict.get('author', [])
@@ -78,23 +64,23 @@ def run_hermes_commands(url):
     hermes_metadata_dict = {
         "@context": "https://w3id.org/codemeta/3.0",
         "@type": "SoftwareSourceCode",
-        "name": full_name,
-        "identifier": identifier,
-        "description": description,
-        "codeRepository": code_repository,
-        "url": url,
-        "issueTracker": issue_tracker,
-        "license": license_value,
-        "programmingLanguage": programming_languages,  
+        "name": hermes_metadata_dict.get('name', ''),
+        "identifier": hermes_metadata_dict.get('identifier', ''),
+        "description": hermes_metadata_dict.get('description', ''),
+        "codeRepository": hermes_metadata_dict.get('codeRepository', ''),
+        "url": hermes_metadata_dict.get('url', ''),
+        "issueTracker": hermes_metadata_dict.get('issueTracker', ''),
+        "license": hermes_metadata_dict.get('license', ''),
+        "programmingLanguage": hermes_metadata_dict.get('programmingLanguage', ['']),  
         "copyrightHolder": {"@type": "Person", "name": copyright_holder},
-        "dateModified": dateModified,
-        "dateCreated": dateCreated,
-        "keywords": topics,
-        "downloadUrl": download_url,
-        "readme": readme_url,
+        "dateModified": hermes_metadata_dict.get('dateModified', ''),
+        "dateCreated": hermes_metadata_dict.get('dateCreated', ''),
+        "keywords": hermes_metadata_dict.get('keywords', ''),
+        "downloadUrl": hermes_metadata_dict.get('downloadUrl', ''),
+        "readme": hermes_metadata_dict.get('readme', ''),
         "developmentStatus": "",
-        "version": version,
-        "citation": citation,
+        "version": hermes_metadata_dict.get('version', ''),
+        "citation": hermes_metadata_dict.get('citation', ''),
         "applicationCategory":"",
         "referencePublication":"",
         "funding":"",
