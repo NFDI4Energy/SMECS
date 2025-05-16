@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll('.tab-links_ext a').forEach(function (tabLink) {
         tabLink.addEventListener('click', function (event) {
             var tabId = this.getAttribute('href');
-            if (tabId === '#tab2-contributors' || tabId === '#tab3-authors') {
+            if (tabId === '#ContributorsAndAuthors' || tabId === '#tab-authors') {
                 checkAndShowPopup(tabId, repoName);
             }
         });

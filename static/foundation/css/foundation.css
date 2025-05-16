@@ -332,10 +332,6 @@ form.data-form3 {
     margin-top: 0;
 }
 
-    form.data-form3 div#tab1-sw-info {
-        margin-top: 0;
-    }
-
 .data-form3::after {
     content: "";
     display: table;

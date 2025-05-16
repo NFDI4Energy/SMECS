@@ -79,7 +79,9 @@ def create_empty_metadata_dict_from_properties_list(
         if "$ref" in full_schema["properties"][property]:
             required_type = full_schema["properties"][property]["$ref"].split(
                 "/")[-1]
+            logger.warning(f'Get type:{required_type}')
             type_properties = full_schema["$defs"][required_type]["properties"]
+            logger.warning(f'Got type properties:{type_properties}')
             metadata[property] = {}
             for type_property in type_properties:
                 metadata[property][type_property] = ""
@@ -94,7 +96,7 @@ def create_empty_metadata(schema: str) -> dict[str, dict[str, str]]:
     properties_list = load_properties_list_from_schema(schema)
     metadata = {"GeneralInformation": create_empty_metadata_dict_from_properties_list(properties_list, schema, "name", "url"),
                 "Provernance": create_empty_metadata_dict_from_properties_list(properties_list, schema, "softwareVersion", "funding"),
-                "ContributorsAndAuthors": create_empty_metadata_dict_from_properties_list(properties_list, schema, "author", "contributor"),
+                "ContributorsAndAuthors": create_empty_metadata_dict_from_properties_list(properties_list, schema, "contributor", "author"),
                 "TechnicalAspects": create_empty_metadata_dict_from_properties_list(properties_list, schema, "downloadUrl", "targetProduct")
         }
     return metadata
