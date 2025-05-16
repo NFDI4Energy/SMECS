@@ -75,9 +75,9 @@
                     <!-- {{tab_name}}_info -->
                     {% if tab_name != "ContributorsAndAuthors" %}
                     {% if forloop.first %}
-                    <div id={{tab_name}} class="tab active">
+                    <div id="{{ tab_name }}" class="tab active">
                     {% else %}
-                    <div id={{tab_name}} class="tab">
+                    <div id="{{ tab_name }}" class="tab">
                             {% endif %}
                             {% for key, value in metadata_dict.items %}
                             <div class="form-group">
