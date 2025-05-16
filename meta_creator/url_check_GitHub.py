@@ -24,9 +24,15 @@ def validate_github_inputs(url):
 
     try:
         response = requests.get(api_url)
+        if response.status_code == 403:
+            if "rate limit" in response.text.lower():
+                return False, 'GitHub API rate limit exceeded. Please use a personal access token.'
+            return False, 'Access to the GitHub repository is forbidden.'
+
         if response.status_code != 200:
             return False, 'GitHub repository not found or inaccessible'
-    except requests.RequestException:
-        return False, 'Network error while accessing GitHub'
+
+    except requests.RequestException as e:
+        return False, f'Network error while accessing GitHub: {str(e)}'
 
     return True, ''
