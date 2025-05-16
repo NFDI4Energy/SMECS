@@ -51,26 +51,19 @@ class TestDataExtraction(unittest.TestCase):
         
     def test_valid_github_input(self):
         """
-        This function tests the validity of input parameters for extracting metadata from GitHub repositories.
-        It asserts that only one of metadata or hermes_metadata is returned as a dict.
+        Tests extracting metadata from GitHub repositories via HERMES.
+        Expects a dict with keys: 'success', 'context', and 'hermes_metadata'.
         """
         request = MagicMock(method='POST', POST={'gl_url': GitHub_url})
         result = data_extraction(request)
         
         self.assertIsInstance(result, dict)
-        self.assertIn('metadata', result)
         self.assertIn('success', result)
-
-        metadata = result.get('metadata')
-        hermes_metadata = result.get('hermes_metadata', None) 
-        context = result.get('context', {}) 
-
-        # only one of metadata (SMECS process) or hermes_metadata (HERMES process) is a dict
-        self.assertTrue(
-            (isinstance(metadata, dict) and hermes_metadata is None) or
-            (metadata is None and isinstance(hermes_metadata, dict)),
-            "Only one of metadata or hermes_metadata should be a dict, the other can be None."
-        )
+        self.assertIn('context', result)
+        self.assertIn('hermes_metadata', result)
+        hermes_metadata = result.get('hermes_metadata')
+        self.assertIsInstance(hermes_metadata, dict, "hermes_metadata should be a dict")
+        
 
     # def test_invalid_gitlab_input_URL(self):
     #     request = MagicMock(method='POST', POST={
