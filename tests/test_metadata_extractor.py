@@ -25,11 +25,11 @@ class TestDataExtraction(unittest.TestCase):
         result = data_extraction(request)
         self.assertIsInstance(result, tuple)
         self.assertEqual(len(result), 4)
-        metadata, context = result
-        self.assertIsInstance(metadata, dict)
-        self.assertIsInstance(context, dict)
-        self.assertIn('gl_url', context)
-        self.assertEqual(context['gl_url'], GitLab_url)
+        filled_metadata, metadata_description, metadata_field_types, joined_metadata = result
+        self.assertIsInstance(filled_metadata, dict)
+        self.assertIsInstance(metadata_description, dict)
+        self.assertIsInstance(metadata_field_types, dict)
+        self.assertIsInstance(joined_metadata, dict)
 
 
     def test_valid_github_input(self):
@@ -40,11 +40,11 @@ class TestDataExtraction(unittest.TestCase):
         result = data_extraction(request)
         self.assertIsInstance(result, tuple)
         self.assertEqual(len(result), 4)
-        metadata, context = result
-        self.assertIsInstance(metadata, dict)
-        self.assertIsInstance(context, dict)   
-        self.assertIn('gl_url', context)
-        self.assertEqual(context['gl_url'], GitHub_url)
+        filled_metadata, metadata_description, metadata_field_types, joined_metadata = result
+        self.assertIsInstance(filled_metadata, dict)
+        self.assertIsInstance(metadata_description, dict)
+        self.assertIsInstance(metadata_field_types, dict)
+        self.assertIsInstance(joined_metadata, dict)
 
     def test_invalid_gitlab_input_URL(self):
         request = MagicMock(method='POST', POST={
