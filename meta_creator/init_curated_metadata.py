@@ -90,7 +90,7 @@ def create_empty_metadata_dict_from_properties_list(
     return metadata
 
 # Create a empty metadata dict with multiple tabs by defining the range for each tab
-def create_empty_metadata(schema: str) -> dict[str, dict[str, str]]:
+def create_empty_metadata(schema: dict) -> dict[str, dict[str, str]]:
     properties_list = load_properties_list_from_schema(schema)
     metadata = {"GeneralInformation": create_empty_metadata_dict_from_properties_list(properties_list, schema, "name", "url"),
                 "Provernance": create_empty_metadata_dict_from_properties_list(properties_list, schema, "softwareVersion", "funding"),
