@@ -25,16 +25,20 @@ def data_extraction(request):
         is_valid_github = validate_github_inputs(gl_url)
 
         tokens = read_token_from_file('tokens.txt')
-        default_access_token_GL = tokens.get('gitlab_token')
+        default_access_token_gitlab = tokens.get('gitlab_token')
+        default_access_token_github = tokens.get('github_token')
         is_valid_gitlab, error_messages = validate_gitlab_inputs(gl_url, personal_token_key)
 
         if is_valid_gitlab:
             extracted_metadata = get_gitlab_metadata(gl_url, personal_token_key)
             if not extracted_metadata:
-                extracted_metadata = get_gitlab_metadata(gl_url, default_access_token_GL)
+                extracted_metadata = get_gitlab_metadata(gl_url, default_access_token_gitlab)
 
         elif is_valid_github:
-            extracted_metadata = get_github_metadata(gl_url, personal_token_key)
+            if personal_token_key:
+                extracted_metadata = get_github_metadata(gl_url, personal_token_key)
+            else:
+                extracted_metadata = get_github_metadata(gl_url, default_access_token_github)
 
         else:
             if 'Invalid URL' in error_messages:
