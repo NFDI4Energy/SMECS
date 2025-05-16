@@ -261,9 +261,9 @@
                                 <button class="ExData" id="downloadBtn" title="Download the JSON file.">Download JSON</button>
                                 {% endif %}
                             </div>
-                        </div>
-                        {% elif tab_name == "ContributorsAndAuthors" %}
-                        <!-- tab_contributors -->
+                    </div>
+                    {% elif tab_name == "ContributorsAndAuthors" %}
+                    <!-- tab_contributors -->
                     <div id="{{tab_name}}" class="tab">
                         <button type="button" class="collapsible-button" onclick="toggleCollapse()">Who are Contributors and Authors?</button>
                         <div class="person-info collapsible-content" id="contributor-explanation">
@@ -339,70 +339,10 @@
                         <!-- </form> -->
                     </div>
 
-                        <!-- tab3_authors -->
-                    <div id="tab-authors" class="tab">
-                        <!-- {% csrf_token %} -->
-                        {% for key, value in metadata_dict.items %}
-                        <div class="form-group">
-                            {% if key == "author" %}
-                            <table class="authors-table">
-                                <thead>
-                                    <tr>
-                                        <th title="{% with descriptions=description_metadata %}{% if 'author' in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">ID</th>
-                                        <th title="{% with descriptions=description_metadata %}{% if 'givenName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</th>
-                                        <th title="{% with descriptions=description_metadata %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</th>
-                                        <th title="{% with descriptions=description_metadata %}{% if 'email' in descriptions %}{{ descriptions|get:'email' }}{% endif %}{% endwith %}">Email</th>
-                                        <th title="Delete the author">Delete</th>
-                                        <th>authors</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="authorsTableBody">
-                                    {% for author in value %}
-                                    {% if author.givenName or author.familyName or author.email %}
-                                    <tr>
-                                        <td>#{{ forloop.counter }}</td>
-                                        <td>{{ author.givenName }}</td>
-                                        <td>{{ author.familyName }}</td>
-                                        <td>{{ author.email }}</td>
-                                        <td><input type="checkbox" name="" id=""></td>
-                                        <td>
-                                            <!-- <button onclick="deletePerson(event, this, 'author')" data-action="delete">
-                            <i class="fas fa-trash-alt"></i>
-                        </button> -->
-                                            <i title="Delete" class="fas fa-trash-alt" onclick="deletePerson(event, this, 'author')" data-action="delete"></i>
-                                        </td>
-                                    </tr>
-                                    {% endif %}
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-
-                            <div class="input-container">
-                                <input type="text" id="authorGivenNameInput" name="author_givenName" placeholder="Given Name">
-                                <input type="text" id="authorFamilyNameInput" name="author_familyName" placeholder="Family Name">
-                                <input type="text" id="authorEmailInput" name="author_email" placeholder="Email">
-                            </div>
-                            <button type="button" class="authorBTN" id="addAuthorButton">Add Author</button>
-                            {% endif %}
-                        </div>
-                        {% endfor %}
-                        <!-- </form> -->
-                        <div class="navigation-buttons">
-                            {% if not forloop.first %}
-                            <button class="backwardBtn"></button>
-                            {% endif %}
-                            {% if not forloop.last %}
-                            <button class="forwardBtn"></button>
-                            {% else %}
-                            <button class="ExData" id="downloadBtn" title="Download the JSON file.">Download JSON</button>
-                            {% endif %}
-                        </div>
-                    </div>
-                        {% endif %}
-                        {% endfor %}
-                    </div>
-</form>
-
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </form>
         </div> <!-- tabs -->
         <!-- Showing extracted metadata as JSON format in the textarea -->
         <div id="metadataFormDisplay" class="metadata-form-display">
