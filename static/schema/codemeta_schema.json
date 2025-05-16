@@ -124,6 +124,12 @@
       "title": "author",
       "items": { "$ref": "#/$defs/Person" }
     },
+    "maintainer": {
+      "description": "Individual responsible for maintaining the software.",
+      "type": "array",
+      "title": "maintainer",
+      "items": { "$ref": "#/$defs/Person" }
+    },
     "downloadUrl": {
       "description": "If the file can be downloaded, URL to download the binary.",
       "type": "string",
@@ -855,11 +861,6 @@
       "description": "A flag to signal that the publication is accessible for free.",
       "type": "boolean",
       "title": "isAccessibleForFree"
-    },
-    "maintainer": {
-      "description": "Individual responsible for maintaining the software.",
-      "title": "maintainer",
-      "$ref": "#/$defs/Person"
     },
     "buildInstruction": {
       "description": "Link to installation instructions/documentation.",

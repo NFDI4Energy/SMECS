@@ -283,8 +283,9 @@
                                         <th title="{% with descriptions=description_metadata %}{% if 'familyName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</th>
                                         <th title="{% with descriptions=description_metadata %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</th>
                                         <th title="{% with descriptions=description_metadata %}{% if 'email' in descriptions %}{{ descriptions|get:'email' }}{% endif %}{% endwith %}">Email</th>
-                                        <th>Contributor</th>
+                                        <th title="{% with descriptions=description_metadata %}{% if 'contributor' in descriptions %}{{ descriptions|get:'contributor' }}{% endif %}{% endwith %}">Contributor</th>
                                         <th>Author</th>
+                                        <th>Maintainer</th>
                                         <th title="Delete the contributer">Action</th>
                                         <!-- <th title="Add the contributor to authors' table">Add to Authors</th> -->
                                     </tr>
@@ -297,10 +298,13 @@
                                         <td>{{ contributor.familyName }}</td>
                                         <td>{{ contributor.email }}</td>
                                         <td>
-                                            <input type="checkbox" class="checkbox-contributor" name="checkbox-contributor" checked>
+                                            <input type="checkbox" class="checkbox-element" data-role="contributor" name="checkbox-contributor" checked>
                                         </td>
                                         <td>
-                                            <input type="checkbox" class="checkbox-author" name="checkbox-author">
+                                            <input type="checkbox" class="checkbox-element" data-role="author" name="checkbox-author">
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" class="checkbox-element" data-role="maintainer" name="checkbox-maintainer">
                                         </td>
                                         <td>
                                             <i title="Delete" class="fas fa-trash-alt" onclick="handleDelete(event)" data-action="delete"></i>
@@ -315,7 +319,7 @@
                                 <input type="text" id="contributorFamilyNameInput" name="contributor_familyName" placeholder="Family Name">
                                 <input type="text" id="contributorEmailInput" name="contributor_email" placeholder="Email">
                             </div>
-                            <button type="button" class="contributorBTN" id="addContributorButton">Add Person</button>
+                            <button type="button" class="contributorBTN" id="addPersonButton">Add Person</button>
                             {% endif %}
                         </div>
 

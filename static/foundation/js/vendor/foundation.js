@@ -33,7 +33,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const repoName = metadata.name;
 
     let initialJson = metadataJson;
-    let previousJson = { ...initialJson };
+
+    // Collect all unique data-roles
+    const contributorsAndAuthorsTab = document.getElementById('ContributorsAndAuthors');
+    const personCheckboxes = contributorsAndAuthorsTab.querySelectorAll('.checkbox-element');
+    const personRoles = Array.from(new Set(
+        Array.from(personCheckboxes).map(checkbox => checkbox.dataset.role)
+    ));
 
     // Function to dynamically mark mandatory fields based on required key in JSON schema
     function setMandatoryFieldsFromSchema() {
@@ -102,7 +108,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     var contributorsTableBody = document.getElementById('contributorsTableBody');
-    var authorsTableBody = document.getElementById('authorsTableBody');
 
     // pop-up message for Contributor and Author tabs
     function showPopup() {
@@ -533,14 +538,9 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     // contributor and author table
-    document.getElementById('addContributorButton').addEventListener('click', function () {
+    document.getElementById('addPersonButton').addEventListener('click', function () {
         addPerson('contributor', 'contributorsTableBody', ['Email']);
     });
-
-    document.getElementById('addAuthorButton').addEventListener('click', function () {
-        addPerson('author', 'authorsTableBody', ['Email']);
-    });
-
 
     // Contributor/Author tables
     function handleTableClick(tableBody, editCallback) {
@@ -555,13 +555,15 @@ document.addEventListener("DOMContentLoaded", function () {
     handleTableClick(contributorsTableBody, (cell) => editCell(cell, 'contributor', ['email']));
 
 
-    // For both checkboxes: Author and Contributor
-    contributorsTableBody.addEventListener('change', function (event) {
-        if (event.target.classList.contains('checkbox-contributor') || event.target.classList.contains('checkbox-author')) {
+    // For all checkboxes in the Author and Contributor tab
+    contributorsAndAuthorsTab.addEventListener('change', function (event) {
+        if (
+            event.target.type === 'checkbox' &&
+            event.target.classList.contains('checkbox-element')
+        ) {
             updateContributorsAndAuthorsJson();
         }
     });
-
 
     // Handle row deletion and update JSON accordingly
     window.handleDelete = function (event) {
@@ -584,38 +586,33 @@ document.addEventListener("DOMContentLoaded", function () {
         const contributorsTableBody = document.getElementById('contributorsTableBody');
         const rows = contributorsTableBody.querySelectorAll('tr');
         const existingJson = JSON.parse(metadataJson.value);
-        let contributors = [];
-        let authors = [];
+
+        const roleList = {};
+        personRoles.forEach(role => {
+            roleList[role] = [];
+        });
 
         rows.forEach(row => {
             const givenName = row.cells[1]?.textContent.trim();
             const familyName = row.cells[2]?.textContent.trim();
             const email = row.cells[3]?.textContent.trim();
 
-            const contributorCheckbox = row.querySelector('.checkbox-contributor');
-            const authorCheckbox = row.querySelector('.checkbox-author');
-
-            if (contributorCheckbox && contributorCheckbox.checked) {
-                contributors.push({
-                    "@type": "Person",
-                    givenName,
-                    familyName,
-                    email
-                });
-            }
-
-            if (authorCheckbox && authorCheckbox.checked) {
-                authors.push({
-                    "@type": "Person",
-                    givenName,
-                    familyName,
-                    email
-                });
-            }
+            row.querySelectorAll('.checkbox-element').forEach(checkbox => {
+                const role = checkbox.dataset.role;
+                if (role && checkbox.checked) {
+                    roleList[role].push({
+                        "@type": "Person",
+                        givenName,
+                        familyName,
+                        email
+                    });
+                }
+            });
         });
 
-        existingJson.contributor = contributors;
-        existingJson.author = authors;
+        Object.keys(roleList).forEach(role => {
+            existingJson[role] = roleList[role];
+        });
         metadataJson.value = JSON.stringify(existingJson, null, 2);
     }
 
@@ -673,19 +670,15 @@ document.addEventListener("DOMContentLoaded", function () {
             var input = document.getElementById(`${type}${prop}Input`);
             newRow.insertCell(cellIndex++).textContent = input.value;
         });
-        // Checkbox cell for Contributor
-        const contributorCell = newRow.insertCell(cellIndex++);
-        const contributorCheckbox = document.createElement("input");
-        contributorCheckbox.type = "checkbox";
-        contributorCheckbox.classList.add("checkbox-contributor");
-        contributorCell.appendChild(contributorCheckbox);
 
-        // Checkbox cell for Author
-        const authorCell = newRow.insertCell(cellIndex++);
-        const authorCheckbox = document.createElement("input");
-        authorCheckbox.type = "checkbox";
-        authorCheckbox.classList.add("checkbox-author");
-        authorCell.appendChild(authorCheckbox);
+        personRoles.forEach(role => {
+            const cell = newRow.insertCell(cellIndex++);
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.classList.add("checkbox-element");
+            checkbox.setAttribute("data-role", role);
+            cell.appendChild(checkbox);
+        });
 
         // Add delete button with icon
         const deletecell = newRow.insertCell(cellIndex++);
@@ -821,10 +814,18 @@ document.addEventListener("DOMContentLoaded", function () {
             const key = input.name.split("[")[0];
             const subkey = input.name.split("[")[1]?.split("]")[0];
 
+            // Collect all IDs of the checkboxes
+            const checkboxIds = Array.from(personCheckboxes)
+                .map(checkbox => checkbox.id)
+                .filter(id => id); // Filter out checkboxes without an ID
+
             const excludedInputs = [
                 "contributor_givenName", "contributor_familyName", "contributor_email",
-                "author_givenName", "author_familyName", "author_email", "checkbox-contributor", "checkbox-author"
+                "author_givenName", "author_familyName", "author_email"
             ];
+
+            // Add the checkbox IDs to the excludedInputs array
+            excludedInputs.push(...checkboxIds);
 
             if (!excludedInputs.includes(input.name)) {
                 if (subkey) {
