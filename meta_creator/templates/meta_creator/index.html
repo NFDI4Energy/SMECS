@@ -6,15 +6,22 @@
 
 <!-- Initial Form to get information from user and extract metadata -->
 <div class="InitialFormContainer" id="firstpage">
-  <h3 class="mainHeader">SMECS</h3>
-  <p id="smecsSubtitle"><b>S</b>oftware <b>M</b>etadata <b>E</b>xtraction and <b>C</b>uration <b>S</b>oftware</p>
+  <h3 class="mainHeader">
+    <a href="https://github.com/NFDI4Energy/SMECS" 
+       target="_blank" 
+       title="Open SMECS GitHub" 
+       class="unstyled-link">
+      SMECS
+    </a>
+  </h3>
+  <p id="smecsSubtitle" title="SMECS"><b>S</b>oftware <b>M</b>etadata <b>E</b>xtraction and <b>C</b>uration <b>S</b>oftware</p>
 
   <form id="form1" method="post" action="{% url 'meta_creator:getdata' %}">
     {% csrf_token %}
     <h6 class="custom-tooltip">
       Project URL 
       <span class="tooltip-text">
-        The repository URL e.g.: GitLab/GitHub project URL
+        The GitHub repository URL
       </span>
       <i class="fa fa-info-circle" aria-hidden="true"></i>
     </h6>
@@ -27,20 +34,17 @@
     <h6 class="custom-tooltip">
       Token Key
       <span class="tooltip-text">
-          To extract metadata from GitLab repositories, a token is required.
-          This token is not needed for GitHub, 
+          To extract metadata from GitHub repositories token is not needed, 
           however, using one resolves rate limitations and allows for additional metadata extraction.
-          <br><br>
-          How to Generate a Token?
-          <br><br>
-          GitLab: Visit <a href="https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#create-a-personal-access-token" target="_blank">Create a personal access token</a>
           <br>
-          GitHub: Visit <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank">Managing your personal access tokens</a>
+          How to Generate a Token?
+          <br>
+          Visit <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank">Managing your personal access tokens</a>
       </span>
       <i class="fa fa-info-circle" aria-hidden="true"></i>
   </h6>
     </div>
-     <input type="text" id="token_input" name="personal_token_key" placeholder="Enter your personal token key from GitHub/GitLab" value=""/>
+     <input type="text" id="token_input" name="personal_token_key" placeholder="Enter your personal token key from GitHub" value=""/>
     {% if error_message_token %}
       <span id="token_error" class="error_message">{{ error_message_token }}</span>
     {% endif %}

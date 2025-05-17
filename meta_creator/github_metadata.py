@@ -106,7 +106,6 @@ def get_contributors_from_repo(owner, repo, token, url):
                     "email": contributor_email,
                 })
                 seen_emails.add(contributor_email)
-
     sorted_metadata = sorted(metadata, key=lambda x: x['givenName'].lower())
     return sorted_metadata
 
