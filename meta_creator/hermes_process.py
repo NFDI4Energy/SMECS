@@ -15,10 +15,17 @@ def run_hermes_commands(url):
     # Step 2: Run hermes harvest with the specified URL
     print("Running hermes harvest with URL...")
     harvest_process = subprocess.run(['hermes', 'harvest', '--path', url], capture_output=True, text=True, cwd=base_directory)
-    found_validation_error = False
     
     hermes_dir = os.path.join(base_directory, ".hermes", "harvest")
-    if not os.path.exists(hermes_dir) or not any(entry.is_file() for entry in os.scandir(hermes_dir)):
+    # Print harvested files
+    print("Harvested files:")
+    for entry in os.scandir(hermes_dir):
+        if entry.is_file():
+            print(f" - {entry.name}")
+            
+    files_exist = os.path.exists(hermes_dir) and any(entry.is_file() for entry in os.scandir(hermes_dir))
+
+    if not files_exist:
         error_msg = ".hermes directory contains no files — nothing harvested."
         print(error_msg)
         errors.append(error_msg)
@@ -28,12 +35,15 @@ def run_hermes_commands(url):
             'warnings': warnings
         }
 
+    # Only check for warnings or log messages if harvest failed,
+    # but still proceed to Step 3 if files are available
     if harvest_process.returncode != 0:
         log_path = os.path.join(base_directory, "hermes.log")
-        warning_msg = f"Harvest failed: {harvest_process.stderr}"
+        warning_msg = f"Harvest failed (non-zero exit): {harvest_process.stderr}"
         print(warning_msg)
         warnings.append(warning_msg)
 
+        found_validation_error = False
         if os.path.exists(log_path):
             with open(log_path, 'r') as log_file:
                 error_lines = []
@@ -50,17 +60,10 @@ def run_hermes_commands(url):
         else:
             warnings.append("hermes.log file does not exist.")
 
-        if found_validation_error:
-            print(f"HermesValidationError detected — continuing despite harvest failure. Check {log_path} for details.")
-            warnings.append("HermesValidationError occurred but ignored.")
-        else:
-            errors.append("Harvest failed with non-validation error.")
-            return {
-                'success': False,
-                'errors': errors,
-                'warnings': warnings
-            }
-        
+        if not found_validation_error:
+            # Only treat as fatal if there are no files harvested
+            warnings.append("Non-validation error occurred, but files were found. Proceeding.")
+
     # Step 3: Run hermes process
     print("Running hermes process...")
     process_command = subprocess.run(['hermes', 'process'], capture_output=True, text=True, cwd=base_directory)
