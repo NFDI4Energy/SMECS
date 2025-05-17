@@ -45,9 +45,10 @@ def index(request):
         result = data_extraction(request)
         
         if not result.get('success'):
+            error_messages = result.get('errors', ['Error in extraction'])
             return render(request, 'meta_creator/error.html', {
-                'error_message': result.get('error_message', 'Unknown error occurred.')
-            })
+                'error_message': "; ".join(error_messages)
+                })
         
         my_json_str = json.dumps(result['hermes_metadata'], indent=4)
         template = loader.get_template('meta_creator/showdata.html')

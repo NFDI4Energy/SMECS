@@ -41,6 +41,7 @@ def data_extraction(request):
                     'description_dict': load_description_dict_from_schema()
                 }
 
+        # Validate GitHub input
         is_valid_github, error_messages = validate_github_inputs(gl_url)
         
         if not is_valid_github:
@@ -49,15 +50,30 @@ def data_extraction(request):
                 'error_message': error_messages
             }
 
+        # Read tokens (currently unused)
         tokens = read_token_from_file('tokens.txt')
         # TODO we need to pass the token to hermes_process
         default_access_token_GH = tokens.get('github_token')
 
+        # Run HERMES process
         hermes_metadata = run_hermes_commands(gl_url)
-        if hermes_metadata == None:
-            hermes_metadata = get_github_metadata(gl_url, default_access_token_GH)
-        return {
+        # if hermes_metadata == None:
+        #     hermes_metadata = get_github_metadata(gl_url, default_access_token_GH)
+        result = {
             'success': True,
             'context': context,
-            'hermes_metadata': hermes_metadata
+            'warnings': [],
+            'errors': [],
+            'hermes_metadata': None
         }
+
+        if isinstance(hermes_metadata, dict):
+            result['hermes_metadata'] = hermes_metadata.get('metadata')
+            result['warnings'].extend(hermes_metadata.get('warnings', []))
+            result['errors'].extend(hermes_metadata.get('errors', []))
+            result['success'] = hermes_metadata.get('success', False)
+        else:
+            result['success'] = False
+            result['errors'].append("HERMES returned unexpected result format.")
+        
+        return result
