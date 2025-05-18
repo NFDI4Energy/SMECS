@@ -1,4 +1,5 @@
 from django import template
+import re
 
 register = template.Library()
 
@@ -16,3 +17,8 @@ def is_list(value):
 @register.filter
 def get(dictionary, key):
     return dictionary.get(key)
+
+# Define a function to change camelcase to nice output
+@register.filter
+def camel_to_spaces_lower(value):
+    return re.sub(r'(?<!^)(?=[A-Z])', ' ', value).title()

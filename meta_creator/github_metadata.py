@@ -4,7 +4,6 @@ import json
 
 from .common_functions import findWord
 from .read_tokens import read_token_from_file
-from .count_extracted_metadata import count_non_empty_values
 from .validate_jsonLD import validate_codemeta
 
 from urllib.parse import urlparse
@@ -80,7 +79,6 @@ def get_contributors_from_repo(owner, repo, token, url):
                     "email": contributor_email,
                 })
                 seen_emails.add(contributor_email)
-
     sorted_metadata = sorted(metadata, key=lambda x: x['givenName'].lower())
     return sorted_metadata
 
@@ -177,30 +175,15 @@ def get_github_metadata(url, personal_token_key):
         "description": description,
         "codeRepository": code_repository,
         "url": code_repository,
-        # "id": code_repository,
         "issueTracker": issue_tracker,
         "license": license_value,
-        # "version": version,
         "programmingLanguage": programming_languages,  # List of all languages used
         "dateModified": dateModified,
         "dateCreated": dateCreated,
          "copyrightHolder": {"@type": "Person", "name": ""},
-        # "publisher": namespaceName,
         "keywords": topics,
         "downloadUrl": download_url,
-        # "permissions": "",
         "readme": readme_url,
-        "developmentStatus": "",
-        "applicationCategory":"",
-        "referencePublication":"",
-        "funding":"",
-        "funder":"",
-        "reviewAspect":"",
-        "reviewBody":"",
-        "continuousIntegration":"",
-        "runtimePlatform":"",
-        "operatingSystem":"",
-        "softwareRequirements":"",
         "author": [{"@type": "Person",
                     "givenName": "",
                     "familyName": "",

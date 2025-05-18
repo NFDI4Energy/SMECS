@@ -55,3 +55,4 @@ myenv/
 __pycache__/
 .vs
 env/
+/Metadata mosaik.json

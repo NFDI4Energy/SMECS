@@ -3,39 +3,36 @@ import requests
 
 def validate_github_inputs(url):
     """
-    Validates both the GitHub repository URL and API token.
+    Validates the GitHub repository URL by pattern and existence.
 
     Args:
         url (str): The GitHub repository URL to validate.
-        token (str): The GitHub API token (not used in GitHub validation).
 
     Returns:
-        tuple: A tuple containing the validation result (bool) and the error messages (str).
+        tuple: (bool, str) A boolean indicating validity and an error message.
     """
-    # Regular expression pattern to match GitHub repository URLs
-    url_pattern = r'^https?://github\.com/([a-zA-Z0-9-]+)/([a-zA-Z0-9-_]+(?:/[a-zA-Z0-9.-]+)*)(?:\.github\.io)?/?$'
-    end = url.split('/')[-1]
+    # Pattern to match GitHub repo URLs like: https://github.com/user/repo
+    url_pattern = r'^https?://github\.com/([a-zA-Z0-9-]+)/([a-zA-Z0-9-_.]+)(?:/)?$'
     error = ''
-    
-    # Check if the URL matches the pattern
+
     match = re.match(url_pattern, url)
     if not match:
-        error = 'Invalid GitHub URL'
+        return False, 'Invalid GitHub URL format'
 
-    # Validate the URL by sending a GET request to GitHub API
-    if not error:
-        if end.endswith('.github.io'):
-            repository_name = '/'.join(match.groups())
-            response = requests.get(f'https://api.github.com/repos/{repository_name}/{end}')
-            if response.status_code != 200:
-                'Invalid GitHub URL'
-        elif not end.endswith('.github.io'):
-            repository_name = '/'.join(match.groups())
-            response = requests.get(f'https://api.github.com/repos/{match.group(1)}/{match.group(2)}')
-            if response.status_code != 200:
-                'Invalid GitHub URL'
+    user, repo = match.groups()
+    api_url = f'https://api.github.com/repos/{user}/{repo}'
 
+    try:
+        response = requests.get(api_url)
+        if response.status_code == 403:
+            if "rate limit" in response.text.lower():
+                return False, 'GitHub API rate limit exceeded. Please use a personal access token.'
+            return False, 'Access to the GitHub repository is forbidden.'
 
-    if len(error) == 0:
-        return True, ''
-    return False
+        if response.status_code != 200:
+            return False, 'GitHub repository not found or inaccessible'
+
+    except requests.RequestException as e:
+        return False, f'Network error while accessing GitHub: {str(e)}'
+
+    return True, ''
