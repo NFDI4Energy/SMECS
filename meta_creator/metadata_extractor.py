@@ -45,9 +45,10 @@ def data_extraction(request):
             is_valid_gitlab, error_messages_gitlab = validate_gitlab_inputs(gl_url, personal_token_key)
 
             if not is_valid_gitlab:
+                error_messages.join(error_messages_gitlab)
                 return {
                     'success': False,
-                    'errors': [error_messages, error_messages_gitlab]
+                    'errors': error_messages
                 }
 
             extracted_metadata = get_gitlab_metadata(gl_url, personal_token_key)
