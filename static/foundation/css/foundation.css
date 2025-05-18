@@ -1689,3 +1689,9 @@ div div p#contributor-explanation {
     padding: 20px;
     margin-top: 0;
 }
+
+.unstyled-link {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer; 
+}

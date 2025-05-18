@@ -12,12 +12,12 @@ from django.core.exceptions import PermissionDenied  # Import PermissionDenied
 from django.http import HttpResponseServerError, HttpResponseForbidden
 from requests.exceptions import ConnectTimeout, ReadTimeout, RequestException
 from .metadata_extractor import data_extraction
-from .validate_jsonLD import validate_codemeta
 
 class IndexView(TemplateView):
     template_name = 'meta_creator/index.html'
 
-# Thesis_navigation to homepage and information page_based on requiremment analysis 
+
+# navigation to homepage and information page_based on requiremment analysis 
 def homepage(request):
     return render(request, 'index.html')
 
@@ -43,25 +43,18 @@ def index(request):
     """
     try:
         result = data_extraction(request)
-        error_message_url = None
-        error_message_token = None
-        if result == 'Invalid URL':
-            error_message_url = 'Invalid URL'
-        if result == 'Invalid Personal Token Key':
-            error_message_token = 'Invalid Personal Token Key'
-        if result == 'Invalid GitHub URL':
-            error_message_url = 'Invalid GitHub URL'
-        errors = {
-            "error_message_url": error_message_url,
-            "error_message_token": error_message_token
-        }
+        
+        if not result.get('success'):
+            error_messages = result.get('errors', ['Error in extraction'])
+            return render(request, 'meta_creator/error.html', {
+                'error_message': "; ".join(error_messages)
+                })
 
-        if error_message_url or error_message_token:
-            return render(request , 'meta_creator/index.html', errors)
+ 
 
         my_json_str = {}
         # Extract metadata
-        extracted_metadata, description_metadata, type_metadata, joined_metadata = result
+        extracted_metadata, description_metadata, type_metadata, joined_metadata = result['hermes_metadata']
         # Validate the JSON data
         is_valid_jsonld = validate_codemeta(joined_metadata)
         if is_valid_jsonld:
@@ -76,22 +69,21 @@ def index(request):
             "description_metadata":description_metadata,
             "extracted_metadata":extracted_metadata,
             "my_json_str": my_json_str,
-            "validation_result": validation_result,
             }, request))
 
     except ConnectTimeout:
         error_message = "Connection timed out."
     except ReadTimeout:
         error_message = "Read operation timed out."
-    except RequestException as e:
+    except RequestException:
         error_message = "Error fetching data from GitHub API"
     except ConnectionError as conn_error:
-        error_message = f"Could not establish a connection: {conn_error}"      
-    except PermissionDenied:  # Catch PermissionDenied instead of CsrfViewMiddleware
+        error_message = f"Could not establish a connection: {conn_error}"
+    except PermissionDenied:
         error_message = "CSRF Error: This action is not allowed."
         return HttpResponseForbidden(error_message)
-    except Exception as unexpected_exception: # pylint: disable=broad-except
+    except Exception as unexpected_exception:
         error_message = f"An unexpected error occurred: {str(unexpected_exception)}"
-        return HttpResponseServerError(error_message)  # Return 500 Internal Server Error   
+        return HttpResponseServerError(error_message)
 
     return render(request, 'meta_creator/error.html', {'error_message': error_message})
