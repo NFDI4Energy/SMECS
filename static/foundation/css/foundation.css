@@ -360,7 +360,7 @@ form.data-form3 {
     width: 40%;
     float: left;
     margin-right: 10%;
-    margin-bottom: 0.5%;
+    margin-bottom: 0.2%;
 }
 
 .form-group input[type="text"]:focus, select:focus {
@@ -368,9 +368,16 @@ form.data-form3 {
     border-color: #0088cc;
 }
 
-#description, #programmingLanguage, #keywords {
+#programmingLanguage, #keywords {
     width: 82%;
     margin-bottom: 2%;
+}
+
+.form-group .long_field {
+    width: 83%;
+    margin-bottom: 0.2%;
+    margin-right: 10%;
+    float: left;
 }
 
 .form-group legend {

@@ -1,0 +1,134 @@
+{
+  "@context": [
+    "https://doi.org/10.5063/schema/codemeta-2.0",
+    {
+      "hermes": "https://software-metadata.pub/ns/hermes/"
+    }
+  ],
+  "@type": "SoftwareSourceCode",
+  "identifier": 796699799,
+  "name": "SMECS",
+  "description": "Software Metadata Extraction and Curation Software (SMECS)",
+  "codeRepository": "https://github.com/NFDI4Energy/SMECS",
+  "issueTracker": "https://github.com/NFDI4Energy/SMECS/issues",
+  "license": "https://spdx.org/licenses/AGPL-3.0",
+  "contributor": [
+    {
+      "id": "_:contributor_1",
+      "type": "Person",
+      "email": "aida.jafarbigloo.274@gmail.com",
+      "familyName": "Jafarbigloo",
+      "givenName": "Aida",
+      "@type": "Person"
+    },
+    {
+      "id": "_:contributor_2",
+      "type": "Person",
+      "email": "143706305+aidajafarbigloo@users.noreply.github.com",
+      "familyName": "",
+      "givenName": "Aidajafarbigloo",
+      "@type": "Person"
+    },
+    {
+      "id": "_:contributor_3",
+      "type": "Person",
+      "email": "alexis.michaltsis@rl-institut.de",
+      "familyName": "Michaltsis",
+      "givenName": "Alexis",
+      "@type": "Person"
+    },
+    {
+      "@type": "Person",
+      "givenName": "dependabotbot",
+      "familyName": "",
+      "email": "49699333+dependabot[bot]@users.noreply.github.com"
+    },
+    {
+      "@type": "Person",
+      "givenName": "jhRLI",
+      "familyName": "",
+      "email": "jonas.huber@rl-institut.de"
+    },
+    {
+      "@type": "Person",
+      "givenName": "jhRLI",
+      "familyName": "",
+      "email": "38939526+jh-rli@users.noreply.github.com"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Ludee",
+      "familyName": "",
+      "email": "ludwig.huelk@rl-institut.de"
+    },
+    {
+      "@type": "Person",
+      "givenName": "RLINSTITUThendrikhuyskens",
+      "familyName": "",
+      "email": "hendrik.huyskens@rl-institut.de"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Stephan",
+      "familyName": "Ferenz",
+      "email": "stephan.ferenz@uol.de"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Stephan",
+      "familyName": "Ferenz",
+      "email": "stephan.alexander.ferenz@uol.de"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Syed",
+      "familyName": "Sundraiz Shah",
+      "email": "sundraiz.shah@gmail.com"
+    }
+  ],
+  "author": [
+    {
+      "id": "_:author_1",
+      "type": "Person",
+      "email": "stephan.ferenz@uol.de",
+      "familyName": "Ferenz",
+      "givenName": "Stephan",
+      "@type": "Person"
+    },
+    {
+      "id": "_:author_2",
+      "type": "Person",
+      "email": "aida.jafarbigloo.274@gmail.com",
+      "familyName": "Jafarbigloo",
+      "givenName": "Aida",
+      "@type": "Person"
+    }
+  ],
+  "programmingLanguage": [
+    "Python",
+    "HTML",
+    "Dockerfile",
+    "Shell",
+    "Dockerfile",
+    "Shell"
+  ],
+  "keywords": [
+    "software metadata",
+    "extraction",
+    "curation",
+    "repository",
+    "research software",
+    "codemeta"
+  ],
+  "dateCreated": "2024-05-06",
+  "downloadUrl": "https://api.github.com/repos/NFDI4Energy/SMECS/{archive_format}{/ref}",
+  "citation": "Ferenz, S., & Jafarbigloo, A. Software Metadata Extraction and Curation Software (SMECS) [Computer software]. https://github.com/NFDI4Energy/SMECS",
+  "url": "https://github.com/NFDI4Energy/SMECS",
+  "copyrightHolder": {
+    "@type": "Person",
+    "name": ""
+  },
+  "dateModified": "2025-05-18",
+  "datePublished": "2025-05-18",
+  "readme": "https://raw.githubusercontent.com/NFDI4Energy/SMECS/master/README.rst"
+}

@@ -5,16 +5,15 @@ SMECS supports typical field types in the curation interface. The following type
 ## Regular Elements
 * Regular elements include one string/number of information
 
-### Simple Field
-* tag: simpleField
+### Single Inputs
+* tag: single_inputs_
 * half page field for simple text
 * Typical used for:
      * Cardinality: 1
      * Type: string, number, etc.
 
-
 ### Long Field
-* tag: longField
+* tag: long_field
 * full page field for longer text
 * Typical used for:
      * Cardinality: 1
@@ -28,6 +27,7 @@ SMECS supports typical field types in the curation interface. The following type
      * Cardinality: 1
      * Type: string
      * Enum list is available
+* Status: not nicely implemented
 
 ### Tagging
 * tag: tagging
@@ -37,6 +37,7 @@ SMECS supports typical field types in the curation interface. The following type
 * Typical used for:
      * Cardinality: n
      * Type: string, number, etc.
+* Status: not nicely implemented
 
 ### TaggingAutocomplete
 * tag: taggingAutocomplete
@@ -46,6 +47,7 @@ SMECS supports typical field types in the curation interface. The following type
      * Cardinality: n
      * Type: string
      * Enum list is available
+* Status: not nicely implemented
 
 ## Tables for Nested Elements
 When an element consists of a type which includes multiple sub-types, a table is required. There are different types:
@@ -55,6 +57,7 @@ When an element consists of a type which includes multiple sub-types, a table is
 * The table takes the full width but is placed within the normal information overview
 * A small table has up 2-4 columns.
 * Allowed column values are simpleField, Tagging, and dropdown
+* Status: not nicely implemented
 
 ### Specific Tables
 * tag: use specific tags here!

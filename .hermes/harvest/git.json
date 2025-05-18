@@ -1,0 +1,632 @@
+{
+  "@context": [
+    [
+      "https://doi.org/10.5063/schema/codemeta-2.0",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "@type": [
+    [
+      "SoftwareSourceCode",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "name": [
+    [
+      "SMECS",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "identifier": [
+    [
+      796699799,
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "description": [
+    [
+      "Software Metadata Extraction and Curation Software (SMECS)",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "codeRepository": [
+    [
+      "https://github.com/NFDI4Energy/SMECS",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "issueTracker": [
+    [
+      "https://github.com/NFDI4Energy/SMECS/issues",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "license": [
+    [
+      "https://spdx.org/licenses/AGPL-3.0",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "programmingLanguage[0]": [
+    [
+      "Python",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "programmingLanguage[1]": [
+    [
+      "HTML",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "programmingLanguage[2]": [
+    [
+      "Dockerfile",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "programmingLanguage[3]": [
+    [
+      "Shell",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "copyrightHolder.@type": [
+    [
+      "Person",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "copyrightHolder.name": [
+    [
+      "",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "dateCreated": [
+    [
+      "2024-05-06",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "dateModified": [
+    [
+      "2025-05-18",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "datePublished": [
+    [
+      "2025-05-18",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "downloadUrl": [
+    [
+      "https://api.github.com/repos/NFDI4Energy/SMECS/{archive_format}{/ref}",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[0].@type": [
+    [
+      "Person",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[0].givenName": [
+    [
+      "Aida",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[0].familyName": [
+    [
+      "Jafarbigloo",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[0].email": [
+    [
+      "aida.jafarbigloo.274@gmail.com",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[1].@type": [
+    [
+      "Person",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[1].givenName": [
+    [
+      "Aidajafarbigloo",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[1].familyName": [
+    [
+      "",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[1].email": [
+    [
+      "143706305+aidajafarbigloo@users.noreply.github.com",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[2].@type": [
+    [
+      "Person",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[2].givenName": [
+    [
+      "Alexis",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[2].familyName": [
+    [
+      "Michaltsis",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[2].email": [
+    [
+      "alexis.michaltsis@rl-institut.de",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[3].@type": [
+    [
+      "Person",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[3].givenName": [
+    [
+      "dependabotbot",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[3].familyName": [
+    [
+      "",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[3].email": [
+    [
+      "49699333+dependabot[bot]@users.noreply.github.com",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[4].@type": [
+    [
+      "Person",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[4].givenName": [
+    [
+      "jhRLI",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[4].familyName": [
+    [
+      "",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[4].email": [
+    [
+      "jonas.huber@rl-institut.de",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[5].@type": [
+    [
+      "Person",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[5].givenName": [
+    [
+      "jhRLI",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[5].familyName": [
+    [
+      "",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[5].email": [
+    [
+      "38939526+jh-rli@users.noreply.github.com",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[6].@type": [
+    [
+      "Person",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[6].givenName": [
+    [
+      "Ludee",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[6].familyName": [
+    [
+      "",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[6].email": [
+    [
+      "ludwig.huelk@rl-institut.de",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[7].@type": [
+    [
+      "Person",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[7].givenName": [
+    [
+      "RLINSTITUThendrikhuyskens",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[7].familyName": [
+    [
+      "",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[7].email": [
+    [
+      "hendrik.huyskens@rl-institut.de",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[8].@type": [
+    [
+      "Person",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[8].givenName": [
+    [
+      "Stephan",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[8].familyName": [
+    [
+      "Ferenz",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[8].email": [
+    [
+      "stephan.ferenz@uol.de",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[9].@type": [
+    [
+      "Person",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[9].givenName": [
+    [
+      "Stephan",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[9].familyName": [
+    [
+      "Ferenz",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[9].email": [
+    [
+      "stephan.alexander.ferenz@uol.de",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[10].@type": [
+    [
+      "Person",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[10].givenName": [
+    [
+      "Syed",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[10].familyName": [
+    [
+      "Sundraiz Shah",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "contributor[10].email": [
+    [
+      "sundraiz.shah@gmail.com",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ],
+  "readme": [
+    [
+      "https://raw.githubusercontent.com/NFDI4Energy/SMECS/master/README.rst",
+      {
+        "plugin": "git",
+        "timestamp": "2025-05-18T19:10:14.499478",
+        "harvester": "git"
+      }
+    ]
+  ]
+}

@@ -1,0 +1,530 @@
+{
+  "@context": [
+    [
+      "https://doi.org/10.5063/schema/codemeta-2.0",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "@type": [
+    [
+      "SoftwareSourceCode",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "identifier": [
+    [
+      "796699799",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "name": [
+    [
+      "Software Metadata Extraction and Curation Software (SMECS)",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "description": [
+    [
+      "SMECS is a web-based tool designed to extract and curate research software metadata in alignment with the codemeta software metadata standard. By accessing repositories on platforms like GitHub and GitLab, SMECS extracts multiple already existing metadata in the harvesting phase. In the curation phase its intuitive graphical interface allows researchers to easily improve and change the retrieved metadata to bestly represent their software. Ultimately, SMECS allows to export the curated metadata in JSON format in line with the codemeta stand.",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "codeRepository": [
+    [
+      "https://github.com/NFDI4Energy/SMECS",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "issueTracker": [
+    [
+      "https://github.com/NFDI4Energy/SMECS/issues",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "license": [
+    [
+      "https://spdx.org/licenses/AGPL-3.0",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "contributor[0].id": [
+    [
+      "_:contributor_1",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "contributor[0].type": [
+    [
+      "Person",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "contributor[0].email": [
+    [
+      "stephan.ferenz@uol.de",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "contributor[0].familyName": [
+    [
+      "Ferenz",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "contributor[0].givenName": [
+    [
+      "Stephan",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "contributor[1].id": [
+    [
+      "_:contributor_2",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "contributor[1].type": [
+    [
+      "Person",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "contributor[1].email": [
+    [
+      "aida.jafarbigloo.274@gmail.com",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "contributor[1].familyName": [
+    [
+      "Jafarbigloo",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "contributor[1].givenName": [
+    [
+      "Aida",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "contributor[2].id": [
+    [
+      "_:contributor_3",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "contributor[2].type": [
+    [
+      "Person",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "contributor[2].email": [
+    [
+      "sundraiz.shah@gmail.com",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "contributor[2].familyName": [
+    [
+      "Sundraiz Shah",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "contributor[2].givenName": [
+    [
+      "Syed",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "author[0].id": [
+    [
+      "_:author_1",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "author[0].type": [
+    [
+      "Person",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "author[0].email": [
+    [
+      "stephan.ferenz@uol.de",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "author[0].familyName": [
+    [
+      "Ferenz",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "author[0].givenName": [
+    [
+      "Stephan",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "author[1].id": [
+    [
+      "_:author_2",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "author[1].type": [
+    [
+      "Person",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "author[1].email": [
+    [
+      "aida.jafarbigloo.274@gmail.com",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "author[1].familyName": [
+    [
+      "Jafarbigloo",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "author[1].givenName": [
+    [
+      "Aida",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "programmingLanguage[0]": [
+    [
+      "Python",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "programmingLanguage[1]": [
+    [
+      "HTML",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "programmingLanguage[2]": [
+    [
+      "CSS",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "programmingLanguage[3]": [
+    [
+      "JavaScript",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "programmingLanguage[4]": [
+    [
+      "Dockerfile",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "programmingLanguage[5]": [
+    [
+      "Shell",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "keywords[0]": [
+    [
+      "software metadata",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "keywords[1]": [
+    [
+      "extraction",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "keywords[2]": [
+    [
+      "curation",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "keywords[3]": [
+    [
+      "repository",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "keywords[4]": [
+    [
+      "research software",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "keywords[5]": [
+    [
+      "codemeta",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "dateCreated": [
+    [
+      "2024-05-06",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "downloadUrl": [
+    [
+      "https://github.com/NFDI4Energy/SMECS/releases",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ],
+  "citation": [
+    [
+      "Ferenz, S., & Jafarbigloo, A. Software Metadata Extraction and Curation Software (SMECS) [Computer software]. https://github.com/NFDI4Energy/SMECS",
+      {
+        "plugin": "codemeta",
+        "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+        "timestamp": "2025-05-18T19:10:15.953631",
+        "harvester": "codemeta"
+      }
+    ]
+  ]
+}

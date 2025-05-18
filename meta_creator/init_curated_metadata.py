@@ -28,6 +28,14 @@ def load_description_dict_from_schema(schema: dict) -> dict[str, str]:
 
     return description_dict
 
+# Check the amount of properties of ref
+def ref_has_multiple_properties(schema: dict, ref_value: str) -> bool:
+    """Check if a $ref type has more than one property."""
+    ref_type = ref_value.split('/')[-1]
+    ref_def = schema.get("$defs", {}).get(ref_type, {})
+    properties = ref_def.get("properties", {})
+    return len(properties) > 1
+
 # Define required field_type per element
 def define_field_type(schema: dict) -> dict[str, str]:
     properties = schema.get("properties", {})
@@ -35,24 +43,30 @@ def define_field_type(schema: dict) -> dict[str, str]:
 
     for key, value in properties.items():
         if key == "authors" or key == "contributors":
-            type_dict[key] = "personTable"    
+            type_dict[key] = "person_table"    
         elif "enum" in value:
             type_dict[key] = "dropdown"
         elif "$ref" in value: 
-            type_dict[key] = "table"
+            if ref_has_multiple_properties(schema, value["$ref"]):
+                type_dict[key] = "table"
+            else:
+                type_dict[key] = "single_inputs"
         elif value.get("type") == "string":
             if key == "description":
-                type_dict[key] = "longField"
+                type_dict[key] = "long_field"
             else:  
-                type_dict[key] = "simpleField"
+                type_dict[key] = "single_inputs"
         elif value.get("type") == "array":
             items = value.get("items", {})  # Safely get "items" or default to an empty dict
             if "enum" in items:
-                type_dict[key] = "taggingAutocomplete"
+                type_dict[key] = "tagging_autocomplete"
             elif items.get("type") == "string":
                 type_dict[key] = "tagging"
             elif "$ref" in items:
-                type_dict[key] = "table"
+                if ref_has_multiple_properties(schema, items["$ref"]):
+                    type_dict[key] = "table"
+                else:
+                    type_dict[key] = "single_inputs"
 
     return type_dict
 
@@ -131,6 +145,7 @@ def init_curated_metadata(extract_metadata):
 
     metadata_description = load_description_dict_from_schema(full_schema)
     metadata_field_types = define_field_type(full_schema)
+    print(f"Field types:\n{metadata_field_types}")
     
     joined_metadata = join_tabs_to_dict(filled_metadata)
     return filled_metadata, metadata_description, metadata_field_types, joined_metadata
