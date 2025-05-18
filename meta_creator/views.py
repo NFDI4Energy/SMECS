@@ -12,6 +12,7 @@ from django.core.exceptions import PermissionDenied  # Import PermissionDenied
 from django.http import HttpResponseServerError, HttpResponseForbidden
 from requests.exceptions import ConnectTimeout, ReadTimeout, RequestException
 from .metadata_extractor import data_extraction
+from .validate_jsonLD import validate_codemeta
 
 class IndexView(TemplateView):
     template_name = 'meta_creator/index.html'
@@ -45,7 +46,7 @@ def index(request):
         result = data_extraction(request)
         
         if not result.get('success'):
-            error_messages = result.get('errors', ['Error in extraction'])
+            error_messages = [result.get('errors'), 'Error in extraction']
             return render(request, 'meta_creator/error.html', {
                 'error_message': "; ".join(error_messages)
                 })
@@ -54,7 +55,7 @@ def index(request):
 
         my_json_str = {}
         # Extract metadata
-        extracted_metadata, description_metadata, type_metadata, joined_metadata = result['hermes_metadata']
+        extracted_metadata, description_metadata, type_metadata, joined_metadata = result['metadata']
         # Validate the JSON data
         is_valid_jsonld = validate_codemeta(joined_metadata)
         if is_valid_jsonld:
