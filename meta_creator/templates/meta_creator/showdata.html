@@ -24,7 +24,7 @@
 <div id="formContainer" class="form-container full-width"><!-- tabs -->
   <div class="tab-links_ext">
     <ul class="tab-links_ext">
-      <li class="active"><a href="#tab1-sw-info">Software Info</a></li>
+      <li class="active"><a href="#tab1-sw-info">Software Information</a></li>
       <li><a href="#tab2-contributors">Contributors/Authors</a></li>
       {% comment %} <li><a href="#tab3-authors">Authors</a></li> {% endcomment %}
     </ul>
@@ -247,7 +247,7 @@
       </div>
     </div>
 
-    <!-- tab2_contributors -->
+    <!-- tab2_contributors and authors -->
     <div id="tab2-contributors" class="tab">
          <button type="button" class="collapsible-button" onclick="toggleCollapse()">Who are Contributors and Authors?</button>
 
@@ -373,6 +373,7 @@
  
 </div> <!-- tabs -->
 
+
 <!-- Showing extracted metadata as JSON format in the textarea -->
 <div id="metadataFormDisplay" class="metadata-form-display"><!-- metadataFormDisplay -->
 <form id="metadata-form-display">
@@ -385,8 +386,6 @@
       <span id="actionFeedback" class="feedback"></span>
     </div>
     
-    
-    
     <div class="right">
       {% comment %} <button  id="updateFormBtn">Update Form</button>  {% endcomment %}
       <i class="fas fa-download ExData" id="downloadButton" title="Download the JSON file."></i>
@@ -394,6 +393,7 @@
       <i id="copy-button" class="fa fa-copy"  title="Copy the JSON"></i>
 
     </div>
+
   </div>
   <textarea name="txtareaJSON" id="metadata-json">{{ my_json_str }}</textarea>
 </form>

@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         if (label && !label.innerHTML.includes('*')) {
                             const asterisk = document.createElement('span');
                             asterisk.style.color = 'red';
-                            asterisk.style.fontSize = '18px';
+                            // asterisk.style.fontSize = '18px';
                             asterisk.textContent = '*';
                             label.appendChild(document.createTextNode(' '));  // Add space before asterisk
                             label.appendChild(asterisk);  // Add the asterisk after the label text
@@ -707,6 +707,15 @@ document.addEventListener("DOMContentLoaded", function () {
             if (cell.querySelector('i.fas.fa-trash-alt') || cell.querySelector('i.fas.fa-copy')) {
                 continue;
             }
+            // Skip delete icons or copy buttons
+            if (cell.querySelector('i.fas.fa-trash-alt') || cell.querySelector('i.fas.fa-copy')) {
+                continue;
+            }
+
+            // Skip cells that contain contributor/author checkboxes
+            if (cell.querySelector('.checkbox-contributor') || cell.querySelector('.checkbox-author')) {
+                continue;
+            }
             // Check if the cell is empty and apply validation
             if (cell.textContent.trim() === "") {
                 cell.classList.add("invalid");
@@ -986,7 +995,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "dateModified", "dateCreated", "keywords", "downloadUrl",
                 "readme", "author", "contributor", "developmentStatus", "applicationCategory",
                 "referencePublication", "funding", "funder", "reviewAspect", "reviewBody", "continuousIntegration",
-                "runtimePlatform", "operatingSystem", "softwareRequirements"
+                "runtimePlatform", "operatingSystem", "softwareRequirements", "citation", "version"
             ];
             // Get key comparison result
             const keyCheck = keysMatch(expectedKeys, jsonKeys, metadata);
