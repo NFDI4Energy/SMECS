@@ -39,13 +39,27 @@ SMECS supports typical field types in the curation interface. The following type
      * Type: string, number, etc.
 * Status: not nicely implemented
 
-### TaggingAutocomplete
-* tag: taggingAutocomplete
-* tagging but with a dropdown menu for each string
-* loads a list of allowed values from schema file
+### TaggingDropdown
+* tag: tagging_dropdown
+* tagging with a dropdown list for each element
+* useful for short enum lists
+* loads a list of allowed values from schema file for dropdown
 * Typical used for:
      * Cardinality: n
      * Type: string
+     * Short enum list
+     * Enum list is available
+* Status: not nicely implemented
+
+### TaggingAutocomplete
+* tag: taggingAutocomplete
+* tagging but with autocompletion for each element
+* useful is the enum list is long
+* loads a list of allowed values from schema file for auto completion
+* Typical used for:
+     * Cardinality: n
+     * Type: string
+     * Long enum list
      * Enum list is available
 * Status: not nicely implemented
 

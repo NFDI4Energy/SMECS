@@ -59,7 +59,11 @@ def define_field_type(schema: dict) -> dict[str, str]:
         elif value.get("type") == "array":
             items = value.get("items", {})  # Safely get "items" or default to an empty dict
             if "enum" in items:
-                type_dict[key] = "tagging_autocomplete"
+                enum_values = items.get("enum")
+                if enum_values is not None and len(enum_values) > 10:
+                    type_dict[key] = "tagging_autocomplete"
+                else:
+                    type_dict[key] = "tagging_dropdown"
             elif items.get("type") == "string":
                 type_dict[key] = "tagging"
             elif "$ref" in items:
