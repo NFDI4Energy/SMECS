@@ -102,7 +102,7 @@
                                     {% endfor %}
                             </div>
                             {% comment %} </fieldset> {% endcomment %}
-                            {% elif key == "@context" or key == "@type" %}
+                            {% elif type_metadata|get:key == "hidden" %}
                             <div class="single_inputs" hidden>
                                 <label for="{{ key }}" hidden>{{ key }}</label>
                                 <div class="custom-tooltip-metadata" hidden>
