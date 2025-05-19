@@ -274,40 +274,42 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Initialize programmingLanguage with autocomplete
-    fetch(JsonSchema)
-        .then(res => res.json())
-        .then(schema => {
-            const availableLanguages = schema.properties?.programmingLanguage?.items?.enum || [];
-
-            setupTagging({
-                containerId: "languageTags",
-                hiddenInputId: "languageHiddenInput",
-                inputId: "languageInput",
-                suggestionsId: "suggestions",
-                jsonKey: "programmingLanguage",
-                useAutocomplete: true,
-                autocompleteSource: availableLanguages
-            });
-        });
-
-    // Initialize all taggings
+    // Initialize all taggings and taggings_autocomplete
     document.querySelectorAll('.tagging-label[data-tagging]').forEach(label => {
         const key = label.getAttribute('data-tagging');
-        if (key === "programmingLanguage") return; // Already handled above
+        const taggingType = label.getAttribute('data-tagging-type'); // "tagging" or "tagging_autocomplete"
         const containerId = key + 'Tags';
         const hiddenInputId = key + 'HiddenInput';
         const inputId = key + 'Input';
+        const suggestionsId = key + 'Suggestions'; // You can use a convention for suggestions box IDs
 
-        setupTagging({
-            containerId,
-            hiddenInputId,
-            inputId,
-            jsonKey: key,
-            useAutocomplete: false
-        });
+        if (taggingType === "tagging_autocomplete") {
+            // Fetch autocomplete source from schema or define it elsewhere
+            fetch(JsonSchema)
+                .then(res => res.json())
+                .then(schema => {
+                    const autocompleteSource = schema.properties?.[key]?.items?.enum || [];
+                    setupTagging({
+                        containerId,
+                        hiddenInputId,
+                        inputId,
+                        suggestionsId,
+                        jsonKey: key,
+                        useAutocomplete: true,
+                        autocompleteSource
+                    });
+                });
+        } else {
+            setupTagging({
+                containerId,
+                hiddenInputId,
+                inputId,
+                jsonKey: key,
+                useAutocomplete: false
+            });
+        }
     });
-
+    
     // Create a general dropdown class
     class DynamicDropdown {
         constructor(dropdownId, jsonSchemaUrl, schemaProperty) {

@@ -81,37 +81,7 @@
                             {% endif %}
                             {% for key, value in metadata_dict.items %}
                         <div class="form-group">
-                            {% if value|list and key == "programmingLanguage" %}
-                            <div class="single_inputs" id="programmingLanguageWrapper">
-                                <label>Programming Language</label>
-                                <div class="custom-tooltip-metadata">
-                                    <span class="tooltip-text-metadata">
-                                        {% with descriptions=description_metadata %}
-                                        {% if key in descriptions %}{{ descriptions|get:key}}{% endif %}
-                                        {% endwith %}
-                                    </span>
-                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                </div>
-
-                                <!-- Hidden input to store actual value as JSON or comma-separated for backend -->
-                                <input type="hidden" id="languageHiddenInput" name="{{ key }}" value='{{ value|join:", " }}'>
-
-                                <!-- Tag display and input -->
-                                <div id="languageTags" class="tags-container">
-                                    {% for item in value %}
-                                    {% if item %}
-                                    <span class="tag" name="{{ key }}">
-                                        {{ item }}
-                                        <span class="remove-tag" data-value="{{ item }}">×</span>
-                                    </span>
-                                    {% endif %}
-                                    {% endfor %}
-                                    <input type="text" id="languageInput" name="{{ key }}" placeholder="Type to add..." />
-                                </div>
-
-                                <div id="suggestions"></div>
-                            </div>
-                            {% elif key == "license" %}
+                            {% if key == "license" %}
                             <div class="single_inputs">
                                 <label for="{{ key }}">{{ key }}</label>
                                 <div class="custom-tooltip-metadata">
@@ -144,20 +114,6 @@
                                     {% endfor %}
                             </div>
                             {% comment %} </fieldset> {% endcomment %}
-
-                            {% elif value|list %}
-                            {% for item in value %}
-                            <div class="single_inputs">
-                                <label for="{{ key }}">{{ key }}</label>
-                                <div class="custom-tooltip-metadata">
-                                    <span class="tooltip-text-metadata">
-                                        {% with descriptions=description_metadata %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
-                                    </span>
-                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                </div>
-                                <input title="{{ item }}" name="{{ key }}[]" type="text" value="{{ item }}"><br>
-                            </div>
-                            {% endfor %}
                             {% elif key == "@context" or key == "@type" %}
                             <div class="single_inputs" hidden>
                                 <label for="{{ key }}" hidden>{{ key }}</label>
@@ -181,11 +137,11 @@
                                 <select name="{{ key }}" id="{{ key }}" data-dropdown-schema="{{ key }}">
                                     <option value=""></option>
                                 </select>
-                                <div id="suggestions"></div>
+                                <div id="{{ key }}Suggestions"></div>
                             </div>
                             {% elif type_metadata|get:key == "tagging" %}
                             <div class="single_inputs tagging-wrapper" id="{{ key }}Wrapper">
-                                <label class="tagging-label" for="{{ key }}Input" data-tagging="{{ key }}">{{ key|camel_to_spaces_lower }}</label>
+                                <label class="tagging-label" for="{{ key }}Input" data-tagging="{{ key }}" data-tagging-type="tagging">{{ key|camel_to_spaces_lower }}</label>
                                 <div class="custom-tooltip-metadata">
                                     <span class="tooltip-text-metadata">
                                         {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
@@ -204,6 +160,35 @@
                                     {% endfor %}
                                     <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type to add..." />
                                 </div>
+                            </div>
+                            {% elif type_metadata|get:key == "tagging_autocomplete" %}
+                            <div class="single_inputs tagging-wrapper" id="{{ key }}Wrapper">
+                                <label class="tagging-label" for="{{ key }}Input" data-tagging="{{ key }}" data-tagging-type="tagging_autocomplete">
+                                    {{ key|camel_to_spaces_lower }}
+                                </label>
+                                <div class="custom-tooltip-metadata">
+                                    <span class="tooltip-text-metadata">
+                                        {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
+                                    </span>
+                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                </div>
+
+                                <!-- Hidden input to store actual value as JSON or comma-separated for backend -->
+                                <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" value='{{ value|join:", " }}'>
+
+                                <!-- Tag display and input -->
+                                <div class="tags-container" id="{{ key }}Tags">
+                                    {% for item in value %}
+                                    {% if item %}
+                                    <span class="tag" data-value="{{ item }}">
+                                        {{ item }}
+                                        <span class="remove-tag" data-value="{{ item }}">×</span>
+                                    </span>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type to add..." />
+                                </div>
+                                <div id="{{ key }}Suggestions"></div>
                             </div>
                             {% else %}
                             <div class={{type_metadata|get:key}}>

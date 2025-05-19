@@ -59,7 +59,6 @@ SMECS supports typical field types in the curation interface. The following type
      * Type: string
      * Long enum list
      * Enum list is available
-* Status: not nicely implemented
 
 ## Tables for Nested Elements
 When an element consists of a type which includes multiple sub-types, a table is required. There are different types:
