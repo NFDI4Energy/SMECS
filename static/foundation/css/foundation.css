@@ -349,7 +349,7 @@ form.data-form3 {
 }
 
 .form-group input[type="text"], select {
-    width: 118%;
+    width: 110%;
     padding: 8px;
     border-radius: 4px;
     border: 1px solid #ccc;
@@ -362,16 +362,12 @@ form.data-form3 {
     float: left;
     margin-right: 10%;
     margin-bottom: 0.2%;
+    box-sizing: border-box;
 }
 
 .form-group input[type="text"]:focus, select:focus {
     outline: none;
     border-color: #0088cc;
-}
-
-#programmingLanguage, #keywords {
-    width: 82%;
-    margin-bottom: 2%;
 }
 
 /* style for general single input elements with longer values */
@@ -948,8 +944,7 @@ button.TrySMECS {
     font-size: 24px;
 }
 
-/************************************programming languages list**************************************/
-        .single_inputs {
+.single_inputs {
     position: relative;
 }
 
@@ -965,19 +960,6 @@ button.TrySMECS {
     top: 100%;
     left: 0;
     box-sizing: border-box;
-}
-
-#licenseSuggestions {
-    border: 1px solid #ccc;
-    background-color: white;
-    max-height: 150px;
-    overflow-y: auto;
-    display: none;
-    position: absolute;
-    width: 118%;
-    z-index: 1000;
-    top: 64%;
-    left: 0;
 }
 
 .suggestion-item {
@@ -1375,11 +1357,6 @@ input:checked + .slider {
         margin-top: 4%;
     }
 
-    #form1 input[type=url], .form-group input[type="text"], select
-    .form-group fieldset label, .data-form3 label {
-        font-size: 74%;
-    }
-
     .form-group fieldset.fieldset_content, .form-group fieldset.copyrightHolder {
         width: 45%;
         margin-right: 4%;
@@ -1584,12 +1561,13 @@ input:checked + .slider {
 }
 /* *********************Tags*********************** */
 .form-group .tags-container {
-    width: 98%;
+    width: 110%;
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
     align-items: center;
     padding: 5px;
+    box-sizing: border-box;
 }
 
 .form-group .tag {
@@ -1634,19 +1612,11 @@ input:checked + .slider {
         background-color: #f0f0f0;
     }
 
-.form-group #programmingLanguageWrapper {
-    width: 100%;
-    margin-right: 10%;
-    margin-bottom: 1.5%;
-    float: left;
-}
-
-.form-group .tagging input[type="text"] {
-    border: none;
+.form-group .tags-container input[type="text"] {
+    width: 110%;
     outline: none;
     flex-grow: 1;
-    min-width: 120px;
-    background: transparent;
+    min-width: 0px;
     font-size: 1em;
     padding: 4px 0;
 }

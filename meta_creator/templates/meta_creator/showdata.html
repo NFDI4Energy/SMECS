@@ -81,19 +81,7 @@
                             {% endif %}
                             {% for key, value in metadata_dict.items %}
                         <div class="form-group">
-                            {% if key == "license" %}
-                            <div class="single_inputs">
-                                <label for="{{ key }}">{{ key }}</label>
-                                <div class="custom-tooltip-metadata">
-                                    <span class="tooltip-text-metadata">
-                                        {% with descriptions=description_metadata %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
-                                    </span>
-                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                </div>
-                                <input title="{{ value }}" id="license-input" name="{{ key }}" type="text" value="{{ value }}" class="input-field" autocomplete="off"><br>
-                                <div id="licenseSuggestions" class="suggestions"></div>
-                            </div>
-                            {% elif value|is_dict and key == "copyrightHolder" %}
+                            {% if value|is_dict and key == "copyrightHolder" %}
                             <div class="single_inputs">
                                 {% comment %} <fieldset class="copyrightHolder">
                                     {% endcomment %}

@@ -16,17 +16,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let contents = document.querySelectorAll('.tab-content_ext .tab');
     const urlInputs = document.querySelectorAll('.url-input');
     const copyBtn = document.getElementById('copy-button');
-    const input_languages = document.getElementById("languageInput");
-    const inputLanguages = document.getElementById('languageInput');
-    const suggestionsBox = document.getElementById('suggestions');
     const SPDX_URL = 'https://raw.githubusercontent.com/spdx/license-list-data/master/json/licenses.json';
     const JsonSchema = '/static/schema/codemeta_schema.json';
-    let licenses = [];
-    const licenseInput = document.getElementById('license-input');
-    const licenseSuggestionsBox = document.getElementById('licenseSuggestions');
-    const tagsContainer = document.getElementById("languageTags");
-    const hiddenInput = document.getElementById("languageHiddenInput");
-
     const metadataJson = document.getElementById("metadata-json");
     const data = metadataJson.value;
     const metadata = JSON.parse(data);
@@ -165,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
         container.insertBefore(highlightTag, input);
     }
 
-    // programming and keywords tag logic
+    // Tagging Logic
     function setupTagging({
         containerId,
         hiddenInputId,
@@ -188,7 +179,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (jsonKey === "keywords" && selectedTags.length > 0) {
             const highlightTag = document.createElement("span");
             highlightTag.classList.add("highlight-tag");
-            highlightTag.innerHTML = `⚠️ Suggestion: Curate the keywords <span class="acknowledge-tag">Got it!</span>`;
+            highlightTag.innerHTML = `⚠️ Suggestion: Curate here <span class="acknowledge-tag">Got it!</span>`;
             container.insertBefore(highlightTag, input);
         }
 
@@ -274,41 +265,64 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Initialize all taggings and taggings_autocomplete
-    document.querySelectorAll('.tagging-label[data-tagging]').forEach(label => {
-        const key = label.getAttribute('data-tagging');
-        const taggingType = label.getAttribute('data-tagging-type'); // "tagging" or "tagging_autocomplete"
-        const containerId = key + 'Tags';
-        const hiddenInputId = key + 'HiddenInput';
-        const inputId = key + 'Input';
-        const suggestionsId = key + 'Suggestions'; // You can use a convention for suggestions box IDs
+    initializeTaggingFields();
 
-        if (taggingType === "tagging_autocomplete") {
-            // Fetch autocomplete source from schema or define it elsewhere
-            fetch(JsonSchema)
-                .then(res => res.json())
-                .then(schema => {
-                    const autocompleteSource = schema.properties?.[key]?.items?.enum || [];
-                    setupTagging({
-                        containerId,
-                        hiddenInputId,
-                        inputId,
-                        suggestionsId,
-                        jsonKey: key,
-                        useAutocomplete: true,
-                        autocompleteSource
-                    });
+    function initializeTaggingFields() {
+        // Initialize all taggings and taggings_autocomplete
+        document.querySelectorAll('.tagging-label[data-tagging]').forEach(label => {
+            const key = label.getAttribute('data-tagging');
+            const taggingType = label.getAttribute('data-tagging-type'); // "tagging" or "tagging_autocomplete"
+            const containerId = key + 'Tags';
+            const hiddenInputId = key + 'HiddenInput';
+            const inputId = key + 'Input';
+            const suggestionsId = key + 'Suggestions'; // You can use a convention for suggestions box IDs
+
+            if (taggingType === "tagging_autocomplete") {
+                if (key === "license") {
+                    fetch(SPDX_URL)
+                        .then(response => response.json())
+                        .then(data => {
+                            const spdxLicenses = data.licenses.map(license => license.licenseId);
+                            console.info('Catched SPDX licenses:', spdxLicenses);
+                            setupTagging({
+                                containerId,
+                                hiddenInputId,
+                                inputId,
+                                suggestionsId,
+                                jsonKey: key,
+                                useAutocomplete: true,
+                                autocompleteSource: spdxLicenses
+                            });
+                        })
+                        .catch(error => console.error('Error fetching SPDX licenses:', error));
+                } else {
+                    // Fetch autocomplete source from schema or define it elsewhere
+                    fetch(JsonSchema)
+                        .then(res => res.json())
+                        .then(schema => {
+                            const autocompleteSource = schema.properties?.[key]?.items?.enum || [];
+                            setupTagging({
+                                containerId,
+                                hiddenInputId,
+                                inputId,
+                                suggestionsId,
+                                jsonKey: key,
+                                useAutocomplete: true,
+                                autocompleteSource: autocompleteSource
+                            });
+                        });
+                }
+            } else {
+                setupTagging({
+                    containerId,
+                    hiddenInputId,
+                    inputId,
+                    jsonKey: key,
+                    useAutocomplete: false
                 });
-        } else {
-            setupTagging({
-                containerId,
-                hiddenInputId,
-                inputId,
-                jsonKey: key,
-                useAutocomplete: false
-            });
-        }
-    });
+            }
+        });
+    }
     
     // Create a general dropdown class
     class DynamicDropdown {
@@ -366,60 +380,6 @@ document.addEventListener("DOMContentLoaded", function () {
             dynamicDropdown.populateDropdown();
         } else {
             console.error(`Dropdown with ID "${dropdownId}" is missing required attributes.`);
-        }
-    });
-
-    // License
-    // Fetch the SPDX licenses
-    fetch(SPDX_URL)
-        .then(response => response.json())
-        .then(data => {
-            licenses = data.licenses.map(license => license.licenseId);
-        })
-        .catch(error => console.error('Error fetching SPDX licenses:', error));
-
-    licenseInput.addEventListener("input", function () {
-        const query = licenseInput.value.toLowerCase().split(',').pop().trim();
-        licenseSuggestionsBox.innerHTML = "";
-
-        if (query.length === 0) {
-            licenseSuggestionsBox.style.display = "none";
-            return;
-        }
-
-        let existingLicenses = licenseInput.value.split(',').map(s => s.trim()).filter(Boolean);
-
-        const matchedLicenses = licenses.filter(license =>
-            license.toLowerCase().startsWith(query) && !existingLicenses.includes(license)
-        );
-
-        if (matchedLicenses.length > 0) {
-            licenseSuggestionsBox.style.display = "block";
-
-            matchedLicenses.forEach(license => {
-                const div = document.createElement("div");
-                div.classList.add("suggestion-item");
-                div.textContent = license;
-                div.addEventListener("click", function () {
-                    existingLicenses[existingLicenses.length - 1] = license;
-                    licenseInput.value = existingLicenses;
-                    // licenseInput.value = existingLicenses.join(', ') + ', ';
-                    licenseSuggestionsBox.style.display = "none";
-                    licenseInput.focus();
-                    const event = new Event('input', { bubbles: true });
-                    licenseInput.dispatchEvent(event);
-                });
-                licenseSuggestionsBox.appendChild(div);
-            });
-        } else {
-            licenseSuggestionsBox.style.display = "none";
-        }
-    });
-
-    // Hide suggestions box when clicking outside
-    document.addEventListener("click", function (e) {
-        if (!licenseSuggestionsBox.contains(e.target) && e.target !== licenseInput) {
-            licenseSuggestionsBox.style.display = "none";
         }
     });
 

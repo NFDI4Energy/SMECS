@@ -42,7 +42,9 @@ def define_field_type(schema: dict) -> dict[str, str]:
     type_dict = {}
 
     for key, value in properties.items():
-        if key == "authors" or key == "contributors":
+        if key == "license":
+            type_dict[key] = "tagging_autocomplete"
+        elif key == "authors" or key == "contributors":
             type_dict[key] = "person_table"    
         elif "enum" in value:
             type_dict[key] = "dropdown"
