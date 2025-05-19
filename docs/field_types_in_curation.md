@@ -27,7 +27,6 @@ SMECS supports typical field types in the curation interface. The following type
      * Cardinality: 1
      * Type: string
      * Enum list is available
-* Status: not nicely implemented
 
 ### Tagging
 * tag: tagging

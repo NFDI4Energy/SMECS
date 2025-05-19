@@ -208,16 +208,16 @@
                                 <input title="{{ value }}" id="license-input" name="{{ key }}[{{ k }}]" type="text" value="{{ value }}" class="input-field" autocomplete="off"><br>
                                 <div id="licenseSuggestions" class="suggestions"></div>
                             </div>
-                            {% elif key == "developmentStatus" %}
+                            {% elif type_metadata|get:key == "dropdown" %}
                             <div class="single_inputs">
-                                <label>Development Status</label>
+                                <label for="{{ key }}">{{ key|camel_to_spaces_lower }}</label>
                                 <div class="custom-tooltip-metadata">
                                     <span class="tooltip-text-metadata">
-                                        {% with descriptions=description_metadata %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
+                                        {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
                                     </span>
                                     <i class="fa fa-info-circle" aria-hidden="true"></i>
                                 </div>
-                                <select name="developmentStatus" id="developmentStatusDropdown" data-dropdown-schema="developmentStatus">
+                                <select name="{{ key }}" id="{{ key }}" data-dropdown-schema="{{ key }}">
                                     <option value=""></option>
                                 </select>
                                 <div id="suggestions"></div>
