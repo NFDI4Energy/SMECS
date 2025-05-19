@@ -291,13 +291,21 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
 
-    // Initialize keywords without autocomplete
-    setupTagging({
-        containerId: "keywordsTags",
-        hiddenInputId: "keywordsHiddenInput",
-        inputId: "keywordsInput",
-        jsonKey: "keywords",
-        useAutocomplete: false
+    // Initialize all taggings
+    document.querySelectorAll('.tagging-label[data-tagging]').forEach(label => {
+        const key = label.getAttribute('data-tagging');
+        if (key === "programmingLanguage") return; // Already handled above
+        const containerId = key + 'Tags';
+        const hiddenInputId = key + 'HiddenInput';
+        const inputId = key + 'Input';
+
+        setupTagging({
+            containerId,
+            hiddenInputId,
+            inputId,
+            jsonKey: key,
+            useAutocomplete: false
+        });
     });
 
     // Create a general dropdown class
@@ -538,9 +546,12 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     // contributor and author table
-    document.getElementById('addPersonButton').addEventListener('click', function () {
-        addPerson('contributor', 'contributorsTableBody', ['Email']);
-    });
+    const addPersonBtn = document.getElementById('addPersonButton');
+    if (addPersonBtn) {
+        addPersonBtn.addEventListener('click', function () {
+            addPerson('contributor', 'contributorsTableBody', ['Email']);
+        });
+    }
 
     // Contributor/Author tables
     function handleTableClick(tableBody, editCallback) {

@@ -36,7 +36,6 @@ SMECS supports typical field types in the curation interface. The following type
 * Typical used for:
      * Cardinality: n
      * Type: string, number, etc.
-* Status: not nicely implemented
 
 ### TaggingDropdown
 * tag: tagging_dropdown

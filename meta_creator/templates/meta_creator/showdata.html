@@ -111,31 +111,17 @@
 
                                 <div id="suggestions"></div>
                             </div>
-                            {% elif value|list and key == "keywords" %}
-                            <div class="single_inputs" id="keywordsWrapper">
-                                <label>Keywords</label>
+                            {% elif key == "license" %}
+                            <div class="single_inputs">
+                                <label for="{{ key }}">{{ key }}</label>
                                 <div class="custom-tooltip-metadata">
                                     <span class="tooltip-text-metadata">
-                                        {% with descriptions=description_metadata %}
-                                        {% if key in descriptions %}{{ descriptions|get:key }}{% endif %}
-                                        {% endwith %}
+                                        {% with descriptions=description_metadata %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
                                     </span>
                                     <i class="fa fa-info-circle" aria-hidden="true"></i>
                                 </div>
-
-                                <input type="hidden" id="keywordsHiddenInput" name="{{ key }}" value='{{ value|join:", " }}'>
-
-                                <div id="keywordsTags" class="tags-container">
-                                    {% for item in value %}
-                                    {% if item %}
-                                    <span class="tag" name="{{ key }}">
-                                        {{ item }}
-                                        <span class="remove-tag" data-value="{{ item }}">×</span>
-                                    </span>
-                                    {% endif %}
-                                    {% endfor %}
-                                    <input type="text" id="keywordsInput" name="{{ key }}" placeholder="Type to add..." />
-                                </div>
+                                <input title="{{ value }}" id="license-input" name="{{ key }}" type="text" value="{{ value }}" class="input-field" autocomplete="off"><br>
+                                <div id="licenseSuggestions" class="suggestions"></div>
                             </div>
                             {% elif value|is_dict and key == "copyrightHolder" %}
                             <div class="single_inputs">
@@ -172,7 +158,6 @@
                                 <input title="{{ item }}" name="{{ key }}[]" type="text" value="{{ item }}"><br>
                             </div>
                             {% endfor %}
-
                             {% elif key == "@context" or key == "@type" %}
                             <div class="single_inputs" hidden>
                                 <label for="{{ key }}" hidden>{{ key }}</label>
@@ -182,31 +167,7 @@
                                     </span>
                                     <i class="fa fa-info-circle" aria-hidden="true" hidden></i>
                                 </div>
-                                <input title="{{ value }}" id="{{ key }}-{{ k }}" name="{{ key }}[{{ k }}]" type="text" value="{{ value }}" hidden><br>
-                            </div>
-                            {% elif key == "url" %}
-                            <div class="single_inputs" id="change_suggestion">
-                                <label for="{{ key }}" title="">{{ key }}</label>
-                                <div class="custom-tooltip-metadata">
-                                    <span class="tooltip-text-metadata">
-                                        {% with descriptions=entered_data.description_dict %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
-                                    </span>
-                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                </div>
-                                <input title="{{ value }}" id="{{ key }}-{{ k }}" name="{{ key }}[{{ k }}]" type="text" value="{{ value }}" class="url-input"><br>
-                            </div>
-
-                            {% elif key == "license" %}
-                            <div class="single_inputs">
-                                <label for="{{ key }}">{{ key }}</label>
-                                <div class="custom-tooltip-metadata">
-                                    <span class="tooltip-text-metadata">
-                                        {% with descriptions=description_metadata %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}
-                                    </span>
-                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                </div>
-                                <input title="{{ value }}" id="license-input" name="{{ key }}[{{ k }}]" type="text" value="{{ value }}" class="input-field" autocomplete="off"><br>
-                                <div id="licenseSuggestions" class="suggestions"></div>
+                                <input title="{{ value }}" id="{{ key }}" name="{{ key }}" type="text" value="{{ value }}" hidden><br>
                             </div>
                             {% elif type_metadata|get:key == "dropdown" %}
                             <div class="single_inputs">
@@ -222,6 +183,28 @@
                                 </select>
                                 <div id="suggestions"></div>
                             </div>
+                            {% elif type_metadata|get:key == "tagging" %}
+                            <div class="single_inputs tagging-wrapper" id="{{ key }}Wrapper">
+                                <label class="tagging-label" for="{{ key }}Input" data-tagging="{{ key }}">{{ key|camel_to_spaces_lower }}</label>
+                                <div class="custom-tooltip-metadata">
+                                    <span class="tooltip-text-metadata">
+                                        {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
+                                    </span>
+                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                </div>
+                                <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" value='{{ value|join:", " }}'>
+                                <div class="tags-container" id="{{ key }}Tags">
+                                    {% for item in value %}
+                                    {% if item %}
+                                    <span class="tag" data-value="{{ item }}">
+                                        {{ item }}
+                                        <span class="remove-tag" data-value="{{ item }}">×</span>
+                                    </span>
+                                    {% endif %}
+                                    {% endfor %}
+                                    <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type to add..." />
+                                </div>
+                            </div>
                             {% else %}
                             <div class={{type_metadata|get:key}}>
                                 <label for="{{ key }}">{{ key|camel_to_spaces_lower }}</label>
@@ -231,7 +214,7 @@
                                     </span>
                                     <i class="fa fa-info-circle" aria-hidden="true"></i>
                                 </div>
-                                <input title="{{ value }}" id="{{ key }}-{{ k }}" name="{{ key }}[{{ k }}]" type="text" value="{{ value }}"><br>
+                                <input title="{{ value }}" id="{{ key }}" name="{{ key }}" type="text" value="{{ value }}"><br>
 
                             </div>
                             {% endif %}

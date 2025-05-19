@@ -356,6 +356,7 @@ form.data-form3 {
     transition: border-color 0.2s ease-in-out;
 }
 
+/* style for general single input elements */
 .form-group .single_inputs {
     width: 40%;
     float: left;
@@ -373,6 +374,7 @@ form.data-form3 {
     margin-bottom: 2%;
 }
 
+/* style for general single input elements with longer values */
 .form-group .long_field {
     width: 83%;
     margin-bottom: 0.2%;
@@ -1581,7 +1583,7 @@ input:checked + .slider {
     }
 }
 /* *********************Tags*********************** */
-.tags-container {
+.form-group .tags-container {
     width: 98%;
     display: flex;
     flex-wrap: wrap;
@@ -1590,7 +1592,7 @@ input:checked + .slider {
     padding: 5px;
 }
 
-.tag {
+.form-group .tag {
     background-color: #dddddd;
     color: rgb(34, 34, 34);
     padding: 4px 8px;
@@ -1600,7 +1602,7 @@ input:checked + .slider {
     font-size: 13px;
 }
 
-.remove-tag {
+.form-group .remove-tag {
     margin-left: 6px;
     cursor: pointer;
     font-weight: bold;
@@ -1632,11 +1634,21 @@ input:checked + .slider {
         background-color: #f0f0f0;
     }
 
-.form-group #programmingLanguageWrapper, .form-group #keywordsWrapper {
+.form-group #programmingLanguageWrapper {
     width: 100%;
     margin-right: 10%;
     margin-bottom: 1.5%;
     float: left;
+}
+
+.form-group .tagging input[type="text"] {
+    border: none;
+    outline: none;
+    flex-grow: 1;
+    min-width: 120px;
+    background: transparent;
+    font-size: 1em;
+    padding: 4px 0;
 }
 
 div div p#contributor-explanation {

@@ -93,15 +93,18 @@ def create_empty_metadata_dict_from_properties_list(
     end_index = properties_list.index(end_property) + 1
 
     for property in properties_list[start_index:end_index]:
+        prop_schema = full_schema["properties"][property]
         # Check if the property uses another schema as type
-        if "$ref" in full_schema["properties"][property]:
-            required_type = full_schema["properties"][property]["$ref"].split(
+        if "$ref" in prop_schema:
+            required_type = prop_schema["$ref"].split(
                 "/")[-1]
             type_properties = full_schema["$defs"][required_type]["properties"]
             metadata[property] = {}
             metadata[property]['@type'] = "required_type"
             for type_property in type_properties:
                 metadata[property][type_property] = ""
+        elif prop_schema.get("type") == "array":
+            metadata[property] = []
         else:
             metadata[property] = ""
 
@@ -123,7 +126,15 @@ def fill_empty_metadata( empty_metadata: dict[str, dict[str, str]], extracted_me
     for metadata_tab_name,metadata_tab_dict  in empty_metadata.items():
         for metadata_field_name, metadata_field_value in metadata_tab_dict.items():
            if metadata_field_name in extracted_metadata:
-                empty_metadata[metadata_tab_name][metadata_field_name] = extracted_metadata[metadata_field_name]
+                value = extracted_metadata[metadata_field_name]
+                # Check the type of the empty value to determine if it should be a list or string
+                if isinstance(metadata_field_value, list):
+                    # If the value is not a list, wrap it in a list
+                    if not isinstance(value, list):
+                        value = [value]
+                    empty_metadata[metadata_tab_name][metadata_field_name] = value
+                else:
+                    empty_metadata[metadata_tab_name][metadata_field_name] = value
 
     return empty_metadata
 
@@ -146,10 +157,12 @@ def init_curated_metadata(extract_metadata):
     full_schema = load_schema(schema_name)
     empty_metadata = create_empty_metadata(full_schema)
     filled_metadata = fill_empty_metadata(empty_metadata, extract_metadata)
+    print(f"Filled metadata:\n{filled_metadata}")
 
     metadata_description = load_description_dict_from_schema(full_schema)
     metadata_field_types = define_field_type(full_schema)
     print(f"Field types:\n{metadata_field_types}")
     
     joined_metadata = join_tabs_to_dict(filled_metadata)
+    print(f"Joined metadata:\n{joined_metadata}")
     return filled_metadata, metadata_description, metadata_field_types, joined_metadata
