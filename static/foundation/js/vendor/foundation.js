@@ -601,6 +601,20 @@ document.addEventListener("DOMContentLoaded", function () {
             'authorEmailInput'
         ];
 
+        // Check if input is inside a tags-container (tagging field)
+        const tagsContainer = input.closest('.tags-container');
+        if (tagsContainer) {
+            // Find the hidden input in the parent tagging-wrapper
+            const taggingWrapper = tagsContainer.closest('.tagging-wrapper');
+            if (taggingWrapper) {
+                const hiddenInput = taggingWrapper.querySelector('input[type="hidden"]');
+                if (hiddenInput && hiddenInput.value.trim() !== "") {
+                    input.classList.remove("invalid");
+                    return;
+                }
+            }
+        }
+
         if (skipValidationIds.includes(input.id)) {
             return; // Skip validation for the specified inputs
         }
