@@ -3,7 +3,6 @@
 {% load custom_filters %}
 {% block content %}
 
-
 <button class="new-url-extraction-page" id="new-url-extraction-page" title="Enter another URL and extract metadata" onclick="window.location.href = '/'">Try New URL</button>
 
 <div class="whole-extraction-page">
@@ -15,8 +14,6 @@
             <span class="slider">JSON</span>
         </label>
     </div>
-
-
 
     <div class="main-container">
         <!-- main div -->
@@ -78,8 +75,8 @@
                     <div id="{{ tab_name }}" class="tab active">
                     {% else %}
                     <div id="{{ tab_name }}" class="tab">
-                            {% endif %}
-                            {% for key, value in metadata_dict.items %}
+                    {% endif %}
+                        {% for key, value in metadata_dict.items %}
                         <div class="form-group">
                             {% if value|is_dict and key == "copyrightHolder" %}
                             <div class="single_inputs">
@@ -129,17 +126,21 @@
                             </div>
                             {% elif type_metadata|get:key == "tagging" %}
                             <div class="single_inputs tagging-wrapper" id="{{ key }}Wrapper">
-                                <label class="tagging-label" for="{{ key }}Input" data-tagging="{{ key }}" data-tagging-type="tagging">{{ key|camel_to_spaces_lower }}</label>
+                                <label class="tagging-label" for="{{ key }}Input"
+                                       data-tagging="{{ key }}"
+                                       data-tagging-type="tagging">
+                                    {{ key|camel_to_spaces_lower }}
+                                </label>
                                 <div class="custom-tooltip-metadata">
                                     <span class="tooltip-text-metadata">
                                         {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
                                     </span>
                                     <i class="fa fa-info-circle" aria-hidden="true"></i>
                                 </div>
-                                <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" value='{{ value|join:", " }}'>
+                                <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" value="{{ value|join:", " }}">
                                 <div class="tags-container" id="{{ key }}Tags">
                                     {% for item in value %}
-                                    {% if item %}
+                                    {% if item is string %}
                                     <span class="tag" data-value="{{ item }}">
                                         {{ item }}
                                         <span class="remove-tag" data-value="{{ item }}">×</span>
@@ -149,6 +150,35 @@
                                     <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type to add..." />
                                 </div>
                             </div>
+                            {% elif type_metadata|get:key == "tagging_object" %}
+                            {% with default_type=value.0|get:"@type" %}
+                            <div class="single_inputs tagging-wrapper" id="{{ key }}Wrapper">
+                                <label class="tagging-label" for="{{ key }}Input"
+                                       data-tagging="{{ key }}"
+                                       data-tagging-type="tagging_object"
+                                       data-tagging-object-key="identifier"
+                                       data-tagging-object-type="@type"
+                                       data-constant-type="{{ default_type }}">
+                                    {{ key|camel_to_spaces_lower }}
+                                </label>
+                                <div class="custom-tooltip-metadata">
+                                    <span class="tooltip-text-metadata">
+                                        {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
+                                    </span>
+                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                </div>
+                                <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" value="{{ value|prepare|escape }}">
+                                <div class="tags-container" id="{{ key }}Tags">
+                                    {% for item in value %}
+                                    <span class="tag" data-value="{{ item|get:'identifier' }}">
+                                        {{ item|get:"identifier" }}{% if item|get:"@type" %} <span class="tag-type">({{ item|get:"@type" }})</span>{% endif %}
+                                        <span class="remove-tag" data-value="{{ item|get:"identifier" }}">×</span>
+                                    </span>
+                                    {% endfor %}
+                                    <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type to add an identifier..." />
+                                </div>
+                            </div>
+                            {% endwith %}
                             {% elif type_metadata|get:key == "tagging_autocomplete" %}
                             <div class="single_inputs tagging-wrapper" id="{{ key }}Wrapper">
                                 <label class="tagging-label" for="{{ key }}Input" data-tagging="{{ key }}" data-tagging-type="tagging_autocomplete">
@@ -189,9 +219,9 @@
                                 </div>
                                 <input title="{{ value }}" id="{{ key }}" name="{{ key }}" type="text" value="{{ value }}"><br>
 
-                                </div>
-                                {% endif %}
                             </div>
+                            {% endif %}
+                        </div>
                             {% endfor %}
                             <div class="navigation-buttons">
                                 {% if not forloop.first %}

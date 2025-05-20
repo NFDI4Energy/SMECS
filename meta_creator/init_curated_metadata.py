@@ -1,6 +1,7 @@
 # Intilize curated metadata
 # Within the file all relevant metadata elements for the curation page are defined
 
+from typing import Required
 from django.conf import settings
 import json
 import os
@@ -50,7 +51,7 @@ def load_description_dict_from_schema(schema: dict) -> dict[str, str]:
     return description_dict
 
 # Define required field_type per element
-def define_field_type(schema: dict, types: dict) -> dict[str, str]:
+def define_field_type(schema: dict, types: dict, array = False) -> dict[str, str]:
     """
     Determines the field type for each property in the schema for curation UI.
 
@@ -73,6 +74,7 @@ def define_field_type(schema: dict, types: dict) -> dict[str, str]:
         elif key == "authors" or key == "contributors":
             type_dict[key] = "person_table"    
 
+        ## Flexible elements
         elif "enum" in value:
             type_dict[key] = "dropdown"
         elif "$ref" in value: 
@@ -93,7 +95,11 @@ def define_field_type(schema: dict, types: dict) -> dict[str, str]:
                 type_dict[key] = "tagging"
             elif "$ref" in items:
                 required_type = items["$ref"].split("/")[-1]
-                type_dict[key] = [define_field_type(types[required_type], None)]
+                subproperties = types[required_type].get("properties")
+                if len(subproperties) > 1:
+                    type_dict[key] = [define_field_type(types[required_type], None)]
+                else:
+                    type_dict[key] = "tagging_object"
 
     return type_dict
 

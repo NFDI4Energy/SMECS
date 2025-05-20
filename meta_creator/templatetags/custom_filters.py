@@ -1,5 +1,6 @@
 from django import template
 import re
+import json
 
 register = template.Library()
 
@@ -45,3 +46,9 @@ def check_maintainer(dictionary, email):
     maintainers = dictionary.get("maintainer")
 
     return check_for_value(maintainers, email)
+
+@register.filter
+def prepare(obj):
+    if obj[0].get("identifier"):
+        json.dumps(obj)
+    return json.dumps([])

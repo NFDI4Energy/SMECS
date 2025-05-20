@@ -171,12 +171,73 @@ document.addEventListener("DOMContentLoaded", function () {
         const input = document.getElementById(inputId);
         const suggestionsBox = suggestionsId ? document.getElementById(suggestionsId) : null;
 
-        let selectedTags = hiddenInput.value
-            .split(",")
-            .map(v => v.trim())
-            .filter(Boolean);
-        // Show yellow tag once if any keyword exists
-        if (jsonKey === "keywords" && selectedTags.length > 0) {
+        // Detect if this is an object-tagging field (e.g., referencePublication)
+        const label = document.querySelector(`.tagging-label[for="${inputId}"]`);
+        const taggingType = label ? label.getAttribute('data-tagging-type') : null;
+        // For tagging_object, get the constant type from data attribute (set in template)
+        const objectKey = label ? label.getAttribute('data-tagging-object-key') : null;
+        const constantType = label ? label.getAttribute('data-constant-type') : null;
+
+        let selectedTags = [];
+
+        // Parse initial value
+        if (taggingType === "tagging_object") {
+            try {
+                const parsed = JSON.parse(hiddenInput.value);
+                if (Array.isArray(parsed)) selectedTags = parsed;
+            } catch {
+                selectedTags = [];
+            }
+        } else {
+            // tagging (array of strings)
+            selectedTags = hiddenInput.value
+                .split(",")
+                .map(v => v.trim())
+                .filter(Boolean);
+        }
+
+        // Render tags
+        function renderTags() {
+            container.querySelectorAll('.tag').forEach(tag => tag.remove());
+            if (taggingType === "tagging_object") {
+                selectedTags.forEach(item => {
+                    const identifier = item.identifier || '';
+                    const type = item['@type'] || constantType || '';
+                    const tag = document.createElement("span");
+                    tag.classList.add("tag");
+                    tag.setAttribute("data-value", identifier);
+                    tag.innerHTML = `${identifier}<span class="remove-tag" data-value="${identifier}">×</span>`;
+                    container.insertBefore(tag, input);
+                });
+            } else {
+                selectedTags.forEach(item => {
+                    const tag = document.createElement("span");
+                    tag.classList.add("tag");
+                    tag.setAttribute("data-value", item);
+                    tag.innerHTML = `${item}<span class="remove-tag" data-value="${item}">×</span>`;
+                    container.insertBefore(tag, input);
+                });
+            }
+        }
+
+        // Add tag logic
+        function addTag(tagValue) {
+            if (!tagValue) return;
+            if (taggingType === "tagging_object") {
+                if (selectedTags.some(item => item.identifier === tagValue)) return;
+                selectedTags.push({ "@type": constantType || "ScholarlyArticle", "identifier": tagValue });
+            } else {
+                if (selectedTags.includes(tagValue)) return;
+                selectedTags.push(tagValue);
+            }
+            renderTags();
+            updateHidden();
+            input.value = "";
+            if (suggestionsBox) suggestionsBox.style.display = "none";
+        }
+
+        // Show yellow tag once if any tag exists
+        if (selectedTags.length > 0) {
             const highlightTag = document.createElement("span");
             highlightTag.classList.add("highlight-tag");
             highlightTag.innerHTML = `⚠️ Suggestion: Curate here <span class="acknowledge-tag">Got it!</span>`;
@@ -191,7 +252,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (!query) return (suggestionsBox.style.display = "none");
 
                 const filtered = autocompleteSource.filter(
-                    tag => tag.toLowerCase().startsWith(query) && !selectedTags.includes(tag)
+                    tag => tag.toLowerCase().startsWith(query) &&
+                        !(objectKey
+                            ? selectedTags.some(item => item[objectKey] === tag)
+                            : selectedTags.includes(tag))
                 );
 
                 if (filtered.length === 0) {
@@ -217,52 +281,46 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
 
-        function addTag(tagValue) {
-            if (!tagValue || selectedTags.includes(tagValue)) return;
-
-            selectedTags.push(tagValue);
-
-            const tag = document.createElement("span");
-            tag.classList.add("tag");
-            tag.innerHTML = `${tagValue}<span class="remove-tag" data-value="${tagValue}">×</span>`;
-            container.insertBefore(tag, input);
-
-            updateHidden();
-            input.value = "";
-            if (suggestionsBox) suggestionsBox.style.display = "none";
-        }
-
+        // Remove tag logic
         container.addEventListener("click", (e) => {
             if (e.target.classList.contains("remove-tag")) {
                 const value = e.target.dataset.value;
-                selectedTags = selectedTags.filter(tag => tag !== value);
+                if (taggingType === "tagging_object") {
+                    selectedTags = selectedTags.filter(item => item.identifier !== value);
+                } else {
+                    selectedTags = selectedTags.filter(tag => tag !== value);
+                }
                 e.target.parentElement.remove();
                 updateHidden();
             }
-
             if (e.target.classList.contains("acknowledge-tag")) {
-                e.target.parentElement.remove();  // Remove the yellow tag
+                e.target.parentElement.remove();
             }
         });
 
+        // Add tag on Enter
         input.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
                 e.preventDefault();
                 const newTag = input.value.trim();
-                if (newTag && !selectedTags.includes(newTag)) {
-                    addTag(newTag);
-                }
-                input.value = "";
-                if (suggestionsBox) suggestionsBox.style.display = "none";
+                if (newTag) addTag(newTag);
             }
         });
 
+        // Update hidden input and JSON
         function updateHidden() {
-            hiddenInput.value = selectedTags.join(", ");
+            if (taggingType === "tagging_object") {
+                hiddenInput.value = JSON.stringify(selectedTags);
+            } else {
+                hiddenInput.value = selectedTags.join(", ");
+            }
             const jsonObject = JSON.parse(metadataJson.value);
             jsonObject[jsonKey] = selectedTags;
             metadataJson.value = JSON.stringify(jsonObject, null, 2);
         }
+
+        // Initial render
+        renderTags();
     }
 
     initializeTaggingFields();

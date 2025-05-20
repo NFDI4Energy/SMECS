@@ -65,6 +65,10 @@ SMECS supports typical field types in the curation interface. The following type
 * elements which should not be shown in frontend
 * elements remain in metadata
 
+### TaggingObject
+* tag: tagging_object
+* Tagging for a nested element only consisting of an identifier
+
 ## Tables for Nested Elements
 When an element consists of a type which includes multiple sub-types, a table is required. There are different types:
 
