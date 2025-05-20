@@ -811,6 +811,7 @@ document.addEventListener("DOMContentLoaded", function () {
         metadataJson.value = JSON.stringify(existingJson, null, 2);
     }
 
+    inputs.forEach(input => validateInput(input));
 
     inputs.forEach((input) => {
         const handleChange = () => {
