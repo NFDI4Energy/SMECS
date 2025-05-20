@@ -9,6 +9,10 @@ from .validate_jsonLD import validate_codemeta
 from urllib.parse import urlparse
 
 def get_api_url(owner, repo, url):
+    """
+    Returns the appropriate GitHub API URL for a given repository.
+    If the URL ends with '.github.io', it's assumed to be a GitHub Pages repository.
+    """
     if url.endswith('.github.io'):
         return f'https://api.github.com/repos/{owner}/{repo}.github.io'
     else:
@@ -17,6 +21,14 @@ def get_api_url(owner, repo, url):
 
 # Check the URL to be accessible or not
 def is_url_accessible(url):
+    """
+    Checks if a URL is accessible by sending a HEAD request.
+    Args:
+        url (str): The URL to check.
+        timeout (int): Timeout in seconds for the request.
+    Returns:
+        bool: True if the URL is accessible (status code 200), False otherwise.
+    """
     try:
         response = requests.head(url, timeout=5)
         return response.status_code == 200
@@ -25,6 +37,15 @@ def is_url_accessible(url):
 
 # Creating download_URL of the Repository
 def download_url_releases(url):
+    """
+    Constructs a releases URL for the given base GitHub repository URL
+    and checks if it is accessible.
+
+    download_url = f"{url}/releases"
+
+    Returns:
+        str: The releases URL if accessible, otherwise an empty string.
+    """
     if url.endswith('/'):
         url = url[:-1]
 
@@ -38,6 +59,16 @@ def download_url_releases(url):
 
 # Function to extract contributors from commit history with pagination
 def get_contributors_from_repo(owner, repo, token, url):
+    """
+    Retrieves unique contributors from a GitHub repository by analyzing the commit history.
+    Args:
+        owner (str): Repository owner's username.
+        repo (str): Repository name.
+        token (Optional[str]): GitHub personal access token for authenticated requests.
+        url (str): Base GitHub API URL for the repository.
+    Returns:
+        A list of dictionaries with contributor metadata or None on failure.
+    """
     url_contributors = f"{url}/commits"
     headers = {"Authorization": f"token {token}"} if token else {}
 
@@ -84,6 +115,15 @@ def get_contributors_from_repo(owner, repo, token, url):
 
 
 def get_github_metadata(url, personal_token_key):
+    """
+    Fetches metadata from a GitHub repository and returns it in CodeMeta format.
+    Args:
+        url (str): The GitHub repository URL (e.g., https://github.com/user/repo).
+        personal_token_key (Optional[str]): A personal GitHub token for authentication.
+    Returns:
+        A dictionary representing the metadata in CodeMeta format,
+        or None if the repository is inaccessible or invalid.
+    """
     # Check if the URL matches the modified GitHub repository pattern
     pattern = re.compile(r'https?://github\.com/([a-zA-Z0-9-]+)/([a-zA-Z0-9-_]+)')
     match = pattern.match(url)

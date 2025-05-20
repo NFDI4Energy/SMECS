@@ -688,9 +688,16 @@ document.addEventListener("DOMContentLoaded", function () {
     function validateRowCells(row) {
         for (let i = 0; i < row.cells.length; i++) {
             const cell = row.cells[i];
+            // Skip delete icons or copy buttons
             if (cell.querySelector('i.fas.fa-trash-alt') || cell.querySelector('i.fas.fa-copy')) {
                 continue;
             }
+
+            // Skip cells that contain contributor/author checkboxes
+            if (cell.querySelector('.checkbox-element')) {
+                continue;
+            }
+
             // Check if the cell is empty and apply validation
             if (cell.textContent.trim() === "") {
                 cell.classList.add("invalid");
@@ -777,6 +784,7 @@ document.addEventListener("DOMContentLoaded", function () {
         metadataJson.value = JSON.stringify(existingJson, null, 2);
     }
 
+    inputs.forEach(input => validateInput(input));
 
     inputs.forEach((input) => {
         const handleChange = () => {
@@ -794,7 +802,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const excludedInputs = [
                 "contributor_givenName", "contributor_familyName", "contributor_email",
-                "author_givenName", "author_familyName", "author_email"
+                "author_givenName", "author_familyName", "author_email", "checkbox-contributor", "checkbox-maintainer", "checkbox-author"
             ];
 
             // Add the checkbox IDs to the excludedInputs array
