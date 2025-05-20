@@ -829,7 +829,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const excludedInputs = [
                 "contributor_givenName", "contributor_familyName", "contributor_email",
-                "author_givenName", "author_familyName", "author_email"
+                "author_givenName", "author_familyName", "author_email", "checkbox-contributor", "checkbox-maintainer", "checkbox-author"
             ];
 
             // Add the checkbox IDs to the excludedInputs array
