@@ -12,6 +12,7 @@ from django.core.exceptions import PermissionDenied  # Import PermissionDenied
 from django.http import HttpResponseServerError, HttpResponseForbidden
 from requests.exceptions import ConnectTimeout, ReadTimeout, RequestException
 from .metadata_extractor import data_extraction
+from .validate_jsonLD import validate_codemeta
 
 class IndexView(TemplateView):
     template_name = 'meta_creator/index.html'
@@ -45,18 +46,31 @@ def index(request):
         result = data_extraction(request)
         
         if not result.get('success'):
-            error_messages = result.get('errors', ['Error in extraction'])
+            error_messages = ['Error in extraction:', result.get('errors')]
             return render(request, 'meta_creator/error.html', {
                 'error_message': "; ".join(error_messages)
                 })
-        
-        my_json_str = json.dumps(result['hermes_metadata'], indent=4)
+
+ 
+
+        my_json_str = {}
+        # Extract metadata
+        extracted_metadata, description_metadata, type_metadata, joined_metadata = result['metadata']
+        # Validate the JSON data
+        is_valid_jsonld = validate_codemeta(joined_metadata)
+        if is_valid_jsonld:
+            validation_result = "The JSON data is a valid JSON-LD Codemeta object"
+        else:
+            validation_result = "The JSON data is not a valid JSON-LD Codemeta object"
+        # Convert the dictionary to JSON
+        my_json_str = json.dumps(joined_metadata, indent=4)
         template = loader.get_template('meta_creator/showdata.html')
         return HttpResponse(template.render({
-            "entered_data": result['context'],
+            "type_metadata": type_metadata,
+            "description_metadata":description_metadata,
+            "extracted_metadata":extracted_metadata,
             "my_json_str": my_json_str,
-            "extracted_metadata": result['hermes_metadata'],
-        }, request))
+            }, request))
 
     except ConnectTimeout:
         error_message = "Connection timed out."

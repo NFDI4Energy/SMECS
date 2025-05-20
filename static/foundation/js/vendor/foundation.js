@@ -33,7 +33,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const repoName = metadata.name;
 
     let initialJson = metadataJson;
-    let previousJson = { ...initialJson };
+
+    // Collect all unique data-roles
+    const contributorsAndAuthorsTab = document.getElementById('ContributorsAndAuthors');
+    const personCheckboxes = contributorsAndAuthorsTab.querySelectorAll('.checkbox-element');
+    const personRoles = Array.from(new Set(
+        Array.from(personCheckboxes).map(checkbox => checkbox.dataset.role)
+    ));
 
     // Function to dynamically mark mandatory fields based on required key in JSON schema
     function setMandatoryFieldsFromSchema() {
@@ -54,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         if (label && !label.innerHTML.includes('*')) {
                             const asterisk = document.createElement('span');
                             asterisk.style.color = 'red';
-                            // asterisk.style.fontSize = '18px';
+                            asterisk.style.fontSize = '18px';
                             asterisk.textContent = '*';
                             label.appendChild(document.createTextNode(' '));  // Add space before asterisk
                             label.appendChild(asterisk);  // Add the asterisk after the label text
@@ -102,7 +108,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     var contributorsTableBody = document.getElementById('contributorsTableBody');
-    var authorsTableBody = document.getElementById('authorsTableBody');
 
     // pop-up message for Contributor and Author tabs
     function showPopup() {
@@ -132,7 +137,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll('.tab-links_ext a').forEach(function (tabLink) {
         tabLink.addEventListener('click', function (event) {
             var tabId = this.getAttribute('href');
-            if (tabId === '#tab2-contributors' || tabId === '#tab3-authors') {
+            if (tabId === '#ContributorsAndAuthors' || tabId === '#tab-authors') {
                 checkAndShowPopup(tabId, repoName);
             }
         });
@@ -458,30 +463,48 @@ document.addEventListener("DOMContentLoaded", function () {
             document.querySelector(contentId).classList.add('active');
         });
     });
-    const forwardBtnCon = document.getElementById('forwardBtnCon');
-    const backwardBtn = document.getElementById('backwardBtn');
-    const forwardBtn = document.getElementById('forwardBtn');
-    const backwardBtnCon = document.getElementById('backwardBtnCon');
 
+    // Attach event listeners to all forward buttons
+    document.querySelectorAll('.forwardBtn').forEach(function (forwardBtn) {
+        forwardBtn.addEventListener('click', function (event) {
+            event.preventDefault();
 
-    forwardBtnCon.addEventListener('click', function (event) {
-        event.preventDefault();
-        document.querySelector('a[href="#tab2-contributors"]').click();
+            // Find the currently active tab link
+            const tabLinks = Array.from(document.querySelectorAll('.tab-links_ext a'));
+            const activeTab = tabLinks.find(link => link.parentElement.classList.contains('active'));
+
+            if (!activeTab) return;
+
+            // Find the index of the current tab
+            const currentIndex = tabLinks.indexOf(activeTab);
+
+            // Go to the next tab if it exists
+            if (currentIndex !== -1 && currentIndex < tabLinks.length - 1) {
+                tabLinks[currentIndex + 1].click();
+            }
+        });
     });
 
-    backwardBtn.addEventListener('click', function (event) {
-        event.preventDefault();
-        document.querySelector('a[href="#tab1-sw-info"]').click();
-    });
+    // Attach event listeners to all backward buttons
+    document.querySelectorAll('.backwardBtn').forEach(function (backwardBtn) {
+        backwardBtn.addEventListener('click', function (event) {
+            event.preventDefault();
 
-    // forwardBtn.addEventListener('click', function (event) {
-    //   event.preventDefault();
-    //   document.querySelector('a[href="#tab3-authors"]').click();
-    // });
+            // Find all tab links
+            const tabLinks = Array.from(document.querySelectorAll('.tab-links_ext a'));
+            // Find the currently active tab link
+            const activeTab = tabLinks.find(link => link.parentElement.classList.contains('active'));
 
-    backwardBtnCon.addEventListener('click', function (event) {
-        event.preventDefault();
-        document.querySelector('a[href="#tab2-contributors"]').click();
+            if (!activeTab) return;
+
+            // Find the index of the current tab
+            const currentIndex = tabLinks.indexOf(activeTab);
+
+            // Go to the previous tab if it exists
+            if (currentIndex > 0) {
+                tabLinks[currentIndex - 1].click();
+            }
+        });
     });
 
 
@@ -515,14 +538,9 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     // contributor and author table
-    document.getElementById('addContributorButton').addEventListener('click', function () {
+    document.getElementById('addPersonButton').addEventListener('click', function () {
         addPerson('contributor', 'contributorsTableBody', ['Email']);
     });
-
-    document.getElementById('addAuthorButton').addEventListener('click', function () {
-        addPerson('author', 'authorsTableBody', ['Email']);
-    });
-
 
     // Contributor/Author tables
     function handleTableClick(tableBody, editCallback) {
@@ -537,13 +555,15 @@ document.addEventListener("DOMContentLoaded", function () {
     handleTableClick(contributorsTableBody, (cell) => editCell(cell, 'contributor', ['email']));
 
 
-    // For both checkboxes: Author and Contributor
-    contributorsTableBody.addEventListener('change', function (event) {
-        if (event.target.classList.contains('checkbox-contributor') || event.target.classList.contains('checkbox-author')) {
+    // For all checkboxes in the Author and Contributor tab
+    contributorsAndAuthorsTab.addEventListener('change', function (event) {
+        if (
+            event.target.type === 'checkbox' &&
+            event.target.classList.contains('checkbox-element')
+        ) {
             updateContributorsAndAuthorsJson();
         }
     });
-
 
     // Handle row deletion and update JSON accordingly
     window.handleDelete = function (event) {
@@ -566,38 +586,33 @@ document.addEventListener("DOMContentLoaded", function () {
         const contributorsTableBody = document.getElementById('contributorsTableBody');
         const rows = contributorsTableBody.querySelectorAll('tr');
         const existingJson = JSON.parse(metadataJson.value);
-        let contributors = [];
-        let authors = [];
+
+        const roleList = {};
+        personRoles.forEach(role => {
+            roleList[role] = [];
+        });
 
         rows.forEach(row => {
             const givenName = row.cells[1]?.textContent.trim();
             const familyName = row.cells[2]?.textContent.trim();
             const email = row.cells[3]?.textContent.trim();
 
-            const contributorCheckbox = row.querySelector('.checkbox-contributor');
-            const authorCheckbox = row.querySelector('.checkbox-author');
-
-            if (contributorCheckbox && contributorCheckbox.checked) {
-                contributors.push({
-                    "@type": "Person",
-                    givenName,
-                    familyName,
-                    email
-                });
-            }
-
-            if (authorCheckbox && authorCheckbox.checked) {
-                authors.push({
-                    "@type": "Person",
-                    givenName,
-                    familyName,
-                    email
-                });
-            }
+            row.querySelectorAll('.checkbox-element').forEach(checkbox => {
+                const role = checkbox.dataset.role;
+                if (role && checkbox.checked) {
+                    roleList[role].push({
+                        "@type": "Person",
+                        givenName,
+                        familyName,
+                        email
+                    });
+                }
+            });
         });
 
-        existingJson.contributor = contributors;
-        existingJson.author = authors;
+        Object.keys(roleList).forEach(role => {
+            existingJson[role] = roleList[role];
+        });
         metadataJson.value = JSON.stringify(existingJson, null, 2);
     }
 
@@ -655,19 +670,15 @@ document.addEventListener("DOMContentLoaded", function () {
             var input = document.getElementById(`${type}${prop}Input`);
             newRow.insertCell(cellIndex++).textContent = input.value;
         });
-        // Checkbox cell for Contributor
-        const contributorCell = newRow.insertCell(cellIndex++);
-        const contributorCheckbox = document.createElement("input");
-        contributorCheckbox.type = "checkbox";
-        contributorCheckbox.classList.add("checkbox-contributor");
-        contributorCell.appendChild(contributorCheckbox);
 
-        // Checkbox cell for Author
-        const authorCell = newRow.insertCell(cellIndex++);
-        const authorCheckbox = document.createElement("input");
-        authorCheckbox.type = "checkbox";
-        authorCheckbox.classList.add("checkbox-author");
-        authorCell.appendChild(authorCheckbox);
+        personRoles.forEach(role => {
+            const cell = newRow.insertCell(cellIndex++);
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.classList.add("checkbox-element");
+            checkbox.setAttribute("data-role", role);
+            cell.appendChild(checkbox);
+        });
 
         // Add delete button with icon
         const deletecell = newRow.insertCell(cellIndex++);
@@ -704,18 +715,16 @@ document.addEventListener("DOMContentLoaded", function () {
     function validateRowCells(row) {
         for (let i = 0; i < row.cells.length; i++) {
             const cell = row.cells[i];
-            if (cell.querySelector('i.fas.fa-trash-alt') || cell.querySelector('i.fas.fa-copy')) {
-                continue;
-            }
             // Skip delete icons or copy buttons
             if (cell.querySelector('i.fas.fa-trash-alt') || cell.querySelector('i.fas.fa-copy')) {
                 continue;
             }
 
             // Skip cells that contain contributor/author checkboxes
-            if (cell.querySelector('.checkbox-contributor') || cell.querySelector('.checkbox-author')) {
+            if (cell.querySelector('.checkbox-element')) {
                 continue;
             }
+
             // Check if the cell is empty and apply validation
             if (cell.textContent.trim() === "") {
                 cell.classList.add("invalid");
@@ -802,6 +811,7 @@ document.addEventListener("DOMContentLoaded", function () {
         metadataJson.value = JSON.stringify(existingJson, null, 2);
     }
 
+    inputs.forEach(input => validateInput(input));
 
     inputs.forEach((input) => {
         const handleChange = () => {
@@ -812,10 +822,18 @@ document.addEventListener("DOMContentLoaded", function () {
             const key = input.name.split("[")[0];
             const subkey = input.name.split("[")[1]?.split("]")[0];
 
+            // Collect all IDs of the checkboxes
+            const checkboxIds = Array.from(personCheckboxes)
+                .map(checkbox => checkbox.id)
+                .filter(id => id); // Filter out checkboxes without an ID
+
             const excludedInputs = [
                 "contributor_givenName", "contributor_familyName", "contributor_email",
-                "author_givenName", "author_familyName", "author_email", "checkbox-contributor", "checkbox-author"
+                "author_givenName", "author_familyName", "author_email", "checkbox-contributor", "checkbox-maintainer", "checkbox-author"
             ];
+
+            // Add the checkbox IDs to the excludedInputs array
+            excludedInputs.push(...checkboxIds);
 
             if (!excludedInputs.includes(input.name)) {
                 if (subkey) {
@@ -923,14 +941,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    function keysMatch(expectedKeys, jsonKeys, jsonObject) {
+    function keysMatch(allowedKeys, requiredKeys, jsonKeys, jsonObject) {
         // Convert both expected and actual keys to lowercase for case-insensitive matching
-        const lowerExpectedKeys = expectedKeys.map(key => key.toLowerCase());
+        const lowerAllowedKeys = allowedKeys.map(key => key.toLowerCase());
+        const lowerRequiredKeys = requiredKeys.map(key => key.toLowerCase());
         const lowerJsonKeys = jsonKeys.map(key => key.toLowerCase());
 
-        // Find missing and extra keys
-        const missingKeys = lowerExpectedKeys.filter(key => !lowerJsonKeys.includes(key));
-        const extraKeys = lowerJsonKeys.filter(key => !lowerExpectedKeys.includes(key));
+        // Find missing: required keys which are not present in json
+        const missingKeys = lowerRequiredKeys.filter(key => !lowerJsonKeys.includes(key));
+        // Find extra: keys present in json, which are not part of allowed
+        const extraKeys = lowerJsonKeys.filter(key => !lowerAllowedKeys.includes(key));
 
         // Check nested key in "copyrightHolder"
         if (jsonObject.hasOwnProperty("copyrightHolder")) {
@@ -989,35 +1009,40 @@ document.addEventListener("DOMContentLoaded", function () {
 
             let repoName = "metadata"; // Default name
 
-            const expectedKeys = [
-                "@context", "@type", "name", "identifier", "description", "codeRepository",
-                "url", "issueTracker", "license", "programmingLanguage", "copyrightHolder",
-                "dateModified", "dateCreated", "keywords", "downloadUrl",
-                "readme", "author", "contributor", "developmentStatus", "applicationCategory",
-                "referencePublication", "funding", "funder", "reviewAspect", "reviewBody", "continuousIntegration",
-                "runtimePlatform", "operatingSystem", "softwareRequirements", "citation", "version"
-            ];
-            // Get key comparison result
-            const keyCheck = keysMatch(expectedKeys, jsonKeys, metadata);
+            fetch(JsonSchema)
+                .then(response => response.json())
+                .then(schema => {
+                    // Extract all property keys
+                    const allowedKeys = Object.keys(schema.properties || {});
+                    const requiredKeys = schema.required || [];
 
-            if (!keyCheck.isMatch) {
-                let errorMessage = "Metadata keys do not match!\n\n";
-                if (keyCheck.missingKeys.length > 0) {
-                    errorMessage += `Missing Keys: ${keyCheck.missingKeys.join(", ")}\n`;
-                }
-                if (keyCheck.extraKeys.length > 0) {
-                    errorMessage += `Extra Keys: ${keyCheck.extraKeys.join(", ")}\n`;
-                }
-                if (keyCheck.nestedErrors.length > 0) {
-                    errorMessage += `\nNested Errors:\n${keyCheck.nestedErrors.join("\n")}`;
-                }
-                alert(errorMessage);
-            } else {
-                jsonPrettier(repoName, metadata);
-            }
+                    // Get key comparison result
+                    const keyCheck = keysMatch(allowedKeys, requiredKeys, jsonKeys, metadata);
+
+                    if (!keyCheck.isMatch) {
+                        let errorMessage = "Metadata keys do not match!\n\n";
+                        if (keyCheck.missingKeys.length > 0) {
+                            errorMessage += `Missing Keys: ${keyCheck.missingKeys.join(", ")}\n`;
+                        }
+                        if (keyCheck.extraKeys.length > 0) {
+                            errorMessage += `Extra Keys: ${keyCheck.extraKeys.join(", ")}\n`;
+                        }
+                        if (keyCheck.nestedErrors.length > 0) {
+                            errorMessage += `\nNested Errors:\n${keyCheck.nestedErrors.join("\n")}`;
+                        }
+                        alert(errorMessage);
+                    } else {
+                        jsonPrettier(repoName, metadata);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading schema:', error);
+                });
         }
         catch (e) {
-            alert("Invalid JSON. Please check your syntax.");
+            let errorMessage = `\n\nCurrent Metadata:\n${JSON.stringify(metadata, null, 2)}`;
+            alert(errorMessage);
+            alert("Invalid JSON. Please check your syntax:metadata");
             console.error("JSON Parsing Error:", e);
         }
     }
@@ -1047,13 +1072,14 @@ document.addEventListener("DOMContentLoaded", function () {
         link.href = URL.createObjectURL(blob);
         link.innerHTML = "Download JSON";
         link.setAttribute("download", fileName);
-        downloadButton.parentNode.insertBefore(link, downloadButton.nextSibling);
-        downloadBtn.parentNode.insertBefore(link, downloadBtn.nextSibling);
+        //downloadButton.parentNode.insertBefore(link, downloadButton.nextSibling);
+        //downloadBtn.parentNode.insertBefore(link, downloadBtn.nextSibling);
+        document.body.appendChild(link);
         link.click();
         setTimeout(() => {
             URL.revokeObjectURL(link.href);
             link.parentNode.removeChild(link);
-        }, 0);
+        }, 100);
     }
 
     // Function to create a cleaned copy of an object by removing empty entries

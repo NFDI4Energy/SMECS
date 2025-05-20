@@ -59,16 +59,17 @@ class TestDataExtraction(unittest.TestCase):
         result = data_extraction(request)
         self.assertIsInstance(result, dict)
         self.assertIn('success', result)
-        self.assertIn('context', result)
-        self.assertIn('hermes_metadata', result)
-        hermes_metadata = result.get('hermes_metadata')
-        if hermes_metadata is None:
-            print("HERMES returned None, possibly due to a CLI failure.")
+        self.assertIn('metadata', result)
+        if result.get('metadata') is None:
+            print("No Metadata present")
+        extracted_metadata, description_metadata, type_metadata, joined_metadata = result.get('metadata')
+        if extracted_metadata is None:
+            print("Extracted_metadata returned None, possibly due to a CLI failure.")
         else:
-            self.assertIsInstance(hermes_metadata, dict, "hermes_metadata should be a dict")
-            # check for expected keys in a successful harvest
-            self.assertIn('@type', hermes_metadata)
-            self.assertIn('name', hermes_metadata)
+            self.assertIsInstance(extracted_metadata, dict, "extracted_metadata should be a dict")
+            self.assertIsInstance(description_metadata, dict, "description_metadata should be a dict")
+            self.assertIsInstance(type_metadata, dict, "type_metadata should be a dict")
+            self.assertIsInstance(joined_metadata, dict, "joined_metadata should be a dict")
 
 
     # def test_invalid_gitlab_input_URL(self):

@@ -1,4 +1,5 @@
 from django import template
+import re
 
 register = template.Library()
 
@@ -16,3 +17,31 @@ def is_list(value):
 @register.filter
 def get(dictionary, key):
     return dictionary.get(key)
+
+# Define a function to change camelcase to nice output
+@register.filter
+def camel_to_spaces_lower(value):
+    return re.sub(r'(?<!^)(?=[A-Z])', ' ', value).title()
+
+#Define function to check if a author with a given email is present
+@register.filter
+def check_author(dictionary, email):
+    authors = dictionary.get("author")
+
+    return check_for_value(authors, email)
+
+def check_for_value(metadata, email):
+    if not metadata:
+        return False
+    for value in metadata:
+        if isinstance(value, dict) and value.get('email') == email:
+            return True
+    
+    return False
+
+#Define function to check if a maintainer with a given email is present
+@register.filter
+def check_maintainer(dictionary, email):
+    maintainers = dictionary.get("maintainer")
+
+    return check_for_value(maintainers, email)
