@@ -200,7 +200,7 @@ def enforce_element_structure(empty_value, value):
             result["identifier"] = value
             return result
         result = empty_value.copy()
-        if result["@type"] == value.get("type"):
+        if result["@type"] == value.get("@type"):
             for k in result:
                 result[k] = enforce_element_structure(result[k], value.get(k, result[k]))
         return result
