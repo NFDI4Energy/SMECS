@@ -71,7 +71,7 @@
       "description": "A license document that applies to this content, typically indicated by URL.",
       "type": "array",
       "title": "license",
-      "items": { "$ref": "#/$defs/CreativeWork" }
+      "items": { "type": "string" }
     },
     "copyrightHolder": {
       "description": "The party holding the legal copyright to the CreativeWork.",
