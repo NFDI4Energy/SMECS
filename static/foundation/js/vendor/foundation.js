@@ -905,46 +905,72 @@ document.addEventListener("DOMContentLoaded", function () {
         contributorsTableBody.parentElement.classList.add('scrollable-table');
     }
 
+    function getNestedExpectedKeys(schema, typeName) {
+        // For JSON Schema Draft-07 and later, use $defs; for older, use definitions
+        const defs = schema.$defs || schema.definitions || {};
+        const typeDef = defs[typeName];
+        if (!typeDef || !typeDef.properties) {
+            return [];
+        }
+        // Exclude @type if you want
+        return Object.keys(typeDef.properties).filter(key => key !== "@type");
+    }
 
-    function keysMatch(allowedKeys, requiredKeys, jsonKeys, jsonObject) {
-        // Convert both expected and actual keys to lowercase for case-insensitive matching
+    function matchKeys(allowedKeys, requiredKeys, jsonKeys) {
+        // Ensure "@type" is always allowed
+        if (!allowedKeys.includes("@type")) {
+            allowedKeys = allowedKeys.concat("@type");
+        }
         const lowerAllowedKeys = allowedKeys.map(key => key.toLowerCase());
         const lowerRequiredKeys = requiredKeys.map(key => key.toLowerCase());
         const lowerJsonKeys = jsonKeys.map(key => key.toLowerCase());
 
-        // Find missing: required keys which are not present in json
         const missingKeys = lowerRequiredKeys.filter(key => !lowerJsonKeys.includes(key));
-        // Find extra: keys present in json, which are not part of allowed
         const extraKeys = lowerJsonKeys.filter(key => !lowerAllowedKeys.includes(key));
 
-        // Check nested key in "copyrightHolder"
-        if (jsonObject.hasOwnProperty("copyrightHolder")) {
-            if (!jsonObject.copyrightHolder.hasOwnProperty("name")) {
-                missingKeys.push("copyrightHolder name key is missing");
-            }
-        }
+        return { missingKeys, extraKeys };
+    }
 
+    function keysMatchRecursive(allowedKeys, requiredKeys, jsonObject, schema) {
+        const jsonKeys = Object.keys(jsonObject);
+        const { missingKeys, extraKeys } = matchKeys(allowedKeys, requiredKeys, jsonKeys);
 
-        // Expected keys for nested 'author' and 'contributor' objects
-        const nestedExpectedKeys = ["givenname", "familyname", "email"];
         let nestedErrors = [];
 
-        ["author", "contributor"].forEach(section => {
-            if (Array.isArray(jsonObject[section])) {
-                jsonObject[section].forEach((item, index) => {
-                    const itemKeys = Object.keys(item)
-                        .map(k => k.toLowerCase()) // Convert nested keys to lowercase
-                        .filter(k => k !== "@type"); // Ignore "@type"
-
-                    const missingNested = nestedExpectedKeys.filter(k => !itemKeys.includes(k.toLowerCase()));
-                    const extraNested = itemKeys.filter(k => !nestedExpectedKeys.includes(k.toLowerCase()));
-
-                    if (missingNested.length > 0 || extraNested.length > 0) {
-                        nestedErrors.push(`In ${section}[${index}]: Missing Keys: ${missingNested.join(", ")}, Extra Keys: ${extraNested.join(", ")}`);
+        for (const key of jsonKeys) {
+            const value = jsonObject[key];
+            if (Array.isArray(value)) {
+                value.forEach((item, idx) => {
+                    if (item && typeof item === "object") {
+                        const typeName = item["@type"] || key;
+                        const expectedKeys = getNestedExpectedKeys(schema, typeName);
+                        const requiredNested = []; // Optionally, get required keys for this type from schema
+                        const result = keysMatchRecursive(expectedKeys, requiredNested, item, schema);
+                        if (!result.isMatch) {
+                            nestedErrors.push(
+                                `In ${key}[${idx}] with ${typeName}: Missing Keys: ${result.missingKeys.join(", ")}, Extra Keys: ${result.extraKeys.join(", ")}`
+                            );
+                            if (result.nestedErrors.length > 0) {
+                                nestedErrors = nestedErrors.concat(result.nestedErrors);
+                            }
+                        }
                     }
                 });
+            } else if (value && typeof value === "object") {
+                const typeName = value["@type"] || key;
+                const expectedKeys = getNestedExpectedKeys(schema, typeName);
+                const requiredNested = [];
+                const result = keysMatchRecursive(expectedKeys, requiredNested, value, schema);
+                if (!result.isMatch) {
+                    nestedErrors.push(
+                        `In ${key}: Missing Keys: ${result.missingKeys.join(", ")}, Extra Keys: ${result.extraKeys.join(", ")}`
+                    );
+                    if (result.nestedErrors.length > 0) {
+                        nestedErrors = nestedErrors.concat(result.nestedErrors);
+                    }
+                }
             }
-        });
+        }
 
         return {
             isMatch: missingKeys.length === 0 && extraKeys.length === 0 && nestedErrors.length === 0,
@@ -982,7 +1008,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const requiredKeys = schema.required || [];
 
                     // Get key comparison result
-                    const keyCheck = keysMatch(allowedKeys, requiredKeys, jsonKeys, metadata);
+                    const keyCheck = keysMatchRecursive(allowedKeys, requiredKeys, metadata, schema);
 
                     if (!keyCheck.isMatch) {
                         let errorMessage = "Metadata keys do not match!\n\n";

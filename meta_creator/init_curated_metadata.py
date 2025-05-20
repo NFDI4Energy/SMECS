@@ -189,6 +189,34 @@ def create_empty_metadata(schema: dict) -> dict[str, dict[str, str]]:
         }
     return metadata
 
+def enforce_element_structure(empty_value, value):
+    """
+    Recursively enforce that value matches the structure of empty_value.
+    """
+    if isinstance(empty_value, dict):
+        # If value is not a dict, return a copy of the empty structure
+        if not isinstance(value, dict):
+            result = empty_value.copy()
+            result["identifier"] = value
+            return result
+        result = empty_value.copy()
+        if result["@type"] == value.get("type"):
+            for k in result:
+                result[k] = enforce_element_structure(result[k], value.get(k, result[k]))
+        return result
+    elif isinstance(empty_value, list):
+        # If value is not a list, wrap it in a list
+        if not isinstance(value, list):
+            value = [value]
+        # If the list should have a certain structure, enforce it for each element
+        if len(empty_value) > 0:
+            element_structure = empty_value[0]
+            return [enforce_element_structure(element_structure, v) for v in value]
+        else:
+            return value
+    else:
+        return value
+
 # Fill the empty metadata dict with the extracted metadata
 def fill_empty_metadata( empty_metadata: dict[str, dict[str, str]], extracted_metadata: dict[str, str]
 ) -> dict[str, dict[str, str]]:
@@ -206,14 +234,7 @@ def fill_empty_metadata( empty_metadata: dict[str, dict[str, str]], extracted_me
         for metadata_field_name, metadata_field_value in metadata_tab_dict.items():
            if metadata_field_name in extracted_metadata:
                 value = extracted_metadata[metadata_field_name]
-                # Check the type of the empty value to determine if it should be a list or string
-                if isinstance(metadata_field_value, list):
-                    # If the value is not a list, wrap it in a list
-                    if not isinstance(value, list):
-                        value = [value]
-                    empty_metadata[metadata_tab_name][metadata_field_name] = value
-                else:
-                    empty_metadata[metadata_tab_name][metadata_field_name] = value
+                empty_metadata[metadata_tab_name][metadata_field_name] = enforce_element_structure(metadata_field_value, value)
 
     return empty_metadata
 
@@ -253,7 +274,9 @@ def init_curated_metadata(extract_metadata):
     schema_name = 'codemeta_schema.json'
     full_schema = load_schema(schema_name)
     empty_metadata = create_empty_metadata(full_schema)
+    print(f"Empty metadata:\n{empty_metadata}")
     filled_metadata = fill_empty_metadata(empty_metadata, extract_metadata)
+    print(f"Filled metadata:\n{filled_metadata}")
 
     metadata_description = load_description_dict_from_schema(full_schema)
     metadata_field_types = define_field_type(full_schema, full_schema["$defs"])
