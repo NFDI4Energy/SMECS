@@ -69,6 +69,10 @@ SMECS supports typical field types in the curation interface. The following type
 * tag: tagging_object
 * Tagging for a nested element only consisting of an identifier
 
+### Single Input Object
+* tag: single_input_object
+* Single input for a nested element only consisting of an identifier
+
 ## Tables for Nested Elements
 When an element consists of a type which includes multiple sub-types, a table is required. There are different types:
 

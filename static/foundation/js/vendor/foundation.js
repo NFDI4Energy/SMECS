@@ -381,6 +381,65 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+
+    // Create a function of a nested single input
+    function setupSingleInputObject({
+        containerId,
+        hiddenInputId,
+        inputId,
+        jsonKey
+    }) {
+        const container = document.getElementById(containerId);
+        const hiddenInput = document.getElementById(hiddenInputId);
+        const input = document.getElementById(inputId);
+
+        // Get the constant type from the label
+        const label = document.querySelector(`.single-input-object-label[for="${inputId}"]`);
+        const constantType = label ? label.getAttribute('data-single-input-object-type') : null;
+
+        // Parse initial value
+        let valueObj = {};
+        try {
+            valueObj = JSON.parse(hiddenInput.value);
+        } catch {
+            valueObj = {};
+        }
+
+        // Set initial value
+        if (valueObj.identifier) {
+            input.value = valueObj.identifier;
+        }
+
+        // Update hidden input and JSON on change
+        input.addEventListener("input", updateSingleInputObject);
+        input.addEventListener("change", updateSingleInputObject);
+        function updateSingleInputObject() {
+            const identifier = input.value.trim();
+            const obj = {
+                "@type": constantType || "ScholarlyArticle",
+                "identifier": identifier
+            };
+            hiddenInput.value = JSON.stringify(obj);
+
+            // Update main JSON
+            const jsonObject = JSON.parse(metadataJson.value);
+            jsonObject[jsonKey] = obj;
+            metadataJson.value = JSON.stringify(jsonObject, null, 2);
+        }
+    }
+
+    document.querySelectorAll('.single-input-object-label[data-single-input-object]').forEach(label => {
+        const key = label.getAttribute('data-single-input-object');
+        const containerId = key + 'Object';
+        const hiddenInputId = key + 'HiddenInput';
+        const inputId = key + 'Input';
+        setupSingleInputObject({
+            containerId,
+            hiddenInputId,
+            inputId,
+            jsonKey: key
+        });
+    });
     
     // Create a general dropdown class
     class DynamicDropdown {
@@ -867,18 +926,23 @@ document.addEventListener("DOMContentLoaded", function () {
             const key = input.name.split("[")[0];
             const subkey = input.name.split("[")[1]?.split("]")[0];
 
-            // Collect all IDs of the checkboxes
-            const checkboxIds = Array.from(personCheckboxes)
-                .map(checkbox => checkbox.id)
-                .filter(id => id); // Filter out checkboxes without an ID
-
             const excludedInputs = [
                 "contributor_givenName", "contributor_familyName", "contributor_email",
                 "author_givenName", "author_familyName", "author_email", "checkbox-contributor", "checkbox-maintainer", "checkbox-author"
             ];
 
+            // Collect all IDs of the checkboxes
+            const checkboxIds = Array.from(personCheckboxes)
+                .map(checkbox => checkbox.id)
+                .filter(id => id); // Filter out checkboxes without an ID
+
+            // Collect all IDs of single input objects
+            const singleInputObjectIds = Array.from(document.querySelectorAll('input[data-single-input-object]'))
+                .map(input => input.name) // or .id, depending on what you want to exclude by
+                .filter(id => id); // Filter out inputs without a name/id
+
             // Add the checkbox IDs to the excludedInputs array
-            excludedInputs.push(...checkboxIds);
+            excludedInputs.push(...checkboxIds, ...singleInputObjectIds);
 
             if (!excludedInputs.includes(input.name)) {
                 if (subkey) {
@@ -900,7 +964,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateFormFromJson(jsonObject) {
         inputs.forEach((input) => {
-
+            
 
             const key = input.name.split("[")[0];
             const subkey = input.name.split("[")[1]?.split("]")[0];

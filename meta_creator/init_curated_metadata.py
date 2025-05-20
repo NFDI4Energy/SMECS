@@ -79,8 +79,12 @@ def define_field_type(schema: dict, types: dict, array = False) -> dict[str, str
             type_dict[key] = "dropdown"
         elif "$ref" in value: 
             required_type = value["$ref"].split("/")[-1]
+            subproperties = types[required_type].get("properties")
             # Recursively define field types for referenced type
-            type_dict[key] = define_field_type(types[required_type], None)
+            if len(subproperties) > 1:
+                type_dict[key] = define_field_type(types[required_type], None)
+            else:
+                type_dict[key] = "single_input_object"
         elif value.get("type") == "string":
             type_dict[key] = "long_field" if key == "description" else "single_inputs"
         elif value.get("type") == "array":

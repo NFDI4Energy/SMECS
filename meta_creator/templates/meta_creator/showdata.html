@@ -167,7 +167,7 @@
                                     </span>
                                     <i class="fa fa-info-circle" aria-hidden="true"></i>
                                 </div>
-                                <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" value="{{ value|prepare|escape }}">
+                                <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" value="{{ value|prepare_array|escape }}">
                                 <div class="tags-container" id="{{ key }}Tags">
                                     {% for item in value %}
                                     <span class="tag" data-value="{{ item|get:'identifier' }}">
@@ -207,6 +207,24 @@
                                     <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type to add..." />
                                 </div>
                                 <div id="{{ key }}Suggestions"></div>
+                            </div>
+                            {% elif type_metadata|get:key == "single_input_object" %}
+                            <div class="single_inputs single-input-object-wrapper" id="{{ key }}Wrapper">
+                                <label class="single-input-object-label" for="{{ key }}Input"
+                                       data-single-input-object="{{ key }}"
+                                       data-single-input-object-type="{{ value|get:'@type' }}">
+                                    {{ key|camel_to_spaces_lower }}
+                                </label>
+                                <div class="custom-tooltip-metadata">
+                                    <span class="tooltip-text-metadata">
+                                        {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
+                                    </span>
+                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                </div>
+                                <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" value="{{ value|prepare_single|escape }}">
+                                <div class="single-object-container" id="{{ key }}Object">
+                                    <input type="text" id="{{ key }}Input" name="{{ key }}" data-single-input-object="true" placeholder="Identifier..." value="{{ value|get:'identifier' }}" />
+                                </div>
                             </div>
                             {% else %}
                             <div class={{type_metadata|get:key}}>

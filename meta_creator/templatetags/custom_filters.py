@@ -48,7 +48,11 @@ def check_maintainer(dictionary, email):
     return check_for_value(maintainers, email)
 
 @register.filter
-def prepare(obj):
+def prepare_array(obj):
     if obj[0].get("identifier"):
         json.dumps(obj)
     return json.dumps([])
+
+@register.filter
+def prepare_single(obj):
+    return json.dumps(obj)
