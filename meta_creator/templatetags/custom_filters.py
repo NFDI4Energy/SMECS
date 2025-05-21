@@ -17,7 +17,7 @@ def is_list(value):
 #Define 'get' to access values in the dictionary
 @register.filter
 def get(dictionary, key):
-    return dictionary.get(key)
+    return dictionary.get(key, '')
 
 # Define a function to change camelcase to nice output
 @register.filter
@@ -56,3 +56,22 @@ def prepare_array(obj):
 @register.filter
 def prepare_single(obj):
     return json.dumps(obj)
+
+#Define 'get' to access values in the dictionary
+@register.filter
+def get_array(dictionary, key):
+    result = dictionary.get(key, '')
+    print(f'get_array: {result[0]}')
+    return result[0]
+
+@register.filter
+def row_has_values(row, columns):
+    """
+    Returns True if at least one value in the row for the given columns is not empty.
+    Usage: {% if row|row_has_values:columns %} ... {% endif %}
+    """
+    for col in columns:
+        value = row.get(col, "")
+        if value not in [None, '', [], {}]:
+            return True
+    return False

@@ -372,10 +372,11 @@ form.data-form3 {
 
 /* style for general single input elements with longer values */
 .form-group .long_field {
-    width: 83%;
+    width: 85%;
     margin-bottom: 0.2%;
     margin-right: 10%;
     float: left;
+    box-sizing: border-box;
 }
 
 .form-group legend {
@@ -518,6 +519,54 @@ div.error-container {
         div.error-container a:hover {
             text-decoration: underline;
         }
+
+/********************************* Style for auto table **********************************/
+/* Fixed width and equal column distribution for auto-property-table */
+.auto-property-table {
+    margin-top: 8px;
+    width: 110%; /* Same as .long_field */
+    min-width: 500px; /* Optional: for usability */
+    table-layout: fixed; /* Ensures equal column width */
+    margin-bottom: 1rem;
+    border-collapse: collapse;
+}
+
+    .auto-property-table th,
+    .auto-property-table td {
+        padding: 8px 12px;
+        width: auto; /* Let table-layout: fixed handle equal width */
+        text-align: left;
+        padding: 8px;
+        border: 1px solid #ccc;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+.add-row-controls {
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
+    gap: 8px;
+    /* The number 1fr will make all children (inputs) share the space equally */
+    /* The last child (button) will auto-size to its content */
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)) auto;
+    margin-top: 8px;
+}
+
+    .add-row-controls .add-row-input {
+        min-width: 60px;
+        max-width: 200px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .add-row-controls .add-row-btn {
+        padding: 4px 12px;
+        font-size: 0.95em;
+        height: 32px;
+        white-space: nowrap;
+    }
 
 /********************************* Style for contributors table **********************************/
 /* contributors table */

@@ -500,6 +500,169 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    // New table    
+    function updateTableHiddenInput(key) {
+        // Get all rows of the table
+        const table = document.querySelector(`#${key}Table`);
+        const hiddenInput = document.getElementById(`${key}TableHiddenInput`);
+        if (!table || !hiddenInput) return;
+
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        if (rows.length === 0) {
+            hiddenInput.value = '[]';
+            // Also update the main JSON
+            const jsonObject = JSON.parse(metadataJson.value);
+            jsonObject[key] = [];
+            metadataJson.value = JSON.stringify(jsonObject, null, 2);
+            return;
+        }
+
+        // Get column headers (excluding the last "Delete" column)
+        const headers = Array.from(table.querySelectorAll('thead th'))
+            .map(th => th.textContent.trim())
+            .slice(0, -1);
+
+        // Get @type from the table's data-at-type attribute
+        const atType = table.getAttribute('data-at-type');
+
+        // Build array of objects
+        const data = rows.map(row => {
+            const cells = Array.from(row.querySelectorAll('td'));
+            let obj = {};
+            if (atType) obj['@type'] = atType;
+            headers.forEach((header, i) => {
+                obj[header] = cells[i] ? cells[i].textContent.trim() : '';
+            });
+            return obj;
+        });
+
+        hiddenInput.value = JSON.stringify(data);
+
+        // Also update the main JSON
+        const jsonObject = JSON.parse(metadataJson.value);
+        jsonObject[key] = data;
+        metadataJson.value = JSON.stringify(jsonObject, null, 2);
+    }
+
+    // Loop over all tables with the class 'auto-property-table'
+    document.querySelectorAll('table.auto-property-table').forEach(function (table) {
+        // Extract the key from the table's id (assumes id is like 'copyrightHolderTable')
+        const tableId = table.id;
+        if (!tableId || !tableId.endsWith('Table')) return;
+        const key = tableId.replace(/Table$/, '');
+
+        // Attach a listener for cell edits (blur on any input or td)
+        table.addEventListener('blur', function (e) {
+            if (e.target.tagName === 'TD' || e.target.tagName === 'INPUT') {
+                updateTableHiddenInput(key);
+            }
+        }, true);
+
+        // Optionally, update on row addition/removal or other events as needed
+        // For initial sync
+        updateTableHiddenInput(key);
+    });
+
+    // Add Row functionality for all auto-property-tables
+    document.querySelectorAll('.add-row-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const key = btn.getAttribute('data-table-key');
+            const table = document.getElementById(key + 'Table');
+            const hiddenInput = document.getElementById(key + 'TableHiddenInput');
+            if (!table || !hiddenInput) return;
+
+            // Get column headers
+            const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
+            // Get input values
+            const controls = btn.parentElement;
+            const inputs = controls.querySelectorAll('.add-row-input');
+            const values = Array.from(inputs).map(input => input.value.trim());
+
+            // Prevent adding if all fields are empty
+            if (values.every(v => v === '')) return;
+
+            // Create new row
+            const tbody = table.querySelector('tbody');
+            const newRow = document.createElement('tr');
+            // Only add data columns, skip the last header ("Delete")
+            for (let i = 0; i < headers.length - 1; i++) {
+                const td = document.createElement('td');
+                td.textContent = values[i] || '';
+                newRow.appendChild(td);
+            }
+            const deleteTd = document.createElement('td');
+            deleteTd.innerHTML = '<i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i>';
+            newRow.appendChild(deleteTd);
+            tbody.appendChild(newRow);
+
+            // Clear input fields
+            inputs.forEach(input => input.value = '');
+
+            // Update hidden input
+            updateTableHiddenInput(key);
+        });
+    });
+
+    // functionanilties within all auto-property-tables
+    document.querySelectorAll('table.auto-property-table').forEach(function (table) { 
+        table.addEventListener('click', function (e) {
+            // Delete rows
+            if (e.target.classList.contains('delete-row-btn')) {
+                const row = e.target.closest('tr');
+                if (row) {
+                    row.remove();
+                    // Update the hidden input
+                    const tableId = table.id;
+                    if (tableId && tableId.endsWith('Table')) {
+                        const key = tableId.replace(/Table$/, '');
+                        updateTableHiddenInput(key);
+                    }
+                }
+            }
+
+            // Update other fields
+            // Only allow editing on <td> that is not the last column (delete icon)
+            const cell = e.target.closest('td');
+            if (!cell) return;
+            const row = cell.parentElement;
+            const allCells = Array.from(row.children);
+            // Don't edit the last cell (delete icon)
+            if (allCells.indexOf(cell) === allCells.length - 1) return;
+            // Prevent multiple inputs
+            if (cell.querySelector('input')) return;
+
+            const oldValue = cell.textContent;
+            cell.innerHTML = '';
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = oldValue;
+            input.style.width = '100%';
+            input.style.boxSizing = 'border-box';
+            cell.appendChild(input);
+            input.focus();
+
+            // Save on blur or Enter
+            function save() {
+                cell.textContent = input.value;
+                // Update the hidden input for this table
+                const tableId = table.id;
+                if (tableId && tableId.endsWith('Table')) {
+                    const key = tableId.replace(/Table$/, '');
+                    updateTableHiddenInput(key);
+                }
+            }
+            input.addEventListener('blur', save);
+            input.addEventListener('keydown', function (evt) {
+                if (evt.key === 'Enter') {
+                    input.blur();
+                } else if (evt.key === 'Escape') {
+                    cell.textContent = oldValue;
+                }
+            });
+
+        });
+    });
+
     // copy button for json
     copyBtn.addEventListener('click', function (event) {
         event.preventDefault();
