@@ -554,6 +554,13 @@ div.error-container {
     margin-top: 8px;
 }
 
+    .add-row-controls .add-row-tag-input {
+        min-width: 60px;
+        max-width: 200px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
     .add-row-controls .add-row-input {
         min-width: 60px;
         max-width: 200px;
@@ -567,6 +574,27 @@ div.error-container {
         height: 32px;
         white-space: nowrap;
     }
+
+/* Make the tags-list a flex container so tags wrap and only take as much space as needed */
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px; /* Optional: space between tags */
+    align-items: center;
+}
+
+/* Make each tag inline-flex and auto-sized */
+.tag {
+    display: inline-flex;
+    align-items: center;
+    background: #e0e0e0;
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 0.95em;
+    margin: 2px 0;
+    white-space: nowrap;
+    max-width: 100%;
+}
 
 /********************************* Style for contributors table **********************************/
 /* contributors table */

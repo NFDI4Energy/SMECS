@@ -531,7 +531,20 @@ document.addEventListener("DOMContentLoaded", function () {
             let obj = {};
             if (atType) obj['@type'] = atType;
             headers.forEach((header, i) => {
-                obj[header] = cells[i] ? cells[i].textContent.trim() : '';
+                const cell = cells[i];
+                if (!cell) {
+                    obj[header] = '';
+                    return;
+                }
+                if (cell.classList.contains('table-tagging-cell')) {
+                    // Extract all tag values from data-tag or data-value attribute
+                    const tags = Array.from(cell.querySelectorAll('.tag')).map(tagEl =>
+                        tagEl.getAttribute('data-tag') || tagEl.getAttribute('data-value') || tagEl.textContent.trim()
+                    );
+                    obj[header] = tags;
+                } else {
+                    obj[header] = cell.textContent.trim();
+                }
             });
             return obj;
         });
@@ -572,34 +585,113 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!table || !hiddenInput) return;
 
             // Get column headers
-            const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
+            const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.getAttribute('data-col'));
             // Get input values
-            const controls = btn.parentElement;
-            const inputs = controls.querySelectorAll('.add-row-input');
+            const controls = btn.parentElement;            
+            const inputs = controls.querySelectorAll('.add-row-input, .add-row-tag-input');
             const values = Array.from(inputs).map(input => input.value.trim());
-
-            // Prevent adding if all fields are empty
-            if (values.every(v => v === '')) return;
+                       
+            // Prevent adding if all fields are empty (including tags)
+            const allEmpty = Array.from(inputs).every(input => input.value.trim() === '') &&
+                Object.values(addRowTags).every(tags => tags.length === 0);
+            if (allEmpty) return;
 
             // Create new row
             const tbody = table.querySelector('tbody');
             const newRow = document.createElement('tr');
             // Only add data columns, skip the last header ("Delete")
             for (let i = 0; i < headers.length - 1; i++) {
+                const header = headers[i];
+                // Find the input for this column
+                const input = Array.from(inputs).find(inp => inp.getAttribute('data-col') === header);
+     
+                if (!input) continue; // or handle error
+                const col = inputs[i].getAttribute('data-col');
+                const colType = inputs[i].getAttribute('data-coltype');
                 const td = document.createElement('td');
-                td.textContent = values[i] || '';
+                if (colType === 'tagging') {
+                    td.className = 'table-tagging-cell';
+                    td.setAttribute('data-col', col);
+                    td.setAttribute('data-coltype', 'tagging');
+                    // Tag UI
+                    const tagsList = document.createElement('div');
+                    tagsList.className = 'tags-list';
+                    (addRowTags[col] || []).forEach(tag => {
+                        const span = document.createElement('span');
+                        span.className = 'tag';
+                        span.setAttribute('data-tag', tag);
+                        span.innerHTML = tag + ' <span class="remove-tag" data-tag="' + tag + '">×</span>';
+                        tagsList.appendChild(span);
+                    });
+                    const input = document.createElement('input');
+                    input.className = 'tag-input';
+                    input.type = 'text';
+                    input.style.display = 'none';
+                    input.placeholder = 'Add tag and press Enter';
+                    td.appendChild(tagsList);
+                    td.appendChild(input);
+                    // Reset tags for next row
+                    addRowTags[col] = [];
+                    // Remove tag elements from add-row-controls
+                    const addRowContainer = document.querySelector('.add-row-tags-container[data-col="' + col + '"]');
+                    if (addRowContainer) {
+                        addRowContainer.querySelectorAll('.tag').forEach(tagEl => tagEl.remove());
+                    }
+                } else {
+                    td.textContent = values[i] || '';
+                }
                 newRow.appendChild(td);
             }
             const deleteTd = document.createElement('td');
             deleteTd.innerHTML = '<i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i>';
             newRow.appendChild(deleteTd);
             tbody.appendChild(newRow);
+            initializeTableTaggingCells();
 
             // Clear input fields
             inputs.forEach(input => input.value = '');
 
             // Update hidden input
             updateTableHiddenInput(key);
+        });
+    });
+
+    // Store tags for each tagging column before row is added
+    const addRowTags = {};
+
+    // Initialize tagging for add-row-controls
+    document.querySelectorAll('.add-row-tags-container').forEach(container => {
+        const col = container.getAttribute('data-col');
+        addRowTags[col] = [];
+        const input = container.querySelector('.add-row-tag-input');
+
+        // Add tag on Enter
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && input.value.trim() !== '') {
+                e.preventDefault();
+                const tag = input.value.trim();
+                if (!addRowTags[col].includes(tag)) {
+                    addRowTags[col].push(tag);
+
+                    // Create tag element
+                    const span = document.createElement('span');
+                    span.className = 'tag';
+                    span.setAttribute('data-tag', tag);
+                    span.innerHTML = tag + ' <span class="remove-tag" data-tag="' + tag + '">×</span>';
+                    // Insert before input
+                    container.insertBefore(span, input);
+                }
+                input.value = '';
+            }
+        });
+
+        // Remove tag on click
+        container.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-tag')) {
+                const tag = e.target.getAttribute('data-tag');
+                addRowTags[col] = addRowTags[col].filter(t => t !== tag);
+                e.target.parentElement.remove();
+            }
         });
     });
 
@@ -624,6 +716,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Only allow editing on <td> that is not the last column (delete icon)
             const cell = e.target.closest('td');
             if (!cell) return;
+            if (cell.classList.contains('table-tagging-cell')) return;
             const row = cell.parentElement;
             const allCells = Array.from(row.children);
             // Don't edit the last cell (delete icon)
@@ -660,6 +753,87 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
 
+        });
+    });
+
+    // Enable tag editing in table cells
+    function initializeTableTaggingCells() {
+        document.querySelectorAll('td.table-tagging-cell').forEach(function (cell) {
+            // Prevent double-binding
+            if (cell.dataset.taggingInitialized) return;
+            cell.dataset.taggingInitialized = "true";
+
+            const tagsList = cell.querySelector('.tags-list');
+            let input = cell.querySelector('.tag-input');
+            if (!input) {
+                input = document.createElement('input');
+                input.className = 'tag-input';
+                input.type = 'text';
+                input.style.display = 'none';
+                input.placeholder = 'Add tag and press Enter';
+                cell.appendChild(input);
+            }
+
+            // Show input when cell is clicked (not on tag or remove)
+            cell.addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-tag') || e.target.classList.contains('tag')) return;
+                input.style.display = 'inline-block';
+                input.focus();
+                e.stopPropagation();
+            });
+
+            // Hide input when focus is lost
+            input.addEventListener('blur', function () {
+                setTimeout(function () { input.style.display = 'none'; }, 100);
+            });
+
+            // Add tag on Enter
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && input.value.trim() !== '') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const tag = input.value.trim();
+                    if ([...tagsList.querySelectorAll('.tag')].some(t => t.textContent.trim() === tag + '×')) {
+                        input.value = '';
+                        return;
+                    }
+                    const span = document.createElement('span');
+                    span.className = 'tag';
+                    span.setAttribute('data-tag', tag);
+                    span.innerHTML = tag + ' <span class="remove-tag" data-tag="' + tag + '">×</span>';
+                    tagsList.appendChild(span);
+                    input.value = '';
+                    const table = cell.closest('table');
+                    if (table && table.id.endsWith('Table')) {
+                        const key = table.id.replace(/Table$/, '');
+                        updateTableHiddenInput(key);
+                    }
+                }
+            });
+
+            // Remove tag on click (cell-local)
+            tagsList.addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-tag')) {
+                    e.target.parentElement.remove();
+                    input.style.display = 'inline-block';
+                    input.focus();
+                    const table = cell.closest('table');
+                    if (table && table.id.endsWith('Table')) {
+                        const key = table.id.replace(/Table$/, '');
+                        updateTableHiddenInput(key);
+                    }
+                    e.stopPropagation();
+                }
+            });
+        });
+    }
+
+    initializeTableTaggingCells();
+
+    // Hide all tag-inputs when clicking outside
+    document.addEventListener('click', function () {
+        document.querySelectorAll('td.table-tagging-cell .tag-input').forEach(function (input) {
+            input.style.display = 'none';
         });
     });
 
