@@ -240,7 +240,15 @@
                                     <thead>
                                         <tr>
                                             {% for col, value in specific_types.items %}
-                                            <th data-col="{{ col }}">{{ col|camel_to_spaces_lower }}</th>
+                                            <th data-col="{{ col }}">
+                                                {{ col|camel_to_spaces_lower }}
+                                                <div class="custom-tooltip-metadata">
+                                                    <span class="tooltip-text-metadata">
+                                                        {% if col in description_metadata %}{{ description_metadata|get:col }}{% endif %}
+                                                    </span>
+                                                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                                </div>
+                                            </th>
                                             {% endfor %}
                                             <th>Delete</th>
                                         </tr>
@@ -318,13 +326,55 @@
                             <table class="contributors-table" id="dataTable">
                                 <thead>
                                     <tr>
-                                        <th title="{% with descriptions=description_metadata %}{% if key in descriptions %}{{ descriptions|get:key }}{% endif %}{% endwith %}">ID</th>
-                                        <th title="{% with descriptions=description_metadata %}{% if 'familyName' in descriptions %}{{ descriptions|get:'givenName' }}{% endif %}{% endwith %}">Given Name</th>
-                                        <th title="{% with descriptions=description_metadata %}{% if 'familyName' in descriptions %}{{ descriptions|get:'familyName' }}{% endif %}{% endwith %}">Family Name</th>
-                                        <th title="{% with descriptions=description_metadata %}{% if 'email' in descriptions %}{{ descriptions|get:'email' }}{% endif %}{% endwith %}">Email</th>
-                                        <th title="{% with descriptions=description_metadata %}{% if 'contributor' in descriptions %}{{ descriptions|get:'contributor' }}{% endif %}{% endwith %}">Contributor</th>
-                                        <th>Author</th>
-                                        <th>Maintainer</th>
+                                        <th>ID</th>
+                                        <th>Given Name
+                                            <div class="custom-tooltip-metadata">
+                                                <span class="tooltip-text-metadata">
+                                                    {% if "givenName" in description_metadata %}{{ description_metadata|get:'givenName' }}{% endif %}
+                                                </span>
+                                                <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                            </div>
+                                        </th>
+                                        <th>Family Name
+                                            <div class="custom-tooltip-metadata">
+                                                <span class="tooltip-text-metadata">
+                                                    {% if "familyName" in description_metadata %}{{ description_metadata|get:'familyName' }}{% endif %}
+                                                </span>
+                                                <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                            </div>
+                                        </th>
+                                        <th>Email
+                                            <div class="custom-tooltip-metadata">
+                                                <span class="tooltip-text-metadata">
+                                                    {% if "email" in description_metadata %}{{ description_metadata|get:'email' }}{% endif %}
+                                                </span>
+                                                <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                            </div>
+                                        </th>
+                                        <th>Contributor
+                                            <div class="custom-tooltip-metadata">
+                                                <span class="tooltip-text-metadata">
+                                                    {% if "contributor" in description_metadata %}{{ description_metadata|get:'contributor' }}{% endif %}
+                                                </span>
+                                                <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                            </div>
+                                        </th>
+                                        <th>Author
+                                            <div class="custom-tooltip-metadata">
+                                                <span class="tooltip-text-metadata">
+                                                    {% if "author" in description_metadata %}{{ description_metadata|get:'author' }}{% endif %}
+                                                </span>
+                                                <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                            </div>
+                                        </th>
+                                        <th>Maintainer
+                                            <div class="custom-tooltip-metadata">
+                                                <span class="tooltip-text-metadata">
+                                                    {% if "maintainer" in description_metadata %}{{ description_metadata|get:'maintainer' }}{% endif %}
+                                                </span>
+                                                <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                            </div>
+                                        </th>
                                         <th title="Delete the contributer">Action</th>
                                         <!-- <th title="Add the contributor to authors' table">Add to Authors</th> -->
                                     </tr>

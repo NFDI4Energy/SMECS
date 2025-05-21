@@ -135,17 +135,30 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     document.querySelectorAll('.custom-tooltip-metadata').forEach(function (element) {
+        const tooltip = element.querySelector('.tooltip-text-metadata');
+        const icon = element.querySelector('i');
         element.addEventListener('mouseenter', function () {
-            const tooltip = element.querySelector('.tooltip-text-metadata');
+            tooltip.style.display = 'block';
             tooltip.style.visibility = 'visible';
             tooltip.style.opacity = '1';
+            tooltip.style.position = 'fixed';
+            tooltip.style.zIndex = '9999';
+            // Get the icon's position
+            const rect = icon.getBoundingClientRect();
+            const margin = 16;
+            let left = rect.right;
+            let top = rect.top + margin;          
+
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
         });
 
         element.addEventListener('mouseleave', function () {
-            const tooltip = element.querySelector('.tooltip-text-metadata');
+            tooltip.style.display = 'none';
             tooltip.style.visibility = 'hidden';
             tooltip.style.opacity = '0';
         });
+
     });
 
     // show highlighted tag for keywords

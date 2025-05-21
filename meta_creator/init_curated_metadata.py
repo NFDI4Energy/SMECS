@@ -48,6 +48,15 @@ def load_description_dict_from_schema(schema: dict) -> dict[str, str]:
         if "description" in value:
             description_dict[key] = value["description"]
 
+    types = schema.get("$defs", {})
+    for name, information in types.items():
+        properties = information.get("properties", None)
+        if properties:
+            for key, value in properties.items():
+                desc = value.get("description")
+                if desc and key not in description_dict:
+                    description_dict[key] = desc
+
     return description_dict
 
 # Define required field_type per element

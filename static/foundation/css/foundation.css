@@ -862,21 +862,29 @@ button.TrySMECS {
     visibility: hidden;
     font-size: 70%;
     min-width: 200px;
-    max-width: 400px;
+    max-width: 260px;
     width: auto;
     background-color: #5e5b5b;
     color: #fff;
     text-align: left;
     border-radius: 6px;
     padding: 5px;
-    position: absolute;
-    z-index: 1000;
-    top: 100%;
+    z-index: 9999;
+    /*top: 100%;
     left: 50%;
-    transform: translateX(-50%);
+    position: absolute;
+    */
+    position: fixed;
+    left: 0; /* Will be set dynamically */
+    top: 0; /* Will be set dynamically */ 
     transition: opacity 0.3s;
     pointer-events: none;
     opacity: 0;
+    word-break: break-word; /* Allow long words to wrap */
+    white-space: normal; /* Allow text to wrap */
+    box-sizing: border-box;
+    overflow-wrap: break-word; /* Ensure wrapping for long words */
+    display: none;
 }
 
 .custom-tooltip-metadata:hover .tooltip-text-metadata {
@@ -913,7 +921,6 @@ button.TrySMECS {
     padding: 3px;
     position: absolute;
     top: 0;
-    transform: translateX(-50%);
     transition: opacity 0.3s;
     pointer-events: none;
 }
@@ -1581,7 +1588,7 @@ input:checked + .slider {
 /* *********************Fixed width when editing cells*********************** */
 .table-cell {
     white-space: nowrap;
-    overflow: hidden;
+    /*overflow: hidden;*/
     text-overflow: ellipsis;
 }
 
