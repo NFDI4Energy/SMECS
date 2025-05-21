@@ -575,6 +575,14 @@ div.error-container {
         white-space: nowrap;
     }
 
+.add-row-tags-container {
+    position: relative;
+}
+
+td.table-tagging-cell {
+    position: relative;
+}
+
 /* Make the tags-list a flex container so tags wrap and only take as much space as needed */
 .tags-list {
     display: flex;
@@ -595,6 +603,25 @@ div.error-container {
     white-space: nowrap;
     max-width: 100%;
 }
+
+.tag-suggestions {
+    position: absolute;
+    background: #fff;
+    border: 1px solid #ccc;
+    z-index: 10000;
+    max-height: 200px;
+    overflow-y: auto;
+    font-size: 0.95em;
+}
+
+.suggestion-item {
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+    .suggestion-item:hover {
+        background: #f0f0f0;
+    }
 
 /********************************* Style for contributors table **********************************/
 /* contributors table */

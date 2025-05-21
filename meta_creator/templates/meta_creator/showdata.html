@@ -259,17 +259,17 @@
                                         <tr>
                                             {% for col, value in specific_types.items %}
                                             {% if value == 'tagging' %}
-                                            <td class="table-tagging-cell" data-col="{{ col }}" data-row="{{ forloop.parentloop.counter0 }}">
+                                            <td class="table-tagging-cell" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" data-row="{{ forloop.parentloop.counter0 }}">
                                                 <div class="tags-list">
                                                     {% for tag in row|get:col %}
                                                     <span class="tag">{{ tag }} <span class="remove-tag" data-tag="{{ tag }}">×</span></span>
                                                     {% endfor %}
                                                 </div>
                                                 <input class="tag-input" type="text" style="display:none;" placeholder="Add tag and press Enter" />
-                                            </td>
+                                            </td>                                            
                                             {% else %}
                                             <td>{{ row|get:col }} </td>
-                                            {% endif %}                                          
+                                            {% endif %}
                                             {% endfor %}
                                             <td>
                                                 <i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i>
@@ -282,13 +282,13 @@
                                 <!-- Add Row Inputs -->
                                 <div class="add-row-controls" data-table-key="{{ key }}">
                                     {% for col, value in specific_types.items %}
-                                    {% if value == 'tagging' %}
-                                        <div class="tags-container add-row-tags-container" data-col="{{ col }}">
-                                            <!-- Tags will be inserted here by JS -->
-                                            <input type="text" class="add-row-tag-input" data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Add tag and press Enter">
-                                        </div>
-                                        {% else %}
-                                        <input type="text" class="add-row-input" data-coltype="{{ value }}" data-col="{{ col }}" placeholder="{{ col|capfirst }}">
+                                    {% if value == 'tagging' or value == 'tagging_autocomplete' %}
+                                    <div class="tags-container add-row-tags-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
+                                        <!-- Tags will be inserted here by JS -->
+                                        <input type="text" class="add-row-tag-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Add tag and press Enter">
+                                    </div>
+                                    {% else %}
+                                    <input type="text" class="add-row-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="{{ col|capfirst }}">
                                     {% endif %}
                                     {% endfor %}
                                     <button type="button" class="add-row-btn" data-table-key="{{ key }}">Add</button>

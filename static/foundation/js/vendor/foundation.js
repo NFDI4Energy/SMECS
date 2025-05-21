@@ -621,11 +621,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (!input) continue; // or handle error
                 const col = inputs[i].getAttribute('data-col');
                 const colType = inputs[i].getAttribute('data-coltype');
+                const dataType = table.getAttribute('data-at-type');
                 const td = document.createElement('td');
-                if (colType === 'tagging') {
+                if (colType === 'tagging' || colType === 'tagging_autocomplete') {
                     td.className = 'table-tagging-cell';
                     td.setAttribute('data-col', col);
                     td.setAttribute('data-coltype', 'tagging');
+                    td.setAttribute('data-type', dataType);
                     // Tag UI
                     const tagsList = document.createElement('div');
                     tagsList.className = 'tags-list';
@@ -649,6 +651,17 @@ document.addEventListener("DOMContentLoaded", function () {
                     const addRowContainer = document.querySelector('.add-row-tags-container[data-col="' + col + '"]');
                     if (addRowContainer) {
                         addRowContainer.querySelectorAll('.tag').forEach(tagEl => tagEl.remove());
+                    }
+                    // If tagging_autocomplete, initialize autocomplete for this cell
+                    if (colType === 'tagging_autocomplete') {
+                        fetch(JsonSchema)
+                            .then(res => res.json())
+                            .then(schema => {
+                                const autocompleteSource = schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];        
+                                if (autocompleteSource.length > 0) {
+                                    setupTableTagAutocomplete({ cell: td, autocompleteSource });
+                                }
+                            });
                     }
                 } else {
                     td.textContent = values[i] || '';
@@ -677,6 +690,59 @@ document.addEventListener("DOMContentLoaded", function () {
         const col = container.getAttribute('data-col');
         addRowTags[col] = [];
         const input = container.querySelector('.add-row-tag-input');
+        const colType = container.getAttribute('data-coltype');
+        const dataType = container.getAttribute('data-type');
+        // --- Autocomplete setup ---
+        let autocompleteSource = [];
+        let suggestionsBox = createSuggestionsBox(container);
+
+        if (colType === 'tagging_autocomplete') {
+            fetch(JsonSchema)
+                .then(res => res.json())
+                .then(schema => {
+                    autocompleteSource = schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];
+                });            
+
+            input.addEventListener('input', function () {
+                const query = input.value.trim().toLowerCase();
+                suggestionsBox.innerHTML = '';
+                if (!query || autocompleteSource.length === 0) {
+                    suggestionsBox.style.display = 'none';
+                    return;
+                }
+                const selectedTags = addRowTags[col];
+                const filtered = autocompleteSource.filter(
+                    tag => tag.toLowerCase().startsWith(query) && !selectedTags.includes(tag)
+                );
+                if (filtered.length === 0) {
+                    suggestionsBox.style.display = 'none';
+                    return;
+                }
+                filtered.forEach(tag => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.textContent = tag;
+                    div.style.cursor = 'pointer';
+                    div.onclick = function () {
+                        input.value = tag;
+                        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+                        suggestionsBox.style.display = 'none';
+                    };
+                    suggestionsBox.appendChild(div);
+                });
+                // Position suggestions below the input
+                const inputRect = input.getBoundingClientRect();
+                suggestionsBox.style.left = inputRect.left + 'px';
+                suggestionsBox.style.top = inputRect.bottom + 'px';
+                suggestionsBox.style.width = input.offsetWidth + 'px';
+                suggestionsBox.style.display = 'block';
+            });
+
+            // Hide suggestions on blur/click outside
+            input.addEventListener('blur', function () {
+                setTimeout(() => { suggestionsBox.style.display = 'none'; }, 200);
+            });
+        }
 
         // Add tag on Enter
         input.addEventListener('keydown', function (e) {
@@ -695,6 +761,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     container.insertBefore(span, input);
                 }
                 input.value = '';
+                if (suggestionsBox) suggestionsBox.style.display = 'none';
             }
         });
 
@@ -707,6 +774,21 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
+
+    function createSuggestionsBox() {
+        let suggestionsBox = document.querySelector('.tag-suggestions-global');
+        if (!suggestionsBox) {
+            suggestionsBox = document.createElement('div');
+            suggestionsBox.className = 'tag-suggestions tag-suggestions-global';
+            suggestionsBox.style.position = 'absolute';
+            suggestionsBox.style.background = '#fff';
+            suggestionsBox.style.border = '1px solid #ccc';
+            suggestionsBox.style.zIndex = 10000;
+            suggestionsBox.style.display = 'none';
+            document.body.appendChild(suggestionsBox);
+        }
+        return suggestionsBox;
+    }
 
     // functionanilties within all auto-property-tables
     document.querySelectorAll('table.auto-property-table').forEach(function (table) { 
@@ -787,6 +869,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 cell.appendChild(input);
             }
 
+            // --- Autocomplete logic: fetch source and setup ---
+            // You can set data-autocomplete-source on the cell or column header, or fetch from schema
+            
+            const col = cell.getAttribute('data-col');
+            const colType = cell.getAttribute('data-coltype');
+            const dataType = cell.getAttribute('data-type');
+            // Example: fetch from schema if available
+            if (colType == 'tagging_autocomplete') {
+                fetch(JsonSchema)
+                    .then(res => res.json())
+                    .then(schema => {
+                        autocompleteSource = schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];
+                        if (autocompleteSource.length > 0) {
+                            setupTableTagAutocomplete({ cell, autocompleteSource });
+                    }
+                });
+            }
+
             // Show input when cell is clicked (not on tag or remove)
             cell.addEventListener('click', function (e) {
                 if (e.target.classList.contains('remove-tag') || e.target.classList.contains('tag')) return;
@@ -842,6 +942,71 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     initializeTableTaggingCells();
+
+    // General autocomplete technique
+    function setupTagAutocompleteInput({ input, selectedTagsProvider, autocompleteSource, onTagSelected, container }) {
+        // Create or get suggestions box
+        let suggestionsBox = container.querySelector('.tag-suggestions-global');
+        if (!suggestionsBox) {
+            suggestionsBox = createSuggestionsBox(container);
+        }
+
+        input.addEventListener('input', function () {
+            const query = input.value.trim().toLowerCase();
+            suggestionsBox.innerHTML = '';
+            if (!query) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            const selectedTags = selectedTagsProvider();
+            const filtered = autocompleteSource.filter(
+                tag => tag.toLowerCase().startsWith(query) && !selectedTags.includes(tag)
+            );
+            if (filtered.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            filtered.forEach(tag => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = tag;
+                div.style.cursor = 'pointer';
+                div.onclick = function () {
+                    onTagSelected(tag);
+                    suggestionsBox.style.display = 'none';
+                };
+                suggestionsBox.appendChild(div);
+            });
+            // Position suggestions below the input
+            const inputRect = input.getBoundingClientRect();
+            suggestionsBox.style.left = inputRect.left + 'px';
+            suggestionsBox.style.top = inputRect.bottom + 'px';
+            suggestionsBox.style.width = input.offsetWidth + 'px';
+            suggestionsBox.style.display = 'block';
+        });
+
+        // Hide suggestions on blur/click outside
+        input.addEventListener('blur', function () {
+            setTimeout(() => { suggestionsBox.style.display = 'none'; }, 200);
+        });
+    }
+
+    // Enable tagging autocomplete
+    function setupTableTagAutocomplete({ cell, autocompleteSource }) {
+        const input = cell.querySelector('.tag-input');
+        if (!input) return;
+        const tagsList = cell.querySelector('.tags-list');
+        setupTagAutocompleteInput({
+            input,
+            selectedTagsProvider: () => Array.from(tagsList.querySelectorAll('.tag')).map(t => t.textContent.trim().replace('×', '').trim()),
+            autocompleteSource,
+            onTagSelected: (tag) => {
+                input.value = tag;
+                input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+            },
+            container: cell
+        });
+    }
 
     // Hide all tag-inputs when clicking outside
     document.addEventListener('click', function () {
