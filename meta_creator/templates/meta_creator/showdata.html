@@ -258,7 +258,7 @@
                                         {% if row|row_has_values:specific_types.keys %}
                                         <tr>
                                             {% for col, value in specific_types.items %}
-                                            {% if value == 'tagging' %}
+                                            {% if value == 'tagging' or value == 'tagging_autocomplete' or value == 'dropdown' %}
                                             <td class="table-tagging-cell" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" data-row="{{ forloop.parentloop.counter0 }}">
                                                 <div class="tags-list">
                                                     {% for tag in row|get:col %}
@@ -287,14 +287,21 @@
                                         <!-- Tags will be inserted here by JS -->
                                         <input type="text" class="add-row-tag-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Add tag and press Enter">
                                     </div>
+                                    {% elif value == 'dropdown' %}
+                                    <div class="tags-container add-row-tags-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
+                                       
+                                        <input type="text" class="add-row-tag-input" ...>
+                                    </div>
                                     {% else %}
-                                    <input type="text" class="add-row-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="{{ col|capfirst }}">
-                                    {% endif %}
-                                    {% endfor %}
-                                    <button type="button" class="add-row-btn" data-table-key="{{ key }}">Add</button>
-                                </div>
-                                {% endwith %}
-                            </div>             
+                                    <div class="tags-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
+                                        <input type="text" class="add-row-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="{{ col|capfirst }}">
+                                    </div>
+                                        {% endif %}
+                                        {% endfor %}
+                                        <button type="button" class="add-row-btn" data-table-key="{{ key }}">Add</button>
+                                    </div>
+                                    {% endwith %}
+                                </div>             
                             {% endif %}
                         </div>
                             {% endfor %}

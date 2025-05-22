@@ -79,14 +79,12 @@ When an element consists of a type which includes multiple sub-types, a table is
 ### Nested Elements with one subelement
 * tag: array of the tags of the subelements
 * The value is stored as subvalue while shown as normal value
-* Status: not nicely implemented
 
 ### Small Table
 * tag: array of the tags of the subelements
 * The table takes the full width but is placed within the normal information overview
 * A small table has up 2-4 columns.
-* Allowed column values are simpleField, Tagging, and dropdown
-* Status: not nicely implemented
+* Allowed column values are simpleField, tagging, tagging-autocomplete and dropdown
 
 ### Specific Tables
 * tag: use specific tags here!
@@ -94,6 +92,7 @@ When an element consists of a type which includes multiple sub-types, a table is
 * Often the information here can be linked to different metadata elements (e.g., author and contributor or input and output)
 * The following table are required: person, funding, interface
 * The table need to support the following types: SimpleField, Tagging, TaggingAutocomplete, smallTable, checkbox
+* Status: Not implemented yet
 
 #### Checkbox
 * A checkbox indicates a boolean property in a table

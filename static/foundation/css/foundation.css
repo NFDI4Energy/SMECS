@@ -554,18 +554,18 @@ div.error-container {
     margin-top: 8px;
 }
 
-    .add-row-controls .add-row-tag-input {
+    .add-row-controls .add-row-input,
+    .add-row-controls .add-row-tag-input,
+    .add-row-controls .add-row-dropdown-select {
         min-width: 60px;
         max-width: 200px;
         width: 100%;
         box-sizing: border-box;
-    }
-
-    .add-row-controls .add-row-input {
-        min-width: 60px;
-        max-width: 200px;
-        width: 100%;
-        box-sizing: border-box;
+        height: 2.4375rem;
+        padding: 0.5rem;
+        border: 1px solid #cacaca;
+        background-color: #fefefe;
+        font-size: 1rem;
     }
 
     .add-row-controls .add-row-btn {

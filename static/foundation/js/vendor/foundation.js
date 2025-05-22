@@ -550,7 +550,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     obj[header] = '';
                     return;
                 }
-                if (cell.classList.contains('table-tagging-cell')) {
+                if (cell.getAttribute('data-coltype') === 'dropdown') {
+                    // Prefer data-value if present, fallback to select if in edit mode, else fallback to text
+                    if (cell.hasAttribute('data-value')) {
+                        obj[header] = cell.getAttribute('data-value');
+                    } else if (cell.querySelector('select')) {
+                        obj[header] = cell.querySelector('select').value;
+                    } else {
+                        obj[header] = cell.textContent.trim();
+                    }
+                } else if (cell.classList.contains('table-tagging-cell')) {
                     // Extract all tag values from data-tag or data-value attribute
                     const tags = Array.from(cell.querySelectorAll('.tag')).map(tagEl =>
                         tagEl.getAttribute('data-tag') || tagEl.getAttribute('data-value') || tagEl.textContent.trim()
@@ -600,9 +609,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Get column headers
             const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.getAttribute('data-col'));
+            console.log({ headers})
             // Get input values
             const controls = btn.parentElement;            
-            const inputs = controls.querySelectorAll('.add-row-input, .add-row-tag-input');
+            const inputs = controls.querySelectorAll('.add-row-input, .add-row-tag-input, .add-row-dropdown-select');
+            console.log({ inputs })
             const values = Array.from(inputs).map(input => input.value.trim());
                        
             // Prevent adding if all fields are empty (including tags)
@@ -617,14 +628,28 @@ document.addEventListener("DOMContentLoaded", function () {
             for (let i = 0; i < headers.length - 1; i++) {
                 const header = headers[i];
                 // Find the input for this column
-                const input = Array.from(inputs).find(inp => inp.getAttribute('data-col') === header);
+                const input = Array.from(inputs).find(inp =>
+                    inp.getAttribute('data-col') === header && !inp.classList.contains('invalid')
+                );
      
                 if (!input) continue; // or handle error
-                const col = inputs[i].getAttribute('data-col');
-                const colType = inputs[i].getAttribute('data-coltype');
+                const col = input.getAttribute('data-col');
+                const colType = input.getAttribute('data-coltype');
                 const dataType = table.getAttribute('data-at-type');
                 const td = document.createElement('td');
-                if (colType === 'tagging' || colType === 'tagging_autocomplete') {
+                console.log({header, input, col, colType, dataType})
+                if (colType === 'dropdown') {
+                    console.log("Got to dropdown")
+                    td.className = 'table-tagging-cell';
+                    td.setAttribute('data-col', col);
+                    td.setAttribute('data-coltype', 'dropdown');
+                    td.setAttribute('data-type', dataType);
+
+                    // Show the selected value as plain text
+                    const value = input ? input.value : '';
+                    console.log('Selected value:', input.value);
+                    td.textContent = value;
+                } else if (colType === 'tagging' || colType === 'tagging_autocomplete') {
                     td.className = 'table-tagging-cell';
                     td.setAttribute('data-col', col);
                     td.setAttribute('data-coltype', 'tagging');
@@ -676,7 +701,13 @@ document.addEventListener("DOMContentLoaded", function () {
             initializeTableTaggingCells();
 
             // Clear input fields
-            inputs.forEach(input => input.value = '');
+            inputs.forEach(input => {
+                if (input.tagName === 'SELECT') {
+                    input.selectedIndex = 0;
+                } else {
+                    input.value = '';
+                }
+            });
 
             // Update hidden input
             updateTableHiddenInput(key);
@@ -743,6 +774,29 @@ document.addEventListener("DOMContentLoaded", function () {
             input.addEventListener('blur', function () {
                 setTimeout(() => { suggestionsBox.style.display = 'none'; }, 200);
             });
+        } else if (colType === 'dropdown') {
+            fetch(JsonSchema)
+                .then(res => res.json())
+                .then(schema => {
+                    const options = schema["$defs"]?.[dataType]?.properties?.[col]?.enum || [];
+                    const select = document.createElement('select');
+                    select.className = 'add-row-dropdown-select';
+                    select.name = 'selectElement';
+                    select.setAttribute('data-col', col);
+                    select.setAttribute('data-type', dataType);
+                    select.setAttribute('data-coltype', 'dropdown');
+                    select.innerHTML = '<option value="">Select...</option>' +
+                        options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
+                    // Replace the input with the select
+                    input.style.display = 'none';
+                    container.appendChild(select);
+
+                    // On change, update addRowTags or values as needed
+                    select.addEventListener('change', function () {
+                        addRowTags[col] = [select.value];
+                        console.log('Selected value:', select.value);
+                    });
+                });
         }
 
         // Add tag on Enter
@@ -812,6 +866,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Only allow editing on <td> that is not the last column (delete icon)
             const cell = e.target.closest('td');
             if (!cell) return;
+            if (cell.classList.contains('table-tagging-cell')) return;
             if (cell.classList.contains('table-tagging-cell')) return;
             const row = cell.parentElement;
             const allCells = Array.from(row.children);
@@ -886,7 +941,66 @@ document.addEventListener("DOMContentLoaded", function () {
                             setupTableTagAutocomplete({ cell, autocompleteSource });
                     }
                 });
+            } else if (colType === 'dropdown') {
+                // Show value as plain text initially
+                const currentValue = cell.getAttribute('data-value') || cell.textContent.trim() || '';
+                cell.innerHTML = '';
+                cell.textContent = currentValue;
+
+                // Only show dropdown on cell click
+                cell.addEventListener('click', function handleDropdownCellClick(e) {
+                    // Prevent multiple dropdowns
+                    if (cell.querySelector('select')) return;
+
+                    fetch(JsonSchema)
+                        .then(res => res.json())
+                        .then(schema => {
+                            const options = schema["$defs"]?.[dataType]?.properties?.[col]?.enum || [];
+                            const select = document.createElement('select');
+                            select.className = 'table-dropdown-select';
+                            select.name = 'ChangingSelect'
+                            select.innerHTML = '<option value="">Select...</option>' +
+                                options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
+                            select.value = currentValue;
+
+                            // Replace cell content with select
+                            cell.innerHTML = '';
+                            cell.appendChild(select);
+                            select.focus();
+
+                            // On change or blur, update cell and data
+                            function finalizeSelection() {
+                                const selectedValue = select.value;
+                                cell.setAttribute('data-value', selectedValue);
+                                cell.innerHTML = selectedValue;
+
+                                // Remove this event listener to avoid duplicate dropdowns
+                                cell.removeEventListener('click', handleDropdownCellClick);
+
+                                // Re-attach the click event for future edits
+                                setTimeout(() => {
+                                    cell.addEventListener('click', handleDropdownCellClick);
+                                }, 0);
+
+                                // Update the hidden input and main JSON
+                                const table = cell.closest('table');
+                                if (table && table.id.endsWith('Table')) {
+                                    const key = table.id.replace(/Table$/, '');
+                                    updateTableHiddenInput(key);
+                                }
+                            }
+
+                            select.addEventListener('change', finalizeSelection);
+                            select.addEventListener('blur', finalizeSelection);
+                        });
+
+                    // Remove this event listener to prevent re-entry until finished
+                    cell.removeEventListener('click', handleDropdownCellClick);
+                });
+
+                return; // Skip further tag logic for dropdowns
             }
+
 
             // Show input when cell is clicked (not on tag or remove)
             cell.addEventListener('click', function (e) {
@@ -1458,12 +1572,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 .filter(id => id); // Filter out inputs without a name/id
 
             // Collect all IDs of single input in tables
-            const singleInputTableIds = Array.from(document.querySelectorAll(`${tableSelector} input, ${tableSelector} select, ${tableSelector} textarea`))
+            const singleInputTableIds = Array.from(document.querySelectorAll('.auto-property-table input, .auto-property-table select, .auto-property-table textarea'))
+
+            const addRowControls = document.querySelectorAll('.add-row-controls');            
+            ddRowControls.forEach(controls => {
+                const fields = controls.querySelectorAll(
+                    '.add-row-input, .add-row-tag-input, .add-row-dropdown-select'
+                );
+                // fields is a NodeList of all relevant input/select fields for this add-row-controls
+                // You can now map/filter as needed:
+                const fieldIds = Array.from(fields)
                     .map(field => field.name || field.id)
-                    .filter(Boolean); // Only keep fields with a name or id
-            
+                    .filter(Boolean);
+                // Do something with fieldIds...
+            });
             // Add the checkbox IDs to the excludedInputs array
-            excludedInputs.push(...checkboxIds, ...singleInputObjectIds, ...singleInputTableIds);
+            excludedInputs.push(...checkboxIds, ...singleInputObjectIds, ...singleInputTableIds, ...fieldIds);
 
             if (!excludedInputs.includes(input.name)) {
                 if (subkey) {
