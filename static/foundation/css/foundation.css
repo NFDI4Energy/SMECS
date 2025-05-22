@@ -883,6 +883,7 @@ button.TrySMECS {
 .fa-info-circle {
     opacity: 0.5;
     font-size: 12px;
+    z-index: 1;
 }
 
 .tooltip-text-metadata {
@@ -896,7 +897,7 @@ button.TrySMECS {
     text-align: left;
     border-radius: 6px;
     padding: 5px;
-    z-index: 9999;
+    z-index: 1000;
     /*top: 100%;
     left: 50%;
     position: absolute;
@@ -1739,6 +1740,7 @@ div div p#contributor-explanation {
 .collapsible-content {
     display: none;
     margin-top: 10px;
+    z-index: 2000;
 }
 
 .collapsible-button {
