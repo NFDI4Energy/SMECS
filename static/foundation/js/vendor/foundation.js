@@ -532,7 +532,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Get column headers (excluding the last "Delete" column)
         const headers = Array.from(table.querySelectorAll('thead th'))
-            .map(th => th.textContent.trim())
+            .map(th => th.getAttribute('data-col'))
             .slice(0, -1);
 
         // Get @type from the table's data-at-type attribute
@@ -544,6 +544,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let obj = {};
             if (atType) obj['@type'] = atType;
             headers.forEach((header, i) => {
+                if (!header) return; // Skip if header is empty or undefined
                 const cell = cells[i];
                 if (!cell) {
                     obj[header] = '';
@@ -1456,8 +1457,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 .map(input => input.name) // or .id, depending on what you want to exclude by
                 .filter(id => id); // Filter out inputs without a name/id
 
+            // Collect all IDs of single input in tables
+            const singleInputTableIds = Array.from(document.querySelectorAll(`${tableSelector} input, ${tableSelector} select, ${tableSelector} textarea`))
+                    .map(field => field.name || field.id)
+                    .filter(Boolean); // Only keep fields with a name or id
+            
             // Add the checkbox IDs to the excludedInputs array
-            excludedInputs.push(...checkboxIds, ...singleInputObjectIds);
+            excludedInputs.push(...checkboxIds, ...singleInputObjectIds, ...singleInputTableIds);
 
             if (!excludedInputs.includes(input.name)) {
                 if (subkey) {
