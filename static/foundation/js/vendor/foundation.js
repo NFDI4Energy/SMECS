@@ -43,18 +43,32 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Find all inputs where the name matches the required field
 
                     inputs.forEach(function (input) {
-                        // Add the 'required' attribute to the input field
-                        input.setAttribute('required', true);
+                        // 1. Standard input/select fields
+                        const standardInputs = document.querySelectorAll(`[name="${fieldKey}"]`);
+                        standardInputs.forEach(function (input) {
+                            input.setAttribute('required', true);
+                        });
 
-                        // Add a red asterisk to the corresponding label
-                        const label = document.querySelector(`label[for="${fieldKey}"]`);
+                        // 2. Tagging fields (hidden input for tagging/tagging_autocomplete)
+                        const hiddenInput = document.getElementById(fieldKey + 'HiddenInput');
+                        if (hiddenInput) {
+                            hiddenInput.setAttribute('required', true);
+                        }
+
+                        // 3. Add asterisk to the correct label
+                        // Try standard label first
+                        let label = document.querySelector(`label[for="${fieldKey}"]`);
+                        // If not found, try tagging label
+                        if (!label) {
+                            label = document.querySelector(`.tagging-label[for="${fieldKey}Input"]`);
+                        }
                         if (label && !label.innerHTML.includes('*')) {
                             const asterisk = document.createElement('span');
                             asterisk.style.color = 'red';
                             asterisk.style.fontSize = '18px';
                             asterisk.textContent = '*';
-                            label.appendChild(document.createTextNode(' '));  // Add space before asterisk
-                            label.appendChild(asterisk);  // Add the asterisk after the label text
+                            label.appendChild(document.createTextNode(' '));
+                            label.appendChild(asterisk);
                         }
                     });
                 });
@@ -1574,8 +1588,10 @@ document.addEventListener("DOMContentLoaded", function () {
             // Collect all IDs of single input in tables
             const singleInputTableIds = Array.from(document.querySelectorAll('.auto-property-table input, .auto-property-table select, .auto-property-table textarea'))
 
+            excludedInputs.push(...checkboxIds, ...singleInputObjectIds, ...singleInputTableIds);
+
             const addRowControls = document.querySelectorAll('.add-row-controls');            
-            ddRowControls.forEach(controls => {
+            addRowControls.forEach(controls => {
                 const fields = controls.querySelectorAll(
                     '.add-row-input, .add-row-tag-input, .add-row-dropdown-select'
                 );
@@ -1584,10 +1600,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 const fieldIds = Array.from(fields)
                     .map(field => field.name || field.id)
                     .filter(Boolean);
-                // Do something with fieldIds...
+                excludedInputs.push(...fieldIds);
             });
-            // Add the checkbox IDs to the excludedInputs array
-            excludedInputs.push(...checkboxIds, ...singleInputObjectIds, ...singleInputTableIds, ...fieldIds);
 
             if (!excludedInputs.includes(input.name)) {
                 if (subkey) {
@@ -1784,7 +1798,8 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             const data = metadataJson.value;
 
-            const metadata = JSON.parse(data); // Move inside try block
+            const entered_metadata = JSON.parse(data); // Move inside try block
+            const metadata = getCleanedMetadata(entered_metadata);
             const jsonKeys = Object.keys(metadata); // Extract keys from received JSON
 
             let repoName = "metadata"; // Default name
@@ -1800,12 +1815,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     const keyCheck = keysMatchRecursive(allowedKeys, requiredKeys, metadata, schema);
 
                     if (!keyCheck.isMatch) {
-                        let errorMessage = "Metadata keys do not match!\n\n";
+                        let errorMessage = "";
                         if (keyCheck.missingKeys.length > 0) {
-                            errorMessage += `Missing Keys: ${keyCheck.missingKeys.join(", ")}\n`;
+                            errorMessage += `Not all required elements were filled. Please add content to the following elements:\n\n ${keyCheck.missingKeys.join(", ")}\n`;
                         }
                         if (keyCheck.extraKeys.length > 0) {
-                            errorMessage += `Extra Keys: ${keyCheck.extraKeys.join(", ")}\n`;
+                            errorMessage += `There are elements which are not part of the standard. Please remove the following elements:\n\n: ${keyCheck.extraKeys.join(", ")}\n`;
                         }
                         if (keyCheck.nestedErrors.length > 0) {
                             errorMessage += `\nNested Errors:\n${keyCheck.nestedErrors.join("\n")}`;
@@ -1842,9 +1857,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (metadata.name) {
-            repoName = metadata.name;
-            const cleanedMetadata = getCleanedMetadata(metadata);
-            validJson = JSON.stringify(cleanedMetadata, null, 2);
+            repoName = metadata.name;            
+            validJson = JSON.stringify(metadata, null, 2);
         }
         const fileName = `${repoName}/codemeta.json`;
         const blob = new Blob([validJson], { type: "application/json" });
