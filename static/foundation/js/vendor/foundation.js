@@ -298,6 +298,46 @@ document.addEventListener("DOMContentLoaded", function () {
                     suggestionsBox.appendChild(div);
                 });
 
+                // --- Position the suggestion box using getBoundingClientRect ---
+                updateSuggestionsBoxPosition(input, suggestionsBox)
+                suggestionsBox.style.display = "block";
+            });
+            window.addEventListener('scroll', () => updateSuggestionsBoxPosition(input, suggestionsBox), true);
+            window.addEventListener('resize', () => updateSuggestionsBoxPosition(input, suggestionsBox));
+
+            input.addEventListener("focus", () => {
+                // Show all suggestions if input is empty, or filtered if not
+                const query = input.value.trim().toLowerCase();
+                suggestionsBox.innerHTML = "";
+
+                // Filter as in your input event
+                const filtered = autocompleteSource.filter(
+                    tag => !(
+                        objectKey
+                            ? selectedTags.some(item => item[objectKey] === tag)
+                            : selectedTags.includes(tag)
+                    ) && (query === "" || tag.toLowerCase().startsWith(query))
+                );
+
+                if (filtered.length === 0) {
+                    suggestionsBox.style.display = "none";
+                    return;
+                }
+
+                filtered.forEach(tag => {
+                    const div = document.createElement("div");
+                    div.classList.add("suggestion-item");
+                    div.textContent = tag;
+                    div.onclick = () => addTag(tag);
+                    suggestionsBox.appendChild(div);
+                });
+
+                // Position the suggestion box
+                const rect = input.getBoundingClientRect();
+                suggestionsBox.style.position = "fixed";
+                suggestionsBox.style.left = rect.left + "px";
+                suggestionsBox.style.top = rect.bottom + "px";
+                suggestionsBox.style.width = rect.width + "px";
                 suggestionsBox.style.display = "block";
             });
 
@@ -330,7 +370,18 @@ document.addEventListener("DOMContentLoaded", function () {
             if (e.key === "Enter") {
                 e.preventDefault();
                 const newTag = input.value.trim();
-                if (newTag) addTag(newTag);
+                if (useAutocomplete) {
+                    if (autocompleteSource.includes(newTag)) {
+                        addTag(newTag);
+                    } else {
+                        showInvalidTagMessage(container, input, "Please select a value from the list.");
+                        input.classList.add("invalid");
+                        setTimeout(() => input.classList.remove("invalid"), 1000);
+                        input.value = "";
+                    }
+                } else if (newTag) {
+                    addTag(newTag);
+                }
             }
         });
 
@@ -784,6 +835,41 @@ document.addEventListener("DOMContentLoaded", function () {
                 suggestionsBox.style.display = 'block';
             });
 
+            input.addEventListener('focus', function () {
+                suggestionsBox.innerHTML = '';
+                if (!autocompleteSource.length) {
+                    suggestionsBox.style.display = 'none';
+                    return;
+                }
+                const query = input.value.trim().toLowerCase();
+                const selectedTags = addRowTags[col];
+                const filtered = autocompleteSource.filter(
+                    tag => !selectedTags.includes(tag) && (query === "" || tag.toLowerCase().startsWith(query))
+                );
+                if (filtered.length === 0) {
+                    suggestionsBox.style.display = 'none';
+                    return;
+                }
+                filtered.forEach(tag => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.textContent = tag;
+                    div.style.cursor = 'pointer';
+                    div.onclick = function () {
+                        input.value = tag;
+                        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+                        suggestionsBox.style.display = 'none';
+                    };
+                    suggestionsBox.appendChild(div);
+                });
+                // Position suggestions below the input
+                updateSuggestionsBoxPosition(input, suggestionsBox);
+                suggestionsBox.style.display = 'block';
+            });
+
+            window.addEventListener('scroll', () => updateSuggestionsBoxPosition(input, suggestionsBox), true);
+            window.addEventListener('resize', () => updateSuggestionsBoxPosition(input, suggestionsBox));
+
             // Hide suggestions on blur/click outside
             input.addEventListener('blur', function () {
                 setTimeout(() => { suggestionsBox.style.display = 'none'; }, 200);
@@ -818,19 +904,38 @@ document.addEventListener("DOMContentLoaded", function () {
             if (e.key === 'Enter' && input.value.trim() !== '') {
                 e.preventDefault();
                 const tag = input.value.trim();
-                if (!addRowTags[col].includes(tag)) {
-                    addRowTags[col].push(tag);
+                if (colType === 'tagging_autocomplete') {
+                    if (autocompleteSource.includes(tag)) {
+                        if (!addRowTags[col].includes(tag)) {
+                            addRowTags[col].push(tag);
 
-                    // Create tag element
-                    const span = document.createElement('span');
-                    span.className = 'tag';
-                    span.setAttribute('data-tag', tag);
-                    span.innerHTML = tag + ' <span class="remove-tag" data-tag="' + tag + '">×</span>';
-                    // Insert before input
-                    container.insertBefore(span, input);
+                            // Create tag element
+                            const span = document.createElement('span');
+                            span.className = 'tag';
+                            span.setAttribute('data-tag', tag);
+                            span.innerHTML = tag + ' <span class="remove-tag" data-tag="' + tag + '">×</span>';
+                            container.insertBefore(span, input);
+                        }
+                        input.value = '';
+                        if (suggestionsBox) suggestionsBox.style.display = 'none';
+                    } else {
+                        showInvalidTagMessage(container, input, "Please select a value from the list.");
+                        input.classList.add("invalid");
+                        setTimeout(() => input.classList.remove("invalid"), 1000);
+                        input.value = '';
+                    }
+                } else {
+                    // For plain tagging, just add the tag
+                    if (!addRowTags[col].includes(tag)) {
+                        addRowTags[col].push(tag);
+                        const span = document.createElement('span');
+                        span.className = 'tag';
+                        span.setAttribute('data-tag', tag);
+                        span.innerHTML = tag + ' <span class="remove-tag" data-tag="' + tag + '">×</span>';
+                        container.insertBefore(span, input);
+                    }
+                    input.value = '';
                 }
-                input.value = '';
-                if (suggestionsBox) suggestionsBox.style.display = 'none';
             }
         });
 
@@ -857,6 +962,28 @@ document.addEventListener("DOMContentLoaded", function () {
             document.body.appendChild(suggestionsBox);
         }
         return suggestionsBox;
+    }
+
+    function showInvalidTagMessage(container, input, message) {
+        // Remove any existing invalid message
+        const existing = container.querySelector('.invalid-tag-message');
+        if (existing) existing.remove();
+
+        const msg = document.createElement("span");
+        msg.classList.add("highlight-tag", "invalid-tag-message");
+        msg.innerHTML = `❌ ${message} <span class="acknowledge-tag">Got it!</span>`;
+        container.insertBefore(msg, input);
+
+        // Remove on click or after a timeout
+        msg.querySelector('.acknowledge-tag').onclick = () => msg.remove();
+        setTimeout(() => { if (msg.parentNode) msg.remove(); }, 2500);
+    }
+
+    function updateSuggestionsBoxPosition(input, suggestionsBox) {
+        const rect = input.getBoundingClientRect();
+        suggestionsBox.style.left = rect.left + "px";
+        suggestionsBox.style.top = rect.bottom + "px";
+        suggestionsBox.style.width = rect.width + "px";
     }
 
     // functionanilties within all auto-property-tables
@@ -1039,6 +1166,26 @@ document.addEventListener("DOMContentLoaded", function () {
                         input.value = '';
                         return;
                     }
+                    // Get autocompleteSource for this cell/column
+                    let autocompleteSource = [];
+                    const col = cell.getAttribute('data-col');
+                    const dataType = cell.getAttribute('data-type');
+                    const colType = cell.getAttribute('data-coltype');
+                    if (colType === 'tagging_autocomplete') {
+                        // You may want to cache this for performance
+                        fetch(JsonSchema)
+                            .then(res => res.json())
+                            .then(schema => {
+                                autocompleteSource = schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];
+                                if (!autocompleteSource.includes(tag)) {
+                                    showInvalidTagMessage(cell, input, "Please select a value from the list.");
+                                    input.classList.add("invalid");
+                                    setTimeout(() => input.classList.remove("invalid"), 1000);
+                                    input.value = '';
+                                    return;
+                                }
+                            });
+                    }
                     const span = document.createElement('span');
                     span.className = 'tag';
                     span.setAttribute('data-tag', tag);
@@ -1107,10 +1254,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 suggestionsBox.appendChild(div);
             });
             // Position suggestions below the input
-            const inputRect = input.getBoundingClientRect();
-            suggestionsBox.style.left = inputRect.left + 'px';
-            suggestionsBox.style.top = inputRect.bottom + 'px';
-            suggestionsBox.style.width = input.offsetWidth + 'px';
+            const rect = input.getBoundingClientRect();
             suggestionsBox.style.display = 'block';
         });
 
