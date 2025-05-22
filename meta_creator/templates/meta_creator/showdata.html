@@ -397,10 +397,10 @@
                                             <input type="checkbox" class="checkbox-element" data-role="contributor" name="checkbox-contributor" checked>
                                         </td>
                                         <td>
-                                            <input type="checkbox" class="checkbox-element" data-role="author" name="checkbox-author" {% if metadata_dict|check_author:contributor.email %}checked{% endif %}>
+                                            <input type="checkbox" class="checkbox-element" data-role="author" name="checkbox-author" {% if metadata_dict|check_author:contributor %}checked{% endif %}>
                                         </td>
                                         <td>
-                                            <input type="checkbox" class="checkbox-element" data-role="maintainer" name="checkbox-maintainer" {% if metadata_dict|check_maintainer:contributor.email %}checked{% endif %}>
+                                            <input type="checkbox" class="checkbox-element" data-role="maintainer" name="checkbox-maintainer" {% if metadata_dict|check_maintainer:contributor %}checked{% endif %}>
                                         </td>
                                         <td>
                                             <i title="Delete" class="fas fa-trash-alt" onclick="handleDelete(event)" data-action="delete"></i>

@@ -26,16 +26,20 @@ def camel_to_spaces_lower(value):
 
 #Define function to check if a author with a given email is present
 @register.filter
-def check_author(dictionary, email):
+def check_author(dictionary, contributor):
+    if not isinstance(contributor, dict):
+        return False
     authors = dictionary.get("author")
 
-    return check_for_value(authors, email)
+    return check_for_value(authors, contributor)
 
-def check_for_value(metadata, email):
+def check_for_value(metadata, contributor):
     if not metadata:
         return False
     for value in metadata:
-        if isinstance(value, dict) and value.get('email') == email:
+        if isinstance(value, dict) and value.get('email') == contributor.get('email',''):
+            return True
+        if isinstance(value, dict) and value.get('givenName') == contributor.get('givenName','') and value.get('familyName') == contributor.get('familyName',''):
             return True
     
     return False
