@@ -41,8 +41,7 @@ def download_url_releases(url):
     Constructs a releases URL for the given base GitHub repository URL
     and checks if it is accessible.
 
-    Args:
-        url (str): The base GitHub repository URL.
+    download_url = f"{url}/releases"
 
     Returns:
         str: The releases URL if accessible, otherwise an empty string.

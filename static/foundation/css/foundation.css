@@ -349,18 +349,20 @@ form.data-form3 {
 }
 
 .form-group input[type="text"], select {
-    width: 118%;
+    width: 110%;
     padding: 8px;
     border-radius: 4px;
     border: 1px solid #ccc;
     transition: border-color 0.2s ease-in-out;
 }
 
+/* style for general single input elements */
 .form-group .single_inputs {
     width: 40%;
     float: left;
     margin-right: 10%;
-    margin-bottom: 0.5%;
+    margin-bottom: 0.2%;
+    box-sizing: border-box;
 }
 
 .form-group input[type="text"]:focus, select:focus {
@@ -368,9 +370,13 @@ form.data-form3 {
     border-color: #0088cc;
 }
 
-#description, #programmingLanguage, #keywords {
-    width: 82%;
-    margin-bottom: 2%;
+/* style for general single input elements with longer values */
+.form-group .long_field {
+    width: 85%;
+    margin-bottom: 0.2%;
+    margin-right: 10%;
+    float: left;
+    box-sizing: border-box;
 }
 
 .form-group legend {
@@ -513,6 +519,109 @@ div.error-container {
         div.error-container a:hover {
             text-decoration: underline;
         }
+
+/********************************* Style for auto table **********************************/
+/* Fixed width and equal column distribution for auto-property-table */
+.auto-property-table {
+    margin-top: 8px;
+    width: 110%; /* Same as .long_field */
+    min-width: 500px; /* Optional: for usability */
+    table-layout: fixed; /* Ensures equal column width */
+    margin-bottom: 1rem;
+    border-collapse: collapse;
+}
+
+    .auto-property-table th,
+    .auto-property-table td {
+        padding: 8px 12px;
+        width: auto; /* Let table-layout: fixed handle equal width */
+        text-align: left;
+        padding: 8px;
+        border: 1px solid #ccc;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+.add-row-controls {
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
+    gap: 8px;
+    /* The number 1fr will make all children (inputs) share the space equally */
+    /* The last child (button) will auto-size to its content */
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)) auto;
+    margin-top: 8px;
+}
+
+    .add-row-controls .add-row-input,
+    .add-row-controls .add-row-tag-input,
+    .add-row-controls .add-row-dropdown-select {
+        min-width: 60px;
+        max-width: 200px;
+        width: 100%;
+        box-sizing: border-box;
+        height: 2.4375rem;
+        padding: 0.5rem;
+        border: 1px solid #cacaca;
+        background-color: #fefefe;
+        font-size: 1rem;
+    }
+
+    .add-row-controls .add-row-btn {
+        padding: 4px 12px;
+        font-size: 0.95em;
+        height: 32px;
+        white-space: nowrap;
+    }
+
+.add-row-tags-container {
+    position: relative;
+}
+
+td.table-tagging-cell {
+    position: relative;
+}
+
+/* Make the tags-list a flex container so tags wrap and only take as much space as needed */
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px; /* Optional: space between tags */
+    align-items: center;
+}
+
+/* Make each tag inline-flex and auto-sized */
+.tag {
+    display: inline-flex;
+    align-items: center;
+    background: #e0e0e0;
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 0.95em;
+    margin: 2px 0;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.tag-suggestions {
+    position: absolute;
+    background: #fff;
+    border: 1px solid #ccc;
+    z-index: 10000;
+    max-height: 200px;
+    overflow-y: auto;
+    font-size: 0.95em;
+}
+
+.suggestion-item {
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+    .suggestion-item:hover {
+        background: #f0f0f0;
+    }
 
 /********************************* Style for contributors table **********************************/
 /* contributors table */
@@ -774,27 +883,36 @@ button.TrySMECS {
 .fa-info-circle {
     opacity: 0.5;
     font-size: 12px;
+    z-index: 1;
 }
 
 .tooltip-text-metadata {
     visibility: hidden;
     font-size: 70%;
     min-width: 200px;
-    max-width: 400px;
+    max-width: 260px;
     width: auto;
     background-color: #5e5b5b;
     color: #fff;
     text-align: left;
     border-radius: 6px;
     padding: 5px;
-    position: absolute;
     z-index: 1000;
-    top: 100%;
+    /*top: 100%;
     left: 50%;
-    transform: translateX(-50%);
+    position: absolute;
+    */
+    position: fixed;
+    left: 0; /* Will be set dynamically */
+    top: 0; /* Will be set dynamically */ 
     transition: opacity 0.3s;
     pointer-events: none;
     opacity: 0;
+    word-break: break-word; /* Allow long words to wrap */
+    white-space: normal; /* Allow text to wrap */
+    box-sizing: border-box;
+    overflow-wrap: break-word; /* Ensure wrapping for long words */
+    display: none;
 }
 
 .custom-tooltip-metadata:hover .tooltip-text-metadata {
@@ -831,7 +949,6 @@ button.TrySMECS {
     padding: 3px;
     position: absolute;
     top: 0;
-    transform: translateX(-50%);
     transition: opacity 0.3s;
     pointer-events: none;
 }
@@ -939,8 +1056,7 @@ button.TrySMECS {
     font-size: 24px;
 }
 
-/************************************programming languages list**************************************/
-        .single_inputs {
+.single_inputs {
     position: relative;
 }
 
@@ -956,19 +1072,6 @@ button.TrySMECS {
     top: 100%;
     left: 0;
     box-sizing: border-box;
-}
-
-#licenseSuggestions {
-    border: 1px solid #ccc;
-    background-color: white;
-    max-height: 150px;
-    overflow-y: auto;
-    display: none;
-    position: absolute;
-    width: 118%;
-    z-index: 1000;
-    top: 64%;
-    left: 0;
 }
 
 .suggestion-item {
@@ -1366,11 +1469,6 @@ input:checked + .slider {
         margin-top: 4%;
     }
 
-    #form1 input[type=url], .form-group input[type="text"], select
-    .form-group fieldset label, .data-form3 label {
-        font-size: 74%;
-    }
-
     .form-group fieldset.fieldset_content, .form-group fieldset.copyrightHolder {
         width: 45%;
         margin-right: 4%;
@@ -1518,7 +1616,7 @@ input:checked + .slider {
 /* *********************Fixed width when editing cells*********************** */
 .table-cell {
     white-space: nowrap;
-    overflow: hidden;
+    /*overflow: hidden;*/
     text-overflow: ellipsis;
 }
 
@@ -1574,16 +1672,17 @@ input:checked + .slider {
     }
 }
 /* *********************Tags*********************** */
-.tags-container {
-    width: 98%;
+.form-group .tags-container {
+    width: 110%;
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
     align-items: center;
     padding: 5px;
+    box-sizing: border-box;
 }
 
-.tag {
+.form-group .tag {
     background-color: #dddddd;
     color: rgb(34, 34, 34);
     padding: 4px 8px;
@@ -1593,7 +1692,7 @@ input:checked + .slider {
     font-size: 13px;
 }
 
-.remove-tag {
+.form-group .remove-tag {
     margin-left: 6px;
     cursor: pointer;
     font-weight: bold;
@@ -1625,11 +1724,13 @@ input:checked + .slider {
         background-color: #f0f0f0;
     }
 
-.form-group #programmingLanguageWrapper, .form-group #keywordsWrapper {
-    width: 100%;
-    margin-right: 10%;
-    margin-bottom: 1.5%;
-    float: left;
+.form-group .tags-container input[type="text"] {
+    width: 110%;
+    outline: none;
+    flex-grow: 1;
+    min-width: 0px;
+    font-size: 1em;
+    padding: 4px 0;
 }
 
 div div p#contributor-explanation {
@@ -1639,6 +1740,7 @@ div div p#contributor-explanation {
 .collapsible-content {
     display: none;
     margin-top: 10px;
+    z-index: 2000;
 }
 
 .collapsible-button {

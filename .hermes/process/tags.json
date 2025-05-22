@@ -1,0 +1,666 @@
+{
+  "@context": {
+    "plugin": "git",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "@type": {
+    "plugin": "git",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "identifier": {
+    "alternatives": [
+      [
+        "796699799",
+        {
+          "plugin": "codemeta",
+          "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+          "timestamp": "2025-05-18T19:10:15.953631",
+          "harvester": "codemeta"
+        }
+      ]
+    ],
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "name": {
+    "alternatives": [
+      [
+        "Software Metadata Extraction and Curation Software (SMECS)",
+        {
+          "plugin": "cff",
+          "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+          "timestamp": "2025-05-18T19:10:15.258167",
+          "harvester": "cff"
+        }
+      ]
+    ],
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "description": {
+    "alternatives": [
+      [
+        "SMECS is a web-based tool designed to extract and curate research software metadata in alignment with the codemeta software metadata standard. By accessing repositories on platforms like GitHub and GitLab, SMECS extracts multiple already existing metadata in the harvesting phase. In the curation phase its intuitive graphical interface allows researchers to easily improve and change the retrieved metadata to bestly represent their software. Ultimately, SMECS allows to export the curated metadata in JSON format in line with the codemeta stand.",
+        {
+          "plugin": "codemeta",
+          "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+          "timestamp": "2025-05-18T19:10:15.953631",
+          "harvester": "codemeta"
+        }
+      ],
+      [
+        "SMECS is a web-based tool designed to extract and curate research software metadata in alignment with the codemeta  software metadata standard. By accessing repositories on  platforms like GitHub and GitLab, SMECS extracts multiple  already existing metadata in the harvesting phase.  In the curation phase its intuitive graphical interface  allows researchers to easily improve and change the retrieved  metadata to bestly represent their software. Ultimately, SMECS allows to export the curated metadata in JSON format in line with the codemeta stand.",
+        {
+          "plugin": "cff",
+          "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+          "timestamp": "2025-05-18T19:10:15.258167",
+          "harvester": "cff"
+        }
+      ]
+    ],
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "codeRepository": {
+    "plugin": "git",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "issueTracker": {
+    "plugin": "git",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "license": {
+    "alternatives": [
+      [
+        "https://spdx.org/licenses/AGPL-3.0",
+        {
+          "plugin": "codemeta",
+          "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+          "timestamp": "2025-05-18T19:10:15.953631",
+          "harvester": "codemeta"
+        }
+      ],
+      [
+        "https://spdx.org/licenses/AGPL-3.0-or-later",
+        {
+          "plugin": "cff",
+          "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+          "timestamp": "2025-05-18T19:10:15.258167",
+          "harvester": "cff"
+        }
+      ]
+    ],
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[0].id": {
+    "plugin": "codemeta",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+    "timestamp": "2025-05-18T19:10:15.953631",
+    "harvester": "codemeta"
+  },
+  "contributor[0].type": {
+    "plugin": "codemeta",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+    "timestamp": "2025-05-18T19:10:15.953631",
+    "harvester": "codemeta"
+  },
+  "contributor[0].email": {
+    "alternatives": [
+      [
+        "stephan.ferenz@uol.de",
+        {
+          "plugin": "codemeta",
+          "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+          "timestamp": "2025-05-18T19:10:15.953631",
+          "harvester": "codemeta"
+        }
+      ]
+    ],
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[0].familyName": {
+    "alternatives": [
+      [
+        "Ferenz",
+        {
+          "plugin": "codemeta",
+          "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+          "timestamp": "2025-05-18T19:10:15.953631",
+          "harvester": "codemeta"
+        }
+      ]
+    ],
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[0].givenName": {
+    "alternatives": [
+      [
+        "Stephan",
+        {
+          "plugin": "codemeta",
+          "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+          "timestamp": "2025-05-18T19:10:15.953631",
+          "harvester": "codemeta"
+        }
+      ]
+    ],
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[1].id": {
+    "plugin": "codemeta",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+    "timestamp": "2025-05-18T19:10:15.953631",
+    "harvester": "codemeta"
+  },
+  "contributor[1].type": {
+    "plugin": "codemeta",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+    "timestamp": "2025-05-18T19:10:15.953631",
+    "harvester": "codemeta"
+  },
+  "contributor[1].email": {
+    "alternatives": [
+      [
+        "aida.jafarbigloo.274@gmail.com",
+        {
+          "plugin": "codemeta",
+          "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+          "timestamp": "2025-05-18T19:10:15.953631",
+          "harvester": "codemeta"
+        }
+      ]
+    ],
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[1].familyName": {
+    "alternatives": [
+      [
+        "Jafarbigloo",
+        {
+          "plugin": "codemeta",
+          "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+          "timestamp": "2025-05-18T19:10:15.953631",
+          "harvester": "codemeta"
+        }
+      ]
+    ],
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[1].givenName": {
+    "alternatives": [
+      [
+        "Aida",
+        {
+          "plugin": "codemeta",
+          "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+          "timestamp": "2025-05-18T19:10:15.953631",
+          "harvester": "codemeta"
+        }
+      ]
+    ],
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[2].id": {
+    "plugin": "codemeta",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+    "timestamp": "2025-05-18T19:10:15.953631",
+    "harvester": "codemeta"
+  },
+  "contributor[2].type": {
+    "plugin": "codemeta",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+    "timestamp": "2025-05-18T19:10:15.953631",
+    "harvester": "codemeta"
+  },
+  "contributor[2].email": {
+    "alternatives": [
+      [
+        "sundraiz.shah@gmail.com",
+        {
+          "plugin": "codemeta",
+          "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+          "timestamp": "2025-05-18T19:10:15.953631",
+          "harvester": "codemeta"
+        }
+      ]
+    ],
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[2].familyName": {
+    "alternatives": [
+      [
+        "Sundraiz Shah",
+        {
+          "plugin": "codemeta",
+          "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+          "timestamp": "2025-05-18T19:10:15.953631",
+          "harvester": "codemeta"
+        }
+      ]
+    ],
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[2].givenName": {
+    "alternatives": [
+      [
+        "Syed",
+        {
+          "plugin": "codemeta",
+          "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+          "timestamp": "2025-05-18T19:10:15.953631",
+          "harvester": "codemeta"
+        }
+      ]
+    ],
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "author[0].id": {
+    "plugin": "codemeta",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+    "timestamp": "2025-05-18T19:10:15.953631",
+    "harvester": "codemeta"
+  },
+  "author[0].type": {
+    "plugin": "codemeta",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+    "timestamp": "2025-05-18T19:10:15.953631",
+    "harvester": "codemeta"
+  },
+  "author[0].email": {
+    "plugin": "cff",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+    "timestamp": "2025-05-18T19:10:15.258167",
+    "harvester": "cff"
+  },
+  "author[0].familyName": {
+    "plugin": "cff",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+    "timestamp": "2025-05-18T19:10:15.258167",
+    "harvester": "cff"
+  },
+  "author[0].givenName": {
+    "plugin": "cff",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+    "timestamp": "2025-05-18T19:10:15.258167",
+    "harvester": "cff"
+  },
+  "author[1].id": {
+    "plugin": "codemeta",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+    "timestamp": "2025-05-18T19:10:15.953631",
+    "harvester": "codemeta"
+  },
+  "author[1].type": {
+    "plugin": "codemeta",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+    "timestamp": "2025-05-18T19:10:15.953631",
+    "harvester": "codemeta"
+  },
+  "author[1].email": {
+    "plugin": "cff",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+    "timestamp": "2025-05-18T19:10:15.258167",
+    "harvester": "cff"
+  },
+  "author[1].familyName": {
+    "plugin": "cff",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+    "timestamp": "2025-05-18T19:10:15.258167",
+    "harvester": "cff"
+  },
+  "author[1].givenName": {
+    "plugin": "cff",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+    "timestamp": "2025-05-18T19:10:15.258167",
+    "harvester": "cff"
+  },
+  "programmingLanguage[0]": {
+    "plugin": "git",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "programmingLanguage[1]": {
+    "plugin": "git",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "programmingLanguage[2]": {
+    "plugin": "git",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "programmingLanguage[3]": {
+    "plugin": "git",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "programmingLanguage[4]": {
+    "plugin": "codemeta",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+    "timestamp": "2025-05-18T19:10:15.953631",
+    "harvester": "codemeta"
+  },
+  "programmingLanguage[5]": {
+    "plugin": "codemeta",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+    "timestamp": "2025-05-18T19:10:15.953631",
+    "harvester": "codemeta"
+  },
+  "keywords[0]": {
+    "plugin": "cff",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+    "timestamp": "2025-05-18T19:10:15.258167",
+    "harvester": "cff"
+  },
+  "keywords[1]": {
+    "plugin": "cff",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+    "timestamp": "2025-05-18T19:10:15.258167",
+    "harvester": "cff"
+  },
+  "keywords[2]": {
+    "plugin": "cff",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+    "timestamp": "2025-05-18T19:10:15.258167",
+    "harvester": "cff"
+  },
+  "keywords[3]": {
+    "plugin": "cff",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+    "timestamp": "2025-05-18T19:10:15.258167",
+    "harvester": "cff"
+  },
+  "keywords[4]": {
+    "plugin": "cff",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+    "timestamp": "2025-05-18T19:10:15.258167",
+    "harvester": "cff"
+  },
+  "keywords[5]": {
+    "plugin": "cff",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+    "timestamp": "2025-05-18T19:10:15.258167",
+    "harvester": "cff"
+  },
+  "dateCreated": {
+    "plugin": "git",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "downloadUrl": {
+    "alternatives": [
+      [
+        "https://github.com/NFDI4Energy/SMECS/releases",
+        {
+          "plugin": "codemeta",
+          "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+          "timestamp": "2025-05-18T19:10:15.953631",
+          "harvester": "codemeta"
+        }
+      ]
+    ],
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "citation": {
+    "plugin": "codemeta",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmpl_gx6eil\\codemeta.json",
+    "timestamp": "2025-05-18T19:10:15.953631",
+    "harvester": "codemeta"
+  },
+  "author[0].@type": {
+    "plugin": "cff",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+    "timestamp": "2025-05-18T19:10:15.258167",
+    "harvester": "cff"
+  },
+  "author[1].@type": {
+    "plugin": "cff",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+    "timestamp": "2025-05-18T19:10:15.258167",
+    "harvester": "cff"
+  },
+  "url": {
+    "plugin": "cff",
+    "local_path": "C:\\Users\\steph\\AppData\\Local\\Temp\\tmps79ljdra\\CITATION.cff",
+    "timestamp": "2025-05-18T19:10:15.258167",
+    "harvester": "cff"
+  },
+  "copyrightHolder.@type": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "copyrightHolder.name": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "dateModified": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "datePublished": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[0].@type": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[1].@type": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[2].@type": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[3].@type": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[3].givenName": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[3].familyName": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[3].email": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[4].@type": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[4].givenName": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[4].familyName": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[4].email": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[5].@type": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[5].givenName": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[5].familyName": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[5].email": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[6].@type": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[6].givenName": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[6].familyName": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[6].email": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[7].@type": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[7].givenName": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[7].familyName": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[7].email": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[8].@type": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[8].givenName": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[8].familyName": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[8].email": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[9].@type": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[9].givenName": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[9].familyName": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[9].email": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[10].@type": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[10].givenName": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[10].familyName": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "contributor[10].email": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  },
+  "readme": {
+    "plugin": "git",
+    "timestamp": "2025-05-18T19:10:14.499478",
+    "harvester": "git"
+  }
+}

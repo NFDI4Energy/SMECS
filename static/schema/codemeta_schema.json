@@ -71,13 +71,7 @@
       "description": "A license document that applies to this content, typically indicated by URL.",
       "type": "array",
       "title": "license",
-      "items": { "$ref": "#/$defs/CreativeWork" }
-    },
-    "copyrightHolder": {
-      "description": "The party holding the legal copyright to the CreativeWork.",
-      "type": "array",
-      "title": "copyrightHolder",
-      "items": { "$ref": "#/$defs/Organization" }
+      "items": { "type": "string" }
     },
     "url": {
       "description": "URL of the item.",
@@ -86,6 +80,12 @@
       "items": {
         "type": "string"
       }
+    },
+    "copyrightHolder": {
+      "description": "The party holding the legal copyright to the CreativeWork.",
+      "type": "array",
+      "title": "copyrightHolder",
+      "items": { "$ref": "#/$defs/Organization" }
     },
     "softwareVersion": {
       "description": "Version of the software instance.",

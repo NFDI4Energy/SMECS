@@ -6,4 +6,5 @@ myenv/
 .vs
 env/
 /Metadata mosaik.json
-/.hermes
+/.hermes/*
+.hermes

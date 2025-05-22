@@ -16,17 +16,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let contents = document.querySelectorAll('.tab-content_ext .tab');
     const urlInputs = document.querySelectorAll('.url-input');
     const copyBtn = document.getElementById('copy-button');
-    const input_languages = document.getElementById("languageInput");
-    const inputLanguages = document.getElementById('languageInput');
-    const suggestionsBox = document.getElementById('suggestions');
     const SPDX_URL = 'https://raw.githubusercontent.com/spdx/license-list-data/master/json/licenses.json';
     const JsonSchema = '/static/schema/codemeta_schema.json';
-    let licenses = [];
-    const licenseInput = document.getElementById('license-input');
-    const licenseSuggestionsBox = document.getElementById('licenseSuggestions');
-    const tagsContainer = document.getElementById("languageTags");
-    const hiddenInput = document.getElementById("languageHiddenInput");
-
     const metadataJson = document.getElementById("metadata-json");
     const data = metadataJson.value;
     const metadata = JSON.parse(data);
@@ -52,18 +43,32 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Find all inputs where the name matches the required field
 
                     inputs.forEach(function (input) {
-                        // Add the 'required' attribute to the input field
-                        input.setAttribute('required', true);
+                        // 1. Standard input/select fields
+                        const standardInputs = document.querySelectorAll(`[name="${fieldKey}"]`);
+                        standardInputs.forEach(function (input) {
+                            input.setAttribute('required', true);
+                        });
 
-                        // Add a red asterisk to the corresponding label
-                        const label = document.querySelector(`label[for="${fieldKey}"]`);
+                        // 2. Tagging fields (hidden input for tagging/tagging_autocomplete)
+                        const hiddenInput = document.getElementById(fieldKey + 'HiddenInput');
+                        if (hiddenInput) {
+                            hiddenInput.setAttribute('required', true);
+                        }
+
+                        // 3. Add asterisk to the correct label
+                        // Try standard label first
+                        let label = document.querySelector(`label[for="${fieldKey}"]`);
+                        // If not found, try tagging label
+                        if (!label) {
+                            label = document.querySelector(`.tagging-label[for="${fieldKey}Input"]`);
+                        }
                         if (label && !label.innerHTML.includes('*')) {
                             const asterisk = document.createElement('span');
                             asterisk.style.color = 'red';
                             asterisk.style.fontSize = '18px';
                             asterisk.textContent = '*';
-                            label.appendChild(document.createTextNode(' '));  // Add space before asterisk
-                            label.appendChild(asterisk);  // Add the asterisk after the label text
+                            label.appendChild(document.createTextNode(' '));
+                            label.appendChild(asterisk);
                         }
                     });
                 });
@@ -144,17 +149,30 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     document.querySelectorAll('.custom-tooltip-metadata').forEach(function (element) {
+        const tooltip = element.querySelector('.tooltip-text-metadata');
+        const icon = element.querySelector('i');
         element.addEventListener('mouseenter', function () {
-            const tooltip = element.querySelector('.tooltip-text-metadata');
+            tooltip.style.display = 'block';
             tooltip.style.visibility = 'visible';
             tooltip.style.opacity = '1';
+            tooltip.style.position = 'fixed';
+            tooltip.style.zIndex = '9999';
+            // Get the icon's position
+            const rect = icon.getBoundingClientRect();
+            const margin = 16;
+            let left = rect.right;
+            let top = rect.top + margin;          
+
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
         });
 
         element.addEventListener('mouseleave', function () {
-            const tooltip = element.querySelector('.tooltip-text-metadata');
+            tooltip.style.display = 'none';
             tooltip.style.visibility = 'hidden';
             tooltip.style.opacity = '0';
         });
+
     });
 
     // show highlighted tag for keywords
@@ -165,7 +183,7 @@ document.addEventListener("DOMContentLoaded", function () {
         container.insertBefore(highlightTag, input);
     }
 
-    // programming and keywords tag logic
+    // Tagging Logic
     function setupTagging({
         containerId,
         hiddenInputId,
@@ -180,15 +198,76 @@ document.addEventListener("DOMContentLoaded", function () {
         const input = document.getElementById(inputId);
         const suggestionsBox = suggestionsId ? document.getElementById(suggestionsId) : null;
 
-        let selectedTags = hiddenInput.value
-            .split(",")
-            .map(v => v.trim())
-            .filter(Boolean);
-        // Show yellow tag once if any keyword exists
-        if (jsonKey === "keywords" && selectedTags.length > 0) {
+        // Detect if this is an object-tagging field (e.g., referencePublication)
+        const label = document.querySelector(`.tagging-label[for="${inputId}"]`);
+        const taggingType = label ? label.getAttribute('data-tagging-type') : null;
+        // For tagging_object, get the constant type from data attribute (set in template)
+        const objectKey = label ? label.getAttribute('data-tagging-object-key') : null;
+        const constantType = label ? label.getAttribute('data-constant-type') : null;
+
+        let selectedTags = [];
+
+        // Parse initial value
+        if (taggingType === "tagging_object") {
+            try {
+                const parsed = JSON.parse(hiddenInput.value);
+                if (Array.isArray(parsed)) selectedTags = parsed;
+            } catch {
+                selectedTags = [];
+            }
+        } else {
+            // tagging (array of strings)
+            selectedTags = hiddenInput.value
+                .split(",")
+                .map(v => v.trim())
+                .filter(Boolean);
+        }
+
+        // Render tags
+        function renderTags() {
+            container.querySelectorAll('.tag').forEach(tag => tag.remove());
+            if (taggingType === "tagging_object") {
+                selectedTags.forEach(item => {
+                    const identifier = item.identifier || '';
+                    const type = item['@type'] || constantType || '';
+                    const tag = document.createElement("span");
+                    tag.classList.add("tag");
+                    tag.setAttribute("data-value", identifier);
+                    tag.innerHTML = `${identifier}<span class="remove-tag" data-value="${identifier}">×</span>`;
+                    container.insertBefore(tag, input);
+                });
+            } else {
+                selectedTags.forEach(item => {
+                    const tag = document.createElement("span");
+                    tag.classList.add("tag");
+                    tag.setAttribute("data-value", item);
+                    tag.innerHTML = `${item}<span class="remove-tag" data-value="${item}">×</span>`;
+                    container.insertBefore(tag, input);
+                });
+            }
+        }
+
+        // Add tag logic
+        function addTag(tagValue) {
+            if (!tagValue) return;
+            if (taggingType === "tagging_object") {
+                if (selectedTags.some(item => item.identifier === tagValue)) return;
+                selectedTags.push({ "@type": constantType || "ScholarlyArticle", "identifier": tagValue });
+            } else {
+                if (selectedTags.includes(tagValue)) return;
+                selectedTags.push(tagValue);
+            }
+            renderTags();
+            updateHidden();
+            input.value = "";
+            if (suggestionsBox) suggestionsBox.style.display = "none";
+        }
+
+        // Show yellow tag once if any tag exists
+        if (selectedTags.length > 0) {
             const highlightTag = document.createElement("span");
             highlightTag.classList.add("highlight-tag");
-            highlightTag.innerHTML = `⚠️ Suggestion: Curate the keywords <span class="acknowledge-tag">Got it!</span>`;
+            highlightTag.innerHTML = `⚠️ Suggestion: Curate here <span class="acknowledge-tag">Got it!</span>`;
             container.insertBefore(highlightTag, input);
         }
 
@@ -200,7 +279,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (!query) return (suggestionsBox.style.display = "none");
 
                 const filtered = autocompleteSource.filter(
-                    tag => tag.toLowerCase().startsWith(query) && !selectedTags.includes(tag)
+                    tag => tag.toLowerCase().startsWith(query) &&
+                        !(objectKey
+                            ? selectedTags.some(item => item[objectKey] === tag)
+                            : selectedTags.includes(tag))
                 );
 
                 if (filtered.length === 0) {
@@ -226,80 +308,166 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
 
-        function addTag(tagValue) {
-            if (!tagValue || selectedTags.includes(tagValue)) return;
-
-            selectedTags.push(tagValue);
-
-            const tag = document.createElement("span");
-            tag.classList.add("tag");
-            tag.innerHTML = `${tagValue}<span class="remove-tag" data-value="${tagValue}">×</span>`;
-            container.insertBefore(tag, input);
-
-            updateHidden();
-            input.value = "";
-            if (suggestionsBox) suggestionsBox.style.display = "none";
-        }
-
+        // Remove tag logic
         container.addEventListener("click", (e) => {
             if (e.target.classList.contains("remove-tag")) {
                 const value = e.target.dataset.value;
-                selectedTags = selectedTags.filter(tag => tag !== value);
+                if (taggingType === "tagging_object") {
+                    selectedTags = selectedTags.filter(item => item.identifier !== value);
+                } else {
+                    selectedTags = selectedTags.filter(tag => tag !== value);
+                }
                 e.target.parentElement.remove();
                 updateHidden();
             }
-
             if (e.target.classList.contains("acknowledge-tag")) {
-                e.target.parentElement.remove();  // Remove the yellow tag
+                e.target.parentElement.remove();
             }
         });
 
+        // Add tag on Enter
         input.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
                 e.preventDefault();
                 const newTag = input.value.trim();
-                if (newTag && !selectedTags.includes(newTag)) {
-                    addTag(newTag);
-                }
-                input.value = "";
-                if (suggestionsBox) suggestionsBox.style.display = "none";
+                if (newTag) addTag(newTag);
             }
         });
 
+        // Update hidden input and JSON
         function updateHidden() {
-            hiddenInput.value = selectedTags.join(", ");
+            if (taggingType === "tagging_object") {
+                hiddenInput.value = JSON.stringify(selectedTags);
+            } else {
+                hiddenInput.value = selectedTags.join(", ");
+            }
             const jsonObject = JSON.parse(metadataJson.value);
             jsonObject[jsonKey] = selectedTags;
             metadataJson.value = JSON.stringify(jsonObject, null, 2);
         }
+
+        // Initial render
+        renderTags();
     }
 
-    // Initialize programmingLanguage with autocomplete
-    fetch(JsonSchema)
-        .then(res => res.json())
-        .then(schema => {
-            const availableLanguages = schema.properties?.programmingLanguage?.items?.enum || [];
+    initializeTaggingFields();
 
-            setupTagging({
-                containerId: "languageTags",
-                hiddenInputId: "languageHiddenInput",
-                inputId: "languageInput",
-                suggestionsId: "suggestions",
-                jsonKey: "programmingLanguage",
-                useAutocomplete: true,
-                autocompleteSource: availableLanguages
-            });
+    function initializeTaggingFields() {
+        // Initialize all taggings and taggings_autocomplete
+        document.querySelectorAll('.tagging-label[data-tagging]').forEach(label => {
+            const key = label.getAttribute('data-tagging');
+            const taggingType = label.getAttribute('data-tagging-type'); // "tagging" or "tagging_autocomplete"
+            const containerId = key + 'Tags';
+            const hiddenInputId = key + 'HiddenInput';
+            const inputId = key + 'Input';
+            const suggestionsId = key + 'Suggestions'; // You can use a convention for suggestions box IDs
+
+            if (taggingType === "tagging_autocomplete") {
+                if (key === "license") {
+                    fetch(SPDX_URL)
+                        .then(response => response.json())
+                        .then(data => {
+                            const spdxLicenses = data.licenses.map(license => license.licenseId);
+                            console.info('Catched SPDX licenses:', spdxLicenses);
+                            setupTagging({
+                                containerId,
+                                hiddenInputId,
+                                inputId,
+                                suggestionsId,
+                                jsonKey: key,
+                                useAutocomplete: true,
+                                autocompleteSource: spdxLicenses
+                            });
+                        })
+                        .catch(error => console.error('Error fetching SPDX licenses:', error));
+                } else {
+                    // Fetch autocomplete source from schema or define it elsewhere
+                    fetch(JsonSchema)
+                        .then(res => res.json())
+                        .then(schema => {
+                            const autocompleteSource = schema.properties?.[key]?.items?.enum || [];
+                            setupTagging({
+                                containerId,
+                                hiddenInputId,
+                                inputId,
+                                suggestionsId,
+                                jsonKey: key,
+                                useAutocomplete: true,
+                                autocompleteSource: autocompleteSource
+                            });
+                        });
+                }
+            } else {
+                setupTagging({
+                    containerId,
+                    hiddenInputId,
+                    inputId,
+                    jsonKey: key,
+                    useAutocomplete: false
+                });
+            }
         });
+    }
 
-    // Initialize keywords without autocomplete
-    setupTagging({
-        containerId: "keywordsTags",
-        hiddenInputId: "keywordsHiddenInput",
-        inputId: "keywordsInput",
-        jsonKey: "keywords",
-        useAutocomplete: false
+    // Create a function of a nested single input
+    function setupSingleInputObject({
+        containerId,
+        hiddenInputId,
+        inputId,
+        jsonKey
+    }) {
+        const container = document.getElementById(containerId);
+        const hiddenInput = document.getElementById(hiddenInputId);
+        const input = document.getElementById(inputId);
+
+        // Get the constant type from the label
+        const label = document.querySelector(`.single-input-object-label[for="${inputId}"]`);
+        const constantType = label ? label.getAttribute('data-single-input-object-type') : null;
+
+        // Parse initial value
+        let valueObj = {};
+        try {
+            valueObj = JSON.parse(hiddenInput.value);
+        } catch {
+            valueObj = {};
+        }
+
+        // Set initial value
+        if (valueObj.identifier) {
+            input.value = valueObj.identifier;
+        }
+
+        // Update hidden input and JSON on change
+        input.addEventListener("input", updateSingleInputObject);
+        input.addEventListener("change", updateSingleInputObject);
+        function updateSingleInputObject() {
+            const identifier = input.value.trim();
+            const obj = {
+                "@type": constantType || "ScholarlyArticle",
+                "identifier": identifier
+            };
+            hiddenInput.value = JSON.stringify(obj);
+
+            // Update main JSON
+            const jsonObject = JSON.parse(metadataJson.value);
+            jsonObject[jsonKey] = obj;
+            metadataJson.value = JSON.stringify(jsonObject, null, 2);
+        }
+    }
+
+    document.querySelectorAll('.single-input-object-label[data-single-input-object]').forEach(label => {
+        const key = label.getAttribute('data-single-input-object');
+        const containerId = key + 'Object';
+        const hiddenInputId = key + 'HiddenInput';
+        const inputId = key + 'Input';
+        setupSingleInputObject({
+            containerId,
+            hiddenInputId,
+            inputId,
+            jsonKey: key
+        });
     });
-
+    
     // Create a general dropdown class
     class DynamicDropdown {
         constructor(dropdownId, jsonSchemaUrl, schemaProperty) {
@@ -359,58 +527,621 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // License
-    // Fetch the SPDX licenses
-    fetch(SPDX_URL)
-        .then(response => response.json())
-        .then(data => {
-            licenses = data.licenses.map(license => license.licenseId);
-        })
-        .catch(error => console.error('Error fetching SPDX licenses:', error));
+    // New table    
+    function updateTableHiddenInput(key) {
+        // Get all rows of the table
+        const table = document.querySelector(`#${key}Table`);
+        const hiddenInput = document.getElementById(`${key}TableHiddenInput`);
+        if (!table || !hiddenInput) return;
 
-    licenseInput.addEventListener("input", function () {
-        const query = licenseInput.value.toLowerCase().split(',').pop().trim();
-        licenseSuggestionsBox.innerHTML = "";
-
-        if (query.length === 0) {
-            licenseSuggestionsBox.style.display = "none";
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        if (rows.length === 0) {
+            hiddenInput.value = '[]';
+            // Also update the main JSON
+            const jsonObject = JSON.parse(metadataJson.value);
+            jsonObject[key] = [];
+            metadataJson.value = JSON.stringify(jsonObject, null, 2);
             return;
         }
 
-        let existingLicenses = licenseInput.value.split(',').map(s => s.trim()).filter(Boolean);
+        // Get column headers (excluding the last "Delete" column)
+        const headers = Array.from(table.querySelectorAll('thead th'))
+            .map(th => th.getAttribute('data-col'))
+            .slice(0, -1);
 
-        const matchedLicenses = licenses.filter(license =>
-            license.toLowerCase().startsWith(query) && !existingLicenses.includes(license)
-        );
+        // Get @type from the table's data-at-type attribute
+        const atType = table.getAttribute('data-at-type');
 
-        if (matchedLicenses.length > 0) {
-            licenseSuggestionsBox.style.display = "block";
-
-            matchedLicenses.forEach(license => {
-                const div = document.createElement("div");
-                div.classList.add("suggestion-item");
-                div.textContent = license;
-                div.addEventListener("click", function () {
-                    existingLicenses[existingLicenses.length - 1] = license;
-                    licenseInput.value = existingLicenses;
-                    // licenseInput.value = existingLicenses.join(', ') + ', ';
-                    licenseSuggestionsBox.style.display = "none";
-                    licenseInput.focus();
-                    const event = new Event('input', { bubbles: true });
-                    licenseInput.dispatchEvent(event);
-                });
-                licenseSuggestionsBox.appendChild(div);
+        // Build array of objects
+        const data = rows.map(row => {
+            const cells = Array.from(row.querySelectorAll('td'));
+            let obj = {};
+            if (atType) obj['@type'] = atType;
+            headers.forEach((header, i) => {
+                if (!header) return; // Skip if header is empty or undefined
+                const cell = cells[i];
+                if (!cell) {
+                    obj[header] = '';
+                    return;
+                }
+                if (cell.getAttribute('data-coltype') === 'dropdown') {
+                    // Prefer data-value if present, fallback to select if in edit mode, else fallback to text
+                    if (cell.hasAttribute('data-value')) {
+                        obj[header] = cell.getAttribute('data-value');
+                    } else if (cell.querySelector('select')) {
+                        obj[header] = cell.querySelector('select').value;
+                    } else {
+                        obj[header] = cell.textContent.trim();
+                    }
+                } else if (cell.classList.contains('table-tagging-cell')) {
+                    // Extract all tag values from data-tag or data-value attribute
+                    const tags = Array.from(cell.querySelectorAll('.tag')).map(tagEl =>
+                        tagEl.getAttribute('data-tag') || tagEl.getAttribute('data-value') || tagEl.textContent.trim()
+                    );
+                    obj[header] = tags;
+                } else {
+                    obj[header] = cell.textContent.trim();
+                }
             });
-        } else {
-            licenseSuggestionsBox.style.display = "none";
-        }
+            return obj;
+        });
+
+        hiddenInput.value = JSON.stringify(data);
+
+        // Also update the main JSON
+        const jsonObject = JSON.parse(metadataJson.value);
+        jsonObject[key] = data;
+        metadataJson.value = JSON.stringify(jsonObject, null, 2);
+    }
+
+    // Loop over all tables with the class 'auto-property-table'
+    document.querySelectorAll('table.auto-property-table').forEach(function (table) {
+        // Extract the key from the table's id (assumes id is like 'copyrightHolderTable')
+        const tableId = table.id;
+        if (!tableId || !tableId.endsWith('Table')) return;
+        const key = tableId.replace(/Table$/, '');
+
+        // Attach a listener for cell edits (blur on any input or td)
+        table.addEventListener('blur', function (e) {
+            if (e.target.tagName === 'TD' || e.target.tagName === 'INPUT') {
+                updateTableHiddenInput(key);
+            }
+        }, true);
+
+        // Optionally, update on row addition/removal or other events as needed
+        // For initial sync
+        updateTableHiddenInput(key);
     });
 
-    // Hide suggestions box when clicking outside
-    document.addEventListener("click", function (e) {
-        if (!licenseSuggestionsBox.contains(e.target) && e.target !== licenseInput) {
-            licenseSuggestionsBox.style.display = "none";
+    // Add Row functionality for all auto-property-tables
+    document.querySelectorAll('.add-row-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const key = btn.getAttribute('data-table-key');
+            const table = document.getElementById(key + 'Table');
+            const hiddenInput = document.getElementById(key + 'TableHiddenInput');
+            if (!table || !hiddenInput) return;
+
+            // Get column headers
+            const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.getAttribute('data-col'));
+            console.log({ headers})
+            // Get input values
+            const controls = btn.parentElement;            
+            const inputs = controls.querySelectorAll('.add-row-input, .add-row-tag-input, .add-row-dropdown-select');
+            console.log({ inputs })
+            const values = Array.from(inputs).map(input => input.value.trim());
+                       
+            // Prevent adding if all fields are empty (including tags)
+            const allEmpty = Array.from(inputs).every(input => input.value.trim() === '') &&
+                Object.values(addRowTags).every(tags => tags.length === 0);
+            if (allEmpty) return;
+
+            // Create new row
+            const tbody = table.querySelector('tbody');
+            const newRow = document.createElement('tr');
+            // Only add data columns, skip the last header ("Delete")
+            for (let i = 0; i < headers.length - 1; i++) {
+                const header = headers[i];
+                // Find the input for this column
+                const input = Array.from(inputs).find(inp =>
+                    inp.getAttribute('data-col') === header && !inp.classList.contains('invalid')
+                );
+     
+                if (!input) continue; // or handle error
+                const col = input.getAttribute('data-col');
+                const colType = input.getAttribute('data-coltype');
+                const dataType = table.getAttribute('data-at-type');
+                const td = document.createElement('td');
+                console.log({header, input, col, colType, dataType})
+                if (colType === 'dropdown') {
+                    console.log("Got to dropdown")
+                    td.className = 'table-tagging-cell';
+                    td.setAttribute('data-col', col);
+                    td.setAttribute('data-coltype', 'dropdown');
+                    td.setAttribute('data-type', dataType);
+
+                    // Show the selected value as plain text
+                    const value = input ? input.value : '';
+                    console.log('Selected value:', input.value);
+                    td.textContent = value;
+                } else if (colType === 'tagging' || colType === 'tagging_autocomplete') {
+                    td.className = 'table-tagging-cell';
+                    td.setAttribute('data-col', col);
+                    td.setAttribute('data-coltype', 'tagging');
+                    td.setAttribute('data-type', dataType);
+                    // Tag UI
+                    const tagsList = document.createElement('div');
+                    tagsList.className = 'tags-list';
+                    (addRowTags[col] || []).forEach(tag => {
+                        const span = document.createElement('span');
+                        span.className = 'tag';
+                        span.setAttribute('data-tag', tag);
+                        span.innerHTML = tag + ' <span class="remove-tag" data-tag="' + tag + '">×</span>';
+                        tagsList.appendChild(span);
+                    });
+                    const input = document.createElement('input');
+                    input.className = 'tag-input';
+                    input.type = 'text';
+                    input.style.display = 'none';
+                    input.placeholder = 'Add tag and press Enter';
+                    td.appendChild(tagsList);
+                    td.appendChild(input);
+                    // Reset tags for next row
+                    addRowTags[col] = [];
+                    // Remove tag elements from add-row-controls
+                    const addRowContainer = document.querySelector('.add-row-tags-container[data-col="' + col + '"]');
+                    if (addRowContainer) {
+                        addRowContainer.querySelectorAll('.tag').forEach(tagEl => tagEl.remove());
+                    }
+                    // If tagging_autocomplete, initialize autocomplete for this cell
+                    if (colType === 'tagging_autocomplete') {
+                        fetch(JsonSchema)
+                            .then(res => res.json())
+                            .then(schema => {
+                                const autocompleteSource = schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];        
+                                if (autocompleteSource.length > 0) {
+                                    setupTableTagAutocomplete({ cell: td, autocompleteSource });
+                                }
+                            });
+                    }
+                } else {
+                    td.textContent = values[i] || '';
+                }
+                newRow.appendChild(td);
+            }
+            const deleteTd = document.createElement('td');
+            deleteTd.innerHTML = '<i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i>';
+            newRow.appendChild(deleteTd);
+            tbody.appendChild(newRow);
+            initializeTableTaggingCells();
+
+            // Clear input fields
+            inputs.forEach(input => {
+                if (input.tagName === 'SELECT') {
+                    input.selectedIndex = 0;
+                } else {
+                    input.value = '';
+                }
+            });
+
+            // Update hidden input
+            updateTableHiddenInput(key);
+        });
+    });
+
+    // Store tags for each tagging column before row is added
+    const addRowTags = {};
+
+    // Initialize tagging for add-row-controls
+    document.querySelectorAll('.add-row-tags-container').forEach(container => {
+        const col = container.getAttribute('data-col');
+        addRowTags[col] = [];
+        const input = container.querySelector('.add-row-tag-input');
+        const colType = container.getAttribute('data-coltype');
+        const dataType = container.getAttribute('data-type');
+        // --- Autocomplete setup ---
+        let autocompleteSource = [];
+        let suggestionsBox = createSuggestionsBox(container);
+
+        if (colType === 'tagging_autocomplete') {
+            fetch(JsonSchema)
+                .then(res => res.json())
+                .then(schema => {
+                    autocompleteSource = schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];
+                });            
+
+            input.addEventListener('input', function () {
+                const query = input.value.trim().toLowerCase();
+                suggestionsBox.innerHTML = '';
+                if (!query || autocompleteSource.length === 0) {
+                    suggestionsBox.style.display = 'none';
+                    return;
+                }
+                const selectedTags = addRowTags[col];
+                const filtered = autocompleteSource.filter(
+                    tag => tag.toLowerCase().startsWith(query) && !selectedTags.includes(tag)
+                );
+                if (filtered.length === 0) {
+                    suggestionsBox.style.display = 'none';
+                    return;
+                }
+                filtered.forEach(tag => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.textContent = tag;
+                    div.style.cursor = 'pointer';
+                    div.onclick = function () {
+                        input.value = tag;
+                        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+                        suggestionsBox.style.display = 'none';
+                    };
+                    suggestionsBox.appendChild(div);
+                });
+                // Position suggestions below the input
+                const inputRect = input.getBoundingClientRect();
+                suggestionsBox.style.left = inputRect.left + 'px';
+                suggestionsBox.style.top = inputRect.bottom + 'px';
+                suggestionsBox.style.width = input.offsetWidth + 'px';
+                suggestionsBox.style.display = 'block';
+            });
+
+            // Hide suggestions on blur/click outside
+            input.addEventListener('blur', function () {
+                setTimeout(() => { suggestionsBox.style.display = 'none'; }, 200);
+            });
+        } else if (colType === 'dropdown') {
+            fetch(JsonSchema)
+                .then(res => res.json())
+                .then(schema => {
+                    const options = schema["$defs"]?.[dataType]?.properties?.[col]?.enum || [];
+                    const select = document.createElement('select');
+                    select.className = 'add-row-dropdown-select';
+                    select.name = 'selectElement';
+                    select.setAttribute('data-col', col);
+                    select.setAttribute('data-type', dataType);
+                    select.setAttribute('data-coltype', 'dropdown');
+                    select.innerHTML = '<option value="">Select...</option>' +
+                        options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
+                    // Replace the input with the select
+                    input.style.display = 'none';
+                    container.appendChild(select);
+
+                    // On change, update addRowTags or values as needed
+                    select.addEventListener('change', function () {
+                        addRowTags[col] = [select.value];
+                        console.log('Selected value:', select.value);
+                    });
+                });
         }
+
+        // Add tag on Enter
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && input.value.trim() !== '') {
+                e.preventDefault();
+                const tag = input.value.trim();
+                if (!addRowTags[col].includes(tag)) {
+                    addRowTags[col].push(tag);
+
+                    // Create tag element
+                    const span = document.createElement('span');
+                    span.className = 'tag';
+                    span.setAttribute('data-tag', tag);
+                    span.innerHTML = tag + ' <span class="remove-tag" data-tag="' + tag + '">×</span>';
+                    // Insert before input
+                    container.insertBefore(span, input);
+                }
+                input.value = '';
+                if (suggestionsBox) suggestionsBox.style.display = 'none';
+            }
+        });
+
+        // Remove tag on click
+        container.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-tag')) {
+                const tag = e.target.getAttribute('data-tag');
+                addRowTags[col] = addRowTags[col].filter(t => t !== tag);
+                e.target.parentElement.remove();
+            }
+        });
+    });
+
+    function createSuggestionsBox() {
+        let suggestionsBox = document.querySelector('.tag-suggestions-global');
+        if (!suggestionsBox) {
+            suggestionsBox = document.createElement('div');
+            suggestionsBox.className = 'tag-suggestions tag-suggestions-global';
+            suggestionsBox.style.position = 'absolute';
+            suggestionsBox.style.background = '#fff';
+            suggestionsBox.style.border = '1px solid #ccc';
+            suggestionsBox.style.zIndex = 10000;
+            suggestionsBox.style.display = 'none';
+            document.body.appendChild(suggestionsBox);
+        }
+        return suggestionsBox;
+    }
+
+    // functionanilties within all auto-property-tables
+    document.querySelectorAll('table.auto-property-table').forEach(function (table) { 
+        table.addEventListener('click', function (e) {
+            // Delete rows
+            if (e.target.classList.contains('delete-row-btn')) {
+                const row = e.target.closest('tr');
+                if (row) {
+                    row.remove();
+                    // Update the hidden input
+                    const tableId = table.id;
+                    if (tableId && tableId.endsWith('Table')) {
+                        const key = tableId.replace(/Table$/, '');
+                        updateTableHiddenInput(key);
+                    }
+                }
+            }
+
+            // Update other fields
+            // Only allow editing on <td> that is not the last column (delete icon)
+            const cell = e.target.closest('td');
+            if (!cell) return;
+            if (cell.classList.contains('table-tagging-cell')) return;
+            if (cell.classList.contains('table-tagging-cell')) return;
+            const row = cell.parentElement;
+            const allCells = Array.from(row.children);
+            // Don't edit the last cell (delete icon)
+            if (allCells.indexOf(cell) === allCells.length - 1) return;
+            // Prevent multiple inputs
+            if (cell.querySelector('input')) return;
+
+            const oldValue = cell.textContent;
+            cell.innerHTML = '';
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = oldValue;
+            input.style.width = '100%';
+            input.style.boxSizing = 'border-box';
+            cell.appendChild(input);
+            input.focus();
+
+            // Save on blur or Enter
+            function save() {
+                cell.textContent = input.value;
+                // Update the hidden input for this table
+                const tableId = table.id;
+                if (tableId && tableId.endsWith('Table')) {
+                    const key = tableId.replace(/Table$/, '');
+                    updateTableHiddenInput(key);
+                }
+            }
+            input.addEventListener('blur', save);
+            input.addEventListener('keydown', function (evt) {
+                if (evt.key === 'Enter') {
+                    input.blur();
+                } else if (evt.key === 'Escape') {
+                    cell.textContent = oldValue;
+                }
+            });
+
+        });
+    });
+
+    // Enable tag editing in table cells
+    function initializeTableTaggingCells() {
+        document.querySelectorAll('td.table-tagging-cell').forEach(function (cell) {
+            // Prevent double-binding
+            if (cell.dataset.taggingInitialized) return;
+            cell.dataset.taggingInitialized = "true";
+
+            const tagsList = cell.querySelector('.tags-list');
+            let input = cell.querySelector('.tag-input');
+            if (!input) {
+                input = document.createElement('input');
+                input.className = 'tag-input';
+                input.type = 'text';
+                input.style.display = 'none';
+                input.placeholder = 'Add tag and press Enter';
+                cell.appendChild(input);
+            }
+
+            // --- Autocomplete logic: fetch source and setup ---
+            // You can set data-autocomplete-source on the cell or column header, or fetch from schema
+            
+            const col = cell.getAttribute('data-col');
+            const colType = cell.getAttribute('data-coltype');
+            const dataType = cell.getAttribute('data-type');
+            // Example: fetch from schema if available
+            if (colType == 'tagging_autocomplete') {
+                fetch(JsonSchema)
+                    .then(res => res.json())
+                    .then(schema => {
+                        autocompleteSource = schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];
+                        if (autocompleteSource.length > 0) {
+                            setupTableTagAutocomplete({ cell, autocompleteSource });
+                    }
+                });
+            } else if (colType === 'dropdown') {
+                // Show value as plain text initially
+                const currentValue = cell.getAttribute('data-value') || cell.textContent.trim() || '';
+                cell.innerHTML = '';
+                cell.textContent = currentValue;
+
+                // Only show dropdown on cell click
+                cell.addEventListener('click', function handleDropdownCellClick(e) {
+                    // Prevent multiple dropdowns
+                    if (cell.querySelector('select')) return;
+
+                    fetch(JsonSchema)
+                        .then(res => res.json())
+                        .then(schema => {
+                            const options = schema["$defs"]?.[dataType]?.properties?.[col]?.enum || [];
+                            const select = document.createElement('select');
+                            select.className = 'table-dropdown-select';
+                            select.name = 'ChangingSelect'
+                            select.innerHTML = '<option value="">Select...</option>' +
+                                options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
+                            select.value = currentValue;
+
+                            // Replace cell content with select
+                            cell.innerHTML = '';
+                            cell.appendChild(select);
+                            select.focus();
+
+                            // On change or blur, update cell and data
+                            function finalizeSelection() {
+                                const selectedValue = select.value;
+                                cell.setAttribute('data-value', selectedValue);
+                                cell.innerHTML = selectedValue;
+
+                                // Remove this event listener to avoid duplicate dropdowns
+                                cell.removeEventListener('click', handleDropdownCellClick);
+
+                                // Re-attach the click event for future edits
+                                setTimeout(() => {
+                                    cell.addEventListener('click', handleDropdownCellClick);
+                                }, 0);
+
+                                // Update the hidden input and main JSON
+                                const table = cell.closest('table');
+                                if (table && table.id.endsWith('Table')) {
+                                    const key = table.id.replace(/Table$/, '');
+                                    updateTableHiddenInput(key);
+                                }
+                            }
+
+                            select.addEventListener('change', finalizeSelection);
+                            select.addEventListener('blur', finalizeSelection);
+                        });
+
+                    // Remove this event listener to prevent re-entry until finished
+                    cell.removeEventListener('click', handleDropdownCellClick);
+                });
+
+                return; // Skip further tag logic for dropdowns
+            }
+
+
+            // Show input when cell is clicked (not on tag or remove)
+            cell.addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-tag') || e.target.classList.contains('tag')) return;
+                input.style.display = 'inline-block';
+                input.focus();
+                e.stopPropagation();
+            });
+
+            // Hide input when focus is lost
+            input.addEventListener('blur', function () {
+                setTimeout(function () { input.style.display = 'none'; }, 100);
+            });
+
+            // Add tag on Enter
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && input.value.trim() !== '') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const tag = input.value.trim();
+                    if ([...tagsList.querySelectorAll('.tag')].some(t => t.textContent.trim() === tag + '×')) {
+                        input.value = '';
+                        return;
+                    }
+                    const span = document.createElement('span');
+                    span.className = 'tag';
+                    span.setAttribute('data-tag', tag);
+                    span.innerHTML = tag + ' <span class="remove-tag" data-tag="' + tag + '">×</span>';
+                    tagsList.appendChild(span);
+                    input.value = '';
+                    const table = cell.closest('table');
+                    if (table && table.id.endsWith('Table')) {
+                        const key = table.id.replace(/Table$/, '');
+                        updateTableHiddenInput(key);
+                    }
+                }
+            });
+
+            // Remove tag on click (cell-local)
+            tagsList.addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-tag')) {
+                    e.target.parentElement.remove();
+                    input.style.display = 'inline-block';
+                    input.focus();
+                    const table = cell.closest('table');
+                    if (table && table.id.endsWith('Table')) {
+                        const key = table.id.replace(/Table$/, '');
+                        updateTableHiddenInput(key);
+                    }
+                    e.stopPropagation();
+                }
+            });
+        });
+    }
+
+    initializeTableTaggingCells();
+
+    // General autocomplete technique
+    function setupTagAutocompleteInput({ input, selectedTagsProvider, autocompleteSource, onTagSelected, container }) {
+        // Create or get suggestions box
+        let suggestionsBox = container.querySelector('.tag-suggestions-global');
+        if (!suggestionsBox) {
+            suggestionsBox = createSuggestionsBox(container);
+        }
+
+        input.addEventListener('input', function () {
+            const query = input.value.trim().toLowerCase();
+            suggestionsBox.innerHTML = '';
+            if (!query) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            const selectedTags = selectedTagsProvider();
+            const filtered = autocompleteSource.filter(
+                tag => tag.toLowerCase().startsWith(query) && !selectedTags.includes(tag)
+            );
+            if (filtered.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            filtered.forEach(tag => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = tag;
+                div.style.cursor = 'pointer';
+                div.onclick = function () {
+                    onTagSelected(tag);
+                    suggestionsBox.style.display = 'none';
+                };
+                suggestionsBox.appendChild(div);
+            });
+            // Position suggestions below the input
+            const inputRect = input.getBoundingClientRect();
+            suggestionsBox.style.left = inputRect.left + 'px';
+            suggestionsBox.style.top = inputRect.bottom + 'px';
+            suggestionsBox.style.width = input.offsetWidth + 'px';
+            suggestionsBox.style.display = 'block';
+        });
+
+        // Hide suggestions on blur/click outside
+        input.addEventListener('blur', function () {
+            setTimeout(() => { suggestionsBox.style.display = 'none'; }, 200);
+        });
+    }
+
+    // Enable tagging autocomplete
+    function setupTableTagAutocomplete({ cell, autocompleteSource }) {
+        const input = cell.querySelector('.tag-input');
+        if (!input) return;
+        const tagsList = cell.querySelector('.tags-list');
+        setupTagAutocompleteInput({
+            input,
+            selectedTagsProvider: () => Array.from(tagsList.querySelectorAll('.tag')).map(t => t.textContent.trim().replace('×', '').trim()),
+            autocompleteSource,
+            onTagSelected: (tag) => {
+                input.value = tag;
+                input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+            },
+            container: cell
+        });
+    }
+
+    // Hide all tag-inputs when clicking outside
+    document.addEventListener('click', function () {
+        document.querySelectorAll('td.table-tagging-cell .tag-input').forEach(function (input) {
+            input.style.display = 'none';
+        });
     });
 
     // copy button for json
@@ -538,9 +1269,12 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     // contributor and author table
-    document.getElementById('addPersonButton').addEventListener('click', function () {
-        addPerson('contributor', 'contributorsTableBody', ['Email']);
-    });
+    const addPersonBtn = document.getElementById('addPersonButton');
+    if (addPersonBtn) {
+        addPersonBtn.addEventListener('click', function () {
+            addPerson('contributor', 'contributorsTableBody', ['Email']);
+        });
+    }
 
     // Contributor/Author tables
     function handleTableClick(tableBody, editCallback) {
@@ -627,6 +1361,20 @@ document.addEventListener("DOMContentLoaded", function () {
             'authorFamilyNameInput',
             'authorEmailInput'
         ];
+
+        // Check if input is inside a tags-container (tagging field)
+        const tagsContainer = input.closest('.tags-container');
+        if (tagsContainer) {
+            // Find the hidden input in the parent tagging-wrapper
+            const taggingWrapper = tagsContainer.closest('.tagging-wrapper');
+            if (taggingWrapper) {
+                const hiddenInput = taggingWrapper.querySelector('input[type="hidden"]');
+                if (hiddenInput && hiddenInput.value.trim() !== "") {
+                    input.classList.remove("invalid");
+                    return;
+                }
+            }
+        }
 
         if (skipValidationIds.includes(input.id)) {
             return; // Skip validation for the specified inputs
@@ -822,18 +1570,38 @@ document.addEventListener("DOMContentLoaded", function () {
             const key = input.name.split("[")[0];
             const subkey = input.name.split("[")[1]?.split("]")[0];
 
-            // Collect all IDs of the checkboxes
-            const checkboxIds = Array.from(personCheckboxes)
-                .map(checkbox => checkbox.id)
-                .filter(id => id); // Filter out checkboxes without an ID
-
             const excludedInputs = [
                 "contributor_givenName", "contributor_familyName", "contributor_email",
                 "author_givenName", "author_familyName", "author_email", "checkbox-contributor", "checkbox-maintainer", "checkbox-author"
             ];
 
-            // Add the checkbox IDs to the excludedInputs array
-            excludedInputs.push(...checkboxIds);
+            // Collect all IDs of the checkboxes
+            const checkboxIds = Array.from(personCheckboxes)
+                .map(checkbox => checkbox.id)
+                .filter(id => id); // Filter out checkboxes without an ID
+
+            // Collect all IDs of single input objects
+            const singleInputObjectIds = Array.from(document.querySelectorAll('input[data-single-input-object]'))
+                .map(input => input.name) // or .id, depending on what you want to exclude by
+                .filter(id => id); // Filter out inputs without a name/id
+
+            // Collect all IDs of single input in tables
+            const singleInputTableIds = Array.from(document.querySelectorAll('.auto-property-table input, .auto-property-table select, .auto-property-table textarea'))
+
+            excludedInputs.push(...checkboxIds, ...singleInputObjectIds, ...singleInputTableIds);
+
+            const addRowControls = document.querySelectorAll('.add-row-controls');            
+            addRowControls.forEach(controls => {
+                const fields = controls.querySelectorAll(
+                    '.add-row-input, .add-row-tag-input, .add-row-dropdown-select'
+                );
+                // fields is a NodeList of all relevant input/select fields for this add-row-controls
+                // You can now map/filter as needed:
+                const fieldIds = Array.from(fields)
+                    .map(field => field.name || field.id)
+                    .filter(Boolean);
+                excludedInputs.push(...fieldIds);
+            });
 
             if (!excludedInputs.includes(input.name)) {
                 if (subkey) {
@@ -855,7 +1623,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateFormFromJson(jsonObject) {
         inputs.forEach((input) => {
-
+            
 
             const key = input.name.split("[")[0];
             const subkey = input.name.split("[")[1]?.split("]")[0];
@@ -940,46 +1708,72 @@ document.addEventListener("DOMContentLoaded", function () {
         contributorsTableBody.parentElement.classList.add('scrollable-table');
     }
 
+    function getNestedExpectedKeys(schema, typeName) {
+        // For JSON Schema Draft-07 and later, use $defs; for older, use definitions
+        const defs = schema.$defs || schema.definitions || {};
+        const typeDef = defs[typeName];
+        if (!typeDef || !typeDef.properties) {
+            return [];
+        }
+        // Exclude @type if you want
+        return Object.keys(typeDef.properties).filter(key => key !== "@type");
+    }
 
-    function keysMatch(allowedKeys, requiredKeys, jsonKeys, jsonObject) {
-        // Convert both expected and actual keys to lowercase for case-insensitive matching
+    function matchKeys(allowedKeys, requiredKeys, jsonKeys) {
+        // Ensure "@type" is always allowed
+        if (!allowedKeys.includes("@type")) {
+            allowedKeys = allowedKeys.concat("@type");
+        }
         const lowerAllowedKeys = allowedKeys.map(key => key.toLowerCase());
         const lowerRequiredKeys = requiredKeys.map(key => key.toLowerCase());
         const lowerJsonKeys = jsonKeys.map(key => key.toLowerCase());
 
-        // Find missing: required keys which are not present in json
         const missingKeys = lowerRequiredKeys.filter(key => !lowerJsonKeys.includes(key));
-        // Find extra: keys present in json, which are not part of allowed
         const extraKeys = lowerJsonKeys.filter(key => !lowerAllowedKeys.includes(key));
 
-        // Check nested key in "copyrightHolder"
-        if (jsonObject.hasOwnProperty("copyrightHolder")) {
-            if (!jsonObject.copyrightHolder.hasOwnProperty("name")) {
-                missingKeys.push("copyrightHolder name key is missing");
-            }
-        }
+        return { missingKeys, extraKeys };
+    }
 
+    function keysMatchRecursive(allowedKeys, requiredKeys, jsonObject, schema) {
+        const jsonKeys = Object.keys(jsonObject);
+        const { missingKeys, extraKeys } = matchKeys(allowedKeys, requiredKeys, jsonKeys);
 
-        // Expected keys for nested 'author' and 'contributor' objects
-        const nestedExpectedKeys = ["givenname", "familyname", "email"];
         let nestedErrors = [];
 
-        ["author", "contributor"].forEach(section => {
-            if (Array.isArray(jsonObject[section])) {
-                jsonObject[section].forEach((item, index) => {
-                    const itemKeys = Object.keys(item)
-                        .map(k => k.toLowerCase()) // Convert nested keys to lowercase
-                        .filter(k => k !== "@type"); // Ignore "@type"
-
-                    const missingNested = nestedExpectedKeys.filter(k => !itemKeys.includes(k.toLowerCase()));
-                    const extraNested = itemKeys.filter(k => !nestedExpectedKeys.includes(k.toLowerCase()));
-
-                    if (missingNested.length > 0 || extraNested.length > 0) {
-                        nestedErrors.push(`In ${section}[${index}]: Missing Keys: ${missingNested.join(", ")}, Extra Keys: ${extraNested.join(", ")}`);
+        for (const key of jsonKeys) {
+            const value = jsonObject[key];
+            if (Array.isArray(value)) {
+                value.forEach((item, idx) => {
+                    if (item && typeof item === "object") {
+                        const typeName = item["@type"] || key;
+                        const expectedKeys = getNestedExpectedKeys(schema, typeName);
+                        const requiredNested = []; // Optionally, get required keys for this type from schema
+                        const result = keysMatchRecursive(expectedKeys, requiredNested, item, schema);
+                        if (!result.isMatch) {
+                            nestedErrors.push(
+                                `In ${key}[${idx}] with ${typeName}: Missing Keys: ${result.missingKeys.join(", ")}, Extra Keys: ${result.extraKeys.join(", ")}`
+                            );
+                            if (result.nestedErrors.length > 0) {
+                                nestedErrors = nestedErrors.concat(result.nestedErrors);
+                            }
+                        }
                     }
                 });
+            } else if (value && typeof value === "object") {
+                const typeName = value["@type"] || key;
+                const expectedKeys = getNestedExpectedKeys(schema, typeName);
+                const requiredNested = [];
+                const result = keysMatchRecursive(expectedKeys, requiredNested, value, schema);
+                if (!result.isMatch) {
+                    nestedErrors.push(
+                        `In ${key}: Missing Keys: ${result.missingKeys.join(", ")}, Extra Keys: ${result.extraKeys.join(", ")}`
+                    );
+                    if (result.nestedErrors.length > 0) {
+                        nestedErrors = nestedErrors.concat(result.nestedErrors);
+                    }
+                }
             }
-        });
+        }
 
         return {
             isMatch: missingKeys.length === 0 && extraKeys.length === 0 && nestedErrors.length === 0,
@@ -1004,7 +1798,8 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             const data = metadataJson.value;
 
-            const metadata = JSON.parse(data); // Move inside try block
+            const entered_metadata = JSON.parse(data); // Move inside try block
+            const metadata = getCleanedMetadata(entered_metadata);
             const jsonKeys = Object.keys(metadata); // Extract keys from received JSON
 
             let repoName = "metadata"; // Default name
@@ -1017,15 +1812,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     const requiredKeys = schema.required || [];
 
                     // Get key comparison result
-                    const keyCheck = keysMatch(allowedKeys, requiredKeys, jsonKeys, metadata);
+                    const keyCheck = keysMatchRecursive(allowedKeys, requiredKeys, metadata, schema);
 
                     if (!keyCheck.isMatch) {
-                        let errorMessage = "Metadata keys do not match!\n\n";
+                        let errorMessage = "";
                         if (keyCheck.missingKeys.length > 0) {
-                            errorMessage += `Missing Keys: ${keyCheck.missingKeys.join(", ")}\n`;
+                            errorMessage += `Not all required elements were filled. Please add content to the following elements:\n\n ${keyCheck.missingKeys.join(", ")}\n`;
                         }
                         if (keyCheck.extraKeys.length > 0) {
-                            errorMessage += `Extra Keys: ${keyCheck.extraKeys.join(", ")}\n`;
+                            errorMessage += `There are elements which are not part of the standard. Please remove the following elements:\n\n: ${keyCheck.extraKeys.join(", ")}\n`;
                         }
                         if (keyCheck.nestedErrors.length > 0) {
                             errorMessage += `\nNested Errors:\n${keyCheck.nestedErrors.join("\n")}`;
@@ -1062,9 +1857,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (metadata.name) {
-            repoName = metadata.name;
-            const cleanedMetadata = getCleanedMetadata(metadata);
-            validJson = JSON.stringify(cleanedMetadata, null, 2);
+            repoName = metadata.name;            
+            validJson = JSON.stringify(metadata, null, 2);
         }
         const fileName = `${repoName}/codemeta.json`;
         const blob = new Blob([validJson], { type: "application/json" });

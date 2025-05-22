@@ -427,7 +427,7 @@ def get_gitlab_metadata(gl_url, personal_token_key):
             "issueTracker": issueTrackerURL,
             "license": license_name,
             "programmingLanguage": [],
-            "copyrightHolder": {"@type": "Person", "name": namespaceName},
+            "copyrightHolder": {"@type": "Organization", "name": namespaceName},
             "dateModified": dateModified,
             "dateCreated": dateCreated,
             "keywords": [topics],

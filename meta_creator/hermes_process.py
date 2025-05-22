@@ -101,6 +101,7 @@ def run_hermes_commands(url):
         author_info = hermes_metadata_dict.get('author', [])
         authors_metadata = [
             {
+                "@type": "Person",
                 "givenName": author.get("givenName", ""),
                 "familyName": author.get("familyName", ""),
                 "email": author.get("email", "")
@@ -112,6 +113,7 @@ def run_hermes_commands(url):
         contributor_info = hermes_metadata_dict.get('contributor', [])
         contributors_metadata = [
             {
+                "@type": "Person",
                 "givenName": contributor.get("givenName", ""),
                 "familyName": contributor.get("familyName", ""),
                 "email": contributor.get("email", "")
