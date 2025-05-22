@@ -200,7 +200,7 @@ def create_empty_metadata(schema: dict) -> dict[str, dict[str, str]]:
         dict[str, dict[str, str]]: A dictionary with tab names as keys and empty metadata dicts as values.
     """
     properties_list = load_properties_list_from_schema(schema)
-    metadata = {"GeneralInformation": create_empty_metadata_dict_from_properties_list(properties_list, schema, "name", "url"),
+    metadata = {"GeneralInformation": create_empty_metadata_dict_from_properties_list(properties_list, schema, "name", "copyrightHolder"),
                 "Provenance": create_empty_metadata_dict_from_properties_list(properties_list, schema, "softwareVersion", "funding"),
                 "ContributorsAndAuthors": create_empty_metadata_dict_from_properties_list(properties_list, schema, "contributor", "maintainer"),
                 "TechnicalAspects": create_empty_metadata_dict_from_properties_list(properties_list, schema, "downloadUrl", "targetProduct")
