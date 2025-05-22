@@ -50,7 +50,7 @@ def check_maintainer(dictionary, email):
 @register.filter
 def prepare_array(obj):
     if obj[0].get("identifier"):
-        json.dumps(obj)
+        return json.dumps(obj)
     return json.dumps([])
 
 @register.filter
@@ -61,7 +61,6 @@ def prepare_single(obj):
 @register.filter
 def get_array(dictionary, key):
     result = dictionary.get(key, '')
-    print(f'get_array: {result[0]}')
     return result[0]
 
 @register.filter

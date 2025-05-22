@@ -292,13 +292,13 @@ def init_curated_metadata(extract_metadata):
     schema_name = 'codemeta_schema.json'
     full_schema = load_schema(schema_name)
     empty_metadata = create_empty_metadata(full_schema)
-    print(f"Empty metadata:\n{empty_metadata}")
+    #print(f"Empty metadata:\n{empty_metadata}")
     filled_metadata = fill_empty_metadata(empty_metadata, extract_metadata)
-    print(f"Filled metadata:\n{filled_metadata}")
+    #print(f"Filled metadata:\n{filled_metadata}")
 
     metadata_description = load_description_dict_from_schema(full_schema)
     metadata_field_types = define_field_type(full_schema, full_schema["$defs"])
-    print(f"Field types:\n{metadata_field_types}")
+    #print(f"Field types:\n{metadata_field_types}")
     
     joined_metadata = join_tabs_to_dict(filled_metadata)
     return filled_metadata, metadata_description, metadata_field_types, joined_metadata
