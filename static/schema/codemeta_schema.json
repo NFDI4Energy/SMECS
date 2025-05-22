@@ -73,12 +73,6 @@
       "title": "license",
       "items": { "type": "string" }
     },
-    "copyrightHolder": {
-      "description": "The party holding the legal copyright to the CreativeWork.",
-      "type": "array",
-      "title": "copyrightHolder",
-      "items": { "$ref": "#/$defs/Organization" }
-    },
     "url": {
       "description": "URL of the item.",
       "title": "url",
@@ -86,6 +80,12 @@
       "items": {
         "type": "string"
       }
+    },
+    "copyrightHolder": {
+      "description": "The party holding the legal copyright to the CreativeWork.",
+      "type": "array",
+      "title": "copyrightHolder",
+      "items": { "$ref": "#/$defs/Organization" }
     },
     "softwareVersion": {
       "description": "Version of the software instance.",
