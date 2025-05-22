@@ -1,7 +1,6 @@
 # Intilize curated metadata
 # Within the file all relevant metadata elements for the curation page are defined
 
-from typing import Required
 from django.conf import settings
 import json
 import os
