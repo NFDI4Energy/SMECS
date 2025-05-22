@@ -32,14 +32,38 @@ document.addEventListener("DOMContentLoaded", function () {
         Array.from(personCheckboxes).map(checkbox => checkbox.dataset.role)
     ));
 
+    // Helper: Fetch required and recommended fields from schema
+    function fetchRequiredAndRecommendedFields(schema) {
+        // Required fields: standard JSON Schema
+        const required = schema.required || [];
+        // Recommended fields: codemeta uses "recommended" (array) or similar
+        const recommended = schema.recommended || [];
+        return { required, recommended };
+    }
+
+    // Helper: Get the field key for an input element
+    function getFieldKey(input) {
+        // Try to get the name attribute, fallback to id
+        // Remove array notation if present (e.g., "author[familyName]" -> "author")
+        let key = input.name || input.id || "";
+        if (key.includes("[")) {
+            key = key.split("[")[0];
+        }
+        // For hidden inputs in tagging/tagging_autocomplete, remove "HiddenInput" suffix
+        if (key.endsWith("HiddenInput")) {
+            key = key.replace(/HiddenInput$/, "");
+        }
+        return key;
+    }
+
     // Function to dynamically mark mandatory fields based on required key in JSON schema
     function setMandatoryFieldsFromSchema() {
         fetch(JsonSchema)
             .then(response => response.json())
-            .then(data => {
-                const requiredFields = data.required || [];  // Extract the required field names
+            .then(schema => {
+                const { required, recommended } = fetchRequiredAndRecommendedFields(schema);
 
-                requiredFields.forEach(function (fieldKey) {
+                required.forEach(function (fieldKey) {
                     // Find all inputs where the name matches the required field
 
                     inputs.forEach(function (input) {
@@ -261,6 +285,7 @@ document.addEventListener("DOMContentLoaded", function () {
             updateHidden();
             input.value = "";
             if (suggestionsBox) suggestionsBox.style.display = "none";
+            input.classList.remove("invalid"); // Remove invalid color immediately
         }
 
         // Show yellow tag once if any tag exists
@@ -664,6 +689,38 @@ document.addEventListener("DOMContentLoaded", function () {
         updateTableHiddenInput(key);
     });
 
+    // Add function to color add items when element is required or recommended and empty
+    function highlightEmptyAddRowControls() {
+        fetch(JsonSchema)
+            .then(response => response.json())
+            .then(schema => {
+                const { required, recommended } = fetchRequiredAndRecommendedFields(schema);
+                const allMandatory = [...required, ...recommended];
+
+                document.querySelectorAll('table.auto-property-table').forEach(table => {
+                    const tableId = table.id;
+                    if (!tableId || !tableId.endsWith('Table')) return;
+                    const key = tableId.replace(/Table$/, '');
+
+                    // Find the corresponding add-row-controls
+                    const addRowControls = document.querySelector(`.add-row-controls[data-table-key="${key}"]`);
+                    if (!addRowControls) return;
+
+                    if (allMandatory.includes(key)) {
+                        const tbody = table.querySelector('tbody');
+                        const rows = tbody ? tbody.querySelectorAll('tr') : [];
+                        if (rows.length === 0) {
+                            addRowControls.classList.add('invalid');
+                        } else {
+                            addRowControls.classList.remove('invalid');
+                        }
+                    } else {
+                        addRowControls.classList.remove('invalid');
+                    }
+                });
+            });
+    }
+
     // Add Row functionality for all auto-property-tables
     document.querySelectorAll('.add-row-btn').forEach(function (btn) {
         btn.addEventListener('click', function () {
@@ -776,6 +833,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Update hidden input
             updateTableHiddenInput(key);
+
+            // Remove color
+            const addRowControls = btn.parentElement;
+            addRowControls.classList.remove('invalid');
         });
     });
 
@@ -1494,6 +1555,11 @@ document.addEventListener("DOMContentLoaded", function () {
         metadataJson.value = JSON.stringify(existingJson, null, 2);
     }
 
+    function isTaggingObjectEmpty(tagsContainer) {
+        // Count the number of .tag elements inside the tagsContainer
+        const tagCount = tagsContainer.querySelectorAll('.tag').length;
+        return tagCount === 0;
+    }
 
     // Pinkish inputs, when no metadata is extracted
     function validateInput(input) {
@@ -1505,30 +1571,67 @@ document.addEventListener("DOMContentLoaded", function () {
             'authorFamilyNameInput',
             'authorEmailInput'
         ];
-
-        // Check if input is inside a tags-container (tagging field)
-        const tagsContainer = input.closest('.tags-container');
-        if (tagsContainer) {
-            // Find the hidden input in the parent tagging-wrapper
-            const taggingWrapper = tagsContainer.closest('.tagging-wrapper');
-            if (taggingWrapper) {
-                const hiddenInput = taggingWrapper.querySelector('input[type="hidden"]');
-                if (hiddenInput && hiddenInput.value.trim() !== "") {
-                    input.classList.remove("invalid");
-                    return;
-                }
-            }
-        }
-
         if (skipValidationIds.includes(input.id)) {
             return; // Skip validation for the specified inputs
         }
 
-        if (input.value.trim() === "") {
-            input.classList.add("invalid");
-        } else {
-            input.classList.remove("invalid");
-        }
+        // Fetch schema and validate only if field is required or recommended
+        fetch(JsonSchema)
+            .then(response => response.json())
+            .then(schema => {
+                const { required, recommended } = fetchRequiredAndRecommendedFields(schema);
+                const allMandatory = [...required, ...recommended];
+
+                // --- Tagging support ---
+                // If input is inside a tags-container, validate the hidden input instead
+                const tagsContainer = input.closest('.tags-container');
+                if (tagsContainer) {
+                    const taggingWrapper = tagsContainer.closest('.tagging-wrapper');
+                    if (taggingWrapper) {
+                        const hiddenInput = taggingWrapper.querySelector('input[type="hidden"]');
+                        const label = taggingWrapper.querySelector('.tagging-label');
+                        const taggingType = label ? label.getAttribute('data-tagging-type') : null;
+                        const key = getFieldKey(hiddenInput);
+
+                        if (allMandatory.includes(key)) {
+                            if (taggingType === "tagging_object") {
+                                // Check number of tags in the container
+                                if (isTaggingObjectEmpty(tagsContainer)) {
+                                    input.classList.add("invalid");
+                                } else {
+                                    input.classList.remove("invalid");
+                                }
+                            } else {
+                                // For normal tagging, check hidden input
+                                if (hiddenInput.value.trim() === "") {
+                                    input.classList.add("invalid");
+                                } else {
+                                    input.classList.remove("invalid");
+                                }
+                            }
+                        } else {
+                            input.classList.remove("invalid");
+                        }
+                        return;
+                    }
+                }
+
+                // --- Standard input/select validation ---
+                const key = getFieldKey(input);
+                if (allMandatory.includes(key)) {
+                    if (input.value.trim() === "") {
+                        input.classList.add("invalid");
+                    } else {
+                        input.classList.remove("invalid");
+                    }
+                } else {
+                    input.classList.remove("invalid");
+                }
+            })
+            .catch(() => {
+                // On schema load error, fallback to no validation
+                input.classList.remove("invalid");
+            });
     }
     //add person to the table
     function addPerson(type, tableBodyId, properties) {
@@ -1628,6 +1731,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Initialize tables on load
     initializeTables();
+    highlightEmptyAddRowControls();
 
 
     function editCell(cell, type, properties) {

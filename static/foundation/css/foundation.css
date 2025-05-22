@@ -553,6 +553,10 @@ div.error-container {
     grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)) auto;
     margin-top: 8px;
 }
+    .add-row-controls.invalid {
+        background-color: #ffd6d6 !important; /* light red */
+        border: 1px solid #ff0000 !important;
+    }
 
     .add-row-controls .add-row-input,
     .add-row-controls .add-row-tag-input,
