@@ -78,3 +78,13 @@ def row_has_values(row, columns):
         if value not in [None, '', [], {}]:
             return True
     return False
+
+@register.filter
+def all_types_same(type_metadata, metadata_dict):
+    """
+    Returns True if all type_metadata values for keys in metadata_dict are the same.
+    """
+    if not metadata_dict:
+        return True
+    types = [type_metadata.get(key) for key in metadata_dict.keys()]
+    return all(t == types[0] for t in types)

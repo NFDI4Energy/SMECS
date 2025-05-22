@@ -143,8 +143,11 @@ def create_empty_ref_object(prop_schema: dict, full_schema: dict) -> dict:
     required_type = prop_schema["$ref"].split("/")[-1]
     type_properties = full_schema["$defs"][required_type]["properties"]
     ref_obj = {"@type": required_type}
-    for type_property in type_properties:
-        ref_obj[type_property] = ""
+    for type_property, value in type_properties.items():
+        if value.get("type") == "array":
+            ref_obj[type_property] = []
+        else:
+            ref_obj[type_property] = ""
     return ref_obj
 
 # Create a empty dict based on a range from the properties list
@@ -202,7 +205,7 @@ def create_empty_metadata(schema: dict) -> dict[str, dict[str, str]]:
     properties_list = load_properties_list_from_schema(schema)
     metadata = {"GeneralInformation": create_empty_metadata_dict_from_properties_list(properties_list, schema, "name", "copyrightHolder"),
                 "Provenance": create_empty_metadata_dict_from_properties_list(properties_list, schema, "softwareVersion", "funding"),
-                "ContributorsAndAuthors": create_empty_metadata_dict_from_properties_list(properties_list, schema, "contributor", "maintainer"),
+                "Contributors": create_empty_metadata_dict_from_properties_list(properties_list, schema, "contributor", "maintainer"),
                 "TechnicalAspects": create_empty_metadata_dict_from_properties_list(properties_list, schema, "downloadUrl", "targetProduct")
         }
     return metadata
@@ -291,6 +294,7 @@ def init_curated_metadata(extract_metadata):
     """
     schema_name = 'codemeta_schema.json'
     full_schema = load_schema(schema_name)
+    #print("Start to create empty metadata:")
     empty_metadata = create_empty_metadata(full_schema)
     #print(f"Empty metadata:\n{empty_metadata}")
     filled_metadata = fill_empty_metadata(empty_metadata, extract_metadata)

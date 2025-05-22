@@ -526,7 +526,7 @@ div.error-container {
     margin-top: 8px;
     width: 110%; /* Same as .long_field */
     min-width: 500px; /* Optional: for usability */
-    table-layout: fixed; /* Ensures equal column width */
+    table-layout: auto; /* Ensures equal column width */
     margin-bottom: 1rem;
     border-collapse: collapse;
 }
@@ -541,6 +541,8 @@ div.error-container {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        min-width: 80px;
+        max-width: 400px;
     }
 
 .add-row-controls {
