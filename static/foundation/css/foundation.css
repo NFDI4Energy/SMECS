@@ -556,8 +556,8 @@ div.error-container {
     margin-top: 8px;
 }
     .add-row-controls.invalid {
-        background-color: #ffd6d6 !important; /* light red */
-        border: 1px solid #ff0000 !important;
+        background-color: #ffd6d6; /* light red */
+        border: 1px solid #ff0000;
     }
 
     .add-row-controls .add-row-input,
@@ -619,7 +619,7 @@ td.table-tagging-cell {
 }
 
 .tag-suggestions {
-    position: fixed;
+    position: absolute;
     background: #fff;
     border: 1px solid #ccc;
     z-index: 10000;

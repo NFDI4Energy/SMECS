@@ -294,7 +294,6 @@ def init_curated_metadata(extract_metadata):
     """
     schema_name = 'codemeta_schema.json'
     full_schema = load_schema(schema_name)
-    #print("Start to create empty metadata:")
     empty_metadata = create_empty_metadata(full_schema)
     #print(f"Empty metadata:\n{empty_metadata}")
     filled_metadata = fill_empty_metadata(empty_metadata, extract_metadata)

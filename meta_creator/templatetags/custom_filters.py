@@ -86,5 +86,5 @@ def all_types_same(type_metadata, metadata_dict):
     """
     if not metadata_dict:
         return True
-    types = [type_metadata.get(key) for key in metadata_dict.keys()]
-    return all(t == types[0] for t in types)
+    collected_types = [type_metadata.get(key) for key in metadata_dict.keys()]
+    return all(t == collected_types[0] for t in collected_types)
