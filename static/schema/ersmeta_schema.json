@@ -1339,14 +1339,14 @@
     },
     "contributor": {
       "minItems": 1,
-      "description": "A person who has contributed to the software.",
+      "description": "A person who has contributed to the software. A contributor refers to anyone who aids in software development in any capacity, from coding to testing, highlighting the collaborative nature of software projects.",
       "type": "array",
       "title": "contributor",
       "items": { "$ref": "#/$defs/Person" }
     },
     "author": {
       "minItems": 1,
-      "description": "A person who has authored the software.",
+      "description": "A person who has authored the software. An author in software authorship is someone who significantly contributes to the creation and development of software, including roles like coding, project management, and documentation.",
       "type": "array",
       "title": "author",
       "items": { "$ref": "#/$defs/Person" }

@@ -535,7 +535,7 @@ div.error-container {
         max-width: 400px;
     }
 
-.add-row-controls {
+.add-row-controls{
     display: grid;
     grid-auto-flow: column;
     align-items: center;
@@ -586,6 +586,15 @@ td.table-tagging-cell {
         box-sizing: border-box;
         min-width: 0;
     }
+
+.tab.unique-tab {
+    /* Keep width as is */
+    width: 100%;
+    transform: scale(0.8);
+    transform-origin: top center; /* Adjust origin as needed */
+    text-align: center; /* Center the inner content horizontally */
+    position: relative;
+}
 
 /* Make the tags-list a flex container so tags wrap and only take as much space as needed */
 .tags-list {
