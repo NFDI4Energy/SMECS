@@ -956,14 +956,6 @@
         ]
       }
     },
-    "url": {
-      "description": "Homepage of the tool. URL of the item.",
-      "title": "website",
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
     "developmentStatus": {
       "description": "Description of development status, e.g. Active, inactive, suspended. See repostatus.org",
       "title": "developmentStatus",
@@ -976,6 +968,16 @@
         "Moved",
         "WIP",
         "Suspended"
+      ]
+    },
+    "cycleOfUpdates": {
+      "description": "How often is the software updated?",
+      "title": "cycleOfUpdates",
+      "enum": [
+        "Monthly",
+        "Quarterly",
+        "Weekly",
+        "Irregularly"
       ]
     },
     "developerStructure": {
@@ -996,20 +998,18 @@
         ]
       }
     },
-    "cycleOfUpdates": {
-      "description": "How often is the software updated?",
-      "title": "cycleOfUpdates",
-      "enum": [
-        "Monthly",
-        "Quarterly",
-        "Weekly",
-        "Irregularly"
-      ]
-    },
     "issueTracker": {
       "description": "Link to software bug reporting or issue tracking system",
       "type": "string",
       "title": "issueTracker"
+    },
+    "url": {
+      "description": "Homepage of the tool. URL of the item.",
+      "title": "website",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "referencePublication": {
       "minItems": 1,
@@ -1385,6 +1385,11 @@
       "type": "string",
       "title": "buildInstruction"
     },
+    "requiredTrainingPeriod": {
+      "description": "How long would a researcher need to be able to use the software?",
+      "type": "string",
+      "title": "requiredTrainingPeriod"
+    },
     "supportGiven": {
       "description": "Is support for the software provided?",
       "type": "boolean",
@@ -1393,11 +1398,6 @@
         true,
         false
       ]
-    },
-    "requiredTrainingPeriod": {
-      "description": "How long would a researcher need to be able to use the software?",
-      "type": "string",
-      "title": "requiredTrainingPeriod"
     },
     "example": {
       "minItems": 1,
@@ -1612,6 +1612,24 @@
       "title": "energyComponent",
       "items": { "$ref": "#/$defs/EnergyComponent" }
     },
+    "temporalCoverage": {
+      "description": "Time scope the software was developed for (e.g. 2010, 2050).",
+      "title": "temporalCoverage",
+      "enum": [
+        "Long term (>=15)",
+        "Other",
+        "Short term (<= 5 years)",
+        "Medium term (>5-<15)"
+      ]
+    },
+    "stationaryVsTransient": {
+      "description": "Does the software support stationary or transient effects?",
+      "title": "stationaryVsTransient",
+      "enum": [
+        "Transient",
+        "Stationary"
+      ]
+    },
     "hasTemporalResolution": {
       "description": "Supported temporal resolution of the software. Temporal resolution is the resolution that indicates time-dependent the level of detail.",
       "title": "hasTemporalResolution",
@@ -1631,24 +1649,6 @@
           "weekly"
         ]
       }
-    },
-    "temporalCoverage": {
-      "description": "Time scope the software was developed for (e.g. 2010, 2050).",
-      "title": "temporalCoverage",
-      "enum": [
-        "Long term (>=15)",
-        "Other",
-        "Short term (<= 5 years)",
-        "Medium term (>5-<15)"
-      ]
-    },
-    "stationaryVsTransient": {
-      "description": "Does the software support stationary or transient effects?",
-      "title": "stationaryVsTransient",
-      "enum": [
-        "Transient",
-        "Stationary"
-      ]
     },
     "hasSpatialResolution": {
       "description": "Supported spatial resolution of the software. Spatial resolution is the resolution that indicates the geographical level of detail.",
