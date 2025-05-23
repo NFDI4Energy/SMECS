@@ -1126,7 +1126,7 @@ body, html {
     transition: all 0.3s ease;
     height: 96%;
     overflow: hidden;
-    margin: 2px;
+    /*margin: 2px;*/
 }
 
 .full-width {
@@ -1325,20 +1325,39 @@ input:checked + .slider {
 /************************************Color-code-info**************************************/
 /* Create info strings to explain color and other codes */
 .color-code-container {
-    align-items: center;
+    /*align-items: center;
     background-color: #ccc;
     width: 99.9%;
     background-color: #f2f2f2;
     padding-top: 0.7%;
-    height: 14%;
+    height: 14%;*/
+    background-color: #f2f2f2;
+    margin: 0;    
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+}
+
+.color-code-inner {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    max-width: 600px; /* or your preferred max width */
+    margin: 0 auto;
+    width: 100%;
 }
 
 .color-code {
     display: flex;
     align-items: center;
-    margin-right: 20px;
+    margin-right: 5px;
+    min-width: 340px; /* Ensures a minimum width for longer text */
     width: 30%;
     padding: 5px;
+    gap: 0.5rem;
+    box-sizing: border-box;
 }
 
     .color-code > span:first-child {
@@ -1350,7 +1369,7 @@ input:checked + .slider {
     }
 
 .color-code-text {
-    font-size: 55%;
+    font-size: 85%;
 }
 
 .red {
