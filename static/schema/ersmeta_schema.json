@@ -1,0 +1,2363 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "This metadata schema includes general metadata elements for research software in the energy domain.",
+  "additionalProperties": false,
+  "type": "object",
+  "title": "EnergyResearchSoftware",
+  "required": [
+    "@context",
+    "name",
+    "softwareVersion",
+    "programmingLanguage",
+    "description",
+    "keywords",
+    "softwareType",
+    "developmentStatus",
+    "license",
+    "dateCreated",
+    "contributor",
+    "downloadUrl",
+    "metadataVersion",
+    "sdLicense",
+    "sdPublisher"
+  ],
+  "recommended": [
+    "identifier",
+    "inLanguage",
+    "abstract",
+    "domain",
+    "category",
+    "roleInResearch",
+    "url",
+    "developerStructure",
+    "cycleOfUpdates",
+    "referencePublication",
+    "preferredCitation",
+    "copyrightHolder",
+    "dateModified",
+    "author",
+    "maintainer",
+    "sourceOrganization",
+    "countryOfOrigin",
+    "codeRepository",
+    "documentation",
+    "readme",
+    "supportGiven",
+    "communityInteractions",
+    "usedInPublication",
+    "purpose",
+    "method",
+    "coversSector",
+    "technology",
+    "typicalHardware",
+    "typicalExcecutionTime",
+    "processorRequirements",
+    "memoryRequirements",
+    "storageRequirements",
+    "targetProduct",
+    "operatingSystem",
+    "softwareRequirements"
+  ],
+  "properties": {
+    "@context": { "$ref": "#/$defs/@context" },
+    "name": {
+      "description": "Name of the software.",
+      "type": "string",
+      "title": "name"
+    },
+    "acronym": {
+      "description": "Abbreviation of the software name.",
+      "type": "string",
+      "title": "acronym"
+    },
+    "identifier": {
+      "description": "The identifier property represents any kind of identifier for any kind of Thing, such as DOI, ISBNs, GTIN codes, UUIDs etc.",
+      "type": "string",
+      "title": "identifier"
+    },
+    "logo": {
+      "description": "Link (URL) to the logo of the software.",
+      "type": "string",
+      "title": "logo"
+    },
+    "softwareVersion": {
+      "description": "Version of the software instance as used by the developers.",
+      "type": "string",
+      "title": "softwareVersion"
+    },
+    "programmingLanguage": {
+      "description": "The computer programming language in which the software is written.",
+      "title": "programmingLanguage",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "A# .NET",
+          "A# (Axiom)",
+          "A-0 System",
+          "A+",
+          "A++",
+          "ABAP",
+          "ABC",
+          "ABC ALGOL",
+          "ABLE",
+          "ABSET",
+          "ABSYS",
+          "ACC",
+          "Accent",
+          "Ace DASL",
+          "ACL2",
+          "ACT-III",
+          "Action!",
+          "ActionScript",
+          "Ada",
+          "Adenine",
+          "Agda",
+          "Agilent VEE",
+          "Agora",
+          "AIMMS",
+          "Alef",
+          "ALF",
+          "ALGOL 58",
+          "ALGOL 60",
+          "ALGOL 68",
+          "ALGOL W",
+          "Alice",
+          "Alma-0",
+          "AmbientTalk",
+          "Amiga E",
+          "AMOS",
+          "AMPL",
+          "APL",
+          "App Inventor for Android's visual block language",
+          "AppleScript",
+          "Arc",
+          "ARexx",
+          "Argus",
+          "AspectJ",
+          "Assembly language",
+          "ATS",
+          "Ateji PX",
+          "AutoHotkey",
+          "Autocoder",
+          "AutoIt",
+          "AutoLISP / Visual LISP",
+          "Averest",
+          "AWK",
+          "Axum",
+          "B",
+          "Babbage",
+          "Bash",
+          "BASIC",
+          "bc",
+          "BCPL",
+          "BeanShell",
+          "Batch (Windows/Dos)",
+          "Bertrand",
+          "BETA",
+          "Bigwig",
+          "Bistro",
+          "BitC",
+          "BLISS",
+          "Blue",
+          "Bon",
+          "Boo",
+          "Boomerang",
+          "Bourne shell",
+          "bash",
+          "ksh",
+          "BREW",
+          "BPEL",
+          "C",
+          "C--",
+          "C++",
+          "C#",
+          "C/AL",
+          "Caché ObjectScript",
+          "C Shell",
+          "Caml",
+          "Candle",
+          "Cayenne",
+          "CDuce",
+          "Cecil",
+          "Cel",
+          "Cesil",
+          "Ceylon",
+          "CFEngine",
+          "CFML",
+          "Cg",
+          "Ch",
+          "Chapel",
+          "CHAIN",
+          "Charity",
+          "Charm",
+          "Chef",
+          "CHILL",
+          "CHIP-8",
+          "chomski",
+          "ChucK",
+          "CICS",
+          "Cilk",
+          "CL",
+          "Claire",
+          "Clarion",
+          "Clean",
+          "Clipper",
+          "CLIST",
+          "Clojure",
+          "CLU",
+          "CMS-2",
+          "COBOL",
+          "Cobra",
+          "CODE",
+          "CoffeeScript",
+          "Cola",
+          "ColdC",
+          "ColdFusion",
+          "COMAL",
+          "Combined Programming Language",
+          "COMIT",
+          "Common Intermediate Language",
+          "Common Lisp",
+          "COMPASS",
+          "Component Pascal",
+          "Constraint Handling Rules",
+          "Converge",
+          "Cool",
+          "Coq",
+          "Coral 66",
+          "Corn",
+          "CorVision",
+          "COWSEL",
+          "CPL",
+          "csh",
+          "CSP",
+          "Csound",
+          "CUDA",
+          "Curl",
+          "Curry",
+          "Cyclone",
+          "Cython",
+          "D",
+          "DASL",
+          "DASL",
+          "Dart",
+          "DataFlex",
+          "Datalog",
+          "DATATRIEVE",
+          "dBase",
+          "dc",
+          "DCL",
+          "Deesel",
+          "Delphi",
+          "DinkC",
+          "DIBOL",
+          "Dog",
+          "Draco",
+          "DRAKON",
+          "Dylan",
+          "DYNAMO",
+          "E",
+          "E#",
+          "Ease",
+          "Easy PL/I",
+          "Easy Programming Language",
+          "EASYTRIEVE PLUS",
+          "ECMAScript",
+          "Edinburgh IMP",
+          "EGL",
+          "Eiffel",
+          "ELAN",
+          "Elixir",
+          "Elm",
+          "Emacs Lisp",
+          "Emerald",
+          "Epigram",
+          "EPL",
+          "Erlang",
+          "es",
+          "Escapade",
+          "Escher",
+          "ESPOL",
+          "Esterel",
+          "Etoys",
+          "Euclid",
+          "Euler",
+          "Euphoria",
+          "EusLisp Robot Programming Language",
+          "CMS EXEC",
+          "EXEC 2",
+          "Executable UML",
+          "F",
+          "F#",
+          "Factor",
+          "Falcon",
+          "Fancy",
+          "Fantom",
+          "FAUST",
+          "Felix",
+          "Ferite",
+          "FFP",
+          "Fjölnir",
+          "FL",
+          "Flavors",
+          "Flex",
+          "FLOW-MATIC",
+          "FOCAL",
+          "FOCUS",
+          "FOIL",
+          "FORMAC",
+          "@Formula",
+          "Forth",
+          "Fortran",
+          "Fortress",
+          "FoxBase",
+          "FoxPro",
+          "FP",
+          "FPr",
+          "Franz Lisp",
+          "Frege",
+          "F-Script",
+          "FSProg",
+          "G",
+          "Google Apps Script",
+          "Game Maker Language",
+          "GameMonkey Script",
+          "GAMS",
+          "GAP",
+          "G-code",
+          "Genie",
+          "GDL",
+          "Gibiane",
+          "GJ",
+          "GEORGE",
+          "GLSL",
+          "GNU E",
+          "GM",
+          "Go",
+          "Go!",
+          "GOAL",
+          "Gödel",
+          "Godiva",
+          "GOM (Good Old Mad)",
+          "Goo",
+          "Gosu",
+          "GOTRAN",
+          "GPSS",
+          "GraphTalk",
+          "GRASS",
+          "Groovy",
+          "Hack (programming language)",
+          "HAL/S",
+          "Hamilton C shell",
+          "Harbour",
+          "Hartmann pipelines",
+          "Haskell",
+          "Haxe",
+          "High Level Assembly",
+          "HLSL",
+          "Hop",
+          "Hope",
+          "Hugo",
+          "Hume",
+          "HyperTalk",
+          "IBM Basic assembly language",
+          "IBM HAScript",
+          "IBM Informix-4GL",
+          "IBM RPG",
+          "ICI",
+          "Icon",
+          "Id",
+          "IDL",
+          "Idris",
+          "IMP",
+          "Inform",
+          "Io",
+          "Ioke",
+          "IPL",
+          "IPTSCRAE",
+          "ISLISP",
+          "ISPF",
+          "ISWIM",
+          "J",
+          "J#",
+          "J++",
+          "JADE",
+          "Jako",
+          "JAL",
+          "Janus",
+          "JASS",
+          "Java",
+          "JavaScript",
+          "JCL",
+          "JEAN",
+          "Join Java",
+          "JOSS",
+          "Joule",
+          "JOVIAL",
+          "Joy",
+          "JScript",
+          "JScript .NET",
+          "JavaFX Script",
+          "Julia",
+          "Jython",
+          "K",
+          "Kaleidoscope",
+          "Karel",
+          "Karel++",
+          "KEE",
+          "Kixtart",
+          "KIF",
+          "Kojo",
+          "Kotlin",
+          "KRC",
+          "KRL",
+          "KUKA",
+          "KRYPTON",
+          "ksh",
+          "L",
+          "L# .NET",
+          "LabVIEW",
+          "Ladder",
+          "Lagoona",
+          "LANSA",
+          "Lasso",
+          "LaTeX",
+          "Lava",
+          "LC-3",
+          "Leda",
+          "Legoscript",
+          "LIL",
+          "LilyPond",
+          "Limbo",
+          "Limnor",
+          "LINC",
+          "Lingo",
+          "Linoleum",
+          "LIS",
+          "LISA",
+          "Lisaac",
+          "Lisp",
+          "Lite-C",
+          "Lithe",
+          "Little b",
+          "Logo",
+          "Logtalk",
+          "LPC",
+          "LSE",
+          "LSL",
+          "LiveCode",
+          "LiveScript",
+          "Lua",
+          "Lucid",
+          "Lustre",
+          "LYaPAS",
+          "Lynx",
+          "M2001",
+          "M4",
+          "Machine code",
+          "MAD",
+          "MAD/I",
+          "Magik",
+          "Magma",
+          "make",
+          "Maple",
+          "MAPPER",
+          "MARK-IV",
+          "Mary",
+          "MASM Microsoft Assembly x86",
+          "Mathematica",
+          "MATLAB",
+          "Maxima",
+          "Macsyma",
+          "Max",
+          "MaxScript",
+          "Maya (MEL)",
+          "MDL",
+          "Mercury",
+          "Mesa",
+          "Metacard",
+          "Metafont",
+          "MetaL",
+          "Microcode",
+          "MicroScript",
+          "MIIS",
+          "MillScript",
+          "MIMIC",
+          "Mirah",
+          "Miranda",
+          "MIVA Script",
+          "ML",
+          "Moby",
+          "Model 204",
+          "Modelica",
+          "Modula",
+          "Modula-2",
+          "Modula-3",
+          "Mohol",
+          "MOO",
+          "Mortran",
+          "Mouse",
+          "MPD",
+          "CIL",
+          "MSL",
+          "MUMPS",
+          "NASM",
+          "NATURAL",
+          "Napier88",
+          "Neko",
+          "Nemerle",
+          "nesC",
+          "NESL",
+          "Net.Data",
+          "NetLogo",
+          "NetRexx",
+          "NewLISP",
+          "NEWP",
+          "Newspeak",
+          "NewtonScript",
+          "NGL",
+          "Nial",
+          "Nice",
+          "Nickle",
+          "Nim",
+          "NPL",
+          "Not eXactly C",
+          "Not Quite C",
+          "NSIS",
+          "Nu",
+          "NWScript",
+          "NXT-G",
+          "o:XML",
+          "Oak",
+          "Oberon",
+          "Obix",
+          "OBJ2",
+          "Object Lisp",
+          "ObjectLOGO",
+          "Object REXX",
+          "Object Pascal",
+          "Objective-C",
+          "Objective-J",
+          "Obliq",
+          "Obol",
+          "OCaml",
+          "occam",
+          "occam-π",
+          "Octave",
+          "OmniMark",
+          "Onyx",
+          "OpenCL",
+          "OpenEdge ABL",
+          "OPL",
+          "OpenVera",
+          "OPRG",
+          "OptimJ",
+          "Orc",
+          "ORCA/Modula-2",
+          "Oriel",
+          "Orwell",
+          "Oxygene",
+          "Oz",
+          "P",
+          "P4",
+          "P#",
+          "PARI/GP",
+          "Pascal",
+          "Pawn",
+          "PCASTL",
+          "PCF",
+          "PEARL",
+          "PeopleCode",
+          "Perl",
+          "PDL",
+          "Pharo",
+          "PHP",
+          "PICT",
+          "Pike",
+          "PILOT",
+          "Pipelines",
+          "Pizza",
+          "PL-11",
+          "PL/0",
+          "PL/B",
+          "PL/C",
+          "PL/I",
+          "PL/M",
+          "PL/P",
+          "PL/SQL",
+          "PL360",
+          "PLEX",
+          "PLEXIL",
+          "Plus",
+          "POP-11",
+          "POP-2",
+          "Pony",
+          "Portable Game Notation",
+          "PostScript",
+          "POV-Ray SDL",
+          "Powerhouse",
+          "PowerBuilder",
+          "PowerShell",
+          "PPL",
+          "Processing",
+          "Prograph",
+          "PROIV",
+          "Prolog",
+          "Promela",
+          "PROSE modeling language",
+          "PROTEL",
+          "ProvideX",
+          "Pure",
+          "Pure Data",
+          "PureBasic",
+          "PureScript",
+          "Python",
+          "Q (equational programming language)",
+          "Q (programming language from Kx Systems)",
+          "Qalb",
+          "QPL",
+          "QtScript",
+          "QuakeC",
+          "QPL",
+          "R",
+          "R++",
+          "Racket",
+          "RAPID",
+          "Raven",
+          "RDL",
+          "REBOL",
+          "Red",
+          "Redcode",
+          "REFAL",
+          "Reia",
+          "Revolution",
+          "REXX",
+          "Ring",
+          "Rlab",
+          "ROOP",
+          "RPG",
+          "RPL",
+          "RSL",
+          "RTL/2",
+          "Ruby",
+          "RuneScript",
+          "Rust",
+          "S",
+          "S-Lang",
+          "S-PLUS",
+          "S/SL",
+          "S2",
+          "SabreTalk",
+          "SAIL",
+          "SALSA",
+          "SAM76",
+          "SAS",
+          "SASL",
+          "Sather",
+          "Sawzall",
+          "Scala",
+          "Scheme",
+          "Scilab",
+          "Scratch",
+          "Script.NET",
+          "Sed",
+          "Seed7",
+          "Self",
+          "SenseTalk",
+          "SequenceL",
+          "SETL",
+          "SIMPOL",
+          "SIGNAL",
+          "SiMPLE",
+          "SIMSCRIPT",
+          "Simula",
+          "Simulink",
+          "SISAL",
+          "SLIP",
+          "SMALL",
+          "Smalltalk",
+          "SML",
+          "Snap!",
+          "SNOBOL",
+          "SPARK",
+          "Speedcode",
+          "SPIN",
+          "SP/k",
+          "SPSS",
+          "SQR",
+          "Squeak",
+          "Squirrel",
+          "SR",
+          "S/SL",
+          "Starlogo",
+          "Strand",
+          "Stateflow",
+          "Subtext",
+          "SuperCollider",
+          "SuperTalk",
+          "Swift",
+          "SYMPL",
+          "SystemVerilog",
+          "T",
+          "TACL",
+          "TADS",
+          "TAL",
+          "Tcl",
+          "Tea",
+          "TECO",
+          "TELCOMP",
+          "TeX",
+          "TEX",
+          "TIE",
+          "Toccata",
+          "TOM",
+          "TOM-Script",
+          "Tool Command Language",
+          "Turing",
+          "TUTOR",
+          "TXL",
+          "TypeScript",
+          "U-SQL",
+          "Ubercode",
+          "UCSD Pascal",
+          "Umple",
+          "Unicon",
+          "Uniface",
+          "UNITY",
+          "Unix shell",
+          "UnrealScript",
+          "V",
+          "Vala",
+          "VBA",
+          "VBScript",
+          "Verilog",
+          "VHDL",
+          "Visual Basic",
+          "Visual Basic .NET",
+          "Visual DataFlex",
+          "Visual DialogScript",
+          "Visual FoxPro",
+          "Visual J++",
+          "Visual J#",
+          "Visual Objects",
+          "VSXu",
+          "WATFIV",
+          "WebDNA",
+          "WebQL",
+          "Whiley",
+          "Winbatch",
+          "Wolfram",
+          "Wyvern",
+          "X++",
+          "X10",
+          "XBase++",
+          "XBase",
+          "XC",
+          "xHarbour",
+          "XL",
+          "Xojo",
+          "XOTcl",
+          "XPath",
+          "XPL",
+          "XPL0",
+          "XQuery",
+          "XSB",
+          "XSLT",
+          "Xtend",
+          "Yorick",
+          "Yoix",
+          "YQL",
+          "YUI",
+          "Z notation",
+          "ZPL",
+          "Zig",
+          "ZOPL",
+          "ZPL"
+        ]
+      }
+    },
+    "inLanguage": {
+      "description": "Language used within the software (e.g. variables, documentation). Standard: IETF (BCP47)",
+      "type": "array",
+      "title": "inLanguage",
+      "items": {
+        "type": "string",
+        "enum": [
+          "ar-SA",
+          "bn-BD",
+          "bn-IN",
+          "cs-CZ",
+          "da-DK",
+          "de-AT",
+          "de-CH",
+          "de-DE",
+          "el-GR",
+          "en-AU",
+          "en-CA",
+          "en-GB",
+          "en-IE",
+          "en-IN",
+          "en-NZ",
+          "en-US",
+          "en-ZA",
+          "es-AR",
+          "es-CL",
+          "es-CO",
+          "es-ES",
+          "es-MX",
+          "es-US",
+          "fi-FI",
+          "fr-BE",
+          "fr-CA",
+          "fr-CH",
+          "fr-FR",
+          "he-IL",
+          "hi-IN",
+          "hu-HU",
+          "id-ID",
+          "it-CH",
+          "it-IT",
+          "ja-JP",
+          "ko-KR",
+          "nl-BE",
+          "nl-NL",
+          "no-NO",
+          "pl-PL",
+          "pt-BR",
+          "pt-PT",
+          "ro-RO",
+          "ru-RU",
+          "sk-SK",
+          "sv-SE",
+          "ta-IN",
+          "ta-LK",
+          "th-TH",
+          "tr-TR",
+          "zh-CN",
+          "zh-HK",
+          "zh-TW"
+        ]
+      }
+    },
+    "abstract": {
+      "description": "A one-line summary of what the software does.",
+      "type": "string",
+      "title": "abstract"
+    },
+    "description": {
+      "description": "A description of the software. Max 200 words.",
+      "type": "string",
+      "title": "description"
+    },
+    "keywords": {
+      "description": "Keywords or tags used to describe this software.",
+      "title": "keywords",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "graphicalAbstract": {
+      "description": "Link (URL) to a graphical overview on the functionality of the software.",
+      "type": "string",
+      "title": "graphicalAbstract"
+    },
+    "domain": {
+      "description": "Research domain for which the software was written.",
+      "title": "domain",
+      "type": "array",
+      "items": {
+        "enum": [
+          "Computer Science",
+          "Materials Engineering",
+          "Chemistry",
+          "Mathematics",
+          "Materials Science",
+          "Social Science",
+          "Geosciences",
+          "Economics",
+          "Jurisprudence",
+          "Construction Engineering and Architecture",
+          "Mechanics and Constructive Mechanical Engineering",
+          "Process Engineering, Technical Chemistry",
+          "Production Technology",
+          "Systems Engineering",
+          "Electrical Engineering and Information Technology",
+          "Fluid Mechanics, Technical Thermodynamics and Thermal Energy Engineering",
+          "Physics"
+        ]
+      }
+    },
+    "category": {
+      "description": "Research category for which the software was written.",
+      "title": "category",
+      "type": "array",
+      "items": {
+        "enum": [
+          "Other",
+          "Grid planning",
+          "Transition of the energy system,",
+          "Research on components",
+          "Control strategies for energy systems",
+          "Energy markets"
+        ]
+      }
+    },
+    "softwareType": {
+      "description": "Type of software application, e.g. 'script'.",
+      "title": "softwareType",
+      "type": "array",
+      "items": {
+        "enum": [
+          "Workflow",
+          "Workbench",
+          "Library",
+          "Script",
+          "Web API",
+          "GUI-framework",
+          "Desktop application",
+          "Plug-in",
+          "Web application",
+          "Database portal",
+          "Web service",
+          "Command-line tool"
+        ]
+      }
+    },
+    "roleInResearch": {
+      "description": "Kind of tasks that the software tasks over in research.",
+      "title": "roleInResearch",
+      "type": "array",
+      "items": {
+        "enum": [
+          "Integrative Analysis",
+          "Collaboration Software",
+          "Data Assimilation",
+          "Laboratiry Notebooks",
+          "Simulation Data Analytics",
+          "Research Infrastructure Software",
+          "Statistical Analysis",
+          "Data Collection",
+          "Agent-based Modeling",
+          "Software Management",
+          "Decision Analysis",
+          "Scientific Visualization",
+          "Machine Learning",
+          "Libraries",
+          "Modeling and Simulation",
+          "Numerical Modeling",
+          "Data Analytics",
+          "Observation Data Analytics",
+          "Pipelines/Workflows",
+          "Proof-of-Concept Software",
+          "Data Management",
+          "Control and Monitoring Software (Embedded, Web-based, Native)"
+        ]
+      }
+    },
+    "url": {
+      "description": "Homepage of the tool. URL of the item.",
+      "title": "website",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "developmentStatus": {
+      "description": "Description of development status, e.g. Active, inactive, suspended. See repostatus.org",
+      "title": "developmentStatus",
+      "enum": [
+        "Abandoned",
+        "Inactive",
+        "Concept",
+        "Active",
+        "Unsupported",
+        "Moved",
+        "WIP",
+        "Suspended"
+      ]
+    },
+    "developerStructure": {
+      "description": "Structure of the development team.",
+      "title": "developerStructure",
+      "type": "array",
+      "items": {
+        "enum": [
+          "Community (Open Source Research Software)",
+          "Community (Closed Source Research Software)",
+          "Community (Research Software as a Service)",
+          "Local Research Group",
+          "Project Group",
+          "Contractor (Open Source Resarch Software)",
+          "Contractor (Closed Source Research Software)",
+          "Contractor (Research Software as a Service)",
+          "Individual Researcher"
+        ]
+      }
+    },
+    "cycleOfUpdates": {
+      "description": "How often is the software updated?",
+      "title": "cycleOfUpdates",
+      "enum": [
+        "Monthly",
+        "Quarterly",
+        "Weekly",
+        "Irregularly"
+      ]
+    },
+    "issueTracker": {
+      "description": "Link to software bug reporting or issue tracking system",
+      "type": "string",
+      "title": "issueTracker"
+    },
+    "referencePublication": {
+      "minItems": 1,
+      "description": "Any academic publication which describes the software.",
+      "type": "array",
+      "title": "referencePublication",
+      "items": { "$ref": "#/$defs/ScholarlyArticle" }
+    },
+    "preferredCitation": {
+      "description": "A reference to another work that should be cited instead of the software or dataset itself. Note that the principles of ?\"software citation\"?and \"data citation\" require that software should be cited on the same basis as any other research product such as a paper or a book. Adding a different preferred citation may result in a violation of the respective primary principle, \"Importance\", when others cite this work.",
+      "title": "preferredCitation",
+      "$ref": "#/$defs/ScholarlyArticle"
+    },
+    "license": {
+      "minItems": 1,
+      "description": "A license document that applies to this software.",
+      "type": "array",
+      "title": "license",
+      "items": { "type": "string" }
+    },
+    "isAccessibleForFree": {
+      "description": "A flag to signal that the software is accessible for free.",
+      "type": "boolean",
+      "title": "isAccessibleForFree",
+      "enum": [
+        true,
+        false
+      ]
+    },
+    "estimatedCost": {
+      "description": "Typical cost for licensing the software, if available.",
+      "title": "estimatedCost",
+      "type": "array",
+      "items": { "$ref": "#/$defs/MonetaryAmount" }
+    },
+    "copyrightHolder": {
+      "minItems": 1,
+      "description": "The party holding the legal copyright to the CreativeWork.",
+      "type": "array",
+      "title": "copyrightHolder",
+      "items": { "$ref": "#/$defs/Organization" }
+    },
+    "dateCreated": {
+      "format": "date",
+      "description": "The date on which the software was initially created.",
+      "type": "string",
+      "title": "dateCreated"
+    },
+    "dateModified": {
+      "format": "date",
+      "description": "The date on which the software was most recently modified.",
+      "type": "string",
+      "title": "dateModified"
+    },
+    "countryOfOrigin": {
+      "description": "Country where the software was developed. Country codes as defined by ISO 3166-1 alpha-2 should be used.",
+      "title": "countryOfOrigin",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "AF",
+          "AL",
+          "DZ",
+          "AS",
+          "AD",
+          "AO",
+          "AI",
+          "AQ",
+          "AG",
+          "AR",
+          "AM",
+          "AW",
+          "AU",
+          "AT",
+          "AZ",
+          "BS",
+          "BH",
+          "BD",
+          "BB",
+          "BY",
+          "BE",
+          "BZ",
+          "BJ",
+          "BM",
+          "BT",
+          "BO",
+          "BQ",
+          "BA",
+          "BW",
+          "BV",
+          "BR",
+          "IO",
+          "BN",
+          "BG",
+          "BF",
+          "BI",
+          "CV",
+          "KH",
+          "CM",
+          "CA",
+          "KY",
+          "CF",
+          "TD",
+          "CL",
+          "CN",
+          "CX",
+          "CC",
+          "CO",
+          "KM",
+          "CD",
+          "CG",
+          "CK",
+          "CR",
+          "HR",
+          "CU",
+          "CW",
+          "CY",
+          "CZ",
+          "CI",
+          "DK",
+          "DJ",
+          "DM",
+          "DO",
+          "EC",
+          "EG",
+          "SV",
+          "GQ",
+          "ER",
+          "EE",
+          "SZ",
+          "ET",
+          "FK",
+          "FO",
+          "FJ",
+          "FI",
+          "FR",
+          "GF",
+          "PF",
+          "TF",
+          "GA",
+          "GM",
+          "GE",
+          "DE",
+          "GH",
+          "GI",
+          "GR",
+          "GL",
+          "GD",
+          "GP",
+          "GU",
+          "GT",
+          "GG",
+          "GN",
+          "GW",
+          "GY",
+          "HT",
+          "HM",
+          "VA",
+          "HN",
+          "HK",
+          "HU",
+          "IS",
+          "IN",
+          "ID",
+          "IR",
+          "IQ",
+          "IE",
+          "IM",
+          "IL",
+          "IT",
+          "JM",
+          "JP",
+          "JE",
+          "JO",
+          "KZ",
+          "KE",
+          "KI",
+          "KP",
+          "KR",
+          "KW",
+          "KG",
+          "LA",
+          "LV",
+          "LB",
+          "LS",
+          "LR",
+          "LY",
+          "LI",
+          "LT",
+          "LU",
+          "MO",
+          "MG",
+          "MW",
+          "MY",
+          "MV",
+          "ML",
+          "MT",
+          "MH",
+          "MQ",
+          "MR",
+          "MU",
+          "YT",
+          "MX",
+          "FM",
+          "MD",
+          "MC",
+          "MN",
+          "ME",
+          "MS",
+          "MA",
+          "MZ",
+          "MM",
+          "NA",
+          "NR",
+          "NP",
+          "NL",
+          "NC",
+          "NZ",
+          "NI",
+          "NE",
+          "NG",
+          "NU",
+          "NF",
+          "MP",
+          "NO",
+          "OM",
+          "PK",
+          "PW",
+          "PS",
+          "PA",
+          "PG",
+          "PY",
+          "PE",
+          "PH",
+          "PN",
+          "PL",
+          "PT",
+          "PR",
+          "QA",
+          "MK",
+          "RO",
+          "RU",
+          "RW",
+          "RE",
+          "BL",
+          "SH",
+          "KN",
+          "LC",
+          "MF",
+          "PM",
+          "VC",
+          "WS",
+          "SM",
+          "ST",
+          "SA",
+          "SN",
+          "RS",
+          "SC",
+          "SL",
+          "SG",
+          "SX",
+          "SK",
+          "SI",
+          "SB",
+          "SO",
+          "ZA",
+          "GS",
+          "SS",
+          "ES",
+          "LK",
+          "SD",
+          "SR",
+          "SJ",
+          "SE",
+          "CH",
+          "SY",
+          "TW",
+          "TJ",
+          "TZ",
+          "TH",
+          "TL",
+          "TG",
+          "TK",
+          "TO",
+          "TT",
+          "TN",
+          "TR",
+          "TM",
+          "TC",
+          "TV",
+          "UG",
+          "UA",
+          "AE",
+          "GB",
+          "UM",
+          "US",
+          "UY",
+          "UZ",
+          "VU",
+          "VE",
+          "VN",
+          "VG",
+          "VI",
+          "WF",
+          "EH",
+          "YE",
+          "ZM",
+          "ZW",
+          "AX"
+        ]
+      }
+    },
+    "sourceOrganization": {
+      "minItems": 1,
+      "description": "Institution which developed the software.",
+      "type": "array",
+      "title": "sourceOrganization",
+      "items": { "$ref": "#/$defs/Organization" }
+    },
+    "funding": {
+      "minItems": 1,
+      "description": "Information on the funding which was used to develop the software.",
+      "type": "array",
+      "title": "funding",
+      "items": { "$ref": "#/$defs/Grant" }
+    },
+    "contributor": {
+      "minItems": 1,
+      "description": "A person who has contributed to the software.",
+      "type": "array",
+      "title": "contributor",
+      "items": { "$ref": "#/$defs/Person" }
+    },
+    "author": {
+      "minItems": 1,
+      "description": "A person who has authored the software.",
+      "type": "array",
+      "title": "author",
+      "items": { "$ref": "#/$defs/Person" }
+    },
+    "maintainer": {
+      "description": "Individual responsible for maintaining the software.",
+      "title": "maintainer",
+      "type": "array",
+      "items": { "$ref": "#/$defs/Person" }
+    },
+    "downloadUrl": {
+      "description": "If the file can be downloaded, URL to download the binary.",
+      "type": "string",
+      "title": "downloadUrl"
+    },
+    "codeRepository": {
+      "description": "Link to the repository where the un-compiled, human readable code and related code is located (SVN, GitHub, CodePlex, institutional GitLab instance, etc.).",
+      "type": "string",
+      "title": "codeRepository"
+    },
+    "documentation": {
+      "description": "Link (URL) to the documentation describing the code and is usful for developers.",
+      "title": "documentation",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "readme": {
+      "description": "Link (URL) to the documentation describing the code and is usful for developers.",
+      "type": "string",
+      "title": "readme"
+    },
+    "buildInstruction": {
+      "description": "Link (URL) to installation instructions/documentation.",
+      "type": "string",
+      "title": "buildInstruction"
+    },
+    "supportGiven": {
+      "description": "Is support for the software provided?",
+      "type": "boolean",
+      "title": "supportGiven",
+      "enum": [
+        true,
+        false
+      ]
+    },
+    "requiredTrainingPeriod": {
+      "description": "How long would a researcher need to be able to use the software?",
+      "type": "string",
+      "title": "requiredTrainingPeriod"
+    },
+    "example": {
+      "minItems": 1,
+      "description": "Code examples for using the software.",
+      "type": "array",
+      "title": "example",
+      "items": { "$ref": "#/$defs/Example" }
+    },
+    "usedInPublication": {
+      "minItems": 1,
+      "description": "A publication which uses the software for its research.",
+      "type": "array",
+      "title": "usedInPublication",
+      "items": { "$ref": "#/$defs/ScholarlyArticle" }
+    },
+    "communityInteractions": {
+      "minItems": 1,
+      "description": "Ways how the software developers interact with the software users (community).",
+      "type": "array",
+      "title": "communityInteractions",
+      "items": { "$ref": "#/$defs/CommunityInteraction" }
+    },
+    "review": {
+      "minItems": 1,
+      "description": "A review of the software.",
+      "type": "array",
+      "title": "review",
+      "items": { "$ref": "#/$defs/Review" }
+    },
+    "tests": {
+      "minItems": 1,
+      "description": "Information on the tests of the software.",
+      "type": "array",
+      "title": "tests",
+      "items": { "$ref": "#/$defs/TestCollection" }
+    },
+    "validation": {
+      "minItems": 1,
+      "description": "Information on validations done for the software. Validation refers to whether the software produces results that correspond to real-world properties.",
+      "type": "array",
+      "title": "validation",
+      "items": { "$ref": "#/$defs/Validation" }
+    },
+    "output": {
+      "minItems": 1,
+      "description": "Description of the output functions of the software (e.g., APIs)",
+      "type": "array",
+      "title": "output",
+      "items": { "$ref": "#/$defs/Interface" }
+    },
+    "input": {
+      "minItems": 1,
+      "description": "Description of the input functions of the software (e.g., APIs)",
+      "type": "array",
+      "title": "input",
+      "items": { "$ref": "#/$defs/Interface" }
+    },
+    "compatibleHardware": {
+      "description": "Hardware which is compatible to this software (e.g., in labs).",
+      "title": "compatibleHardware",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "compatibleSoftware": {
+      "minItems": 1,
+      "description": "A software which can directly be used with the software without further changes.",
+      "type": "array",
+      "title": "compatibleSoftware",
+      "items": { "$ref": "#/$defs/SoftwareApplication" }
+    },
+    "compatibleData": {
+      "description": "Data which is compatible to this software.",
+      "title": "compatibleData",
+      "type": "array",
+      "items": { "$ref": "#/$defs/DataSet" }
+    },
+    "usedData": {
+      "description": "Data that is directly used by the provided software",
+      "title": "usedData",
+      "type": "array",
+      "items": { "$ref": "#/$defs/DataSet" }
+    },
+    "purpose": {
+      "description": "A general goal/purpose of the software.",
+      "title": "purpose",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "method": {
+      "description": "An used method in the software.",
+      "title": "method",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "coversSector": {
+      "description": "A supported sector of the software. A sector is generically dependent continuant that is a subdivision of a system.",
+      "title": "coversSector",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "agriculture, forestry and land use sector",
+          "energy demand sector",
+          "energy transformation sector",
+          "industry sector",
+          "waste and wastewater sector",
+          "building sector",
+          "commercial sector",
+          "heating and cooling sector",
+          "household sector",
+          "transport sector",
+          "electricity sector",
+          "mineral oil refining sector"
+        ]
+      }
+    },
+    "technology": {
+      "description": "A supported energy technology of the software.",
+      "title": "technology",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "sector coupling technology",
+          "carbon capture and storage technology",
+          "energy technology",
+          "manufacturing technology",
+          "mobility technology",
+          "non-energy use technology",
+          "energy storage technology",
+          "heat generation technology",
+          "power generation technology",
+          "power-to-fuel technology",
+          "chemical energy storage technology",
+          "electrical energy storage technology",
+          "kinetic energy storage technology",
+          "potential energy storage technology",
+          "thermal energy storage technology",
+          "geothermal heat technology",
+          "solar thermal heat technology",
+          "fuel power technology",
+          "geothermal power technology",
+          "hydro power technology",
+          "nuclear power technology",
+          "solar power technology",
+          "wind power technology",
+          "coal power technology",
+          "marine hydro power technology",
+          "pumped hydro storage power technology",
+          "reservoir hydro storage power technology",
+          "run of river power technology",
+          "photovoltaic technology",
+          "solar thermal power technology",
+          "offshore wind power technology",
+          "onshore wind power technology",
+          "power-to-gas technology",
+          "power-to-liquid technology",
+          "electric mobility technology"
+        ]
+      }
+    },
+    "assumption": {
+      "description": "A required assumption of the software.",
+      "title": "assumption",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "useCase": {
+      "description": "Other supported use case, e.g., a research question which can be answered with the software besides the main goal.",
+      "title": "useCase",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "limitation": {
+      "description": "A limitation of the software.",
+      "title": "limitation",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "parameter": {
+      "description": "A relevant internal parameter of the software.",
+      "title": "parameter",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "featureList": {
+      "description": "A feature of the software.",
+      "title": "featureList",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "energyComponent": {
+      "minItems": 1,
+      "description": "A component of the energy system included in the software.",
+      "type": "array",
+      "title": "energyComponent",
+      "items": { "$ref": "#/$defs/EnergyComponent" }
+    },
+    "hasTemporalResolution": {
+      "description": "Supported temporal resolution of the software. Temporal resolution is the resolution that indicates time-dependent the level of detail.",
+      "title": "hasTemporalResolution",
+      "type": "array",
+      "items": {
+        "enum": [
+          "annual",
+          "hourly",
+          "quarter-hourly",
+          "minutely",
+          "none",
+          "daily",
+          "secondly",
+          "unlimited",
+          "other",
+          "monthly",
+          "weekly"
+        ]
+      }
+    },
+    "temporalCoverage": {
+      "description": "Time scope the software was developed for (e.g. 2010, 2050).",
+      "title": "temporalCoverage",
+      "enum": [
+        "Long term (>=15)",
+        "Other",
+        "Short term (<= 5 years)",
+        "Medium term (>5-<15)"
+      ]
+    },
+    "stationaryVsTransient": {
+      "description": "Does the software support stationary or transient effects?",
+      "title": "stationaryVsTransient",
+      "enum": [
+        "Transient",
+        "Stationary"
+      ]
+    },
+    "hasSpatialResolution": {
+      "description": "Supported spatial resolution of the software. Spatial resolution is the resolution that indicates the geographical level of detail.",
+      "title": "hasSpatialResolution",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "dimensions": {
+      "description": "Supported dimensions of the software.",
+      "title": "dimensions",
+      "type": "array",
+      "items": {
+        "enum": [
+          "1D",
+          "2D",
+          "3D"
+        ]
+      }
+    },
+    "spatialScope": {
+      "description": "Geo scope the software was developed for (e.g., microgrid, Germany, Europe).",
+      "type": "string",
+      "title": "spatialScope"
+    },
+    "spatialCoverage": {
+      "description": "Regions covered by the model. Leave this blank if the model and data are not limited to a specific region. Examples include: USA, Canada, Germany, western Europe.",
+      "title": "spatialCoverage",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "supportedVoltageLevel": {
+      "description": "Supported voltage level of the software.",
+      "title": "supportedVoltageLevel",
+      "type": "array",
+      "items": {
+        "enum": [
+          "None",
+          "Low Voltage",
+          "High Voltage",
+          "Medium Voltage"
+        ]
+      }
+    },
+    "usedOptimization": {
+      "minItems": 1,
+      "description": "Information on an optimization included in the software.",
+      "type": "array",
+      "title": "usedOptimization",
+      "items": { "$ref": "#/$defs/OptimizationTool" }
+    },
+    "typicalHardware": {
+      "description": "Typical minimal hardware which is required to run the software.",
+      "title": "typicalHardware",
+      "type": "array",
+      "items": {
+        "enum": [
+          "HPC",
+          "Laptop",
+          "Desktop Computer/Work station"
+        ]
+      }
+    },
+    "typicalExcecutionTime": {
+      "description": "Typical execution time of the software in seconds.",
+      "title": "typicalExcecutionTime",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "processorRequirements": {
+      "description": "Processor architecture required to run the application (e.g. IA64).",
+      "type": "string",
+      "title": "processorRequirements"
+    },
+    "memoryRequirements": {
+      "description": "Minimum memory requirements.",
+      "type": "string",
+      "title": "memoryRequirements"
+    },
+    "storageRequirements": {
+      "description": "Storage requirements (free space required).",
+      "type": "string",
+      "title": "storageRequirements"
+    },
+    "realtimeCapability": {
+      "description": "What kind of realtime simulations are supported by the software?",
+      "title": "realtimeCapablity",
+      "type": "array",
+      "items": {
+        "enum": [
+          "Hard",
+          "Soft",
+          "None",
+          "Firm"
+        ]
+      }
+    },
+    "parallelizationCapability": {
+      "description": "Does the software support parallization?",
+      "type": "boolean",
+      "title": "parallelizationCapability",
+      "enum": [
+        true,
+        false
+      ]
+    },
+    "targetProduct": {
+      "description": "Target programming enviroments to which the code applies. If applies to several versions, just the product name can be used.",
+      "title": "targetProduct",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "operatingSystem": {
+      "title": "operatingSystem",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Linux",
+          "Microsoft Windows",
+          "MacOS",
+          "Android",
+          "iOS"
+        ]
+      }
+    },
+    "softwareRequirements": {
+      "description": "Required software dependencies.",
+      "title": "softwareRequirements",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "fileSize": {
+      "description": "Size of the application / package (e.g. 18MB). In the absence of a unit (MB, KB etc.), KB will be assumed.",
+      "type": "string",
+      "title": "fileSize"
+    },
+    "metadataVersion": {
+      "description": "The type and version number of the metadata.",
+      "type": "string",
+      "title": "schemaVersion"
+    },
+    "sdPublisher": {
+      "description": "Indicates the party responsible for generating and publishing the current structured data markup. For example, student projects and open data initiatives often re-publish existing content with more explicitly structured metadata. The sdPublisher property helps make such practices more explicit.",
+      "type": "string",
+      "title": "sdPublisher"
+    },
+    "sdLicense": {
+      "minItems": 1,
+      "description": "The license of the provided metadata.",
+      "type": "array",
+      "title": "sdLicense",
+      "items": { "$ref": "#/$defs/CreativeWork" }
+    }
+  },
+  "$id": "https://nfdi4energy.github.io/ERSmeta/#ersmeta:EnergyResearchSoftware",
+  "$defs": {
+    "@context": {
+      "format": "iri-reference",
+      "$comment": "The URL of the JSON-LD @context",
+      "type": "string"
+    },
+    "Validation": {
+      "description": "",
+      "type": "object",
+      "title": "Validation",
+      "required": [],
+      "properties": {
+        "additionalType": {
+          "description": "Type of the validation.",
+          "title": "additionalType",
+          "enum": [
+            "Empirical validation",
+            "Inter-model comparison",
+            "Analytical verification"
+          ]
+        },
+        "similarityOfResults": {
+          "description": "Factor on how close the validation was.",
+          "type": "string",
+          "title": "similarityOfResults"
+        },
+        "url": {
+          "description": "Link (URL) to further information on the validation.",
+          "type": "string",
+          "title": "url"
+        }
+      }
+    },
+    "Grant": {
+      "description": "A grant, typically financial or otherwise quantifiable, of resources. Typically a funder sponsors some MonetaryAmount to an Organization or Person, sometimes not necessarily via a dedicated or long-lived Project, resulting in one or more outputs, or fundedItems. For financial sponsorship, indicate the funder of a MonetaryGrant. For non-financial support, indicate sponsor of Grants of resources (e.g. office space). Grants support activities directed towards some agreed collective goals, often but not always organized as Projects. Long-lived projects are sometimes sponsored by a variety of grants over time, but it is also common for a project to be associated with a single grant. The amount of a Grant is represented using amount as a MonetaryAmount.",
+      "type": "object",
+      "title": "",
+      "required": [],
+      "properties": {
+        "name": {
+          "description": "Name of the project during which the software was developed.",
+          "type": "string",
+          "title": "projectName"
+        },
+        "identifier": {
+          "description": "An identifying grant number, in case of a publicly funded project, this number is assigned by the funding agency.",
+          "type": "string",
+          "title": "grantNo"
+        },
+        "funder": {
+          "minItems": 1,
+          "description": "A organization that supports (sponsors) something through some kind of financial contribution.",
+          "type": "array",
+          "title": "funder",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "Organization": {
+      "description": "An organization such as a school, NGO, corporation, club, etc.",
+      "type": "object",
+      "title": "Organization",
+      "required": [],
+      "properties": {
+        "legalName": {
+          "description": "The official name of the organization, e.g. the registered company name.",
+          "type": "string",
+          "title": "legalName"
+        },
+        "identifier": {
+          "description": "URL identifier, ideally a ROR for institutions.",
+          "type": "string",
+          "title": "identifier"
+        }
+      }
+    },
+    "MonetaryAmount": {
+      "description": "A monetary value or range. This type can be used to describe an amount of money such as $50 USD, or a range as in describing a bank account being suitable for a balance between ?1,000 and ?1,000,000 GBP, or the value of a salary, etc. It is recommended to use PriceSpecification Types to describe the price of an Offer, Invoice, etc.",
+      "type": "object",
+      "title": "MonetaryAmount",
+      "required": [],
+      "properties": {
+        "currency": {
+          "description": "The currency in which the monetary amount is expressed. Use standard formats: ISO 4217 currency format, e.g. USD; Ticker symbol for cryptocurrencies, e.g. BTC; well known names for Local Exchange Trading Systems (LETS) and other currency types, e.g. Ithaca HOUR.",
+          "type": "string",
+          "title": "currency"
+        },
+        "value": {
+          "description": "The value of the estimatedCost.",
+          "type": "string",
+          "title": "value"
+        }
+      }
+    },
+    "DataSet": {
+      "description": "A body of structured information describing some topic(s) of interest.",
+      "type": "object",
+      "title": "DataSet",
+      "required": [],
+      "properties": {
+        "identifier": {
+          "description": "The identifier property represents any kind of identifier for any kind of Thing, such as ISBNs, GTIN codes, UUIDs etc.",
+          "type": "string",
+          "title": "identifier"
+        },
+        "encodingFormat": {
+          "description": "Format of the dataset.",
+          "title": "encodingFormat",
+          "type": "array",
+          "items": {
+            "enum": [
+              "JSON",
+              "db",
+              "xlsx",
+              "Python dict",
+              "other",
+              "xml",
+              "Pandas",
+              "mat",
+              "csv",
+              "mdf5",
+              "binary",
+              "DataFrame/Serie",
+              "YAML"
+            ]
+          }
+        },
+        "url": {
+          "description": "Link to the dataset.",
+          "title": "url",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "CreativeWork": {
+      "description": "The most generic kind of creative work, including books, movies, photographs, software programs, etc.",
+      "type": "object",
+      "title": "CreativeWork",
+      "required": [],
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "description": "The identifier property represents any kind of identifier for any kind of Thing, such as ISBNs, GTIN codes, UUIDs etc.",
+          "title": "identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the item.",
+          "title": "name"
+        }
+      }
+    },
+    "CommunityInteraction": {
+      "description": "Interaction with the community of the research software.",
+      "type": "object",
+      "title": "CommunityInteraction",
+      "required": [],
+      "properties": {
+        "additionalType": {
+          "description": "Type of the interaction.",
+          "title": "additionalType",
+          "enum": [
+            "Mailinglist",
+            "In-person meet-ups",
+            "Github discussions",
+            "Issues",
+            "Forum",
+            "Online meetings"
+          ]
+        },
+        "url": {
+          "description": "Link to further information on the community interaction.",
+          "type": "string",
+          "title": "url"
+        }
+      }
+    },
+    "Review": {
+      "description": "A review of a software.",
+      "type": "object",
+      "title": "Review",
+      "required": [],
+      "properties": {
+        "reviewAspect": {
+          "description": "This Review is relevant to this part or facet of the object being review.",
+          "type": "string",
+          "title": "reviewAspect"
+        },
+        "reviewBody": {
+          "description": "The actual body of the review.",
+          "type": "string",
+          "title": "reviewBody"
+        },
+        "abstract": {
+          "description": "A review of the source code.",
+          "type": "string",
+          "title": "abstract"
+        }
+      }
+    },
+    "EnergyComponent": {
+      "description": "An energy component modelled within a simulation software",
+      "type": "object",
+      "title": "EnergyComponent",
+      "required": [],
+      "properties": {
+        "identifier": {
+          "description": "The identifier property represents any kind of identifier for any kind of Thing, such as ISBNs, GTIN codes, UUIDs etc. Schema.org provides dedicated properties for representing many of these, either as Textual strings or as URL (URI) links. See background notes for more details.",
+          "type": "string",
+          "title": "identifier"
+        },
+        "additionalType": {
+          "description": "Type of the component, e.g., pv",
+          "title": "additionalType",
+          "enum": [
+            "sector coupling technology",
+            "carbon capture and storage technology",
+            "energy technology",
+            "manufacturing technology",
+            "mobility technology",
+            "non-energy use technology",
+            "energy storage technology",
+            "heat generation technology",
+            "power generation technology",
+            "power-to-fuel technology",
+            "chemical energy storage technology",
+            "electrical energy storage technology",
+            "kinetic energy storage technology",
+            "potential energy storage technology",
+            "thermal energy storage technology",
+            "geothermal heat technology",
+            "solar thermal heat technology",
+            "fuel power technology",
+            "geothermal power technology",
+            "hydro power technology",
+            "nuclear power technology",
+            "solar power technology",
+            "wind power technology",
+            "coal power technology",
+            "marine hydro power technology",
+            "pumped hydro storage power technology",
+            "reservoir hydro storage power technology",
+            "run of river power technology",
+            "photovoltaic technology",
+            "solar thermal power technology",
+            "offshore wind power technology",
+            "onshore wind power technology",
+            "power-to-gas technology",
+            "power-to-liquid technology",
+            "electric mobility technology"
+          ]
+        },
+        "name": {
+          "description": "Name of the component.",
+          "type": "string",
+          "title": "name"
+        },
+        "levelOfDetail": {
+          "description": "Level of detail of the component.",
+          "title": "levelOfDetail",
+          "enum": [
+            "low (simple timeseries)",
+            "middle (linear equations with some parameters)",
+            "high (nonlinear equations with a high number of parameters)"
+          ]
+        }
+      }
+    },
+    "OptimizationTool": {
+      "description": "A tool used for optimization",
+      "type": "object",
+      "title": "OptimizationTool",
+      "required": [],
+      "properties": {
+        "featureList": {
+          "description": "Features of the optimization.",
+          "title": "featureList",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "method": {
+          "description": "Method of the optimization.",
+          "title": "method",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "problemType": {
+          "description": "Problem class of the optimization.",
+          "type": "string",
+          "title": "problemType"
+        },
+        "solver": {
+          "description": "Used solver for the optimization.",
+          "title": "solver",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Example": {
+      "description": "Example for a software usage",
+      "type": "object",
+      "title": "Example",
+      "required": [],
+      "properties": {
+        "additionalType": {
+          "description": "Type of the example.",
+          "title": "additionalType",
+          "enum": [
+            "Test",
+            "Minimal",
+            "Long",
+            "Paper"
+          ]
+        },
+        "name": {
+          "description": "Name of the example.",
+          "type": "string",
+          "title": "name"
+        },
+        "url": {
+          "description": "Link to the example.",
+          "type": "string",
+          "title": "url"
+        }
+      }
+    },
+    "ScholarlyArticle": {
+      "description": "A scholarly article.",
+      "type": "object",
+      "title": "ScholarlyArticle",
+      "required": [],
+      "properties": {
+        "identifier": {
+          "description": "URL identifier, ideally a DOI for a publication.",
+          "type": "string",
+          "title": "identifier"
+        }
+      }
+    },
+    "SoftwareApplication": {
+      "description": "A software application.",
+      "type": "object",
+      "title": "CreativeWork",
+      "required": [],
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "description": "The identifier property represents any kind of identifier for any kind of Thing, such as ISBNs, GTIN codes, UUIDs etc.,",
+          "title": "identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the compatible software.",
+          "title": "name"
+        },
+        "url": {
+          "description": "Link to the software.",
+          "title": "url",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "container_language": {
+      "patternProperties": {
+        "^[A-Za-z]{2,3}$": {
+          "$comment": "Overly simplified version of the regex. See https://github.com/w3c/wot-thing-description/blob/main/validation/td-json-schema-validation.json for a complete regex",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "Person": {
+      "description": "A person (alive, dead, undead, or fictional).",
+      "type": "object",
+      "title": "Person",
+      "required": [
+        "givenName",
+        "familyName"
+      ],
+      "properties": {
+        "identifier": {
+          "description": "URL identifier, ideally an ORCID ID for individuals, a FundRef ID for funders.",
+          "type": "string",
+          "title": "identifier"
+        },
+        "givenName": {
+          "description": "Given name. In the U.S., the first name of a Person. This can be used along with familyName instead of the name property.",
+          "type": "string",
+          "title": "givenName"
+        },
+        "familyName": {
+          "description": "Family name. In the U.S., the last name of an Person. This can be used along with givenName instead of the name property.",
+          "type": "string",
+          "title": "familyName"
+        },
+        "roleName": {
+          "description": "Detailed role of a person.",
+          "title": "roleName",
+          "type": "array",
+          "items": {
+            "enum": [
+              "Architecture",
+              "Documentation",
+              "Design",
+              "Support",
+              "Maintenance",
+              "Coding",
+              "Testing",
+              "Debugging",
+              "Management"
+            ]
+          }
+        },
+        "email": {
+          "description": "Email address.",
+          "title": "email",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "TestCollection": {
+      "description": "A collection of Software Tests",
+      "type": "object",
+      "title": "TestCollection",
+      "required": [],
+      "properties": {
+        "collectionSize": {
+          "description": "Number of the tests of the software.",
+          "type": "string",
+          "title": "collectionSize"
+        },
+        "url": {
+          "description": "Link to one or multiple test case.",
+          "title": "url",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Interface": {
+      "description": "An interface of a software",
+      "type": "object",
+      "title": "Interface",
+      "required": [],
+      "properties": {
+        "identifier": {
+          "description": "The identifier property represents any kind of identifier for any kind of Thing, such as ISBNs, GTIN codes, UUIDs etc. Schema.org provides dedicated properties for representing many of these, either as Textual strings or as URL (URI) links. See background notes for more details.",
+          "type": "string",
+          "title": "identifier"
+        },
+        "usedStandard": {
+          "description": "Supported standards of the API.",
+          "title": "usedStandard",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "description": "Example for the interface.",
+          "title": "example",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "description": "Description of the content exchanged via the interface.",
+          "type": "string",
+          "title": "description"
+        },
+        "encodingFormat": {
+          "description": "Description of the allowed encoding format of the interface, e.g., csv",
+          "title": "encodingFormat",
+          "type": "array",
+          "items": {
+            "enum": [
+              "JSON",
+              "db",
+              "txt",
+              "xlsx",
+              "Python dict",
+              "other",
+              "xml",
+              "Pandas",
+              "mat",
+              "csv",
+              "mdf5",
+              "binary",
+              "DataFrame/Serie",
+              "YAML"
+            ]
+          }
+        },
+        "hasTemporalResolution": {
+          "description": "Description on the required temporal resolution for the interface.",
+          "title": "hasTemporalResolution",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "annual",
+              "hourly",
+              "quarter-hourly",
+              "minutely",
+              "none",
+              "daily",
+              "secondly",
+              "unlimited",
+              "other",
+              "monthly",
+              "weekly"
+            ]
+          }
+        },
+        "required": {
+          "description": "Is it required to provide input to the interface?",
+          "type": "bool",
+          "title": "required",
+          "enum": [
+            true,
+            false
+          ]
+        }
+      }
+    }
+  }
+}

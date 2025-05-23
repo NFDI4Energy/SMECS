@@ -8,3 +8,6 @@ env/
 /Metadata mosaik.json
 /.hermes/*
 .hermes
+*.sln
+*.pyproj
+*.user

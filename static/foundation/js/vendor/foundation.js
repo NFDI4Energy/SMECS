@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const urlInputs = document.querySelectorAll('.url-input');
     const copyBtn = document.getElementById('copy-button');
     const SPDX_URL = 'https://raw.githubusercontent.com/spdx/license-list-data/master/json/licenses.json';
-    const JsonSchema = '/static/schema/codemeta_schema.json';
+    const JsonSchema = '/static/schema/ersmeta_schema.json';
     const metadataJson = document.getElementById("metadata-json");
     const data = metadataJson.value;
     const metadata = JSON.parse(data);

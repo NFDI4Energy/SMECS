@@ -94,15 +94,25 @@ def define_field_type(schema: dict, types: dict, array = False) -> dict[str, str
             else:
                 type_dict[key] = "single_input_object"
         elif value.get("type") == "string":
-            type_dict[key] = "long_field" if key == "description" else "single_inputs"
+            if key == "description":
+                type_dict[key] = "longField"
+            else:  
+                type_dict[key] = "simpleField"
+            required_type = value["$ref"].split("/")[-1]
+            subproperties = types[required_type].get("properties")
+            # Recursively define field types for referenced type
+            if len(subproperties) > 1:
+                type_dict[key] = define_field_type(types[required_type], None)
+            else:
+                type_dict[key] = "single_input_object"
+        elif value.get("type") == "string":
+            type_dict[key] = "long_field" if key == "description" or key == "abstract" else "single_inputs"
         elif value.get("type") == "array":
             items = value.get("items", {})  # Safely get "items" or default to an empty dict
             if "enum" in items:
-                enum_values = items.get("enum")
-                if enum_values is not None and len(enum_values) > 10:
-                    type_dict[key] = "tagging_autocomplete"
-                else:
-                    type_dict[key] = "tagging_dropdown"
+                type_dict[key] = "taggingAutocomplete"
+                enum_values = items.get("enum")                
+                type_dict[key] = "tagging_autocomplete"                
             elif items.get("type") == "string":
                 type_dict[key] = "tagging"
             elif "$ref" in items:
@@ -203,10 +213,17 @@ def create_empty_metadata(schema: dict) -> dict[str, dict[str, str]]:
         dict[str, dict[str, str]]: A dictionary with tab names as keys and empty metadata dicts as values.
     """
     properties_list = load_properties_list_from_schema(schema)
-    metadata = {"GeneralInformation": create_empty_metadata_dict_from_properties_list(properties_list, schema, "name", "copyrightHolder"),
-                "Provenance": create_empty_metadata_dict_from_properties_list(properties_list, schema, "softwareVersion", "funding"),
-                "Contributors": create_empty_metadata_dict_from_properties_list(properties_list, schema, "contributor", "maintainer"),
-                "TechnicalAspects": create_empty_metadata_dict_from_properties_list(properties_list, schema, "downloadUrl", "targetProduct")
+    metadata = {"General": create_empty_metadata_dict_from_properties_list(properties_list, schema, "name", "inLanguage"),
+                "GeneralDescription": create_empty_metadata_dict_from_properties_list(properties_list, schema, "abstract", "copyrightHolder"),
+                "Provenance": create_empty_metadata_dict_from_properties_list(properties_list, schema, "dateCreated", "funding"),
+                "RelatedPersons": create_empty_metadata_dict_from_properties_list(properties_list, schema, "contributor", "maintainer"),
+                "Usage": create_empty_metadata_dict_from_properties_list(properties_list, schema, "downloadUrl", "example"),
+                "CommunityAndQuality": create_empty_metadata_dict_from_properties_list(properties_list, schema, "usedInPublication", "validation"),
+                "Interface": create_empty_metadata_dict_from_properties_list(properties_list, schema, "output", "input"),
+                "Interoperability": create_empty_metadata_dict_from_properties_list(properties_list, schema, "compatibleHardware", "usedData"),
+                "Functionalities": create_empty_metadata_dict_from_properties_list(properties_list, schema, "purpose", "usedOptimization"),
+                "TechnicalRequirements": create_empty_metadata_dict_from_properties_list(properties_list, schema, "typicalHardware", "fileSize"),
+                "MetaMetadata": create_empty_metadata_dict_from_properties_list(properties_list, schema, "metadataVersion", "sdLicense"),
         }
     return metadata
 
@@ -292,7 +309,7 @@ def init_curated_metadata(extract_metadata):
     Returns:
         tuple: (filled_metadata, metadata_description, metadata_field_types, joined_metadata)
     """
-    schema_name = 'codemeta_schema.json'
+    schema_name = 'ersmeta_schema.json'
     full_schema = load_schema(schema_name)
     empty_metadata = create_empty_metadata(full_schema)
     #print(f"Empty metadata:\n{empty_metadata}")
