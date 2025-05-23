@@ -129,7 +129,7 @@
                                         </span>
                                         {% endif %}
                                         {% endfor %}
-                                        <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type and press ENTER to add..." />
+                                        <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type and press Enter to add..." />
                                     </div>
                                 </div>
                                 {% elif type_metadata|get:key == "tagging_object" %}
@@ -158,7 +158,7 @@
                                             <span class="remove-tag" data-value="{{ item|get:"identifier" }}">×</span>
                                         </span>
                                         {% endfor %}
-                                        <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type and press ENTER to add an identifier..." />
+                                        <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type and press Enter to add an identifier..." />
                                     </div>
                                 </div>
                                 {% endwith %}
@@ -188,7 +188,7 @@
                                         </span>
                                         {% endif %}
                                         {% endfor %}
-                                        <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type and press ENTER to add..." />
+                                        <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type and press Enter to add..." />
                                     </div>
                                     <div id="{{ key }}Suggestions" class="tag-suggestions"></div>
                                 </div>
