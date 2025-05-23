@@ -340,7 +340,7 @@ form.data-form3 {
 
 .tab .form-group {
     width: 90%;
-    margin: 0px 0% 1% 9%;
+    margin: 0px 0% 0% 9%;
 }
 
 .form-group label {
@@ -361,7 +361,7 @@ form.data-form3 {
     width: 40%;
     float: left;
     margin-right: 10%;
-    margin-bottom: 0.2%;
+    margin-bottom: 0.1em;
     box-sizing: border-box;
 }
 
@@ -373,7 +373,7 @@ form.data-form3 {
 /* style for general single input elements with longer values */
 .form-group .long_field {
     width: 85%;
-    margin-bottom: 0.2%;
+    margin-bottom: 0.1em;
     margin-right: 10%;
     float: left;
     box-sizing: border-box;
@@ -390,16 +390,6 @@ form.data-form3 {
     border: 1px solid #ada8a8;
     border-radius: 4px;
 }
-
-    .form-group fieldset.fieldset_content, .form-group fieldset.copyrightHolder {
-        width: 40%;
-        float: right;
-        margin-right: 15px;
-        margin-left: 5px;
-        margin-top: 5px;
-        margin-bottom: 5px;
-    }
-
 
     .form-group fieldset label, .data-form3 label {
         display: inline;
@@ -421,7 +411,7 @@ form.data-form3 {
     border-radius: 4px;
     border: 1px solid #ccc;
     transition: border-color 0.2s ease-in-out;
-    margin-bottom: 5px;
+    margin-bottom: 0.1em;
     margin-left: 4px;
 }
 
@@ -1609,10 +1599,6 @@ input:checked + .slider {
         font-size: 1em;
     }
 
-    .form-group .single_inputs {
-        margin-bottom: 0.5%;
-    }
-
     #metadata-json {
         font-size: 100%;
     }
@@ -1741,7 +1727,7 @@ input:checked + .slider {
     flex-wrap: wrap;
     gap: 5px;
     align-items: center;
-    padding: 5px;
+    margin-bottom: 0.2em;
     box-sizing: border-box;
 }
 
