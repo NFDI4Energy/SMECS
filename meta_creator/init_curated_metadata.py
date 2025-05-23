@@ -299,8 +299,16 @@ def init_curated_metadata(extract_metadata):
     full_schema = load_schema(schema_name)
     empty_metadata = create_empty_metadata(full_schema)
     #print(f"Empty metadata:\n{empty_metadata}")
+
+    extract_metadata['metadataVersion'] = 0.8
+    extract_metadata['sdLicense'] = [{
+      "@type": "CreativeWork",
+      "identifier": "CC0-1.0",
+      "name": "Creative Commons Zero v1.0 Universal"
+    }]
+
     filled_metadata = fill_empty_metadata(empty_metadata, extract_metadata)
-    #print(f"Filled metadata:\n{filled_metadata}")
+    print(f"Filled metadata:\n{filled_metadata}")
 
     metadata_description = load_description_dict_from_schema(full_schema)
     metadata_field_types = define_field_type(full_schema, full_schema["$defs"])
