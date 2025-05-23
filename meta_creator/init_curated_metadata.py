@@ -274,8 +274,8 @@ def join_tabs_to_dict(filled_metadata: dict[str, dict]) -> dict:
         dict: The combined metadata dictionary.
     """
     output_metadata = {
-            "@context": "https://w3id.org/codemeta/3.0",
-            "@type": "SoftwareSourceCode",
+            "@context": "https://github.com/NFDI4Energy/ERSmeta/blob/main/schema/ersmeta.jsonld",
+            "@type": "EnergyResearchSoftware",
         }
     for _, tab_data in filled_metadata.items():
         output_metadata.update(tab_data)
