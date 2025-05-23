@@ -188,7 +188,7 @@
                                         </span>
                                         {% endif %}
                                         {% endfor %}
-                                        <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Select tag to add..." />
+                                        <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type and select from list" />
                                     </div>
                                     <div id="{{ key }}Suggestions" class="tag-suggestions"></div>
                                 </div>
@@ -291,7 +291,7 @@
                                                     {% if value == 'tagging' %}
                                                     <input class="tag-input" type="text" style="display:none;" placeholder="Add tag and press Enter" />
                                                     {% else %}
-                                                    <input class="tag-input" type="text" style="display:none;" placeholder="Select tag to add" />
+                                                    <input class="tag-input" type="text" style="display:none;" placeholder="Type and select from list" />
                                                     {% endif %}
                                                 </td>
                                                 {% else %}
@@ -330,7 +330,7 @@
                                             {% if value == "tagging" %}
                                             <input type="text" class="add-row-tag-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Add tag for {{col|camel_to_spaces_lower}} and press Enter">
                                             {% else %}
-                                            <input type="text" class="add-row-tag-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Select tag for {{col|camel_to_spaces_lower}}">
+                                            <input type="text" class="add-row-tag-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Type and select from list for {{col|camel_to_spaces_lower}}">
                                             {% endif %}
                                         </div>
                                         {% elif value == 'dropdown' %}
