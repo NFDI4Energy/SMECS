@@ -188,7 +188,7 @@
                                         </span>
                                         {% endif %}
                                         {% endfor %}
-                                        <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type and press Enter to add..." />
+                                        <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Select tag to add..." />
                                     </div>
                                     <div id="{{ key }}Suggestions" class="tag-suggestions"></div>
                                 </div>
@@ -235,7 +235,7 @@
                                         </span>
                                         <i class="fa fa-info-circle" aria-hidden="true"></i>
                                     </div>
-                                    {% else %}
+                                    {% elif key == "Contributor" %}
                                     <button type="button" class="collapsible-button" onclick="toggleCollapse()">Who are Contributors and Authors?</button>
                                     <div class="person-info collapsible-content" id="contributor-explanation">
                                         <h5>Who is a Contributor?</h5>
@@ -288,7 +288,11 @@
                                                         <span class="tag" data-tag="{{ tag }}">{{ tag }} <span class="remove-tag" data-tag="{{ tag }}">×</span></span>
                                                         {% endfor %}
                                                     </div>
+                                                    {% if value == 'tagging' %}
                                                     <input class="tag-input" type="text" style="display:none;" placeholder="Add tag and press Enter" />
+                                                    {% else %}
+                                                    <input class="tag-input" type="text" style="display:none;" placeholder="Select tag to add" />
+                                                    {% endif %}
                                                 </td>
                                                 {% else %}
                                                 <td>{{ row|get:col }} </td>
@@ -323,7 +327,11 @@
                                         {% if value == 'tagging' or value == 'tagging_autocomplete' %}
                                         <div class="tags-container add-row-tags-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
                                             <!-- Tags will be inserted here by JS -->
+                                            {% if value == "tagging" %}
                                             <input type="text" class="add-row-tag-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Add tag for {{col|camel_to_spaces_lower}} and press Enter">
+                                            {% else %}
+                                            <input type="text" class="add-row-tag-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Select tag for {{col|camel_to_spaces_lower}}">
+                                            {% endif %}
                                         </div>
                                         {% elif value == 'dropdown' %}
                                         <div class="tags-container add-row-tags-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
