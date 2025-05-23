@@ -94,24 +94,10 @@ def define_field_type(schema: dict, types: dict, array = False) -> dict[str, str
             else:
                 type_dict[key] = "single_input_object"
         elif value.get("type") == "string":
-            if key == "description":
-                type_dict[key] = "longField"
-            else:  
-                type_dict[key] = "simpleField"
-            required_type = value["$ref"].split("/")[-1]
-            subproperties = types[required_type].get("properties")
-            # Recursively define field types for referenced type
-            if len(subproperties) > 1:
-                type_dict[key] = define_field_type(types[required_type], None)
-            else:
-                type_dict[key] = "single_input_object"
-        elif value.get("type") == "string":
             type_dict[key] = "long_field" if key == "description" or key == "abstract" else "single_inputs"
         elif value.get("type") == "array":
             items = value.get("items", {})  # Safely get "items" or default to an empty dict
-            if "enum" in items:
-                type_dict[key] = "taggingAutocomplete"
-                enum_values = items.get("enum")                
+            if "enum" in items:            
                 type_dict[key] = "tagging_autocomplete"                
             elif items.get("type") == "string":
                 type_dict[key] = "tagging"
