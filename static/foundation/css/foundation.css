@@ -898,10 +898,36 @@ button.TrySMECS {
     cursor: pointer;
 }
 
+.label-content,
+label > .asterisk,
+label > .fa-info-circle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25em; /* optional: space between elements */
+}
+
+.asterisk {
+    color: red;
+    font-size: 1em; /* match the label font size */
+    font-weight: bold;
+    line-height: 1;
+    vertical-align: middle;
+}
+
 .fa-info-circle {
     opacity: 0.5;
     font-size: 12px;
     z-index: 1;
+    font-size: 1em; /* match the label font size */
+    vertical-align: middle;
+    line-height: 1;
+}
+
+/* Ensure both the info icon and asterisk are aligned */
+.fa-info-circle,
+.asterisk {
+    vertical-align: middle;
+    /* Optionally, adjust font-size or line-height if needed */
 }
 
 .tooltip-text-metadata {
