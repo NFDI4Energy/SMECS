@@ -17,6 +17,8 @@ def is_list(value):
 #Define 'get' to access values in the dictionary
 @register.filter
 def get(dictionary, key):
+    if not isinstance(dictionary, dict):
+        return ''
     return dictionary.get(key, '')
 
 # Define a function to change camelcase to nice output
@@ -53,7 +55,7 @@ def check_maintainer(dictionary, email):
 
 @register.filter
 def prepare_array(obj):
-    if obj[0].get("identifier"):
+    if isinstance(obj, list) and obj and isinstance(obj[0], dict) and obj[0].get("identifier"):
         return json.dumps(obj)
     return json.dumps([])
 
@@ -65,7 +67,9 @@ def prepare_single(obj):
 @register.filter
 def get_array(dictionary, key):
     result = dictionary.get(key, '')
-    return result[0]
+    if isinstance(result, list) and result:
+        return result[0]
+    return {}
 
 @register.filter
 def row_has_values(row, columns):
@@ -78,3 +82,13 @@ def row_has_values(row, columns):
         if value not in [None, '', [], {}]:
             return True
     return False
+
+@register.filter
+def all_types_same(type_metadata, metadata_dict):
+    """
+    Returns True if all type_metadata values for keys in metadata_dict are the same.
+    """
+    if not metadata_dict:
+        return True
+    collected_types = [type_metadata.get(key) for key in metadata_dict.keys()]
+    return all(t == collected_types[0] for t in collected_types)

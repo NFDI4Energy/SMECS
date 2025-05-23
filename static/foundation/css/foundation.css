@@ -526,7 +526,7 @@ div.error-container {
     margin-top: 8px;
     width: 110%; /* Same as .long_field */
     min-width: 500px; /* Optional: for usability */
-    table-layout: fixed; /* Ensures equal column width */
+    table-layout: auto; /* Ensures equal column width */
     margin-bottom: 1rem;
     border-collapse: collapse;
 }
@@ -541,6 +541,8 @@ div.error-container {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        min-width: 80px;
+        max-width: 400px;
     }
 
 .add-row-controls {
@@ -553,6 +555,10 @@ div.error-container {
     grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)) auto;
     margin-top: 8px;
 }
+    .add-row-controls.invalid {
+        background-color: #ffd6d6; /* light red */
+        border: 1px solid #ff0000;
+    }
 
     .add-row-controls .add-row-input,
     .add-row-controls .add-row-tag-input,
@@ -583,6 +589,14 @@ td.table-tagging-cell {
     position: relative;
 }
 
+    td.table-tagging-cell input.tag-input,
+    td.table-tagging-cell select.table-dropdown-select {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        min-width: 0;
+    }
+
 /* Make the tags-list a flex container so tags wrap and only take as much space as needed */
 .tags-list {
     display: flex;
@@ -609,9 +623,13 @@ td.table-tagging-cell {
     background: #fff;
     border: 1px solid #ccc;
     z-index: 10000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     max-height: 200px;
     overflow-y: auto;
     font-size: 0.95em;
+    min-width: 180px; /* optional: ensures a minimum width */
+    padding: 0;
+    margin: 0;
 }
 
 .suggestion-item {

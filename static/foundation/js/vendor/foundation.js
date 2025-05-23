@@ -25,21 +25,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let initialJson = metadataJson;
 
-    // Collect all unique data-roles
-    const contributorsAndAuthorsTab = document.getElementById('ContributorsAndAuthors');
-    const personCheckboxes = contributorsAndAuthorsTab.querySelectorAll('.checkbox-element');
-    const personRoles = Array.from(new Set(
-        Array.from(personCheckboxes).map(checkbox => checkbox.dataset.role)
-    ));
+    // Helper: Fetch required and recommended fields from schema
+    function fetchRequiredAndRecommendedFields(schema) {
+        // Required fields: standard JSON Schema
+        const required = schema.required || [];
+        // Recommended fields: codemeta uses "recommended" (array) or similar
+        const recommended = schema.recommended || [];
+        return { required, recommended };
+    }
+
+    // Helper: Get the field key for an input element
+    function getFieldKey(input) {
+        // Try to get the name attribute, fallback to id
+        // Remove array notation if present (e.g., "author[familyName]" -> "author")
+        let key = input.name || input.id || "";
+        if (key.includes("[")) {
+            key = key.split("[")[0];
+        }
+        // For hidden inputs in tagging/tagging_autocomplete, remove "HiddenInput" suffix
+        if (key.endsWith("HiddenInput")) {
+            key = key.replace(/HiddenInput$/, "");
+        }
+        return key;
+    }
 
     // Function to dynamically mark mandatory fields based on required key in JSON schema
     function setMandatoryFieldsFromSchema() {
         fetch(JsonSchema)
             .then(response => response.json())
-            .then(data => {
-                const requiredFields = data.required || [];  // Extract the required field names
+            .then(schema => {
+                const { required, recommended } = fetchRequiredAndRecommendedFields(schema);
 
-                requiredFields.forEach(function (fieldKey) {
+                required.forEach(function (fieldKey) {
                     // Find all inputs where the name matches the required field
 
                     inputs.forEach(function (input) {
@@ -112,8 +129,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    var contributorsTableBody = document.getElementById('contributorsTableBody');
-
     // pop-up message for Contributor and Author tabs
     function showPopup() {
         document.getElementById('popup').style.display = 'block';
@@ -137,16 +152,6 @@ document.addEventListener("DOMContentLoaded", function () {
             localStorage.setItem(key, 'true');
         }
     }
-
-    // Add event listeners to the tab links
-    document.querySelectorAll('.tab-links_ext a').forEach(function (tabLink) {
-        tabLink.addEventListener('click', function (event) {
-            var tabId = this.getAttribute('href');
-            if (tabId === '#ContributorsAndAuthors' || tabId === '#tab-authors') {
-                checkAndShowPopup(tabId, repoName);
-            }
-        });
-    });
 
     document.querySelectorAll('.custom-tooltip-metadata').forEach(function (element) {
         const tooltip = element.querySelector('.tooltip-text-metadata');
@@ -176,13 +181,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // show highlighted tag for keywords
-    function showKeywordHighlight(tagValue) {
-        const highlightTag = document.createElement("span");
-        highlightTag.classList.add("highlight-tag");
-        highlightTag.innerHTML = `⚠️ ${tagValue} <span class="acknowledge-tag" data-value="${tagValue}">Got it</span>`;
-        container.insertBefore(highlightTag, input);
-    }
-
+   
     // Tagging Logic
     function setupTagging({
         containerId,
@@ -261,6 +260,7 @@ document.addEventListener("DOMContentLoaded", function () {
             updateHidden();
             input.value = "";
             if (suggestionsBox) suggestionsBox.style.display = "none";
+            input.classList.remove("invalid"); // Remove invalid color immediately
         }
 
         // Show yellow tag once if any tag exists
@@ -298,6 +298,46 @@ document.addEventListener("DOMContentLoaded", function () {
                     suggestionsBox.appendChild(div);
                 });
 
+                // --- Position the suggestion box using getBoundingClientRect ---
+                updateSuggestionsBoxPosition(input, suggestionsBox)
+                suggestionsBox.style.display = "block";
+            });
+            window.addEventListener('scroll', () => updateSuggestionsBoxPosition(input, suggestionsBox), true);
+            window.addEventListener('resize', () => updateSuggestionsBoxPosition(input, suggestionsBox));
+
+            input.addEventListener("focus", () => {
+                // Show all suggestions if input is empty, or filtered if not
+                const query = input.value.trim().toLowerCase();
+                suggestionsBox.innerHTML = "";
+
+                // Filter as in your input event
+                const filtered = autocompleteSource.filter(
+                    tag => !(
+                        objectKey
+                            ? selectedTags.some(item => item[objectKey] === tag)
+                            : selectedTags.includes(tag)
+                    ) && (query === "" || tag.toLowerCase().startsWith(query))
+                );
+
+                if (filtered.length === 0) {
+                    suggestionsBox.style.display = "none";
+                    return;
+                }
+
+                filtered.forEach(tag => {
+                    const div = document.createElement("div");
+                    div.classList.add("suggestion-item");
+                    div.textContent = tag;
+                    div.onclick = () => addTag(tag);
+                    suggestionsBox.appendChild(div);
+                });
+
+                // Position the suggestion box
+                const rect = input.getBoundingClientRect();
+                suggestionsBox.style.position = "fixed";
+                suggestionsBox.style.left = rect.left + "px";
+                suggestionsBox.style.top = rect.bottom + "px";
+                suggestionsBox.style.width = rect.width + "px";
                 suggestionsBox.style.display = "block";
             });
 
@@ -330,7 +370,18 @@ document.addEventListener("DOMContentLoaded", function () {
             if (e.key === "Enter") {
                 e.preventDefault();
                 const newTag = input.value.trim();
-                if (newTag) addTag(newTag);
+                if (useAutocomplete) {
+                    if (autocompleteSource.includes(newTag)) {
+                        addTag(newTag);
+                    } else {
+                        showInvalidTagMessage(container, input, "Please select a value from the list.");
+                        input.classList.add("invalid");
+                        setTimeout(() => input.classList.remove("invalid"), 1000);
+                        input.value = "";
+                    }
+                } else if (newTag) {
+                    addTag(newTag);
+                }
             }
         });
 
@@ -534,6 +585,72 @@ document.addEventListener("DOMContentLoaded", function () {
         const hiddenInput = document.getElementById(`${key}TableHiddenInput`);
         if (!table || !hiddenInput) return;
 
+        const atType = table.getAttribute('data-at-type');
+
+        // Check if this table is marked as unique
+        if (table.getAttribute('unique-tab') === 'True') {
+            // Get all headers and their data-col and data-coltype
+            const headerCells = Array.from(table.querySelectorAll('thead th'));
+            const headers = headerCells.map(th => ({
+                name: th.getAttribute('data-col'),
+                coltype: th.getAttribute('data-coltype')
+            }));
+
+            // elements: all headers with data-coltype == 'element'
+            const elements = headers
+                .filter(h => h.coltype === 'element')
+                .map(h => h.name);
+
+            // subElements: all headers not 'delete' or 'element'
+            const subElements = headers
+                .filter(h => h.coltype !== 'delete' && h.coltype !== 'element')
+                .map(h => h.name);
+
+            // Find the table body
+            const tbody = table.querySelector('tbody');
+            const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
+            const existingJson = JSON.parse(metadataJson.value);
+
+            // Build elementList
+            const elementList = {};
+            elements.forEach(element => {
+                elementList[element] = [];
+            });
+
+            rows.forEach(row => {
+                const cells = Array.from(row.cells);
+                // Build the element object from subElements
+                let elementObj = { "@type": atType };
+                subElements.forEach((field) => {
+                    const headerIdx = headers.findIndex(h => h.name === field && h.coltype !== 'element' && h.coltype !== 'delete');
+                    if (headerIdx >= 0 && cells[headerIdx]) {
+                        const coltype = headers[headerIdx].coltype;
+                        elementObj[field] = extractCellValue(cells[headerIdx], coltype);
+                    }
+                });
+
+                // For each element, check if the checkbox is checked
+                elements.forEach(element => {
+                    // Find the header index for this element
+                    const headerIdx = headers.findIndex(h => h.name === element);
+                    if (headerIdx >= 0 && cells[headerIdx]) {
+                        const checkbox = cells[headerIdx].querySelector('.checkbox-element');
+                        if (checkbox && checkbox.checked) {
+                            elementList[element].push({ ...elementObj });
+                        }
+                    }
+                });
+            });
+
+            // Update JSON
+            Object.keys(elementList).forEach(element => {
+                existingJson[element] = elementList[element];
+            });
+            metadataJson.value = JSON.stringify(existingJson, null, 2);
+
+            return;
+        }
+
         const rows = Array.from(table.querySelectorAll('tbody tr'));
         if (rows.length === 0) {
             hiddenInput.value = '[]';
@@ -549,9 +666,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .map(th => th.getAttribute('data-col'))
             .slice(0, -1);
 
-        // Get @type from the table's data-at-type attribute
-        const atType = table.getAttribute('data-at-type');
-
         // Build array of objects
         const data = rows.map(row => {
             const cells = Array.from(row.querySelectorAll('td'));
@@ -564,24 +678,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     obj[header] = '';
                     return;
                 }
-                if (cell.getAttribute('data-coltype') === 'dropdown') {
-                    // Prefer data-value if present, fallback to select if in edit mode, else fallback to text
-                    if (cell.hasAttribute('data-value')) {
-                        obj[header] = cell.getAttribute('data-value');
-                    } else if (cell.querySelector('select')) {
-                        obj[header] = cell.querySelector('select').value;
-                    } else {
-                        obj[header] = cell.textContent.trim();
-                    }
-                } else if (cell.classList.contains('table-tagging-cell')) {
-                    // Extract all tag values from data-tag or data-value attribute
-                    const tags = Array.from(cell.querySelectorAll('.tag')).map(tagEl =>
-                        tagEl.getAttribute('data-tag') || tagEl.getAttribute('data-value') || tagEl.textContent.trim()
-                    );
-                    obj[header] = tags;
-                } else {
-                    obj[header] = cell.textContent.trim();
-                }
+                const coltype = cell.getAttribute('data-coltype');
+                obj[header] = extractCellValue(cell, coltype);
             });
             return obj;
         });
@@ -592,6 +690,29 @@ document.addEventListener("DOMContentLoaded", function () {
         const jsonObject = JSON.parse(metadataJson.value);
         jsonObject[key] = data;
         metadataJson.value = JSON.stringify(jsonObject, null, 2);
+    }
+
+    function extractCellValue(cell, coltype) {
+        if (!cell) return '';
+        if (coltype === 'dropdown') {
+            if (cell.hasAttribute('data-value')) {
+                return cell.getAttribute('data-value');
+            } else if (cell.querySelector('select')) {
+                return cell.querySelector('select').value;
+            } else {
+                return cell.textContent.trim();
+            }
+        } else if (coltype === 'tagging' || coltype === 'tagging_autocomplete') {
+            // Extract all tag values from data-tag or data-value attribute
+            return Array.from(cell.querySelectorAll('.tag')).map(tagEl => {
+                let val = tagEl.getAttribute('data-tag') || tagEl.getAttribute('data-value');
+                if (val) return val;
+                // Remove the trailing " ×" or "×" from textContent
+                return tagEl.textContent.replace(/\s*×$/, '').trim();
+            });
+        } else {
+            return cell.textContent.trim();
+        }
     }
 
     // Loop over all tables with the class 'auto-property-table'
@@ -608,10 +729,48 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }, true);
 
+        table.addEventListener('change', function (e) {
+            if (e.target.classList.contains('checkbox-element')) {
+                updateTableHiddenInput(key);
+            }
+        });
+
         // Optionally, update on row addition/removal or other events as needed
         // For initial sync
         updateTableHiddenInput(key);
     });
+
+    // Add function to color add items when element is required or recommended and empty
+    function highlightEmptyAddRowControls() {
+        fetch(JsonSchema)
+            .then(response => response.json())
+            .then(schema => {
+                const { required, recommended } = fetchRequiredAndRecommendedFields(schema);
+                const allMandatory = [...required, ...recommended];
+
+                document.querySelectorAll('table.auto-property-table').forEach(table => {
+                    const tableId = table.id;
+                    if (!tableId || !tableId.endsWith('Table')) return;
+                    const key = tableId.replace(/Table$/, '');
+
+                    // Find the corresponding add-row-controls
+                    const addRowControls = document.querySelector(`.add-row-controls[data-table-key="${key}"]`);
+                    if (!addRowControls) return;
+
+                    if (allMandatory.includes(key)) {
+                        const tbody = table.querySelector('tbody');
+                        const rows = tbody ? tbody.querySelectorAll('tr') : [];
+                        if (rows.length === 0) {
+                            addRowControls.classList.add('invalid');
+                        } else {
+                            addRowControls.classList.remove('invalid');
+                        }
+                    } else {
+                        addRowControls.classList.remove('invalid');
+                    }
+                });
+            });
+    }
 
     // Add Row functionality for all auto-property-tables
     document.querySelectorAll('.add-row-btn').forEach(function (btn) {
@@ -645,14 +804,23 @@ document.addEventListener("DOMContentLoaded", function () {
                 const input = Array.from(inputs).find(inp =>
                     inp.getAttribute('data-col') === header && !inp.classList.contains('invalid')
                 );
-     
-                if (!input) continue; // or handle error
-                const col = input.getAttribute('data-col');
-                const colType = input.getAttribute('data-coltype');
+                const th = table.querySelector(`thead th[data-col="${header}"]`);
+                const colType = th ? th.getAttribute('data-coltype') : (input ? input.getAttribute('data-coltype') : null);
+                const col = input ? input.getAttribute('data-col') : null;
                 const dataType = table.getAttribute('data-at-type');
                 const td = document.createElement('td');
                 console.log({header, input, col, colType, dataType})
-                if (colType === 'dropdown') {
+                if (colType === 'element') {
+                    // Create a checkbox for this cell
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.classList.add('checkbox-element');
+                    // Set data-role if needed (e.g., from personRoles or header)
+                    td.setAttribute('data-col', col);
+                    td.setAttribute('data-coltype', 'element');
+                    td.setAttribute('data-type', dataType);
+                    td.appendChild(checkbox);
+                } else if (colType === 'dropdown') {
                     console.log("Got to dropdown")
                     td.className = 'table-tagging-cell';
                     td.setAttribute('data-col', col);
@@ -704,7 +872,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             });
                     }
                 } else {
-                    td.textContent = values[i] || '';
+                    td.textContent = input ? input.value : '';
                 }
                 newRow.appendChild(td);
             }
@@ -725,6 +893,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Update hidden input
             updateTableHiddenInput(key);
+
+            // Remove color
+            const addRowControls = btn.parentElement;
+            addRowControls.classList.remove('invalid');
         });
     });
 
@@ -784,6 +956,41 @@ document.addEventListener("DOMContentLoaded", function () {
                 suggestionsBox.style.display = 'block';
             });
 
+            input.addEventListener('focus', function () {
+                suggestionsBox.innerHTML = '';
+                if (!autocompleteSource.length) {
+                    suggestionsBox.style.display = 'none';
+                    return;
+                }
+                const query = input.value.trim().toLowerCase();
+                const selectedTags = addRowTags[col];
+                const filtered = autocompleteSource.filter(
+                    tag => !selectedTags.includes(tag) && (query === "" || tag.toLowerCase().startsWith(query))
+                );
+                if (filtered.length === 0) {
+                    suggestionsBox.style.display = 'none';
+                    return;
+                }
+                filtered.forEach(tag => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.textContent = tag;
+                    div.style.cursor = 'pointer';
+                    div.onclick = function () {
+                        input.value = tag;
+                        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+                        suggestionsBox.style.display = 'none';
+                    };
+                    suggestionsBox.appendChild(div);
+                });
+                // Position suggestions below the input
+                updateSuggestionsBoxPosition(input, suggestionsBox);
+                suggestionsBox.style.display = 'block';
+            });
+
+            window.addEventListener('scroll', () => updateSuggestionsBoxPosition(input, suggestionsBox), true);
+            window.addEventListener('resize', () => updateSuggestionsBoxPosition(input, suggestionsBox));
+
             // Hide suggestions on blur/click outside
             input.addEventListener('blur', function () {
                 setTimeout(() => { suggestionsBox.style.display = 'none'; }, 200);
@@ -818,19 +1025,38 @@ document.addEventListener("DOMContentLoaded", function () {
             if (e.key === 'Enter' && input.value.trim() !== '') {
                 e.preventDefault();
                 const tag = input.value.trim();
-                if (!addRowTags[col].includes(tag)) {
-                    addRowTags[col].push(tag);
+                if (colType === 'tagging_autocomplete') {
+                    if (autocompleteSource.includes(tag)) {
+                        if (!addRowTags[col].includes(tag)) {
+                            addRowTags[col].push(tag);
 
-                    // Create tag element
-                    const span = document.createElement('span');
-                    span.className = 'tag';
-                    span.setAttribute('data-tag', tag);
-                    span.innerHTML = tag + ' <span class="remove-tag" data-tag="' + tag + '">×</span>';
-                    // Insert before input
-                    container.insertBefore(span, input);
+                            // Create tag element
+                            const span = document.createElement('span');
+                            span.className = 'tag';
+                            span.setAttribute('data-tag', tag);
+                            span.innerHTML = tag + ' <span class="remove-tag" data-tag="' + tag + '">×</span>';
+                            container.insertBefore(span, input);
+                        }
+                        input.value = '';
+                        if (suggestionsBox) suggestionsBox.style.display = 'none';
+                    } else {
+                        showInvalidTagMessage(container, input, "Please select a value from the list.");
+                        input.classList.add("invalid");
+                        setTimeout(() => input.classList.remove("invalid"), 1000);
+                        input.value = '';
+                    }
+                } else {
+                    // For plain tagging, just add the tag
+                    if (!addRowTags[col].includes(tag)) {
+                        addRowTags[col].push(tag);
+                        const span = document.createElement('span');
+                        span.className = 'tag';
+                        span.setAttribute('data-tag', tag);
+                        span.innerHTML = tag + ' <span class="remove-tag" data-tag="' + tag + '">×</span>';
+                        container.insertBefore(span, input);
+                    }
+                    input.value = '';
                 }
-                input.value = '';
-                if (suggestionsBox) suggestionsBox.style.display = 'none';
             }
         });
 
@@ -857,6 +1083,28 @@ document.addEventListener("DOMContentLoaded", function () {
             document.body.appendChild(suggestionsBox);
         }
         return suggestionsBox;
+    }
+
+    function showInvalidTagMessage(container, input, message) {
+        // Remove any existing invalid message
+        const existing = container.querySelector('.invalid-tag-message');
+        if (existing) existing.remove();
+
+        const msg = document.createElement("span");
+        msg.classList.add("highlight-tag", "invalid-tag-message");
+        msg.innerHTML = `❌ ${message} <span class="acknowledge-tag">Got it!</span>`;
+        container.insertBefore(msg, input);
+
+        // Remove on click or after a timeout
+        msg.querySelector('.acknowledge-tag').onclick = () => msg.remove();
+        setTimeout(() => { if (msg.parentNode) msg.remove(); }, 2500);
+    }
+
+    function updateSuggestionsBoxPosition(input, suggestionsBox) {
+        const rect = input.getBoundingClientRect();
+        suggestionsBox.style.left = rect.left + "px";
+        suggestionsBox.style.top = rect.bottom + "px";
+        suggestionsBox.style.width = rect.width + "px";
     }
 
     // functionanilties within all auto-property-tables
@@ -1039,6 +1287,26 @@ document.addEventListener("DOMContentLoaded", function () {
                         input.value = '';
                         return;
                     }
+                    // Get autocompleteSource for this cell/column
+                    let autocompleteSource = [];
+                    const col = cell.getAttribute('data-col');
+                    const dataType = cell.getAttribute('data-type');
+                    const colType = cell.getAttribute('data-coltype');
+                    if (colType === 'tagging_autocomplete') {
+                        // You may want to cache this for performance
+                        fetch(JsonSchema)
+                            .then(res => res.json())
+                            .then(schema => {
+                                autocompleteSource = schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];
+                                if (!autocompleteSource.includes(tag)) {
+                                    showInvalidTagMessage(cell, input, "Please select a value from the list.");
+                                    input.classList.add("invalid");
+                                    setTimeout(() => input.classList.remove("invalid"), 1000);
+                                    input.value = '';
+                                    return;
+                                }
+                            });
+                    }
                     const span = document.createElement('span');
                     span.className = 'tag';
                     span.setAttribute('data-tag', tag);
@@ -1107,10 +1375,35 @@ document.addEventListener("DOMContentLoaded", function () {
                 suggestionsBox.appendChild(div);
             });
             // Position suggestions below the input
-            const inputRect = input.getBoundingClientRect();
-            suggestionsBox.style.left = inputRect.left + 'px';
-            suggestionsBox.style.top = inputRect.bottom + 'px';
-            suggestionsBox.style.width = input.offsetWidth + 'px';
+            updateSuggestionsBoxPosition(input, suggestionsBox);
+            suggestionsBox.style.display = 'block';
+        });
+
+        input.addEventListener('focus', function () {
+            suggestionsBox.innerHTML = '';
+            const query = input.value.trim().toLowerCase();
+            const selectedTags = selectedTagsProvider();
+            // Show all suggestions if input is empty, or filtered if not
+            const filtered = autocompleteSource.filter(
+                tag => !selectedTags.includes(tag) && (query === "" || tag.toLowerCase().startsWith(query))
+            );
+            if (filtered.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            filtered.forEach(tag => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = tag;
+                div.style.cursor = 'pointer';
+                div.onclick = function () {
+                    onTagSelected(tag);
+                    suggestionsBox.style.display = 'none';
+                };
+                suggestionsBox.appendChild(div);
+            });
+            // Position suggestions below the input
+            updateSuggestionsBoxPosition(input, suggestionsBox);
             suggestionsBox.style.display = 'block';
         });
 
@@ -1179,7 +1472,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
-
 
     // tabs_ext
     tabs_ext.forEach(tab => {
@@ -1268,88 +1560,11 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('toggleSwitch').addEventListener('change', toggleSection);
     };
 
-    // contributor and author table
-    const addPersonBtn = document.getElementById('addPersonButton');
-    if (addPersonBtn) {
-        addPersonBtn.addEventListener('click', function () {
-            addPerson('contributor', 'contributorsTableBody', ['Email']);
-        });
+    function isTaggingObjectEmpty(tagsContainer) {
+        // Count the number of .tag elements inside the tagsContainer
+        const tagCount = tagsContainer.querySelectorAll('.tag').length;
+        return tagCount === 0;
     }
-
-    // Contributor/Author tables
-    function handleTableClick(tableBody, editCallback) {
-        tableBody.addEventListener('click', function (event) {
-            if (event.target.tagName === 'TD' && event.target.cellIndex !== 0 && !event.target.querySelector('input[type="checkbox"]')) {
-                // Check if the clicked cell is not the first column
-                editCallback(event.target);
-            }
-        });
-    }
-    // Usage for contributors table
-    handleTableClick(contributorsTableBody, (cell) => editCell(cell, 'contributor', ['email']));
-
-
-    // For all checkboxes in the Author and Contributor tab
-    contributorsAndAuthorsTab.addEventListener('change', function (event) {
-        if (
-            event.target.type === 'checkbox' &&
-            event.target.classList.contains('checkbox-element')
-        ) {
-            updateContributorsAndAuthorsJson();
-        }
-    });
-
-    // Handle row deletion and update JSON accordingly
-    window.handleDelete = function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        const button = event.target;
-        const row = button.closest('tr');
-        if (!row) {
-            console.error("Row not found for deletion");
-            return;
-        }
-
-        row.remove(); // Remove the row visually
-        updateContributorsAndAuthorsJson(); // Sync JSON
-    };
-
-    // Update JSON for contributors and authors based on checkbox state
-    function updateContributorsAndAuthorsJson() {
-        const contributorsTableBody = document.getElementById('contributorsTableBody');
-        const rows = contributorsTableBody.querySelectorAll('tr');
-        const existingJson = JSON.parse(metadataJson.value);
-
-        const roleList = {};
-        personRoles.forEach(role => {
-            roleList[role] = [];
-        });
-
-        rows.forEach(row => {
-            const givenName = row.cells[1]?.textContent.trim();
-            const familyName = row.cells[2]?.textContent.trim();
-            const email = row.cells[3]?.textContent.trim();
-
-            row.querySelectorAll('.checkbox-element').forEach(checkbox => {
-                const role = checkbox.dataset.role;
-                if (role && checkbox.checked) {
-                    roleList[role].push({
-                        "@type": "Person",
-                        givenName,
-                        familyName,
-                        email
-                    });
-                }
-            });
-        });
-
-        Object.keys(roleList).forEach(role => {
-            existingJson[role] = roleList[role];
-        });
-        metadataJson.value = JSON.stringify(existingJson, null, 2);
-    }
-
 
     // Pinkish inputs, when no metadata is extracted
     function validateInput(input) {
@@ -1361,204 +1576,73 @@ document.addEventListener("DOMContentLoaded", function () {
             'authorFamilyNameInput',
             'authorEmailInput'
         ];
-
-        // Check if input is inside a tags-container (tagging field)
-        const tagsContainer = input.closest('.tags-container');
-        if (tagsContainer) {
-            // Find the hidden input in the parent tagging-wrapper
-            const taggingWrapper = tagsContainer.closest('.tagging-wrapper');
-            if (taggingWrapper) {
-                const hiddenInput = taggingWrapper.querySelector('input[type="hidden"]');
-                if (hiddenInput && hiddenInput.value.trim() !== "") {
-                    input.classList.remove("invalid");
-                    return;
-                }
-            }
-        }
-
         if (skipValidationIds.includes(input.id)) {
             return; // Skip validation for the specified inputs
         }
 
-        if (input.value.trim() === "") {
-            input.classList.add("invalid");
-        } else {
-            input.classList.remove("invalid");
-        }
-    }
-    //add person to the table
-    function addPerson(type, tableBodyId, properties) {
-        var givenNameInput = document.getElementById(`${type}GivenNameInput`);
-        var familyNameInput = document.getElementById(`${type}FamilyNameInput`);
-        var emailInput = document.getElementById(`${type}EmailInput`);
+        // Fetch schema and validate only if field is required or recommended
+        fetch(JsonSchema)
+            .then(response => response.json())
+            .then(schema => {
+                const { required, recommended } = fetchRequiredAndRecommendedFields(schema);
+                const allMandatory = [...required, ...recommended];
 
-        // Check if any of the input fields are empty
-        if (!givenNameInput.value.trim() && !familyNameInput.value.trim() && !emailInput.value.trim()) {
-            alert('Please provide all required information.');
-            return;
-        }
+                // --- Tagging support ---
+                // If input is inside a tags-container, validate the hidden input instead
+                const tagsContainer = input.closest('.tags-container');
+                if (tagsContainer) {
+                    const taggingWrapper = tagsContainer.closest('.tagging-wrapper');
+                    if (taggingWrapper) {
+                        const hiddenInput = taggingWrapper.querySelector('input[type="hidden"]');
+                        const label = taggingWrapper.querySelector('.tagging-label');
+                        const taggingType = label ? label.getAttribute('data-tagging-type') : null;
+                        const key = getFieldKey(hiddenInput);
 
-        // Get the table body
-        var tableBody = document.getElementById(`${type}sTableBody`);
+                        if (allMandatory.includes(key)) {
+                            if (taggingType === "tagging_object") {
+                                // Check number of tags in the container
+                                if (isTaggingObjectEmpty(tagsContainer)) {
+                                    input.classList.add("invalid");
+                                } else {
+                                    input.classList.remove("invalid");
+                                }
+                            } else {
+                                // For normal tagging, check hidden input
+                                if (hiddenInput.value.trim() === "") {
+                                    input.classList.add("invalid");
+                                } else {
+                                    input.classList.remove("invalid");
+                                }
+                            }
+                        } else {
+                            input.classList.remove("invalid");
+                        }
+                        return;
+                    }
+                }
 
-        // Insert a new row at the end of the table
-        var newRow = tableBody.insertRow(tableBody.rows.length);
-
-        // Insert cells into the new row
-        var cellIndex = 0;
-        newRow.insertCell(cellIndex++).textContent = `#${tableBody.rows.length}`;
-        newRow.insertCell(cellIndex++).textContent = givenNameInput.value;
-        newRow.insertCell(cellIndex++).textContent = familyNameInput.value;
-
-        // Add new-row class to the newly created row
-        newRow.classList.add('new-row');
-
-        // Iterate over additional properties and insert cells
-        properties.forEach((prop, index) => {
-            var input = document.getElementById(`${type}${prop}Input`);
-            newRow.insertCell(cellIndex++).textContent = input.value;
-        });
-
-        personRoles.forEach(role => {
-            const cell = newRow.insertCell(cellIndex++);
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.classList.add("checkbox-element");
-            checkbox.setAttribute("data-role", role);
-            cell.appendChild(checkbox);
-        });
-
-        // Add delete button with icon
-        const deletecell = newRow.insertCell(cellIndex++);
-        const deleteButton = document.createElement('i');
-        deleteButton.classList.add('fas', 'fa-trash-alt');
-        deleteButton.setAttribute('data-action', 'delete');
-        deleteButton.onclick = function (event) { handleDelete(event); };
-        deletecell.appendChild(deleteButton);
-
-        givenNameInput.value = '';
-        familyNameInput.value = '';
-        emailInput.value = '';
-
-
-        // Update Contributor/Author numbers for all remaining rows
-        for (let i = 0; i < tableBody.rows.length; i++) {
-            tableBody.rows[i].cells[0].textContent = `#${i + 1}`;
-        }
-
-        // updateJsonData(`${type}sTableBody`, type, properties);
-        validateRowCells(newRow);
-    }
-
-
-    // Initialize table with existing contributors and authors
-    function initializeTables() {
-        const contributorsRows = document.getElementById('contributorsTableBody').rows;
-        for (let i = 0; i < contributorsRows.length; i++) {
-            validateRowCells(contributorsRows[i]); // Validate each row during initialization
-        }
-    }
-
-    // Validate each cell in the row in table
-    function validateRowCells(row) {
-        for (let i = 0; i < row.cells.length; i++) {
-            const cell = row.cells[i];
-            // Skip delete icons or copy buttons
-            if (cell.querySelector('i.fas.fa-trash-alt') || cell.querySelector('i.fas.fa-copy')) {
-                continue;
-            }
-
-            // Skip cells that contain contributor/author checkboxes
-            if (cell.querySelector('.checkbox-element')) {
-                continue;
-            }
-
-            // Check if the cell is empty and apply validation
-            if (cell.textContent.trim() === "") {
-                cell.classList.add("invalid");
-            } else {
-                cell.classList.remove("invalid");
-            }
-        }
-    }
-
-    // Initialize tables on load
-    initializeTables();
-
-
-    function editCell(cell, type, properties) {
-        // Check if the clicked cell is in the delete button column
-        if (cell.cellIndex === cell.parentElement.cells.length - 1 || cell.querySelector('i[data-action="delete"]')) {
-            return;
-        }
-
-        var currentValue = cell.textContent;
-
-        // Create an input element
-        var inputElement = document.createElement('input');
-        inputElement.type = 'text';
-        inputElement.value = currentValue;
-
-        // Get the current dimensions of the cell before editing
-        var cellWidth = cell.offsetWidth;
-        var cellHeight = cell.offsetHeight;
-
-        // Apply styles to fix cell dimensions
-        cell.style.width = cellWidth + 'px';
-        cell.style.height = cellHeight + 'px';
-        cell.style.padding = '0'; // Remove padding to prevent resizing
-
-        // Replace the cell content with the input element
-        cell.innerHTML = '';
-        cell.appendChild(inputElement);
-
-        // Apply the same dimensions to the input element
-        inputElement.style.width = cellWidth + 'px';
-        inputElement.style.height = cellHeight + 'px';
-        inputElement.style.boxSizing = 'border-box';
-
-        // Focus on the input element
-        inputElement.focus();
-
-        // Handle editing completion
-        inputElement.addEventListener('blur', function () {
-            cell.textContent = inputElement.value;
-
-            // Reset the cell's inline styles after editing is done
-            cell.style.width = '';
-            cell.style.height = '';
-            cell.style.padding = '';
-
-            validateRowCells(cell.parentElement);
-            updateJsonData(`${type}sTableBody`, type, properties);
-        });
-    }
-
-    function updateJsonData(tableBodyId, jsonDataProperty, additionalProperties) {
-        var tableBody = document.getElementById(tableBodyId);
-        var data = [];
-
-        // Iterate through table rows and update JSON data
-        for (var i = 0; i < tableBody.rows.length; i++) {
-            var rowData = {
-                "@type": "Person",
-                givenName: tableBody.rows[i].cells[1].textContent,
-                familyName: tableBody.rows[i].cells[2].textContent,
-            };
-
-            additionalProperties.forEach((prop, index) => {
-                rowData[prop] = tableBody.rows[i].cells[index + 3].textContent; // Assuming additional properties start from cell index 3
+                // --- Standard input/select validation ---
+                const key = getFieldKey(input);
+                if (allMandatory.includes(key)) {
+                    if (input.value.trim() === "") {
+                        input.classList.add("invalid");
+                    } else {
+                        input.classList.remove("invalid");
+                    }
+                } else {
+                    input.classList.remove("invalid");
+                }
+            })
+            .catch(() => {
+                // On schema load error, fallback to no validation
+                input.classList.remove("invalid");
             });
-
-            data.push(rowData);
-        }
-
-
-        var existingJson = JSON.parse(metadataJson.value);
-        existingJson[jsonDataProperty] = data;
-        metadataJson.value = JSON.stringify(existingJson, null, 2);
     }
+      
+    // Initialize tables on load
+    highlightEmptyAddRowControls();
 
+    
     inputs.forEach(input => validateInput(input));
 
     inputs.forEach((input) => {
@@ -1570,15 +1654,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const key = input.name.split("[")[0];
             const subkey = input.name.split("[")[1]?.split("]")[0];
 
-            const excludedInputs = [
-                "contributor_givenName", "contributor_familyName", "contributor_email",
-                "author_givenName", "author_familyName", "author_email", "checkbox-contributor", "checkbox-maintainer", "checkbox-author"
-            ];
-
-            // Collect all IDs of the checkboxes
-            const checkboxIds = Array.from(personCheckboxes)
-                .map(checkbox => checkbox.id)
-                .filter(id => id); // Filter out checkboxes without an ID
+            const excludedInputs = [];
 
             // Collect all IDs of single input objects
             const singleInputObjectIds = Array.from(document.querySelectorAll('input[data-single-input-object]'))
@@ -1588,31 +1664,25 @@ document.addEventListener("DOMContentLoaded", function () {
             // Collect all IDs of single input in tables
             const singleInputTableIds = Array.from(document.querySelectorAll('.auto-property-table input, .auto-property-table select, .auto-property-table textarea'))
 
-            excludedInputs.push(...checkboxIds, ...singleInputObjectIds, ...singleInputTableIds);
+            excludedInputs.push(...singleInputObjectIds, ...singleInputTableIds);
 
-            const addRowControls = document.querySelectorAll('.add-row-controls');            
-            addRowControls.forEach(controls => {
-                const fields = controls.querySelectorAll(
-                    '.add-row-input, .add-row-tag-input, .add-row-dropdown-select'
-                );
-                // fields is a NodeList of all relevant input/select fields for this add-row-controls
-                // You can now map/filter as needed:
-                const fieldIds = Array.from(fields)
-                    .map(field => field.name || field.id)
-                    .filter(Boolean);
-                excludedInputs.push(...fieldIds);
-            });
-
-            if (!excludedInputs.includes(input.name)) {
-                if (subkey) {
-                    if (!jsonObject[key]) jsonObject[key] = {}; // make sure key exists
-                    jsonObject[key][subkey] = input.value;
-                } else {
-                    jsonObject[key] = input.value;
+            const addRowFields = document.querySelectorAll('[data-add-row="true"]');
+            const addRowFieldNames = Array.from(addRowFields)
+                .map(field => field.name)
+                .filter(Boolean);
+            excludedInputs.push(...addRowFieldNames);
+            
+            if (!isInTable(input) && !isInAddRowControls(input)) {
+                if (!excludedInputs.includes(input.name)) {
+                    if (subkey) {
+                        if (!jsonObject[key]) jsonObject[key] = {}; // make sure key exists
+                        jsonObject[key][subkey] = input.value;
+                    } else {
+                        jsonObject[key] = input.value;
+                    }
                 }
+                metadataJson.value = JSON.stringify(jsonObject, null, 2);
             }
-
-            metadataJson.value = JSON.stringify(jsonObject, null, 2);
         };
 
         // Attach event listeners for both inputs and selects
@@ -1620,6 +1690,13 @@ document.addEventListener("DOMContentLoaded", function () {
         input.addEventListener("change", handleChange); // important for <select>
     });
 
+    function isInTable(element) {
+        return !!element.closest('table');
+    }
+
+    function isInAddRowControls(element) {
+        return !!element.closest('.add-row-controls');
+    }
 
     function updateFormFromJson(jsonObject) {
         inputs.forEach((input) => {
@@ -1701,11 +1778,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             };
         });
-    }
-
-    // Check if contributors are more than 10
-    if (contributorsTableBody.rows.length > 10) {
-        contributorsTableBody.parentElement.classList.add('scrollable-table');
     }
 
     function getNestedExpectedKeys(schema, typeName) {
@@ -1906,5 +1978,4 @@ document.addEventListener("DOMContentLoaded", function () {
     downloadBtn.addEventListener("click", (event) => {
         downloadFile(event);
     });
-
 });
