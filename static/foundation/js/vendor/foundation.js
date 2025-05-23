@@ -1375,7 +1375,35 @@ document.addEventListener("DOMContentLoaded", function () {
                 suggestionsBox.appendChild(div);
             });
             // Position suggestions below the input
-            const rect = input.getBoundingClientRect();
+            updateSuggestionsBoxPosition(input, suggestionsBox);
+            suggestionsBox.style.display = 'block';
+        });
+
+        input.addEventListener('focus', function () {
+            suggestionsBox.innerHTML = '';
+            const query = input.value.trim().toLowerCase();
+            const selectedTags = selectedTagsProvider();
+            // Show all suggestions if input is empty, or filtered if not
+            const filtered = autocompleteSource.filter(
+                tag => !selectedTags.includes(tag) && (query === "" || tag.toLowerCase().startsWith(query))
+            );
+            if (filtered.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            filtered.forEach(tag => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = tag;
+                div.style.cursor = 'pointer';
+                div.onclick = function () {
+                    onTagSelected(tag);
+                    suggestionsBox.style.display = 'none';
+                };
+                suggestionsBox.appendChild(div);
+            });
+            // Position suggestions below the input
+            updateSuggestionsBoxPosition(input, suggestionsBox);
             suggestionsBox.style.display = 'block';
         });
 
