@@ -319,35 +319,49 @@
                                             </tr>
                                             {% endif %}
                                             {% endfor %}
+                                    <!-- Add Row Inputs -->
+                                            <tr class="add-row-controls" data-table-key="{{ key }}">
+                                                {% for col, value in specific_types.items %}
+                                                {% if value == 'tagging' or value == 'tagging_autocomplete' %}
+                                                <td class="tags-table-container add-row-tags-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
+                                                    <!-- Tags will be inserted here by JS -->
+                                                    {% if value == "tagging" %}
+                                                    <input type="text" class="add-row-tag-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Add tag for {{col|camel_to_spaces_lower}} and press Enter" />
+                                                    {% else %}
+                                                    <input type="text" class="add-row-tag-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Type and select from list for {{col|camel_to_spaces_lower}}" />
+                                                    {% endif %}
+                                                </td>
+                                                {% elif value == 'dropdown' %}
+                                                <td class="tags-table-container add-row-tags-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
+                                                    <select class="add-row-dropdown-select"
+                                                            data-type="{{ default_type }}"
+                                                            data-coltype="{{ value }}"
+                                                            data-col="{{ col }}">
+                                                        <option value="">Select...</option>
+                                                        <!-- Options will be populated by JS -->
+                                                    </select>
+                                                </td>
+                                                {% else %}
+                                                <td class="tags-table-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
+                                                    <input type="text" class="add-row-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="{{ col|camel_to_spaces_lower }}"/>
+                                                </td>
+                                                {% endif %}
+                                                {% endfor %}
+                                                {% if unique_tab %}
+                                                {% for col, value in metadata_dict.items %}
+                                                <td data-col="{{ col }}" data-coltype="element">                                                    
+                                                    <input type="checkbox" class="checkbox-element" data-role="{{ col }}" name="checkbox-{{ col }}">
+                                                </td>
+                                                {% endfor %}
+                                                {% endif %}
+                                                <td>
+                                                    <button type="button" class="add-row-btn" data-table-key="{{ key }}">Add</button>
+                                                </td>
+                                            </tr>
                                         </tbody>
                                     </table>
-                                    <!-- Add Row Inputs -->
-                                    <div class="add-row-controls" data-table-key="{{ key }}">
-                                        {% for col, value in specific_types.items %}
-                                        {% if value == 'tagging' or value == 'tagging_autocomplete' %}
-                                        <div class="tags-container add-row-tags-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
-                                            <!-- Tags will be inserted here by JS -->
-                                            {% if value == "tagging" %}
-                                            <input type="text" class="add-row-tag-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Add tag for {{col|camel_to_spaces_lower}} and press Enter">
-                                            {% else %}
-                                            <input type="text" class="add-row-tag-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Type and select from list for {{col|camel_to_spaces_lower}}">
-                                            {% endif %}
-                                        </div>
-                                        {% elif value == 'dropdown' %}
-                                        <div class="tags-container add-row-tags-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
-
-                                            <input type="text" class="add-row-tag-input" ...>
-                                        </div>
-                                        {% else %}
-                                        <div class="tags-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
-                                            <input type="text" class="add-row-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="{{ col|camel_to_spaces_lower }}">
-                                        </div>
-                                        {% endif %}
-                                        {% endfor %}
-                                        <button type="button" class="add-row-btn" data-table-key="{{ key }}">Add</button>
+                                        {% endwith %}
                                     </div>
-                                    {% endwith %}
-                                </div>
                                 {% endif %}
                             </div>
                             {% endfor %}
