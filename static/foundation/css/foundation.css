@@ -471,9 +471,14 @@ form.data-form3 {
     margin-bottom: 2px;
 }
 
-.invalid {
-    border: 1px solid rgba(226, 7, 7, 0.535);
-    background-color: rgba(225, 94, 94, 0.377);
+input.invalid-required, textarea.invalid-required, select.invalid-required {
+    border: 2px solid #ff0000;
+    background-color: #ffd6d6;
+}
+
+input.invalid-recommended, textarea.invalid-recommended, select.invalid-recommended {
+    border: 2px solid #ffe066;
+    background-color: #fef6da;
 }
 
 
@@ -568,9 +573,14 @@ div.error-container {
     grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)) auto;
     margin-top: 8px;
 }
-    .add-row-controls.invalid {
+    .add-row-controls.invalid-required {
         background-color: #ffd6d6; /* light red */
-        border: 1px solid #ff0000;
+        border: 2px solid #ff0000;
+    }
+
+    .add-row-controls.invalid-recommended {
+        background-color: #fef6da; /* light yellow */
+        border: 2px solid #ffe066;
     }
 
     .add-row-controls .add-row-input,

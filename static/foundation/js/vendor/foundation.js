@@ -261,7 +261,7 @@ document.addEventListener("DOMContentLoaded", function () {
             updateHidden();
             input.value = "";
             if (suggestionsBox) suggestionsBox.style.display = "none";
-            input.classList.remove("invalid"); // Remove invalid color immediately
+            input.classList.remove("invalid", "invalid-required", "invalid-recommended");
         }
 
         // Show yellow tag once if any tag exists
@@ -747,7 +747,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(response => response.json())
             .then(schema => {
                 const { required, recommended } = fetchRequiredAndRecommendedFields(schema);
-                const allMandatory = [...required, ...recommended];
 
                 document.querySelectorAll('table.auto-property-table').forEach(table => {
                     const tableId = table.id;
@@ -758,16 +757,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     const addRowControls = document.querySelector(`.add-row-controls[data-table-key="${key}"]`);
                     if (!addRowControls) return;
 
-                    if (allMandatory.includes(key)) {
-                        const tbody = table.querySelector('tbody');
-                        const rows = tbody ? tbody.querySelectorAll('tr') : [];
-                        if (rows.length === 0) {
-                            addRowControls.classList.add('invalid');
-                        } else {
-                            addRowControls.classList.remove('invalid');
-                        }
-                    } else {
-                        addRowControls.classList.remove('invalid');
+                    // Remove previous highlight classes
+                    addRowControls.classList.remove('invalid-required', 'invalid-recommended');
+
+                    const tbody = table.querySelector('tbody');
+                    const rows = tbody ? tbody.querySelectorAll('tr') : [];
+
+                    if (required.includes(key) && rows.length === 0) {
+                        addRowControls.classList.add('invalid-required');
+                    } else if (recommended.includes(key) && rows.length === 0) {
+                        addRowControls.classList.add('invalid-recommended');
                     }
                 });
             });
@@ -897,7 +896,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Remove color
             const addRowControls = btn.parentElement;
-            addRowControls.classList.remove('invalid');
+            addRowControls.classList.remove('invalid-required', 'invalid-recommended');
         });
     });
 
@@ -1581,12 +1580,14 @@ document.addEventListener("DOMContentLoaded", function () {
             return; // Skip validation for the specified inputs
         }
 
+        // Always remove highlight classes before validation
+        input.classList.remove("invalid", "invalid-required", "invalid-recommended");
+
         // Fetch schema and validate only if field is required or recommended
         fetch(JsonSchema)
             .then(response => response.json())
             .then(schema => {
                 const { required, recommended } = fetchRequiredAndRecommendedFields(schema);
-                const allMandatory = [...required, ...recommended];
 
                 // --- Tagging support ---
                 // If input is inside a tags-container, validate the hidden input instead
@@ -1599,24 +1600,20 @@ document.addEventListener("DOMContentLoaded", function () {
                         const taggingType = label ? label.getAttribute('data-tagging-type') : null;
                         const key = getFieldKey(hiddenInput);
 
-                        if (allMandatory.includes(key)) {
-                            if (taggingType === "tagging_object") {
-                                // Check number of tags in the container
-                                if (isTaggingObjectEmpty(tagsContainer)) {
-                                    input.classList.add("invalid");
-                                } else {
-                                    input.classList.remove("invalid");
-                                }
-                            } else {
-                                // For normal tagging, check hidden input
-                                if (hiddenInput.value.trim() === "") {
-                                    input.classList.add("invalid");
-                                } else {
-                                    input.classList.remove("invalid");
-                                }
+                        if (required.includes(key)) {
+                            if (
+                                (taggingType === "tagging_object" && isTaggingObjectEmpty(tagsContainer)) ||
+                                (taggingType !== "tagging_object" && hiddenInput.value.trim() === "")
+                            ) {
+                                input.classList.add("invalid-required");
                             }
-                        } else {
-                            input.classList.remove("invalid");
+                        } else if (recommended.includes(key)) {
+                            if (
+                                (taggingType === "tagging_object" && isTaggingObjectEmpty(tagsContainer)) ||
+                                (taggingType !== "tagging_object" && hiddenInput.value.trim() === "")
+                            ) {
+                                input.classList.add("invalid-recommended");
+                            }
                         }
                         return;
                     }
@@ -1624,19 +1621,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // --- Standard input/select validation ---
                 const key = getFieldKey(input);
-                if (allMandatory.includes(key)) {
+                if (required.includes(key)) {
                     if (input.value.trim() === "") {
-                        input.classList.add("invalid");
-                    } else {
-                        input.classList.remove("invalid");
+                        input.classList.add("invalid-required");
                     }
-                } else {
-                    input.classList.remove("invalid");
+                } else if (recommended.includes(key)) {
+                    if (input.value.trim() === "") {
+                        input.classList.add("invalid-recommended");
+                    }
                 }
             })
             .catch(() => {
                 // On schema load error, fallback to no validation
-                input.classList.remove("invalid");
+                input.classList.remove("invalid", "invalid-required", "invalid-recommended");
             });
     }
       
