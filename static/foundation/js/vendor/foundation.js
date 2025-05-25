@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const downloadButton = document.getElementById("downloadButton");
     const downloadBtn = document.getElementById("downloadBtn");
     const updateJsonBtn = document.getElementById("updateFormBtn");
-    const inputs = document.querySelectorAll("#metadata-form input, #metadata-form select");
+    const inputs = document.querySelectorAll("#metadata-form input, #metadata-form select, #metadata-form textarea ");
     const deleteButtons = document.querySelectorAll('[data-action="delete"]');
     let tabs_ext = document.querySelectorAll('.tab-links_ext a');
     let contents = document.querySelectorAll('.tab-content_ext .tab');

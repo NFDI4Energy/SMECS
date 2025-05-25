@@ -94,7 +94,12 @@ def define_field_type(schema: dict, types: dict, array = False) -> dict[str, str
             else:
                 type_dict[key] = "single_input_object"
         elif value.get("type") == "string":
-            type_dict[key] = "long_field" if key == "description" or key == "abstract" else "single_inputs"
+            if key == "description":
+                type_dict[key] = "big_field"
+            elif key == "abstract":
+                type_dict[key] = "long_field"
+            else:
+                type_dict[key] = "single_inputs"
         elif value.get("type") == "array":
             items = value.get("items", {})  # Safely get "items" or default to an empty dict
             if "enum" in items:            
