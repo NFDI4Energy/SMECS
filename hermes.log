@@ -1,0 +1,275 @@
+1748023065.533580:          hermes.cli:     DEBUG | Running hermes with the following command line arguments: Namespace(subcommand='clean', path=WindowsPath('.'), config=WindowsPath('hermes.toml'), options=[], command=<hermes.commands.clean.base.HermesCleanCommand object at 0x0000021DBB735490>)
+1748023065.533580:          hermes.cli:     DEBUG | Loading settings...
+1748023065.533580:          hermes.cli:     DEBUG | Update settings from command line...
+1748023065.534574:          hermes.cli:      INFO | Run subcommand clean
+1748023065.535573:        hermes.clean:      INFO | Removing HERMES caches...
+1748023068.768657:          hermes.cli:     DEBUG | Running hermes with the following command line arguments: Namespace(subcommand='harvest', path=WindowsPath('https:/github.com/OFFIS-mosaik/mosaik'), config=WindowsPath('hermes.toml'), options=[], command=<hermes.commands.harvest.base.HermesHarvestCommand object at 0x000001C14BEE3990>)
+1748023068.769659:          hermes.cli:     DEBUG | Loading settings...
+1748023068.775680:          hermes.cli:     DEBUG | Update settings from command line...
+1748023068.775680:          hermes.cli:      INFO | Run subcommand harvest
+1748023076.115342:          hermes.cli:     ERROR | An error occurred during execution of harvest (Find details in './hermes.log')
+1748023076.115342:          hermes.cli:     DEBUG | Original exception was: cannot unpack non-iterable NoneType object
+1748023078.769876:          hermes.cli:     DEBUG | Running hermes with the following command line arguments: Namespace(subcommand='process', path=WindowsPath('.'), config=WindowsPath('hermes.toml'), options=[], command=<hermes.commands.process.base.HermesProcessCommand object at 0x0000026289099E10>)
+1748023078.769876:          hermes.cli:     DEBUG | Loading settings...
+1748023078.771891:          hermes.cli:     DEBUG | Update settings from command line...
+1748023078.771891:          hermes.cli:      INFO | Run subcommand process
+1748023078.773906:      hermes.process:      INFO | ## Process data from codemeta
+1748023078.774598:      hermes.process:      INFO | ## Process data from cff
+1748023078.775619:      hermes.process:      INFO | ## Process data from git
+1748023078.779610:   hermes.model.path:     DEBUG | @context: 'Key @type not in @context.'
+1748023078.779610:   hermes.model.path:     DEBUG | @type: 'Key @type not in @type.'
+1748023078.780611:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from name.
+1748023078.780611:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from identifier.
+1748023078.780611:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from description.
+1748023078.781620:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from codeRepository.
+1748023078.781620:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from issueTracker.
+1748023078.781620:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from license.
+1748023078.782623:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from programmingLanguage.
+1748023078.783632:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from programmingLanguage[0].
+1748023078.783632:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from copyrightHolder.
+1748023078.784622:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from copyrightHolder.@type.
+1748023078.784622:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from copyrightHolder.name.
+1748023078.784622:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from dateCreated.
+1748023078.784622:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from dateModified.
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from datePublished.
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from keywords.
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from keywords[0].
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from downloadUrl.
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor.
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[0].
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[0].@type.
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[0].givenName.
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[0].familyName.
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[0].email.
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[1].
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[1].@type.
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[1].givenName.
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[1].familyName.
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[1].email.
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[2].
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[2].@type.
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[2].givenName.
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[2].familyName.
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[2].email.
+1748023078.785621:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[3].
+1748023078.796198:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[3].@type.
+1748023078.796198:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[3].givenName.
+1748023078.796198:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[3].familyName.
+1748023078.798215:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[3].email.
+1748023078.798215:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[4].
+1748023078.798215:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[4].@type.
+1748023078.800231:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[4].givenName.
+1748023078.800231:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[4].familyName.
+1748023078.801749:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[4].email.
+1748023078.801749:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[5].
+1748023078.801749:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[5].@type.
+1748023078.801749:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[5].givenName.
+1748023078.803765:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[5].familyName.
+1748023078.803765:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[5].email.
+1748023078.803765:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[6].
+1748023078.803765:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[6].@type.
+1748023078.803765:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[6].givenName.
+1748023078.803765:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[6].familyName.
+1748023078.803765:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[6].email.
+1748023078.803765:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[7].
+1748023078.807974:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[7].@type.
+1748023078.807974:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[7].givenName.
+1748023078.808987:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[7].familyName.
+1748023078.808987:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[7].email.
+1748023078.809986:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[8].
+1748023078.809986:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[8].@type.
+1748023078.809986:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[8].givenName.
+1748023078.810986:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[8].familyName.
+1748023078.811986:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[8].email.
+1748023078.811986:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[9].
+1748023078.812984:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[9].@type.
+1748023078.812984:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[9].givenName.
+1748023078.813988:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[9].familyName.
+1748023078.813988:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[9].email.
+1748023078.814988:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[10].
+1748023078.814988:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[10].@type.
+1748023078.814988:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[10].givenName.
+1748023078.815985:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[10].familyName.
+1748023078.816989:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[10].email.
+1748023078.817986:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[11].
+1748023078.817986:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[11].@type.
+1748023078.817986:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[11].givenName.
+1748023078.818990:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[11].familyName.
+1748023078.819996:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[11].email.
+1748023078.819996:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[12].
+1748023078.819996:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[12].@type.
+1748023078.820992:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[12].givenName.
+1748023078.820992:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[12].familyName.
+1748023078.820992:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[12].email.
+1748023078.821986:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[13].
+1748023078.821986:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[13].@type.
+1748023078.821986:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[13].givenName.
+1748023078.822987:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[13].familyName.
+1748023078.822987:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[13].email.
+1748023078.822987:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[14].
+1748023078.823988:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[14].@type.
+1748023078.824987:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[14].givenName.
+1748023078.824987:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[14].familyName.
+1748023078.825987:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[14].email.
+1748023078.825987:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[15].
+1748023078.825987:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[15].@type.
+1748023078.826989:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[15].givenName.
+1748023078.826989:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[15].familyName.
+1748023078.827985:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[15].email.
+1748023078.827985:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[16].
+1748023078.828991:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[16].@type.
+1748023078.828991:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[16].givenName.
+1748023078.829989:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[16].familyName.
+1748023078.829989:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[16].email.
+1748023078.830988:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[17].
+1748023078.831983:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[17].@type.
+1748023078.831983:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[17].givenName.
+1748023078.832986:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[17].familyName.
+1748023078.832986:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[17].email.
+1748023078.834016:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[18].
+1748023078.834016:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[18].@type.
+1748023078.834987:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[18].givenName.
+1748023078.835991:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[18].familyName.
+1748023078.835991:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[18].email.
+1748023078.835991:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[19].
+1748023078.835991:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[19].@type.
+1748023078.835991:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[19].givenName.
+1748023078.835991:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[19].familyName.
+1748023078.835991:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[19].email.
+1748023078.835991:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[20].
+1748023078.835991:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[20].@type.
+1748023078.835991:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[20].givenName.
+1748023078.835991:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[20].familyName.
+1748023078.841257:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[20].email.
+1748023078.841257:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[21].
+1748023078.842272:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[21].@type.
+1748023078.842272:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[21].givenName.
+1748023078.842272:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[21].familyName.
+1748023078.843271:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[21].email.
+1748023078.843271:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[22].
+1748023078.843271:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[22].@type.
+1748023078.844267:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[22].givenName.
+1748023078.844267:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[22].familyName.
+1748023078.845267:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[22].email.
+1748023078.845267:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[23].
+1748023078.845267:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[23].@type.
+1748023078.846267:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[23].givenName.
+1748023078.846267:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[23].familyName.
+1748023078.846267:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[23].email.
+1748023078.848270:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[24].
+1748023078.849272:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[24].@type.
+1748023078.849272:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[24].givenName.
+1748023078.850296:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[24].familyName.
+1748023078.850296:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[24].email.
+1748023078.851268:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[25].
+1748023078.851268:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[25].@type.
+1748023078.852268:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[25].givenName.
+1748023078.852268:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[25].familyName.
+1748023078.853267:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[25].email.
+1748023078.853267:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[26].
+1748023078.853267:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[26].@type.
+1748023078.854267:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[26].givenName.
+1748023078.854267:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[26].familyName.
+1748023078.854267:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[26].email.
+1748023078.855267:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[27].
+1748023078.855267:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[27].@type.
+1748023078.855267:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[27].givenName.
+1748023078.856278:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[27].familyName.
+1748023078.857272:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[27].email.
+1748023078.857272:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[28].
+1748023078.858272:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[28].@type.
+1748023078.859272:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[28].givenName.
+1748023078.859272:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[28].familyName.
+1748023078.860271:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[28].email.
+1748023078.860271:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[29].
+1748023078.860271:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[29].@type.
+1748023078.860271:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[29].givenName.
+1748023078.861266:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[29].familyName.
+1748023078.861266:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[29].email.
+1748023078.862269:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[30].
+1748023078.862269:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[30].@type.
+1748023078.863270:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[30].givenName.
+1748023078.863270:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[30].familyName.
+1748023078.864271:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[30].email.
+1748023078.865273:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[31].
+1748023078.865273:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[31].@type.
+1748023078.866272:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[31].givenName.
+1748023078.866272:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[31].familyName.
+1748023078.867269:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[31].email.
+1748023078.867269:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[32].
+1748023078.867269:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[32].@type.
+1748023078.868269:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[32].givenName.
+1748023078.868269:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[32].familyName.
+1748023078.868269:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[32].email.
+1748023078.869269:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[33].
+1748023078.869269:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[33].@type.
+1748023078.870269:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[33].givenName.
+1748023078.870269:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[33].familyName.
+1748023078.870269:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[33].email.
+1748023078.870269:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[34].
+1748023078.870269:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[34].@type.
+1748023078.870269:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[34].givenName.
+1748023078.870269:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[34].familyName.
+1748023078.870269:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[34].email.
+1748023078.874609:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[35].
+1748023078.874609:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[35].@type.
+1748023078.874609:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[35].givenName.
+1748023078.875622:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[35].familyName.
+1748023078.875622:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[35].email.
+1748023078.876622:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[36].
+1748023078.876622:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[36].@type.
+1748023078.877624:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[36].givenName.
+1748023078.878623:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[36].familyName.
+1748023078.878623:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[36].email.
+1748023078.878623:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[37].
+1748023078.879619:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[37].@type.
+1748023078.880623:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[37].givenName.
+1748023078.880623:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[37].familyName.
+1748023078.881634:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[37].email.
+1748023078.881634:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from readme.
+1748023078.886782:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from @context.
+1748023078.886782:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from @type.
+1748031044.255615:          hermes.cli:     DEBUG | Running hermes with the following command line arguments: Namespace(subcommand='clean', path=WindowsPath('.'), config=WindowsPath('hermes.toml'), options=[], command=<hermes.commands.clean.base.HermesCleanCommand object at 0x000002410D724E50>)
+1748031044.255615:          hermes.cli:     DEBUG | Loading settings...
+1748031044.255615:          hermes.cli:     DEBUG | Update settings from command line...
+1748031044.255615:          hermes.cli:      INFO | Run subcommand clean
+1748031044.255615:        hermes.clean:      INFO | Removing HERMES caches...
+1748031045.655958:          hermes.cli:     DEBUG | Running hermes with the following command line arguments: Namespace(subcommand='harvest', path=WindowsPath('https:/github.com/s-guenther/hess-sim'), config=WindowsPath('hermes.toml'), options=[], command=<hermes.commands.harvest.base.HermesHarvestCommand object at 0x00000283118E3910>)
+1748031045.655958:          hermes.cli:     DEBUG | Loading settings...
+1748031045.660997:          hermes.cli:     DEBUG | Update settings from command line...
+1748031045.660997:          hermes.cli:      INFO | Run subcommand harvest
+1748031046.842592:          hermes.cli:     ERROR | An error occurred during execution of harvest (Find details in './hermes.log')
+1748031046.842592:          hermes.cli:     DEBUG | Original exception was: cannot unpack non-iterable NoneType object
+1748031048.545951:          hermes.cli:     DEBUG | Running hermes with the following command line arguments: Namespace(subcommand='process', path=WindowsPath('.'), config=WindowsPath('hermes.toml'), options=[], command=<hermes.commands.process.base.HermesProcessCommand object at 0x000001E3F5CE9210>)
+1748031048.545951:          hermes.cli:     DEBUG | Loading settings...
+1748031048.555744:          hermes.cli:     DEBUG | Update settings from command line...
+1748031048.555744:          hermes.cli:      INFO | Run subcommand process
+1748031048.556361:      hermes.process:      INFO | ## Process data from codemeta
+1748031048.557199:      hermes.process:      INFO | ## Process data from cff
+1748031048.557199:      hermes.process:      INFO | ## Process data from git
+1748031048.559208:   hermes.model.path:     DEBUG | @context: 'Key @type not in @context.'
+1748031048.559208:   hermes.model.path:     DEBUG | @type: 'Key @type not in @type.'
+1748031048.559208:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from name.
+1748031048.559208:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from identifier.
+1748031048.559208:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from description.
+1748031048.559208:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from codeRepository.
+1748031048.559208:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from issueTracker.
+1748031048.559208:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from license.
+1748031048.561226:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from programmingLanguage.
+1748031048.561226:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from programmingLanguage[0].
+1748031048.561226:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from copyrightHolder.
+1748031048.561226:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from copyrightHolder.@type.
+1748031048.561226:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from copyrightHolder.name.
+1748031048.561226:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from dateCreated.
+1748031048.563244:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from dateModified.
+1748031048.563244:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from datePublished.
+1748031048.563244:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from downloadUrl.
+1748031048.563244:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor.
+1748031048.563244:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[0].
+1748031048.563244:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[0].@type.
+1748031048.563244:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[0].givenName.
+1748031048.563244:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[0].familyName.
+1748031048.565270:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from contributor[0].email.
+1748031048.565270:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from readme.
+1748031048.567337:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from @context.
+1748031048.567337:   hermes.model.path:     DEBUG | Using type SoftwareSourceCode from @type.

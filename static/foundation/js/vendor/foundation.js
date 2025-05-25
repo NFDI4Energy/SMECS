@@ -587,6 +587,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!table || !hiddenInput) return;
 
         const atType = table.getAttribute('data-at-type');
+        const rows = Array.from(table.querySelectorAll('tbody tr'))
+            .filter(row => !row.classList.contains('add-row-controls')); // <-- skip add-row-controls
 
         // Check if this table is marked as unique
         if (table.getAttribute('unique-tab') === 'True') {
@@ -609,7 +611,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Find the table body
             const tbody = table.querySelector('tbody');
-            const rows = tbody ? Array.from(tbody.querySelectorAll('tr')) : [];
+            const rows = tbody ? Array.from(tbody.querySelectorAll('tr')).filter(row => !row.classList.contains('add-row-controls')) : [];
             const existingJson = JSON.parse(metadataJson.value);
 
             // Build elementList
@@ -652,7 +654,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        const rows = Array.from(table.querySelectorAll('tbody tr'));
         if (rows.length === 0) {
             hiddenInput.value = '[]';
             // Also update the main JSON
@@ -761,11 +762,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     addRowControls.classList.remove('invalid-required', 'invalid-recommended');
 
                     const tbody = table.querySelector('tbody');
-                    const rows = tbody ? tbody.querySelectorAll('tr') : [];
+                    const dataRows = tbody
+                        ? Array.from(tbody.querySelectorAll('tr')).filter(row => !row.classList.contains('add-row-controls'))
+                        : [];
 
-                    if (required.includes(key) && rows.length === 0) {
+                    if (required.includes(key) && dataRows.length === 0) {
                         addRowControls.classList.add('invalid-required');
-                    } else if (recommended.includes(key) && rows.length === 0) {
+                    } else if (recommended.includes(key) && dataRows.length === 0) {
                         addRowControls.classList.add('invalid-recommended');
                     }
                 });
@@ -780,23 +783,23 @@ document.addEventListener("DOMContentLoaded", function () {
             const hiddenInput = document.getElementById(key + 'TableHiddenInput');
             if (!table || !hiddenInput) return;
 
-            // Get column headers
-            const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.getAttribute('data-col'));
-            console.log({ headers})
-            // Get input values
-            const controls = btn.parentElement;            
-            const inputs = controls.querySelectorAll('.add-row-input, .add-row-tag-input, .add-row-dropdown-select');
+            // Find the add-row-controls row
+            const addRowControls = table.querySelector('tr.add-row-controls[data-table-key="' + key + '"]');
+            if (!addRowControls) return;
+
+            // Get input values 
+            const inputs = addRowControls.querySelectorAll('.add-row-input, .add-row-tag-input, .add-row-dropdown-select');
             console.log({ inputs })
             const values = Array.from(inputs).map(input => input.value.trim());
                        
-            // Prevent adding if all fields are empty (including tags)
-            const allEmpty = Array.from(inputs).every(input => input.value.trim() === '') &&
-                Object.values(addRowTags).every(tags => tags.length === 0);
+            // Prevent adding if all fields are empty
+            const allEmpty = values.every(val => val === '');
             if (allEmpty) return;
 
             // Create new row
-            const tbody = table.querySelector('tbody');
             const newRow = document.createElement('tr');
+            // Get column headers
+            const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.getAttribute('data-col'));
             // Only add data columns, skip the last header ("Delete")
             for (let i = 0; i < headers.length - 1; i++) {
                 const header = headers[i];
@@ -811,11 +814,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 const td = document.createElement('td');
                 console.log({header, input, col, colType, dataType})
                 if (colType === 'element') {
-                    // Create a checkbox for this cell
+                    // Find the checkbox in the add-row-controls row
+                    console.log('Looking for checkbox with data-role:', col);
+                    const checkboxInput = addRowControls.querySelector(`input[type="checkbox"][data-role="${header}"]`);
                     const checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
                     checkbox.classList.add('checkbox-element');
-                    // Set data-role if needed (e.g., from personRoles or header)
+                    checkbox.setAttribute('data-role', col);
+                    checkbox.name = `checkbox-${col}`;
+                    console.log('Try to check for checkbox')
+                    console.log({ checkboxInput })
+                    // Set checked state based on add-row-controls checkbox
+                    if (checkboxInput && checkboxInput.checked) {
+                        checkbox.checked = true;
+                        console.log('Copyied checked state')
+                    }
                     td.setAttribute('data-col', col);
                     td.setAttribute('data-coltype', 'element');
                     td.setAttribute('data-type', dataType);
@@ -879,7 +892,10 @@ document.addEventListener("DOMContentLoaded", function () {
             const deleteTd = document.createElement('td');
             deleteTd.innerHTML = '<i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i>';
             newRow.appendChild(deleteTd);
-            tbody.appendChild(newRow);
+
+            // Insert new row above add-row-controls
+            addRowControls.parentNode.insertBefore(newRow, addRowControls);
+
             initializeTableTaggingCells();
 
             // Clear input fields
@@ -894,8 +910,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Update hidden input
             updateTableHiddenInput(key);
 
-            // Remove color
-            const addRowControls = btn.parentElement;
+            // Remove color            
             addRowControls.classList.remove('invalid-required', 'invalid-recommended');
         });
     });
@@ -949,10 +964,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     suggestionsBox.appendChild(div);
                 });
                 // Position suggestions below the input
-                const inputRect = input.getBoundingClientRect();
-                suggestionsBox.style.left = inputRect.left + 'px';
-                suggestionsBox.style.top = inputRect.bottom + 'px';
-                suggestionsBox.style.width = input.offsetWidth + 'px';
+                updateSuggestionsBoxPosition(input, suggestionsBox);
                 suggestionsBox.style.display = 'block';
             });
 
@@ -1009,7 +1021,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     select.innerHTML = '<option value="">Select...</option>' +
                         options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
                     // Replace the input with the select
-                    input.style.display = 'none';
+                    if (input) {
+                        input.style.display = 'none';
+                    }
                     container.appendChild(select);
 
                     // On change, update addRowTags or values as needed
@@ -1234,7 +1248,9 @@ document.addEventListener("DOMContentLoaded", function () {
                             function finalizeSelection() {
                                 const selectedValue = select.value;
                                 cell.setAttribute('data-value', selectedValue);
-                                cell.innerHTML = selectedValue;
+                                setTimeout(() => {
+                                    cell.innerHTML = selectedValue;
+                                }, 0);
 
                                 // Remove this event listener to avoid duplicate dropdowns
                                 cell.removeEventListener('click', handleDropdownCellClick);

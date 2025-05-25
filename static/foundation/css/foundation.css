@@ -539,63 +539,130 @@ div.error-container {
         }
 
 /********************************* Style for auto table **********************************/
-/* Fixed width and equal column distribution for auto-property-table */
+/* Flexible columns distribution */
 .auto-property-table {
     margin-top: 8px;
     width: 110%; /* Same as .long_field */
     min-width: 500px; /* Optional: for usability */
-    table-layout: auto; /* Ensures equal column width */
+    table-layout: auto;
     margin-bottom: 1rem;
     border-collapse: collapse;
 }
 
+/* Set properties of table head and table data for auto-property table */
     .auto-property-table th,
     .auto-property-table td {
         padding: 8px 12px;
         width: auto; /* Let table-layout: fixed handle equal width */
         text-align: left;
-        padding: 8px;
         border: 1px solid #ccc;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        min-width: 80px;
-        max-width: 400px;
+        min-width: 100px;
+        max-width: 300px;
     }
 
-.add-row-controls{
-    display: grid;
-    grid-auto-flow: column;
-    align-items: center;
-    gap: 8px;
-    /* The number 1fr will make all children (inputs) share the space equally */
-    /* The last child (button) will auto-size to its content */
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)) auto;
-    margin-top: 8px;
+    /* Set fixed width for first row */
+        .auto-property-table th:first-child,
+        .auto-property-table td:first-child {
+            max-width: 200px;
+            min-width: 20px;
+            width: 15%;
+        }
+
+/* for the add-row-control row (last row) */
+tr.add-row-controls,
+tr.add-row-controls td {
+    display: table-row;
+    width: auto;
+    box-sizing: border-box;
+    padding: 0.5em;
+    vertical-align: middle;
+    background: #f9f9f9; /* Optional: subtle highlight */
 }
-    .add-row-controls.invalid-required {
-        background-color: #ffd6d6; /* light red */
-        border: 2px solid #ff0000;
+
+/* For the table elements in the add-row-control row*/
+
+    tr.add-row-controls td {
+        /* Remove any display:block/flex if present */
+        display: table-cell;
     }
 
-    .add-row-controls.invalid-recommended {
-        background-color: #fef6da; /* light yellow */
-        border: 2px solid #ffe066;
-    }
+/* Set the properties for the tags-table-container*/
+.auto-property-table td .tags-table-container {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0;
+}
 
-    .add-row-controls .add-row-input,
-    .add-row-controls .add-row-tag-input,
-    .add-row-controls .add-row-dropdown-select {
-        min-width: 60px;
-        max-width: 200px;
-        width: 100%;
+/* Set properties for inputs of tags-table-container */
+    .auto-property-table td .tags-table-container input[type="text"] {
+        width: 95% !important;
+        /*max-width: 95% !important;*/
+        margin-left: 8px;
+        margin-right: 8px;
         box-sizing: border-box;
-        height: 2.4375rem;
-        padding: 0.5rem;
-        border: 1px solid #cacaca;
-        background-color: #fefefe;
-        font-size: 1rem;
+        min-width: 0;
+        padding: 4px 0;
+        font-size: 1em;
     }
+
+/* Set properties for tags-list */
+.auto-property-table td .tags-list {
+    width: auto !important;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0;
+}
+
+.add-row-tags-container .tag {
+    display: inline-flex !important;
+    width: auto !important;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.add-row-controls .tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+    width: auto;
+}
+
+/* Set colors for add-row-controls */
+.add-row-controls.invalid-required,
+.add-row-controls.invalid-required td {
+    background-color: #ffd6d6; /* light red */
+    border: 2px solid #ff0000;
+}
+
+.add-row-controls.invalid-recommended,
+.add-row-controls.invalid-recommended td {
+    background-color: #fef6da; /* light yellow */
+    border: 2px solid #ffe066;
+}
+
+/* Set properties for classes in add-row-controls */
+.add-row-controls .add-row-input,
+.add-row-controls .add-row-tag-input,
+.add-row-controls .add-row-dropdown-select {
+    min-width: 60px;
+    max-width: 200px;
+    width: 100%;
+    max-width: 100% !important;
+    box-sizing: border-box;
+    height: 2.4375rem;
+    padding: 0.5rem;
+    border: 1px solid #cacaca;
+    background-color: #fefefe;
+    font-size: 1rem;
+}
 
     .add-row-controls .add-row-btn {
         padding: 4px 12px;
