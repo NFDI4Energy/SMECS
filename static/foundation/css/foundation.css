@@ -542,37 +542,83 @@ div.error-container {
         text-overflow: ellipsis;
         white-space: nowrap;
         min-width: 80px;
-        max-width: 400px;
+        max-width: 200px;
     }
 
-.add-row-controls {
-    display: grid;
-    grid-auto-flow: column;
-    align-items: center;
-    gap: 8px;
-    /* The number 1fr will make all children (inputs) share the space equally */
-    /* The last child (button) will auto-size to its content */
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)) auto;
-    margin-top: 8px;
+        .auto-property-table th:first-child,
+        .auto-property-table td:first-child {
+            max-width: 200px;
+            min-width: 20px;
+            width: 15%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+tr.add-row-controls,
+tr.add-row-controls td {
+    display: table-row;
+    width: auto;
+    box-sizing: border-box;
+    padding: 0.5em;
+    vertical-align: middle;
+    background: #f9f9f9; /* Optional: subtle highlight */
 }
+
+    tr.add-row-controls td {
+        /* Remove any display:block/flex if present */
+        display: table-cell;
+    }
+
+.auto-property-table td .tags-table-container,
+.auto-property-table .add-row-tags-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+    padding: 0;
+}
+
+    .auto-property-table td .tags-table-container input[type="text"],
+    .auto-property-table .add-row-tags-container input[type="text"] {
+        width: 95% !important;
+        max-width: 95% !important;
+        margin-left: 8px;
+        margin-right: 8px;
+        box-sizing: border-box;
+        min-width: 0;
+        padding: 4px 0;
+        font-size: 1em;
+    }
+
+.auto-property-table td .tags-list {
+    width: auto !important;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0;
+}
+
     .add-row-controls.invalid {
         background-color: #ffd6d6; /* light red */
         border: 1px solid #ff0000;
     }
 
-    .add-row-controls .add-row-input,
-    .add-row-controls .add-row-tag-input,
-    .add-row-controls .add-row-dropdown-select {
-        min-width: 60px;
-        max-width: 200px;
-        width: 100%;
-        box-sizing: border-box;
-        height: 2.4375rem;
-        padding: 0.5rem;
-        border: 1px solid #cacaca;
-        background-color: #fefefe;
-        font-size: 1rem;
-    }
+.add-row-controls .add-row-input,
+.add-row-controls .add-row-tag-input,
+.add-row-controls .add-row-dropdown-select {
+    min-width: 60px;
+    max-width: 200px;
+    width: 100%;
+    max-width: 100% !important;
+    box-sizing: border-box;
+    height: 2.4375rem;
+    padding: 0.5rem;
+    border: 1px solid #cacaca;
+    background-color: #fefefe;
+    font-size: 1rem;
+}
 
     .add-row-controls .add-row-btn {
         padding: 4px 12px;
@@ -1742,7 +1788,7 @@ input:checked + .slider {
         background-color: #f0f0f0;
     }
 
-.form-group .tags-container input[type="text"] {
+.form-group .tags-container .input[type="text"] {
     width: 110%;
     outline: none;
     flex-grow: 1;
