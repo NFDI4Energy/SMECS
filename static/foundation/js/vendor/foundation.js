@@ -271,6 +271,12 @@ document.addEventListener("DOMContentLoaded", function () {
             highlightTag.innerHTML = `⚠️ Suggestion: Curate here <span class="acknowledge-tag">Got it!</span>`;
             container.insertBefore(highlightTag, input);
         }
+        else if (!useAutocomplete) {
+            const highlightTag = document.createElement("span");
+            highlightTag.classList.add("highlight-tag");
+            highlightTag.innerHTML = `⚠️ Multiple entries supported: please press enter after typing each <span class="acknowledge-tag">Got it!</span>`;
+            container.insertBefore(highlightTag, input);
+        }
 
         if (useAutocomplete && suggestionsBox) {
             input.addEventListener("input", () => {
