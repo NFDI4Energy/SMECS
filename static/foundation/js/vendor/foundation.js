@@ -334,11 +334,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
 
                 // Position the suggestion box
-                const rect = input.getBoundingClientRect();
-                suggestionsBox.style.position = "fixed";
-                suggestionsBox.style.left = rect.left + "px";
-                suggestionsBox.style.top = rect.bottom + "px";
-                suggestionsBox.style.width = rect.width + "px";
+                updateSuggestionsBoxPosition(input, suggestionsBox)
                 suggestionsBox.style.display = "block";
             });
 
@@ -1394,6 +1390,9 @@ document.addEventListener("DOMContentLoaded", function () {
             updateSuggestionsBoxPosition(input, suggestionsBox);
             suggestionsBox.style.display = 'block';
         });
+
+        window.addEventListener('scroll', () => updateSuggestionsBoxPosition(input, suggestionsBox), true);
+        window.addEventListener('resize', () => updateSuggestionsBoxPosition(input, suggestionsBox));
 
         input.addEventListener('focus', function () {
             suggestionsBox.innerHTML = '';
