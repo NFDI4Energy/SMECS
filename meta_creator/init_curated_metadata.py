@@ -56,6 +56,19 @@ def load_description_dict_from_schema(schema: dict) -> dict[str, str]:
                 if desc and key not in description_dict:
                     description_dict[key] = desc
 
+
+    description_dict['General'] = "This section describes general information about the software."
+    #description_dict['GeneralDescription'] = ""
+    description_dict['Provenance'] = "This section describes creation history of the software."
+    description_dict['RelatedPersons'] = "This section lists all relevant persons who are connected to the software."
+    #description_dict['Usage'] = ""
+    #description_dict['CommunityAndQuality'] = ""
+    description_dict['Interface'] = "This section focuses on interfaces the software has to load or store data or to exchange information with other software."
+    description_dict['Interoperability'] = "This section allows to describe objects which the software can interact with."
+    description_dict['Functionalities'] = "This section describes the functionalities of the software."
+    #description_dict['TechnicalRequirements'] = ""
+    description_dict['MetaMetadata'] = "This section describes the metadata of all created metadata."
+
     return description_dict
 
 # Define required field_type per element
@@ -313,7 +326,7 @@ def init_curated_metadata(extract_metadata):
     }]
 
     filled_metadata = fill_empty_metadata(empty_metadata, extract_metadata)
-    print(f"Filled metadata:\n{filled_metadata}")
+    #print(f"Filled metadata:\n{filled_metadata}")
 
     metadata_description = load_description_dict_from_schema(full_schema)
     metadata_field_types = define_field_type(full_schema, full_schema["$defs"])
