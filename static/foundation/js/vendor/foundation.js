@@ -154,6 +154,21 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // Add event listeners to the tab links
+    document.querySelectorAll('.tab-links_ext a').forEach(function (tabLink) {
+        tabLink.addEventListener('click', function (event) {
+            var tabId = this.getAttribute('href');
+            var tabContent = document.querySelector(tabId);
+            if (tabContent) {
+                console.log('Checked ClassList')
+                console.log([...tabContent.classList])
+                if (tabContent.classList.contains('unique-tab')) {
+                    checkAndShowPopup(tabId, repoName);
+                }
+            }
+        });
+    });
+
     document.querySelectorAll('.custom-tooltip-metadata').forEach(function (element) {
         const tooltip = element.querySelector('.tooltip-text-metadata');
         const icon = element.querySelector('i');
