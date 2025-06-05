@@ -2,6 +2,7 @@
 import subprocess
 import json
 import os
+from .token_handling_in_toml import remove_token_from_toml
 
 def run_hermes_commands(url):
     errors = []
@@ -146,6 +147,8 @@ def run_hermes_commands(url):
         }
     else:
         hermes_metadata_dict = {}
+        
+    remove_token_from_toml('hermes.toml')
 
     return {
         'success': len(errors) == 0,
