@@ -12,19 +12,26 @@ from .github_metadata import get_github_metadata
 from .gitlab_metadata import get_gitlab_metadata
 from .read_tokens import read_token_from_file
 from .hermes_process import run_hermes_commands
-import json
-import os
+from .token_handling_in_toml import update_token_to_toml
 
-
-#################### getting metadata from github/gitlab project ####################
 
 @csrf_exempt
 def data_extraction(request):
+    """
+    Handle metadata extraction from a GitHub or GitLab repository.
+
+    Expects:
+        POST with 'gl_url', and 'personal_token_key'.
+
+    Returns:
+        JsonResponse with success status, metadata, warnings, and errors.
+    """
     if request.method == 'POST':
         # getting values from post
         project_name = request.POST.get('project_name')
         gl_url = request.POST.get('gl_url')
         personal_token_key = request.POST.get('personal_token_key')
+        update_token_to_toml(personal_token_key)
 
         # Get tokens from file
         tokens = read_token_from_file('tokens.txt')
