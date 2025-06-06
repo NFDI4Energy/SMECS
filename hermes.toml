@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: CC0-1.0
 
 [harvest]
-sources = [ "git", "cff", "codemeta", ] # ordered priority (first one is most important)
+sources = [ "githublab", "cff", "codemeta", ] # ordered priority (first one is most important)
 
 [deposit]
 target = "invenio_rdm"
