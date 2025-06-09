@@ -11,5 +11,5 @@ python-gitlab==3.13.0
 GitPython>=3.1.41
 
 # Git-based packages pinned to specific commits/branches
-git+https://github.com/softwarepub/hermes-plugin-github-gitlab@6dbcc09f4e7635c3e62110a1e9f2b08973de766b#egg=hermes_plugin_githublab
+git+https://github.com/softwarepub/hermes-plugin-github-gitlab@6f90ebc3c52f0e9a39ea59a9318537b25f87771a#egg=hermes_plugin_githublab
 git+https://github.com/Aidajafarbigloo/hermes@14fc040afd4b7f7268b937477dce56bd7695fbf3#egg=hermes
