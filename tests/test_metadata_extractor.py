@@ -11,6 +11,7 @@ personal_token_gl = os.getenv('CI_PERSONAL_TOKEN_KEY_GL')
 personal_token_gh = os.getenv('CI_PERSONAL_TOKEN_KEY_GH')
 
 class TestDataExtraction(unittest.TestCase):
+    pass
 
     # TODO unittests for GitLab instances (HERMES-based extraction)
     # def test_valid_gitlab_input(self):
