@@ -2,12 +2,15 @@
 import subprocess
 import json
 import os
-from .token_handling_in_toml import remove_token_from_toml
+from .token_handling_in_toml import update_token_to_toml, remove_token_from_toml
 
-def run_hermes_commands(url):
+def run_hermes_commands(url, token=None):
     errors = []
     warnings = []
     base_directory = os.getenv('HERMES_BASE_DIR', os.getcwd())
+    
+    if token:
+        update_token_to_toml(token)
 
     # Step 1: Clean up any previous runs
     print("Running hermes clean...")
@@ -148,7 +151,8 @@ def run_hermes_commands(url):
     else:
         hermes_metadata_dict = {}
         
-    remove_token_from_toml('hermes.toml')
+    if token:
+        remove_token_from_toml('hermes.toml')
 
     return {
         'success': len(errors) == 0,
