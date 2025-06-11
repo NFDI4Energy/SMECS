@@ -35,18 +35,6 @@ def is_github_repo(url):
     return "github" in url
 
 
-def is_gitlab_repo(url):
-    """
-    Checks if a given URL points to a GitLab repository.
-
-    Args:
-        url (str): The repository URL.
-
-    Returns:
-        bool: True if the URL contains 'gitlab', otherwise False.
-    """
-    return "gitlab" in url
-
 
 def check_github_token(repo_url, token):
     """
@@ -117,7 +105,7 @@ def validate_token(repo_url, token):
             return fallback_token  # Valid fallback token
         return None  # No token available but OK for GitHub
 
-    elif is_gitlab_repo(repo_url):
+    elif not is_github_repo(repo_url):
         if token and check_gitlab_token(repo_url, token):
             return token  # Valid provided token
         fallback_token = tokens_from_file.get("gitlab_token")

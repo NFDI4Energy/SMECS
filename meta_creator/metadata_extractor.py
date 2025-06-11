@@ -11,7 +11,7 @@ from .url_check_GitHub import validate_github_inputs
 from .github_metadata import get_github_metadata
 from .gitlab_metadata import get_gitlab_metadata
 from .hermes_process import run_hermes_commands
-from .token_check import validate_token, is_gitlab_repo
+from .token_check import validate_token, is_github_repo
 
 
 @csrf_exempt
@@ -33,7 +33,7 @@ def data_extraction(request):
         
         valid_token = validate_token(repo_url, personal_token_key)
         
-        if is_gitlab_repo(repo_url) and not valid_token:
+        if not is_github_repo(repo_url) and not valid_token:
             result =  {
                 'success': False,
                 'errors': "GitLab requires a valid personal access token."
