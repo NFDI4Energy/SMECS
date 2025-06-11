@@ -10,58 +10,66 @@ from .url_check_GitLab import validate_gitlab_inputs
 from .url_check_GitHub import validate_github_inputs
 from .github_metadata import get_github_metadata
 from .gitlab_metadata import get_gitlab_metadata
-from .read_tokens import read_token_from_file
 from .hermes_process import run_hermes_commands
-import json
-import os
+from .token_check import validate_token, is_github_repo
 
-
-#################### getting metadata from github/gitlab project ####################
 
 @csrf_exempt
 def data_extraction(request):
+    """
+    Handle metadata extraction from a GitHub or GitLab repository.
+
+    Expects:
+        POST with 'repo_url', and 'personal_token_key'.
+
+    Returns:
+        JsonResponse with success status, metadata, warnings, and errors.
+    """
     if request.method == 'POST':
         # getting values from post
         project_name = request.POST.get('project_name')
-        gl_url = request.POST.get('gl_url')
+        repo_url = request.POST.get('repo_url')
         personal_token_key = request.POST.get('personal_token_key')
+        
+        valid_token = validate_token(repo_url, personal_token_key)
+        
+        if not is_github_repo(repo_url) and not valid_token:
+            result =  {
+                'success': False,
+                'errors': "GitLab requires a valid personal access token."
+            }
+        else:
+            token = valid_token  # could be None for GitHub
 
-        # Get tokens from file
-        tokens = read_token_from_file('tokens.txt')
-        default_access_token_gitlab = tokens.get('gitlab_token')
-        default_access_token_github = tokens.get('github_token')
+            # Define empty result dict
+            result = {
+                'success': True,
+                'warnings': [],
+                'errors': [],
+                'metadata': None
+            }
 
-        # Define empty result dict
-        result = {
-            'success': True,
-            'warnings': [],
-            'errors': [],
-            'metadata': None
-        }
+            # # Validate GitHub input
+            # is_valid_github, error_messages = validate_github_inputs(gl_url)
+            # if not is_valid_github:
+            #     is_valid_gitlab, error_messages_gitlab = validate_gitlab_inputs(gl_url, personal_token_key)
 
-        # Validate GitHub input
-        is_valid_github, error_messages = validate_github_inputs(gl_url)
-        if not is_valid_github:
-            is_valid_gitlab, error_messages_gitlab = validate_gitlab_inputs(gl_url, personal_token_key)
+            #     if not is_valid_gitlab:
+            #         error_messages.join(error_messages_gitlab)
+            #         return {
+            #             'success': False,
+            #             'errors': error_messages
+            #         }
 
-            if not is_valid_gitlab:
-                error_messages.join(error_messages_gitlab)
-                return {
-                    'success': False,
-                    'errors': error_messages
-                }
+            #     extracted_metadata = get_gitlab_metadata(gl_url, personal_token_key)
+            #     if not extracted_metadata:
+            #         extracted_metadata = get_gitlab_metadata(gl_url, default_access_token_gitlab)
 
-            extracted_metadata = get_gitlab_metadata(gl_url, personal_token_key)
-            if not extracted_metadata:
-                extracted_metadata = get_gitlab_metadata(gl_url, default_access_token_gitlab)
+            #     result['metadata'] = init_curated_metadata(extracted_metadata)
 
-            result['metadata'] = init_curated_metadata(extracted_metadata)
-
-        else: 
-            # TODO we need to pass the token to hermes_process
 
             # Run HERMES process
-            hermes_metadata = run_hermes_commands(gl_url)
+            hermes_metadata = run_hermes_commands(repo_url, token)
             # if hermes_metadata == None:
             #     hermes_metadata = get_github_metadata(gl_url, default_access_token_GH)
 
@@ -73,5 +81,5 @@ def data_extraction(request):
             else:
                 result['success'] = False
                 result['errors'].append("HERMES returned unexpected result format.")
-        
+    
         return result
