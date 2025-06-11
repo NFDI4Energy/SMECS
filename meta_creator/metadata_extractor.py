@@ -12,10 +12,8 @@ from .github_metadata import get_github_metadata
 from .gitlab_metadata import get_gitlab_metadata
 from .read_tokens import read_token_from_file
 from .hermes_process import run_hermes_commands
-import json
-import os
-
-
+from .spdx_utils import validate_license 
+             
 #################### getting metadata from github/gitlab project ####################
 
 @csrf_exempt
@@ -55,7 +53,15 @@ def data_extraction(request):
             if not extracted_metadata:
                 extracted_metadata = get_gitlab_metadata(gl_url, default_access_token_gitlab)
 
-            result['metadata'] = init_curated_metadata(extracted_metadata)
+            output = validate_license(extracted_metadata)
+            if output.get('success') is False:
+                return {
+                    'success': False,
+                    'errors': 'No valid license found in metadata.'
+                }
+            else:
+                result['metadata'] = init_curated_metadata(extracted_metadata)
+            
 
         else: 
             # TODO we need to pass the token to hermes_process
@@ -66,12 +72,20 @@ def data_extraction(request):
             #     hermes_metadata = get_github_metadata(gl_url, default_access_token_GH)
 
             if isinstance(hermes_metadata, dict):
-                result['metadata'] = init_curated_metadata(hermes_metadata.get('metadata'))
-                result['warnings'].extend(hermes_metadata.get('warnings', []))
-                result['errors'].extend(hermes_metadata.get('errors', []))
-                result['success'] = hermes_metadata.get('success', False)
+                extracted_metadata = hermes_metadata.get('metadata')
+                if extracted_metadata:
+                    output = validate_license(extracted_metadata)
+                    if output.get('success') is False:
+                        return {
+                            'success': False,
+                            'errors': 'No valid license found in metadata.'
+                        }
+                    else:
+                        result['metadata'] = init_curated_metadata(hermes_metadata.get('metadata'))
+                        result['warnings'].extend(hermes_metadata.get('warnings', []))
+                        result['errors'].extend(hermes_metadata.get('errors', []))
+                        result['success'] = hermes_metadata.get('success', False)
             else:
                 result['success'] = False
                 result['errors'].append("HERMES returned unexpected result format.")
-        
         return result
