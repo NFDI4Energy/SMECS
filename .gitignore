@@ -18,3 +18,4 @@ env/
 .hermes/harvest/git_contexts.json
 .hermes/process/hermes.json
 hermes.log
+hermes.toml
