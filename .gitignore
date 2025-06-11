@@ -7,6 +7,18 @@ myenv/
 env/
 /Metadata mosaik.json
 /.hermes/*
+.hermes/
+.hermes/process/tags.json
+.hermes/harvest/cff_contexts.json
+.hermes/harvest/cff.json
+.hermes/harvest/git_contexts.json
+.hermes/harvest/codemeta.json
+.hermes/harvest/codemeta_contexts.json
+.hermes/harvest/git.json
+.hermes/harvest/git_contexts.json
+.hermes/process/hermes.json
+hermes.log
+hermes.toml
 .hermes
 *.sln
 *.pyproj

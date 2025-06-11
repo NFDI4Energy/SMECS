@@ -1914,7 +1914,7 @@ input:checked + .slider {
         background-color: #f0f0f0;
     }
 
-.form-group .tags-container input[type="text"] {
+.form-group .tags-container .input[type="text"] {
     width: 110%;
     outline: none;
     flex-grow: 1;
