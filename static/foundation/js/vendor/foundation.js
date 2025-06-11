@@ -357,6 +357,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Position the suggestion box
                 updateSuggestionsBoxPosition(input, suggestionsBox)
                 suggestionsBox.style.display = "block";
+                suggestionsBox.style.position = "fixed";
             });
 
             document.addEventListener("click", (e) => {
