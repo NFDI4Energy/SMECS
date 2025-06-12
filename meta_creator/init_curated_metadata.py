@@ -57,16 +57,16 @@ def load_description_dict_from_schema(schema: dict) -> dict[str, str]:
                     description_dict[key] = desc
 
 
-    description_dict['General'] = "This section describes general information about the software."
-    #description_dict['GeneralDescription'] = ""
-    description_dict['Provenance'] = "This section describes creation history of the software."
+    description_dict['General'] = "This section gives general information about the software."
+    description_dict['GeneralDescription'] = "This section provides a general description of the software."
+    description_dict['Provenance'] = "This section describes the creation history of the software."
     description_dict['RelatedPersons'] = "This section lists all relevant persons who are connected to the software."
-    #description_dict['Usage'] = ""
-    #description_dict['CommunityAndQuality'] = ""
+    description_dict['Usage'] = "This section gives information how the software can be used by others."
+    description_dict['CommunityAndQuality'] = "This section gives information on the community around the software and aspects related to software quality."
     description_dict['Interface'] = "This section focuses on interfaces the software has to load or store data or to exchange information with other software."
     description_dict['Interoperability'] = "This section allows to describe objects which the software can interact with."
     description_dict['Functionalities'] = "This section describes the functionalities of the software."
-    #description_dict['TechnicalRequirements'] = ""
+    description_dict['TechnicalRequirements'] = "This section decribes the technical requirements of the software."
     description_dict['MetaMetadata'] = "This section describes the metadata of all created metadata."
 
     return description_dict
