@@ -45,17 +45,17 @@
       {% block content %}{% endblock %}
     </div>
 
-    <script src="{% static 'foundation/js/vendor/foundation.js' %}"></script>
+    <script type="module" src="{% static 'foundation/js/vendor/foundation.js' %}"></script>
     
     <script>
-      initFieldsData();
-      initCallbacks();
-      loadStateFromStorage();
+      // initFieldsData();
+      // initCallbacks();
+      // loadStateFromStorage();
     </script>
 
     <script>
       $(document).ready(function() {
-        $(document).foundation();
+        // $(document).foundation();
       })
      </script>
      
