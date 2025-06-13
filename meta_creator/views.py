@@ -46,7 +46,11 @@ def index(request):
         result = data_extraction(request)
         
         if not result.get('success'):
-            error_messages = ['Error in extraction:', result.get('errors')]
+            errors = result.get('errors')
+            if isinstance(errors, list):
+                error_messages = ['Error in extraction:'] + errors
+            else:
+                error_messages = ['Error in extraction:', errors]            
             return render(request, 'meta_creator/error.html', {
                 'error_message': "; ".join(error_messages)
                 })
