@@ -49,6 +49,32 @@ document.addEventListener("DOMContentLoaded", function () {
         return key;
     }
 
+    // Delete confirmation when delete button clicked
+    function confirmDelete(element) {
+        const confirmed = confirm("Are you sure you want to delete this row?");
+        if (confirmed) {
+            const row = element.closest("tr");
+            row.remove();
+            // Update JSON
+            const table = row.closest('table');
+            if (table && table.id && table.id.endsWith('Table')) {
+                const key = table.id.replace(/Table$/, '');
+                if (typeof updateTableHiddenInput === 'function') {
+                    updateTableHiddenInput(key);
+                }
+            }
+        }
+    }
+
+    if (!window.deleteListenerAttached) {
+        document.addEventListener("click", function (e) {
+            if (e.target && e.target.classList.contains("delete-row-btn")) {
+                confirmDelete(e.target);
+            }
+        });
+        window.deleteListenerAttached = true;
+    }
+
     // Function to dynamically mark mandatory fields based on required key in JSON schema
     function setMandatoryFieldsFromSchema() {
         fetch(JsonSchema)
@@ -773,6 +799,33 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
+    // Function to check for duplicate when new row added 
+    function isDuplicateRow({ identifier, givenName, familyName }, table) {
+        const rows = table.querySelectorAll("tbody tr:not(.add-row-controls)");
+        for (let row of rows) {
+            const cells = row.querySelectorAll("td");
+            let rowIdentifier = "", rowGivenName = "", rowFamilyName = "";
+
+            const headers = Array.from(table.querySelectorAll("thead th"));
+            headers.forEach((th, idx) => {
+                const col = th.getAttribute("data-col");
+                if (col === "identifier") rowIdentifier = cells[idx]?.textContent.trim();
+                if (col === "givenName") rowGivenName = cells[idx]?.textContent.trim();
+                if (col === "familyName") rowFamilyName = cells[idx]?.textContent.trim();
+            });
+
+            // Compare identifiers to check for a match
+            const idMatch = identifier && rowIdentifier && identifier === rowIdentifier;
+            const nameMatch = givenName && familyName && rowGivenName && rowFamilyName &&
+                            givenName === rowGivenName && familyName === rowFamilyName;
+
+            if (idMatch || nameMatch) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Add Row functionality for all auto-property-tables
     document.querySelectorAll('.add-row-btn').forEach(function (btn) {
         btn.addEventListener('click', function () {
@@ -789,11 +842,28 @@ document.addEventListener("DOMContentLoaded", function () {
             const inputs = addRowControls.querySelectorAll('.add-row-input, .add-row-tag-input, .add-row-dropdown-select');
             console.log({ inputs })
             const values = Array.from(inputs).map(input => input.value.trim());
-                       
+
             // Prevent adding if all fields are empty
             const allEmpty = values.every(val => val === '');
             if (allEmpty) return;
 
+            // Preparation for duplicate check
+            const identifierInput = addRowControls.querySelector('input[data-col="identifier"], select[data-col="identifier"]');
+            const givenNameInput = addRowControls.querySelector('input[data-col="givenName"], select[data-col="givenName"]');
+            const familyNameInput = addRowControls.querySelector('input[data-col="familyName"], select[data-col="familyName"]');
+
+            const identifier = identifierInput ? identifierInput.value.trim() : undefined;
+            const givenName = givenNameInput ? givenNameInput.value.trim() : undefined;
+            const familyName = familyNameInput ? familyNameInput.value.trim() : undefined;
+
+            // Only check for duplicates if one of these fields exists in this table
+            if (identifierInput || (givenNameInput && familyNameInput)) {
+            if (isDuplicateRow({ identifier, givenName, familyName }, table)) {
+                alert("Duplicate row detected! Please enter a unique Identifier or Name.");
+                return;
+            }
+            }
+            
             // Create new row
             const newRow = document.createElement('tr');
             // Get column headers
