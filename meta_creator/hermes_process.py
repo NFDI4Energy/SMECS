@@ -34,6 +34,7 @@ def run_hermes_commands(url, token=None):
         print(error_msg)
         errors.append(error_msg)
         return {
+            'metadata': {"codeRepository": url },
             'success': False,
             'errors': errors,
             'warnings': warnings
@@ -71,15 +72,32 @@ def run_hermes_commands(url, token=None):
     # Step 3: Run hermes process
     print("Running hermes process...")
     process_command = subprocess.run(['hermes', 'process'], capture_output=True, text=True, cwd=base_directory)
+    
+    ## Check result and create correct path
     if process_command.returncode != 0:
         error_msg = f"Error in hermes process: {process_command.stderr}"
         print(error_msg)
         errors.append(error_msg)
-        return {
-            'success': False,
-            'errors': errors,
-            'warnings': warnings
-        }
+        file_names = ["codemeta.json", "cff.json", "githublab.json"]
+        for file_name in file_names:
+            file_path = os.path.join(base_directory, ".hermes", "harvest", file_name)
+            os.remove(file_path)
+            print(f"Removed{file_path}")
+            process_command = subprocess.run(['hermes', 'process'], capture_output=True, text=True, cwd=base_directory)
+
+            if process_command.returncode == 0:
+                break
+
+        if process_command.returncode != 0:
+            errors.append(error_msg)
+            return {
+                'metadata': {"codeRepository": url },
+                'success': False,
+                'errors': errors,
+                'warnings': warnings
+            }
+        else:
+           errors = []
 
     # Construct the path to hermes.json
     hermes_json_path = os.path.join(base_directory, ".hermes", "process", "hermes.json")
