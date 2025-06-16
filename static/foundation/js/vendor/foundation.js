@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const downloadButton = document.getElementById("downloadButton");
     const downloadBtn = document.getElementById("downloadBtn");
     const updateJsonBtn = document.getElementById("updateFormBtn");
-    const inputs = document.querySelectorAll("#metadata-form input, #metadata-form select");
+    const inputs = document.querySelectorAll("#metadata-form input, #metadata-form select, #metadata-form textarea");
     const deleteButtons = document.querySelectorAll('[data-action="delete"]');
     let tabs_ext = document.querySelectorAll('.tab-links_ext a');
     let contents = document.querySelectorAll('.tab-content_ext .tab');
@@ -81,6 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                         if (label && !label.innerHTML.includes('*')) {
                             const asterisk = document.createElement('span');
+                            asterisk.className = 'asterisk';
                             asterisk.style.color = 'red';
                             asterisk.style.fontSize = '18px';
                             asterisk.textContent = '*';
@@ -152,6 +153,21 @@ document.addEventListener("DOMContentLoaded", function () {
             localStorage.setItem(key, 'true');
         }
     }
+
+    // Add event listeners to the tab links
+    document.querySelectorAll('.tab-links_ext a').forEach(function (tabLink) {
+        tabLink.addEventListener('click', function (event) {
+            var tabId = this.getAttribute('href');
+            var tabContent = document.querySelector(tabId);
+            if (tabContent) {
+                console.log('Checked ClassList')
+                console.log([...tabContent.classList])
+                if (tabContent.classList.contains('unique-tab')) {
+                    checkAndShowPopup(tabId, repoName);
+                }
+            }
+        });
+    });
 
     document.querySelectorAll('.custom-tooltip-metadata').forEach(function (element) {
         const tooltip = element.querySelector('.tooltip-text-metadata');
@@ -260,7 +276,7 @@ document.addEventListener("DOMContentLoaded", function () {
             updateHidden();
             input.value = "";
             if (suggestionsBox) suggestionsBox.style.display = "none";
-            input.classList.remove("invalid"); // Remove invalid color immediately
+            input.classList.remove("invalid", "invalid-required", "invalid-recommended");
         }
 
         // Show yellow tag once if any tag exists
@@ -268,6 +284,12 @@ document.addEventListener("DOMContentLoaded", function () {
             const highlightTag = document.createElement("span");
             highlightTag.classList.add("highlight-tag");
             highlightTag.innerHTML = `⚠️ Suggestion: Curate here <span class="acknowledge-tag">Got it!</span>`;
+            container.insertBefore(highlightTag, input);
+        }
+        else if (!useAutocomplete) {
+            const highlightTag = document.createElement("span");
+            highlightTag.classList.add("highlight-tag");
+            highlightTag.innerHTML = `⚠️ Multiple entries supported: please press enter after typing each <span class="acknowledge-tag">Got it!</span>`;
             container.insertBefore(highlightTag, input);
         }
 
@@ -334,10 +356,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // Position the suggestion box
                 const rect = input.getBoundingClientRect();
-                suggestionsBox.style.position = "fixed";
-                suggestionsBox.style.left = rect.left + "px";
-                suggestionsBox.style.top = rect.bottom + "px";
-                suggestionsBox.style.width = rect.width + "px";
+                updateSuggestionsBoxPosition(input, suggestionsBox)
+                suggestionsBox.style.position = "fixed";                
                 suggestionsBox.style.display = "block";
             });
 
@@ -747,7 +767,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(response => response.json())
             .then(schema => {
                 const { required, recommended } = fetchRequiredAndRecommendedFields(schema);
-                const allMandatory = [...required, ...recommended];
 
                 document.querySelectorAll('table.auto-property-table').forEach(table => {
                     const tableId = table.id;
@@ -757,17 +776,18 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Find the corresponding add-row-controls
                     const addRowControls = document.querySelector(`.add-row-controls[data-table-key="${key}"]`);
                     if (!addRowControls) return;
+                    // Remove previous highlight classes
+                    addRowControls.classList.remove('invalid-required', 'invalid-recommended');
 
-                    if (allMandatory.includes(key)) {
-                        const tbody = table.querySelector('tbody');
-                        const rows = tbody ? tbody.querySelectorAll('tr') : [];
-                        if (rows.length === 0) {
-                            addRowControls.classList.add('invalid');
-                        } else {
-                            addRowControls.classList.remove('invalid');
-                        }
-                    } else {
-                        addRowControls.classList.remove('invalid');
+                    const tbody = table.querySelector('tbody');
+                    const dataRows = tbody
+                        ? Array.from(tbody.querySelectorAll('tr')).filter(row => !row.classList.contains('add-row-controls'))
+                        : [];
+
+                    if (required.includes(key) && dataRows.length === 0) {
+                        addRowControls.classList.add('invalid-required');
+                    } else if (recommended.includes(key) && dataRows.length === 0) {
+                        addRowControls.classList.add('invalid-recommended');
                     }
                 });
             });
@@ -908,8 +928,8 @@ document.addEventListener("DOMContentLoaded", function () {
             // Update hidden input
             updateTableHiddenInput(key);
 
-            // Remove color
-            addRowControls.classList.remove('invalid');
+            // Remove color            
+            addRowControls.classList.remove('invalid-required', 'invalid-recommended');
         });
     });
 
@@ -963,9 +983,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
                 // Position suggestions below the input
                 const inputRect = input.getBoundingClientRect();
-                suggestionsBox.style.left = inputRect.left + 'px';
-                suggestionsBox.style.top = inputRect.bottom + 'px';
-                suggestionsBox.style.width = input.offsetWidth + 'px';
+                updateSuggestionsBoxPosition(input, suggestionsBox);
                 suggestionsBox.style.display = 'block';
             });
 
@@ -1022,7 +1040,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     select.innerHTML = '<option value="">Select...</option>' +
                         options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
                     // Replace the input with the select
-                    input.style.display = 'none';
+                    if (input) {
+                        input.style.display = 'none';
+                    }
                     container.appendChild(select);
 
                     // On change, update addRowTags or values as needed
@@ -1247,7 +1267,9 @@ document.addEventListener("DOMContentLoaded", function () {
                             function finalizeSelection() {
                                 const selectedValue = select.value;
                                 cell.setAttribute('data-value', selectedValue);
-                                cell.innerHTML = selectedValue;
+                                setTimeout(() => {
+                                    cell.innerHTML = selectedValue;
+                                }, 0);
 
                                 // Remove this event listener to avoid duplicate dropdowns
                                 cell.removeEventListener('click', handleDropdownCellClick);
@@ -1391,6 +1413,9 @@ document.addEventListener("DOMContentLoaded", function () {
             updateSuggestionsBoxPosition(input, suggestionsBox);
             suggestionsBox.style.display = 'block';
         });
+
+        window.addEventListener('scroll', () => updateSuggestionsBoxPosition(input, suggestionsBox), true);
+        window.addEventListener('resize', () => updateSuggestionsBoxPosition(input, suggestionsBox));
 
         input.addEventListener('focus', function () {
             suggestionsBox.innerHTML = '';
@@ -1593,12 +1618,14 @@ document.addEventListener("DOMContentLoaded", function () {
             return; // Skip validation for the specified inputs
         }
 
+        // Always remove highlight classes before validation
+        input.classList.remove("invalid", "invalid-required", "invalid-recommended");
+
         // Fetch schema and validate only if field is required or recommended
         fetch(JsonSchema)
             .then(response => response.json())
             .then(schema => {
                 const { required, recommended } = fetchRequiredAndRecommendedFields(schema);
-                const allMandatory = [...required, ...recommended];
 
                 // --- Tagging support ---
                 // If input is inside a tags-container, validate the hidden input instead
@@ -1611,21 +1638,19 @@ document.addEventListener("DOMContentLoaded", function () {
                         const taggingType = label ? label.getAttribute('data-tagging-type') : null;
                         const key = getFieldKey(hiddenInput);
 
-                        if (allMandatory.includes(key)) {
-                            if (taggingType === "tagging_object") {
-                                // Check number of tags in the container
-                                if (isTaggingObjectEmpty(tagsContainer)) {
-                                    input.classList.add("invalid");
-                                } else {
-                                    input.classList.remove("invalid");
-                                }
-                            } else {
-                                // For normal tagging, check hidden input
-                                if (hiddenInput.value.trim() === "") {
-                                    input.classList.add("invalid");
-                                } else {
-                                    input.classList.remove("invalid");
-                                }
+                        if (required.includes(key)) {
+                            if (
+                                (taggingType === "tagging_object" && isTaggingObjectEmpty(tagsContainer)) ||
+                                (taggingType !== "tagging_object" && hiddenInput.value.trim() === "")
+                            ) {
+                                input.classList.add("invalid-required");
+                            }
+                        } else if (recommended.includes(key)) {
+                            if (
+                                (taggingType === "tagging_object" && isTaggingObjectEmpty(tagsContainer)) ||
+                                (taggingType !== "tagging_object" && hiddenInput.value.trim() === "")
+                            ) {
+                                input.classList.add("invalid-recommended");
                             }
                         } else {
                             input.classList.remove("invalid");
@@ -1636,19 +1661,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // --- Standard input/select validation ---
                 const key = getFieldKey(input);
-                if (allMandatory.includes(key)) {
+                if (required.includes(key)) {
                     if (input.value.trim() === "") {
-                        input.classList.add("invalid");
-                    } else {
-                        input.classList.remove("invalid");
+                        input.classList.add("invalid-required");
                     }
-                } else {
-                    input.classList.remove("invalid");
+                } else if (recommended.includes(key)) {
+                    if (input.value.trim() === "") {
+                        input.classList.add("invalid-recommended");
+                    }
                 }
             })
             .catch(() => {
                 // On schema load error, fallback to no validation
-                input.classList.remove("invalid");
+                input.classList.remove("invalid", "invalid-required", "invalid-recommended");
             });
     }
       
