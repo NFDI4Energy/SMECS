@@ -119,19 +119,38 @@ def validate_token(repo_url, token):
 
 
 def validate_repo_and_token(repo_url, token):
+    """
+    Validates both the repository URL and the API token.
+
+    This function will first check whether the repository host is supported (GitHub or GitLab),
+    then validates the repository URL for proper formatting and existence.
+    If the URL is valid, it proceeds to validate the API token if one is provided.
+
+    Args:
+        repo_url (str): The full URL of the repository.
+        token (str): The access token used for API authentication.
+
+    Returns:
+        tuple: A tuple containing a bool (True if both URL and token are valid; otherwise False.),
+        and a str (A message indicating which validation step failed or if validation succeeded.)
+    """
+
+    # Handle GitHub validation
     if is_github_repo(repo_url):
         is_valid_url, url_error = validate_github_inputs(repo_url)
         if not is_valid_url:
             return False, f"URL error: {url_error}"
+        # Only check token if provided
         if token and not check_github_token(repo_url, token):
             return False, "Token error: Invalid GitHub token"
         return True, "GitHub repository and token are valid"
 
+    # Handle GitLab validation
     elif "gitlab.com" in repo_url:
         is_valid_url, error = validate_gitlab_inputs(repo_url, token)
         if not is_valid_url:
             return False, f"Validation failed: {error}"
         return True, "GitLab repository and token are valid"
 
-    # Fallback for malformed or unrecognized URLs
+    # Handle unknown or unsupported repository host
     return False, "URL error: Repository host must be GitHub or GitLab"
