@@ -1,3 +1,5 @@
+from .url_check_GitHub import validate_github_inputs
+from .url_check_GitLab import validate_gitlab_inputs
 import requests
 import json
 import os
@@ -113,4 +115,23 @@ def validate_token(repo_url, token):
             return fallback_token  # Valid fallback token
         return None  # Not okay for GitLab
 
-    return None  
+    return None
+
+
+def validate_repo_and_token(repo_url, token):
+    if is_github_repo(repo_url):
+        is_valid_url, url_error = validate_github_inputs(repo_url)
+        if not is_valid_url:
+            return False, f"URL error: {url_error}"
+        if token and not check_github_token(repo_url, token):
+            return False, "Token error: Invalid GitHub token"
+        return True, "GitHub repository and token are valid"
+
+    elif "gitlab.com" in repo_url:
+        is_valid_url, error = validate_gitlab_inputs(repo_url, token)
+        if not is_valid_url:
+            return False, f"Validation failed: {error}"
+        return True, "GitLab repository and token are valid"
+
+    # Fallback for malformed or unrecognized URLs
+    return False, "URL error: Repository host must be GitHub or GitLab"
