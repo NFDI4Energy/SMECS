@@ -51,24 +51,60 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Delete confirmation when delete button clicked
     function confirmDelete(element) {
-        const confirmed = confirm("Are you sure you want to delete this row?");
-        if (confirmed) {
-            const row = element.closest("tr");
+        const row = element.closest("tr");
+        if (!row) return;
+
+        const table = row.closest("table");
+        const delay = 5000;
+        let canceled = false;
+
+        const deleteTimeout = setTimeout(() => {
+            if (canceled) return;
+
             row.remove();
-            // Update JSON
-            const table = row.closest('table');
-            if (table && table.id && table.id.endsWith('Table')) {
-                const key = table.id.replace(/Table$/, '');
-                if (typeof updateTableHiddenInput === 'function') {
+
+            if (table && table.id && table.id.endsWith("Table")) {
+                const key = table.id.replace(/Table$/, "");
+                if (typeof updateTableHiddenInput === "function") {
                     updateTableHiddenInput(key);
                 }
             }
-        }
+
+            Toastify({
+                text: "Row deleted.",
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#FF4E4E",
+            }).showToast();
+        }, delay);
+
+        Toastify({
+            text: "Row will be deleted in 5 seconds. Click to cancel.",
+            duration: delay,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#FFA500",
+            onClick: () => {
+                canceled = true;
+                clearTimeout(deleteTimeout);
+                Toastify({
+                    text: "Row deletion canceled.",
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#4CAF50",
+                }).showToast();
+            },
+        }).showToast();
     }
 
     if (!window.deleteListenerAttached) {
         document.addEventListener("click", function (e) {
             if (e.target && e.target.classList.contains("delete-row-btn")) {
+                e.preventDefault();
+                e.stopPropagation();
                 confirmDelete(e.target);
             }
         });
@@ -800,31 +836,67 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Function to check for duplicate when new row added 
-    function isDuplicateRow({ identifier, givenName, familyName }, table) {
-        const rows = table.querySelectorAll("tbody tr:not(.add-row-controls)");
-        for (let row of rows) {
-            const cells = row.querySelectorAll("td");
-            let rowIdentifier = "", rowGivenName = "", rowFamilyName = "";
+function isDuplicateRow(entry, table) {
+    const rows = table.querySelectorAll("tbody tr:not(.add-row-controls)");
 
-            const headers = Array.from(table.querySelectorAll("thead th"));
-            headers.forEach((th, idx) => {
-                const col = th.getAttribute("data-col");
-                if (col === "identifier") rowIdentifier = cells[idx]?.textContent.trim();
-                if (col === "givenName") rowGivenName = cells[idx]?.textContent.trim();
-                if (col === "familyName") rowFamilyName = cells[idx]?.textContent.trim();
-            });
+    for (let row of rows) {
+        const cells = row.querySelectorAll("td");
+        const headers = Array.from(table.querySelectorAll("thead th"));
 
-            // Compare identifiers to check for a match
-            const idMatch = identifier && rowIdentifier && identifier === rowIdentifier;
-            const nameMatch = givenName && familyName && rowGivenName && rowFamilyName &&
-                            givenName === rowGivenName && familyName === rowFamilyName;
+        let rowData = {
+            identifier: "",
+            givenName: "",
+            familyName: "",
+            email: [],
+            affiliation: ""
+        };
 
-            if (idMatch || nameMatch) {
+        headers.forEach((th, idx) => {
+            const col = th.getAttribute("data-col");
+            const cell = cells[idx];
+            if (!cell) return;
+
+            if (col === "email") {
+                const tags = cell.querySelectorAll(".tag[data-tag]");
+                rowData.email = Array.from(tags).map(tag => tag.getAttribute("data-tag").trim().toLowerCase());
+            } else if (rowData.hasOwnProperty(col)) {
+                rowData[col] = cell.textContent.trim().toLowerCase();
+            }
+        });
+
+        const newEmails = Array.isArray(entry.email) ? entry.email : [entry.email];
+        const normalizedNewEmails = newEmails
+            .filter(Boolean)
+            .map(e => e.trim().toLowerCase());
+
+        const match = (field) => {
+            if (field === "email") {
+                return normalizedNewEmails.some(email => rowData.email.includes(email));
+            }
+            return entry[field] && rowData[field] && entry[field].trim().toLowerCase() === rowData[field];
+        };
+
+        // Checked combinations
+        const combinations = [
+            ["identifier", "givenName", "familyName", "email", "affiliation"],
+            ["identifier", "givenName", "familyName", "email"],
+            ["identifier", "givenName", "familyName"],
+            ["givenName", "familyName", "email", "affiliation"],
+            ["givenName", "familyName", "email"],
+            ["givenName", "familyName"],
+            ["givenName", "email"],
+            ["identifier", "familyName", "email"]
+        ];
+
+        for (let combo of combinations) {
+            if (combo.every(field => match(field))) {
                 return true;
             }
         }
-        return false;
     }
+
+    return false;
+}
 
     // Add Row functionality for all auto-property-tables
     document.querySelectorAll('.add-row-btn').forEach(function (btn) {
@@ -834,34 +906,48 @@ document.addEventListener("DOMContentLoaded", function () {
             const hiddenInput = document.getElementById(key + 'TableHiddenInput');
             if (!table || !hiddenInput) return;
 
-            // Find the add-row-controls row
             const addRowControls = table.querySelector('tr.add-row-controls[data-table-key="' + key + '"]');
             if (!addRowControls) return;
 
-            // Get input values 
             const inputs = addRowControls.querySelectorAll('.add-row-input, .add-row-tag-input, .add-row-dropdown-select');
             console.log({ inputs })
             const values = Array.from(inputs).map(input => input.value.trim());
 
-            // Prevent adding if all fields are empty
             const allEmpty = values.every(val => val === '');
             if (allEmpty) return;
 
-            // Preparation for duplicate check
             const identifierInput = addRowControls.querySelector('input[data-col="identifier"], select[data-col="identifier"]');
             const givenNameInput = addRowControls.querySelector('input[data-col="givenName"], select[data-col="givenName"]');
             const familyNameInput = addRowControls.querySelector('input[data-col="familyName"], select[data-col="familyName"]');
+            const affiliationInput = addRowControls.querySelector('input[data-col="affiliation"], select[data-col="affiliation"]');
+
+            const emailTagContainer = addRowControls.querySelector('[data-col="email"]');
+            const emailTags = Array.from(emailTagContainer?.querySelectorAll('.tag[data-tag]') || [])
+                .map(tag => tag.getAttribute("data-tag").trim());
 
             const identifier = identifierInput ? identifierInput.value.trim() : undefined;
             const givenName = givenNameInput ? givenNameInput.value.trim() : undefined;
             const familyName = familyNameInput ? familyNameInput.value.trim() : undefined;
+            const affiliation = affiliationInput ? affiliationInput.value.trim() : undefined;
 
-            // Only check for duplicates if one of these fields exists in this table
-            if (identifierInput || (givenNameInput && familyNameInput)) {
-            if (isDuplicateRow({ identifier, givenName, familyName }, table)) {
-                alert("Duplicate row detected! Please enter a unique Identifier or Name.");
+            const newRowData = {
+                identifier,
+                givenName,
+                familyName,
+                email: emailTags,
+                affiliation
+            };
+
+            if (isDuplicateRow(newRowData, table)) {
+                Toastify({
+                    text: "Duplicate row detected! Row not added.",
+                    duration: 4000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#FF4E4E"
+                }).showToast();
                 return;
-            }
             }
             
             // Create new row
@@ -1191,33 +1277,21 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // functionanilties within all auto-property-tables
-    document.querySelectorAll('table.auto-property-table').forEach(function (table) { 
+    document.querySelectorAll('table.auto-property-table').forEach(function (table) {
         table.addEventListener('click', function (e) {
-            // Delete rows
             if (e.target.classList.contains('delete-row-btn')) {
-                const row = e.target.closest('tr');
-                if (row) {
-                    row.remove();
-                    // Update the hidden input
-                    const tableId = table.id;
-                    if (tableId && tableId.endsWith('Table')) {
-                        const key = tableId.replace(/Table$/, '');
-                        updateTableHiddenInput(key);
-                    }
-                }
+                e.preventDefault();
+                e.stopPropagation();
+                confirmDelete(e.target);
+                return;
             }
 
-            // Update other fields
-            // Only allow editing on <td> that is not the last column (delete icon)
             const cell = e.target.closest('td');
             if (!cell) return;
             if (cell.classList.contains('table-tagging-cell')) return;
-            if (cell.classList.contains('table-tagging-cell')) return;
             const row = cell.parentElement;
             const allCells = Array.from(row.children);
-            // Don't edit the last cell (delete icon)
             if (allCells.indexOf(cell) === allCells.length - 1) return;
-            // Prevent multiple inputs
             if (cell.querySelector('input')) return;
 
             const oldValue = cell.textContent;
@@ -1230,16 +1304,15 @@ document.addEventListener("DOMContentLoaded", function () {
             cell.appendChild(input);
             input.focus();
 
-            // Save on blur or Enter
             function save() {
                 cell.textContent = input.value;
-                // Update the hidden input for this table
                 const tableId = table.id;
                 if (tableId && tableId.endsWith('Table')) {
                     const key = tableId.replace(/Table$/, '');
                     updateTableHiddenInput(key);
                 }
             }
+
             input.addEventListener('blur', save);
             input.addEventListener('keydown', function (evt) {
                 if (evt.key === 'Enter') {
@@ -1248,7 +1321,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     cell.textContent = oldValue;
                 }
             });
-
         });
     });
 
