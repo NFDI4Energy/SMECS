@@ -1,4 +1,11 @@
 // ui.js
+/*Popup behavior
+Tabs and navigation buttons
+Toggle switch visibility for form sections
+Tooltips
+*/
+const metadataJson = document.getElementById("metadata-json");
+const urlInputs = document.querySelectorAll('.url-input');
 
 // pop-up message for Contributor and Author tabs
 function showPopup() {
@@ -18,8 +25,14 @@ export function setupUI() {
           closePopup();
       }
   };
-
-
+  const copyBtn = document.getElementById('copy-button');
+ // copy button for json
+ copyBtn.addEventListener('click', function (event) {
+    event.preventDefault();
+    metadataJson.select();
+    document.execCommand('copy');
+    actionFeedback("Text copied!");
+});
   // tabs_ext
   const tabs_ext = document.querySelectorAll('.tab-links_ext a');
   const contents = document.querySelectorAll('.tab-content_ext .tab');
@@ -93,6 +106,8 @@ export function setupUI() {
       toggleSwitch.addEventListener('change', toggleSection);
       window.addEventListener('load', toggleSection);
   }
+  //highlightsURLs
+  highlightEditableUrls(urlInputs);
 }
 
 // toggle
@@ -136,3 +151,24 @@ export function toggleCollapse() {
   }
 }
   window.toggleCollapse = toggleCollapse;
+
+// Applying the yellow border for suggesting the user to change or review the extracted value
+  export function highlightEditableUrls(urlInputs) {
+    urlInputs.forEach(input => {
+        const initialValue = input.value;
+        if (initialValue !== "") {
+            input.style.border = '2px solid yellow';
+            input.style.backgroundColor = '#fef6da';
+        }
+        input.addEventListener('input', () => {
+            if (input.value !== initialValue) {
+                input.style.border = '';
+                input.style.backgroundColor = '';
+            } else if (initialValue !== "") {
+                // Reapply the yellow border if the value is reset to the initial value
+                input.style.border = '2px solid yellow';
+                input.style.backgroundColor = '#fef6da';
+            }
+        });
+    });
+}

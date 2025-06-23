@@ -1,4 +1,8 @@
 // dropdown-utils.js
+/*Populates <select> elements based on schema-enumerated options:
+    Dynamically loads schema values into dropdowns using a DynamicDropdown class
+    Automatically initializes all select elements with data-dropdown-schema*/   
+    
 import { getSchema } from "./schema-utils.js";
 const JsonSchema = '/static/schema/codemeta_schema.json';
 const dropdownElements = document.querySelectorAll('select[data-dropdown-schema]');

@@ -1,4 +1,10 @@
 // table-utils.js
+
+/*
+Tracks user input in tables
+Syncs table rows with the main JSON object
+Handles input blur/change events to auto-update hidden fields and JSON
+*/
 import {fetchRequiredAndRecommendedFields, getSchema} from './schema-utils.js';
 import {updateSuggestionsBoxPosition, setupTableTagAutocomplete} from './tagging.js';
 

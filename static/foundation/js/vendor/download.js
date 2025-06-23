@@ -1,5 +1,10 @@
 // download.js
 
+/*Validates metadata structure before download
+Cleans out empty fields
+Formats and downloads the JSON as a codemeta.json file
+*/
+
 import { keysMatchRecursive } from './schema-utils.js';
 
 const JsonSchema = '/static/schema/codemeta_schema.json';

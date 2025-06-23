@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const recommended = schema.recommended || [];
         return { required, recommended };
     }
-  /////////_______schema_________////////
+
     // Helper: Get the field key for an input element
     function getFieldKey(input) {
         // Try to get the name attribute, fallback to id
@@ -129,8 +129,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    //table////
-
     // pop-up message for Contributor and Author tabs
     function showPopup() {
         document.getElementById('popup').style.display = 'block';
@@ -154,8 +152,6 @@ document.addEventListener("DOMContentLoaded", function () {
             localStorage.setItem(key, 'true');
         }
     }
-
-    // tooltip icon logic//
 
     document.querySelectorAll('.custom-tooltip-metadata').forEach(function (element) {
         const tooltip = element.querySelector('.tooltip-text-metadata');
@@ -183,7 +179,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
     });
-//---------------------------------------Tags-------------------------------//
+
     // show highlighted tag for keywords
    
     // Tagging Logic
@@ -369,7 +365,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        // Add tag on pressing Enter key
+        // Add tag on Enter
         input.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
                 e.preventDefault();
@@ -463,9 +459,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
-//------------------------------------tags end------------------------------//
 
-//-------------------------------JSON text area updates via a simple text box-------///
     // Create a function of a nested single input
     function setupSingleInputObject({
         containerId,
@@ -524,9 +518,6 @@ document.addEventListener("DOMContentLoaded", function () {
             jsonKey: key
         });
     });
-    //-----------------end--------------//
-
-    //---------------------------Dropdown --------------------------------------//
     
     // Create a general dropdown class
     class DynamicDropdown {
@@ -586,9 +577,7 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error(`Dropdown with ID "${dropdownId}" is missing required attributes.`);
         }
     });
-//-----------------------------------Dropdown ends --------------------------------//
 
-//---------------------------------------contributors table-------------------------------------//
     // New table    
     function updateTableHiddenInput(key) {
         // Get all rows of the table
@@ -1210,10 +1199,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 input.placeholder = 'Add tag and press Enter';
                 cell.appendChild(input);
             }
-// ------------------------------Contributors table ends----------------------------////
 
-//--------------- --- Autocomplete logic: fetch source and setup --------------//
-
+            // --- Autocomplete logic: fetch source and setup ---
             // You can set data-autocomplete-source on the cell or column header, or fetch from schema
             
             const col = cell.getAttribute('data-col');
@@ -1455,7 +1442,6 @@ document.addEventListener("DOMContentLoaded", function () {
             container: cell
         });
     }
- 
 
     // Hide all tag-inputs when clicking outside
     document.addEventListener('click', function () {
@@ -1463,10 +1449,7 @@ document.addEventListener("DOMContentLoaded", function () {
             input.style.display = 'none';
         });
     });
-   //---------------------------Auto complete tagging ends-----------------------//
 
-
-   //------------------------------------------------UI elements------------------------//
     // copy button for json
     copyBtn.addEventListener('click', function (event) {
         event.preventDefault();
@@ -1584,14 +1567,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
     }
-    function toggleCollapse() {
-        const content = document.getElementById('contributor-explanation');
-        if (content) {
-            content.style.display = (content.style.display === 'none' || content.style.display === '') ? 'block' : 'none';
-        }
-    }
-    window.toggleCollapse = toggleCollapse;
-
     // Initialize the state on page load
     window.onload = function () {
         toggleSection();
@@ -1617,9 +1592,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (skipValidationIds.includes(input.id)) {
             return; // Skip validation for the specified inputs
         }
-//-----------------------------UI elements ends---------------------------------//
-
-//---------------------------------Schema fecting ---------------------------------------//
 
         // Fetch schema and validate only if field is required or recommended
         fetch(JsonSchema)
@@ -1683,7 +1655,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initialize tables on load
     highlightEmptyAddRowControls();
 
-    //----------------------------------- JSON UPDATE-----------------------//
+    
     inputs.forEach(input => validateInput(input));
 
     inputs.forEach((input) => {
@@ -1738,86 +1710,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function isInAddRowControls(element) {
         return !!element.closest('.add-row-controls');
     }
-
-    function getNestedExpectedKeys(schema, typeName) {
-        // For JSON Schema Draft-07 and later, use $defs; for older, use definitions
-        const defs = schema.$defs || schema.definitions || {};
-        const typeDef = defs[typeName];
-        if (!typeDef || !typeDef.properties) {
-            return [];
-        }
-        // Exclude @type if you want
-        return Object.keys(typeDef.properties).filter(key => key !== "@type");
-    }
-
-    function matchKeys(allowedKeys, requiredKeys, jsonKeys) {
-        // Ensure "@type" is always allowed
-        if (!allowedKeys.includes("@type")) {
-            allowedKeys = allowedKeys.concat("@type");
-        }
-        const lowerAllowedKeys = allowedKeys.map(key => key.toLowerCase());
-        const lowerRequiredKeys = requiredKeys.map(key => key.toLowerCase());
-        const lowerJsonKeys = jsonKeys.map(key => key.toLowerCase());
-
-        const missingKeys = lowerRequiredKeys.filter(key => !lowerJsonKeys.includes(key));
-        const extraKeys = lowerJsonKeys.filter(key => !lowerAllowedKeys.includes(key));
-
-        return { missingKeys, extraKeys };
-    }
-
-    function keysMatchRecursive(allowedKeys, requiredKeys, jsonObject, schema) {
-        const jsonKeys = Object.keys(jsonObject);
-        const { missingKeys, extraKeys } = matchKeys(allowedKeys, requiredKeys, jsonKeys);
-
-        let nestedErrors = [];
-
-        for (const key of jsonKeys) {
-            const value = jsonObject[key];
-            if (Array.isArray(value)) {
-                value.forEach((item, idx) => {
-                    if (item && typeof item === "object") {
-                        const typeName = item["@type"] || key;
-                        const expectedKeys = getNestedExpectedKeys(schema, typeName);
-                        const requiredNested = []; // Optionally, get required keys for this type from schema
-                        const result = keysMatchRecursive(expectedKeys, requiredNested, item, schema);
-                        if (!result.isMatch) {
-                            nestedErrors.push(
-                                `In ${key}[${idx}] with ${typeName}: Missing Keys: ${result.missingKeys.join(", ")}, Extra Keys: ${result.extraKeys.join(", ")}`
-                            );
-                            if (result.nestedErrors.length > 0) {
-                                nestedErrors = nestedErrors.concat(result.nestedErrors);
-                            }
-                        }
-                    }
-                });
-            } else if (value && typeof value === "object") {
-                const typeName = value["@type"] || key;
-                const expectedKeys = getNestedExpectedKeys(schema, typeName);
-                const requiredNested = [];
-                const result = keysMatchRecursive(expectedKeys, requiredNested, value, schema);
-                if (!result.isMatch) {
-                    nestedErrors.push(
-                        `In ${key}: Missing Keys: ${result.missingKeys.join(", ")}, Extra Keys: ${result.extraKeys.join(", ")}`
-                    );
-                    if (result.nestedErrors.length > 0) {
-                        nestedErrors = nestedErrors.concat(result.nestedErrors);
-                    }
-                }
-            }
-        }
-
-        return {
-            isMatch: missingKeys.length === 0 && extraKeys.length === 0 && nestedErrors.length === 0,
-            missingKeys,
-            extraKeys,
-            nestedErrors
-        };
-    }
-
- 
-// -------------------------------------------JSON Update ends--------------------------//
-
-//----------------------bidirection-------------------//
 
     function updateFormFromJson(jsonObject) {
         inputs.forEach((input) => {
@@ -1901,10 +1793,89 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // -------------------bidirection ends--------------------//
+    function getNestedExpectedKeys(schema, typeName) {
+        // For JSON Schema Draft-07 and later, use $defs; for older, use definitions
+        const defs = schema.$defs || schema.definitions || {};
+        const typeDef = defs[typeName];
+        if (!typeDef || !typeDef.properties) {
+            return [];
+        }
+        // Exclude @type if you want
+        return Object.keys(typeDef.properties).filter(key => key !== "@type");
+    }
 
-   
-// -------------------------downloadfile-----------------------//
+    function matchKeys(allowedKeys, requiredKeys, jsonKeys) {
+        // Ensure "@type" is always allowed
+        if (!allowedKeys.includes("@type")) {
+            allowedKeys = allowedKeys.concat("@type");
+        }
+        const lowerAllowedKeys = allowedKeys.map(key => key.toLowerCase());
+        const lowerRequiredKeys = requiredKeys.map(key => key.toLowerCase());
+        const lowerJsonKeys = jsonKeys.map(key => key.toLowerCase());
+
+        const missingKeys = lowerRequiredKeys.filter(key => !lowerJsonKeys.includes(key));
+        const extraKeys = lowerJsonKeys.filter(key => !lowerAllowedKeys.includes(key));
+
+        return { missingKeys, extraKeys };
+    }
+
+    function keysMatchRecursive(allowedKeys, requiredKeys, jsonObject, schema) {
+        const jsonKeys = Object.keys(jsonObject);
+        const { missingKeys, extraKeys } = matchKeys(allowedKeys, requiredKeys, jsonKeys);
+
+        let nestedErrors = [];
+
+        for (const key of jsonKeys) {
+            const value = jsonObject[key];
+            if (Array.isArray(value)) {
+                value.forEach((item, idx) => {
+                    if (item && typeof item === "object") {
+                        const typeName = item["@type"] || key;
+                        const expectedKeys = getNestedExpectedKeys(schema, typeName);
+                        const requiredNested = []; // Optionally, get required keys for this type from schema
+                        const result = keysMatchRecursive(expectedKeys, requiredNested, item, schema);
+                        if (!result.isMatch) {
+                            nestedErrors.push(
+                                `In ${key}[${idx}] with ${typeName}: Missing Keys: ${result.missingKeys.join(", ")}, Extra Keys: ${result.extraKeys.join(", ")}`
+                            );
+                            if (result.nestedErrors.length > 0) {
+                                nestedErrors = nestedErrors.concat(result.nestedErrors);
+                            }
+                        }
+                    }
+                });
+            } else if (value && typeof value === "object") {
+                const typeName = value["@type"] || key;
+                const expectedKeys = getNestedExpectedKeys(schema, typeName);
+                const requiredNested = [];
+                const result = keysMatchRecursive(expectedKeys, requiredNested, value, schema);
+                if (!result.isMatch) {
+                    nestedErrors.push(
+                        `In ${key}: Missing Keys: ${result.missingKeys.join(", ")}, Extra Keys: ${result.extraKeys.join(", ")}`
+                    );
+                    if (result.nestedErrors.length > 0) {
+                        nestedErrors = nestedErrors.concat(result.nestedErrors);
+                    }
+                }
+            }
+        }
+
+        return {
+            isMatch: missingKeys.length === 0 && extraKeys.length === 0 && nestedErrors.length === 0,
+            missingKeys,
+            extraKeys,
+            nestedErrors
+        };
+    }
+
+    function toggleCollapse() {
+        const content = document.getElementById('contributor-explanation');
+        if (content) {
+            content.style.display = (content.style.display === 'none' || content.style.display === '') ? 'block' : 'none';
+        }
+    }
+    window.toggleCollapse = toggleCollapse;
+
 
     function downloadFile(event) {
         event.preventDefault();
@@ -2021,4 +1992,3 @@ document.addEventListener("DOMContentLoaded", function () {
         downloadFile(event);
     });
 });
-// ----------------------------downloadfile ends-----------------------//

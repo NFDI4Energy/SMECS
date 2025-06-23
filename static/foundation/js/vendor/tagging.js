@@ -1,4 +1,9 @@
 // tagging.js
+/*Supports basic tagging and tagging with autocomplete
+Dynamically adds/removes tags
+Highlights suggested input
+Provides reusable autocomplete logic for table cells and forms*/
+
 import { getSchema } from "./schema-utils.js";
 const SPDX_URL = 'https://raw.githubusercontent.com/spdx/license-list-data/master/json/licenses.json';
 const metadataJson = document.getElementById("metadata-json");

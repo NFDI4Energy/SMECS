@@ -1,4 +1,8 @@
 // form-utils.js
+/*Handles all form input behaviors, including:
+    1) Real-time validation against the schema
+    2) Syncing form fields to the JSON textarea
+    3) Filling form fields from existing metadata*/
 
 import { fetchRequiredAndRecommendedFields , getSchema} from './schema-utils.js';
 
@@ -43,29 +47,75 @@ export function getFieldKey(input) {
   return key;
 }
 
-export function validateInput(input) {
-  const skipValidationIds = [
-    'contributorGivenNameInput', 'contributorFamilyNameInput', 'contributorEmailInput',
-    'authorGivenNameInput', 'authorFamilyNameInput', 'authorEmailInput'
-  ];
-  if (skipValidationIds.includes(input.id)) return;
-  getSchema().then(schema => {
-      const { required, recommended } = fetchRequiredAndRecommendedFields(schema);
-      const allMandatory = [...required, ...recommended];
+   // Pinkish inputs, when no metadata is extracted
+  export function validateInput(input) {
+    const skipValidationIds = [
+        'contributorGivenNameInput',
+        'contributorFamilyNameInput',
+        'contributorEmailInput',
+        'authorGivenNameInput',
+        'authorFamilyNameInput',
+        'authorEmailInput'
+    ];
+    if (skipValidationIds.includes(input.id)) {
+        return; // Skip validation for the specified inputs
+    }
 
-      const key = getFieldKey(input);
+    // Fetch schema and validate only if field is required or recommended
+        getSchema().then(schema => {
+            const { required, recommended } = fetchRequiredAndRecommendedFields(schema);
+            const allMandatory = [...required, ...recommended];
 
-      if (allMandatory.includes(key)) {
-        if (input.value.trim() === "") {
-          input.classList.add("invalid");
-        } else {
-          input.classList.remove("invalid");
-        }
-      } else {
-        input.classList.remove("invalid");
-      }
-    })
-    .catch(() => input.classList.remove("invalid"));
+            // --- Tagging support ---
+            // If input is inside a tags-container, validate the hidden input instead
+            const tagsContainer = input.closest('.tags-container');
+            if (tagsContainer) {
+                const taggingWrapper = tagsContainer.closest('.tagging-wrapper');
+                if (taggingWrapper) {
+                    const hiddenInput = taggingWrapper.querySelector('input[type="hidden"]');
+                    const label = taggingWrapper.querySelector('.tagging-label');
+                    const taggingType = label ? label.getAttribute('data-tagging-type') : null;
+                    const key = getFieldKey(hiddenInput);
+
+                    if (allMandatory.includes(key)) {
+                        if (taggingType === "tagging_object") {
+                            // Check number of tags in the container
+                            if (isTaggingObjectEmpty(tagsContainer)) {
+                                input.classList.add("invalid");
+                            } else {
+                                input.classList.remove("invalid");
+                            }
+                        } else {
+                            // For normal tagging, check hidden input
+                            if (hiddenInput.value.trim() === "") {
+                                input.classList.add("invalid");
+                            } else {
+                                input.classList.remove("invalid");
+                            }
+                        }
+                    } else {
+                        input.classList.remove("invalid");
+                    }
+                    return;
+                }
+            }
+
+            // --- Standard input/select validation ---
+            const key = getFieldKey(input);
+            if (allMandatory.includes(key)) {
+                if (input.value.trim() === "") {
+                    input.classList.add("invalid");
+                } else {
+                    input.classList.remove("invalid");
+                }
+            } else {
+                input.classList.remove("invalid");
+            }
+        })
+        .catch(() => {
+            // On schema load error, fallback to no validation
+            input.classList.remove("invalid");
+        });
 }
 
 function isInTable(element) {

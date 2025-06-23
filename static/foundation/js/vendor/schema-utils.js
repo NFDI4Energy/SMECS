@@ -1,4 +1,9 @@
 // schema-utils.js
+/*Fetching the JSON schema once and caching it (getSchema())
+Extracting required/recommended fields
+Validating if metadata keys match the schema*/
+
+
 const JsonSchema = '/static/schema/codemeta_schema.json';
 const inputs = document.querySelectorAll("#metadata-form input, #metadata-form select");
 let schemaCache = null;
@@ -38,7 +43,6 @@ export function getNestedExpectedKeys(schema, typeName) {
     // Exclude @type if you want
     return Object.keys(typeDef.properties).filter(key => key !== "@type");
 }
-
 // Compare allowed/required JSON keys with actual JSON object keys
 export function matchKeys(allowedKeys, requiredKeys, jsonKeys) {
     // Ensure "@type" is always allowed
