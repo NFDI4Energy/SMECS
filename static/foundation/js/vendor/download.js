@@ -23,7 +23,7 @@ export function setupDownload() {
 }
 
 // Function to handle download with validation
-export function downloadFile(event) {
+function downloadFile(event) {
     event.preventDefault();
 
     try {
@@ -73,7 +73,7 @@ export function downloadFile(event) {
 }
 
 // Provide metadata as download
-export function jsonPrettier(repoName, metadata) {
+function jsonPrettier(repoName, metadata) {
     let validJson;
     const values = Object.values(metadata).slice(0, 2);
     // Check the conditions
@@ -105,7 +105,7 @@ export function jsonPrettier(repoName, metadata) {
 }
 
 // Function to create a cleaned copy of an object by removing empty entries
-export function getCleanedMetadata(obj) {
+function getCleanedMetadata(obj) {
     const cleanedObj = Array.isArray(obj) ? [] : {};
     Object.keys(obj).forEach(key => {
         if (obj[key] && typeof obj[key] === 'object' && !Array.isArray(obj[key])) {

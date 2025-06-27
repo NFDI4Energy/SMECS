@@ -9,6 +9,7 @@ const inputs = document.querySelectorAll("#metadata-form input, #metadata-form s
 let schemaCache = null;
 let schemaPromise = null;
 
+// fetch schema once
 export function getSchema() {
 if (schemaCache) return Promise.resolve(schemaCache);
 if (schemaPromise) return schemaPromise;
@@ -152,3 +153,18 @@ export function setMandatoryFieldsFromSchema() {
             console.error('Error loading the JSON schema:', error);
         });
 }
+
+  // Helper: Get the field key for an input element
+export function getFieldKey(input) {
+        // Try to get the name attribute, fallback to id
+        // Remove array notation if present (e.g., "author[familyName]" -> "author")
+        let key = input.name || input.id || "";
+        if (key.includes("[")) {
+            key = key.split("[")[0];
+        }
+        // For hidden inputs in tagging/tagging_autocomplete, remove "HiddenInput" suffix
+        if (key.endsWith("HiddenInput")) {
+            key = key.replace(/HiddenInput$/, "");
+        }
+        return key;
+    }

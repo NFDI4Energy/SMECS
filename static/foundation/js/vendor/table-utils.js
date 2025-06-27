@@ -6,10 +6,124 @@ Syncs table rows with the main JSON object
 Handles input blur/change events to auto-update hidden fields and JSON
 */
 import {fetchRequiredAndRecommendedFields, getSchema} from './schema-utils.js';
-import {updateSuggestionsBoxPosition, setupTableTagAutocomplete} from './tagging.js';
+import {updateSuggestionsBoxPosition, setupTableTagAutocomplete,createSuggestionsBox} from './tagging.js';
 
-const JsonSchema = '/static/schema/codemeta_schema.json';
 const metadataJson = document.getElementById("metadata-json");
+
+  // New table    
+ export function updateTableHiddenInput(key) {
+        // Get all rows of the table
+        const table = document.querySelector(`#${key}Table`);
+        const hiddenInput = document.getElementById(`${key}TableHiddenInput`);
+        if (!table || !hiddenInput) return;
+
+        const atType = table.getAttribute('data-at-type');
+        const rows = Array.from(table.querySelectorAll('tbody tr'))
+            .filter(row => !row.classList.contains('add-row-controls')); // <-- skip add-row-controls
+
+        // Check if this table is marked as unique
+        if (table.getAttribute('unique-tab') === 'True') {
+            // Get all headers and their data-col and data-coltype
+            const headerCells = Array.from(table.querySelectorAll('thead th'));
+            const headers = headerCells.map(th => ({
+                name: th.getAttribute('data-col'),
+                coltype: th.getAttribute('data-coltype')
+            }));
+
+            // elements: all headers with data-coltype == 'element'
+            const elements = headers
+                .filter(h => h.coltype === 'element')
+                .map(h => h.name);
+
+            // subElements: all headers not 'delete' or 'element'
+            const subElements = headers
+                .filter(h => h.coltype !== 'delete' && h.coltype !== 'element')
+                .map(h => h.name);
+
+            // Find the table body
+            const tbody = table.querySelector('tbody');
+            const rows = tbody ? Array.from(tbody.querySelectorAll('tr')).filter(row => !row.classList.contains('add-row-controls')) : [];
+            const existingJson = JSON.parse(metadataJson.value);
+
+            // Build elementList
+            const elementList = {};
+            elements.forEach(element => {
+                elementList[element] = [];
+            });
+
+            rows.forEach(row => {
+                const cells = Array.from(row.cells);
+                // Build the element object from subElements
+                let elementObj = { "@type": atType };
+                subElements.forEach((field) => {
+                    const headerIdx = headers.findIndex(h => h.name === field && h.coltype !== 'element' && h.coltype !== 'delete');
+                    if (headerIdx >= 0 && cells[headerIdx]) {
+                        const coltype = headers[headerIdx].coltype;
+                        elementObj[field] = extractCellValue(cells[headerIdx], coltype);
+                    }
+                });
+
+                // For each element, check if the checkbox is checked
+                elements.forEach(element => {
+                    // Find the header index for this element
+                    const headerIdx = headers.findIndex(h => h.name === element);
+                    if (headerIdx >= 0 && cells[headerIdx]) {
+                        const checkbox = cells[headerIdx].querySelector('.checkbox-element');
+                        if (checkbox && checkbox.checked) {
+                            elementList[element].push({ ...elementObj });
+                        }
+                    }
+                });
+            });
+
+            // Update JSON
+            Object.keys(elementList).forEach(element => {
+                existingJson[element] = elementList[element];
+            });
+            metadataJson.value = JSON.stringify(existingJson, null, 2);
+
+            return;
+        }
+
+        if (rows.length === 0) {
+            hiddenInput.value = '[]';
+            // Also update the main JSON
+            const jsonObject = JSON.parse(metadataJson.value);
+            jsonObject[key] = [];
+            metadataJson.value = JSON.stringify(jsonObject, null, 2);
+            return;
+        }
+
+        // Get column headers (excluding the last "Delete" column)
+        const headers = Array.from(table.querySelectorAll('thead th'))
+            .map(th => th.getAttribute('data-col'))
+            .slice(0, -1);
+
+        // Build array of objects
+        const data = rows.map(row => {
+            const cells = Array.from(row.querySelectorAll('td'));
+            let obj = {};
+            if (atType) obj['@type'] = atType;
+            headers.forEach((header, i) => {
+                if (!header) return; // Skip if header is empty or undefined
+                const cell = cells[i];
+                if (!cell) {
+                    obj[header] = '';
+                    return;
+                }
+                const coltype = cell.getAttribute('data-coltype');
+                obj[header] = extractCellValue(cell, coltype);
+            });
+            return obj;
+        });
+
+        hiddenInput.value = JSON.stringify(data);
+
+        // Also update the main JSON
+        const jsonObject = JSON.parse(metadataJson.value);
+        jsonObject[key] = data;
+        metadataJson.value = JSON.stringify(jsonObject, null, 2);
+    }
 
 // Function to extract cell value based on column type
 export function extractCellValue(cell, coltype) {
@@ -35,183 +149,33 @@ export function extractCellValue(cell, coltype) {
     }
 }
 
-  // New table    
-export  function updateTableHiddenInput(key) {
-    // Get all rows of the table
-    const table = document.querySelector(`#${key}Table`);
-    const hiddenInput = document.getElementById(`${key}TableHiddenInput`);
-    if (!table || !hiddenInput) return;
-
-    const atType = table.getAttribute('data-at-type');
-    const rows = Array.from(table.querySelectorAll('tbody tr'))
-        .filter(row => !row.classList.contains('add-row-controls')); // <-- skip add-row-controls
-
-    // Check if this table is marked as unique
-    if (table.getAttribute('unique-tab') === 'True') {
-        // Get all headers and their data-col and data-coltype
-        const headerCells = Array.from(table.querySelectorAll('thead th'));
-        const headers = headerCells.map(th => ({
-            name: th.getAttribute('data-col'),
-            coltype: th.getAttribute('data-coltype')
-        }));
-
-        // elements: all headers with data-coltype == 'element'
-        const elements = headers
-            .filter(h => h.coltype === 'element')
-            .map(h => h.name);
-
-        // subElements: all headers not 'delete' or 'element'
-        const subElements = headers
-            .filter(h => h.coltype !== 'delete' && h.coltype !== 'element')
-            .map(h => h.name);
-
-        // Find the table body
-        const tbody = table.querySelector('tbody');
-        const rows = tbody ? Array.from(tbody.querySelectorAll('tr')).filter(row => !row.classList.contains('add-row-controls')) : [];
-        const existingJson = JSON.parse(metadataJson.value);
-
-        // Build elementList
-        const elementList = {};
-        elements.forEach(element => {
-            elementList[element] = [];
-        });
-
-        rows.forEach(row => {
-            const cells = Array.from(row.cells);
-            // Build the element object from subElements
-            let elementObj = { "@type": atType };
-            subElements.forEach((field) => {
-                const headerIdx = headers.findIndex(h => h.name === field && h.coltype !== 'element' && h.coltype !== 'delete');
-                if (headerIdx >= 0 && cells[headerIdx]) {
-                    const coltype = headers[headerIdx].coltype;
-                    elementObj[field] = extractCellValue(cells[headerIdx], coltype);
-                }
-            });
-
-            // For each element, check if the checkbox is checked
-            elements.forEach(element => {
-                // Find the header index for this element
-                const headerIdx = headers.findIndex(h => h.name === element);
-                if (headerIdx >= 0 && cells[headerIdx]) {
-                    const checkbox = cells[headerIdx].querySelector('.checkbox-element');
-                    if (checkbox && checkbox.checked) {
-                        elementList[element].push({ ...elementObj });
-                    }
-                }
-            });
-        });
-
-        // Update JSON
-        Object.keys(elementList).forEach(element => {
-            existingJson[element] = elementList[element];
-        });
-        metadataJson.value = JSON.stringify(existingJson, null, 2);
-
-        return;
-    }
-
-    if (rows.length === 0) {
-        hiddenInput.value = '[]';
-        // Also update the main JSON
-        const jsonObject = JSON.parse(metadataJson.value);
-        jsonObject[key] = [];
-        metadataJson.value = JSON.stringify(jsonObject, null, 2);
-        return;
-    }
-
-    // Get column headers (excluding the last "Delete" column)
-    const headers = Array.from(table.querySelectorAll('thead th'))
-        .map(th => th.getAttribute('data-col'))
-        .slice(0, -1);
-
-    // Build array of objects
-    const data = rows.map(row => {
-        const cells = Array.from(row.querySelectorAll('td'));
-        let obj = {};
-        if (atType) obj['@type'] = atType;
-        headers.forEach((header, i) => {
-            if (!header) return; // Skip if header is empty or undefined
-            const cell = cells[i];
-            if (!cell) {
-                obj[header] = '';
-                return;
-            }
-            const coltype = cell.getAttribute('data-coltype');
-            obj[header] = extractCellValue(cell, coltype);
-        });
-        return obj;
-    });
-
-    hiddenInput.value = JSON.stringify(data);
-
-    // Also update the main JSON
-    const jsonObject = JSON.parse(metadataJson.value);
-    jsonObject[key] = data;
-    metadataJson.value = JSON.stringify(jsonObject, null, 2);
-}
 
 // Set up event listeners on all auto-property-tables
 export function setupTables() {
-    // Add function to color add items when element is required or recommended and empty
-    document.querySelectorAll('table.auto-property-table').forEach(function (table) { 
-        table.addEventListener('click', function (e) {
-            // Delete rows
-            if (e.target.classList.contains('delete-row-btn')) {
-                const row = e.target.closest('tr');
-                if (row) {
-                    row.remove();
-                    // Update the hidden input
-                    const tableId = table.id;
-                    if (tableId && tableId.endsWith('Table')) {
-                        const key = tableId.replace(/Table$/, '');
-                        updateTableHiddenInput(key);
-                    }
-                }
+
+   // Loop over all tables with the class 'auto-property-table'
+    document.querySelectorAll('table.auto-property-table').forEach(function (table) {
+        // Extract the key from the table's id (assumes id is like 'copyrightHolderTable')
+        const tableId = table.id;
+        if (!tableId || !tableId.endsWith('Table')) return;
+        const key = tableId.replace(/Table$/, '');
+
+        // Attach a listener for cell edits (blur on any input or td)
+        table.addEventListener('blur', function (e) {
+            if (e.target.tagName === 'TD' || e.target.tagName === 'INPUT') {
+                updateTableHiddenInput(key);
             }
+        }, true);
 
-            // Update other fields
-            // Only allow editing on <td> that is not the last column (delete icon)
-            const cell = e.target.closest('td');
-            if (!cell) return;
-            if (cell.classList.contains('table-tagging-cell')) return;
-            if (cell.classList.contains('table-tagging-cell')) return;
-            const row = cell.parentElement;
-            const allCells = Array.from(row.children);
-            // Don't edit the last cell (delete icon)
-            if (allCells.indexOf(cell) === allCells.length - 1) return;
-            // Prevent multiple inputs
-            if (cell.querySelector('input')) return;
-
-            const oldValue = cell.textContent;
-            cell.innerHTML = '';
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.value = oldValue;
-            input.style.width = '100%';
-            input.style.boxSizing = 'border-box';
-            cell.appendChild(input);
-            input.focus();
-
-            // Save on blur or Enter
-            function save() {
-                cell.textContent = input.value;
-                // Update the hidden input for this table
-                const tableId = table.id;
-                if (tableId && tableId.endsWith('Table')) {
-                    const key = tableId.replace(/Table$/, '');
-                    updateTableHiddenInput(key);
-                }
+        table.addEventListener('change', function (e) {
+            if (e.target.classList.contains('checkbox-element')) {
+                updateTableHiddenInput(key);
             }
-            input.addEventListener('blur', save);
-            input.addEventListener('keydown', function (evt) {
-                if (evt.key === 'Enter') {
-                    input.blur();
-                } else if (evt.key === 'Escape') {
-                    cell.textContent = oldValue;
-                }
-            });
-
         });
+
+        // Optionally, update on row addition/removal or other events as needed
+        // For initial sync
+        updateTableHiddenInput(key);
     });
     // Add Row functionality for all auto-property-tables
     document.querySelectorAll('.add-row-btn').forEach(function (btn) {
@@ -517,6 +481,68 @@ export function setupTables() {
          });
      });
 
+        // functionanilties within all auto-property-tables
+    document.querySelectorAll('table.auto-property-table').forEach(function (table) { 
+        table.addEventListener('click', function (e) {
+            // Delete rows
+            if (e.target.classList.contains('delete-row-btn')) {
+                const row = e.target.closest('tr');
+                if (row) {
+                    row.remove();
+                    // Update the hidden input
+                    const tableId = table.id;
+                    if (tableId && tableId.endsWith('Table')) {
+                        const key = tableId.replace(/Table$/, '');
+                        updateTableHiddenInput(key);
+                    }
+                }
+            }
+
+            // Update other fields
+            // Only allow editing on <td> that is not the last column (delete icon)
+            const cell = e.target.closest('td');
+            if (!cell) return;
+            if (cell.classList.contains('table-tagging-cell')) return;
+            if (cell.classList.contains('table-tagging-cell')) return;
+            const row = cell.parentElement;
+            const allCells = Array.from(row.children);
+            // Don't edit the last cell (delete icon)
+            if (allCells.indexOf(cell) === allCells.length - 1) return;
+            // Prevent multiple inputs
+            if (cell.querySelector('input')) return;
+
+            const oldValue = cell.textContent;
+            cell.innerHTML = '';
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = oldValue;
+            input.style.width = '100%';
+            input.style.boxSizing = 'border-box';
+            cell.appendChild(input);
+            input.focus();
+
+            // Save on blur or Enter
+            function save() {
+                cell.textContent = input.value;
+                // Update the hidden input for this table
+                const tableId = table.id;
+                if (tableId && tableId.endsWith('Table')) {
+                    const key = tableId.replace(/Table$/, '');
+                    updateTableHiddenInput(key);
+                }
+            }
+            input.addEventListener('blur', save);
+            input.addEventListener('keydown', function (evt) {
+                if (evt.key === 'Enter') {
+                    input.blur();
+                } else if (evt.key === 'Escape') {
+                    cell.textContent = oldValue;
+                }
+            });
+
+        });
+    });
+
      initializeTableTaggingCells();
 
         // Hide all tag-inputs when clicking outside
@@ -525,6 +551,8 @@ export function setupTables() {
             input.style.display = 'none';
         });
     });
+
+    highlightEmptyAddRowControls();
 }
    // Add function to color add items when element is required or recommended and empty
    export function highlightEmptyAddRowControls() {
@@ -556,35 +584,6 @@ export function setupTables() {
         });
 }
 
-export function createSuggestionsBox() {
-    let suggestionsBox = document.querySelector('.tag-suggestions-global');
-    if (!suggestionsBox) {
-        suggestionsBox = document.createElement('div');
-        suggestionsBox.className = 'tag-suggestions tag-suggestions-global';
-        suggestionsBox.style.position = 'absolute';
-        suggestionsBox.style.background = '#fff';
-        suggestionsBox.style.border = '1px solid #ccc';
-        suggestionsBox.style.zIndex = 10000;
-        suggestionsBox.style.display = 'none';
-        document.body.appendChild(suggestionsBox);
-    }
-    return suggestionsBox;
-}
-
-function showInvalidTagMessage(container, input, message) {
-    // Remove any existing invalid message
-    const existing = container.querySelector('.invalid-tag-message');
-    if (existing) existing.remove();
-
-    const msg = document.createElement("span");
-    msg.classList.add("highlight-tag", "invalid-tag-message");
-    msg.innerHTML = `❌ ${message} <span class="acknowledge-tag">Got it!</span>`;
-    container.insertBefore(msg, input);
-
-    // Remove on click or after a timeout
-    msg.querySelector('.acknowledge-tag').onclick = () => msg.remove();
-    setTimeout(() => { if (msg.parentNode) msg.remove(); }, 2500);
-}
  // Enable tag editing in table cells
  export function initializeTableTaggingCells() {
     document.querySelectorAll('td.table-tagging-cell').forEach(function (cell) {

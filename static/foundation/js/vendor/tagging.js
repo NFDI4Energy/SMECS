@@ -281,6 +281,76 @@ export function initializeTaggingFields() {
             });
         }
     });
+
+      document.querySelectorAll('.single-input-object-label[data-single-input-object]').forEach(label => {
+        const key = label.getAttribute('data-single-input-object');
+        const containerId = key + 'Object';
+        const hiddenInputId = key + 'HiddenInput';
+        const inputId = key + 'Input';
+        setupSingleInputObject({
+            containerId,
+            hiddenInputId,
+            inputId,
+            jsonKey: key
+        });
+    });
+}
+
+   // Create a function of a nested single input
+export function setupSingleInputObject({containerId,hiddenInputId,inputId,jsonKey}) {
+
+        const container = document.getElementById(containerId);
+        const hiddenInput = document.getElementById(hiddenInputId);
+        const input = document.getElementById(inputId);
+
+        // Get the constant type from the label
+        const label = document.querySelector(`.single-input-object-label[for="${inputId}"]`);
+        const constantType = label ? label.getAttribute('data-single-input-object-type') : null;
+
+        // Parse initial value
+        let valueObj = {};
+        try {
+            valueObj = JSON.parse(hiddenInput.value);
+        } catch {
+            valueObj = {};
+        }
+
+        // Set initial value
+        if (valueObj.identifier) {
+            input.value = valueObj.identifier;
+        }
+
+        // Update hidden input and JSON on change
+        input.addEventListener("input", updateSingleInputObject);
+        input.addEventListener("change", updateSingleInputObject);
+        function updateSingleInputObject() {
+            const identifier = input.value.trim();
+            const obj = {
+                "@type": constantType || "ScholarlyArticle",
+                "identifier": identifier
+            };
+            hiddenInput.value = JSON.stringify(obj);
+
+            // Update main JSON
+            const jsonObject = JSON.parse(metadataJson.value);
+            jsonObject[jsonKey] = obj;
+            metadataJson.value = JSON.stringify(jsonObject, null, 2);
+        }
+}
+
+export function createSuggestionsBox() {
+    let suggestionsBox = document.querySelector('.tag-suggestions-global');
+    if (!suggestionsBox) {
+        suggestionsBox = document.createElement('div');
+        suggestionsBox.className = 'tag-suggestions tag-suggestions-global';
+        suggestionsBox.style.position = 'absolute';
+        suggestionsBox.style.background = '#fff';
+        suggestionsBox.style.border = '1px solid #ccc';
+        suggestionsBox.style.zIndex = 10000;
+        suggestionsBox.style.display = 'none';
+        document.body.appendChild(suggestionsBox);
+    }
+    return suggestionsBox;
 }
 
 export function showInvalidTagMessage(container, input, message) {
@@ -298,11 +368,11 @@ export function showInvalidTagMessage(container, input, message) {
 }
 
 export function updateSuggestionsBoxPosition(input, suggestionsBox) {
-    const rect = input.getBoundingClientRect();
-    suggestionsBox.style.left = rect.left + "px";
-    suggestionsBox.style.top = rect.bottom + "px";
-    suggestionsBox.style.width = rect.width + "px";
-}
+        const rect = input.getBoundingClientRect();
+        suggestionsBox.style.left = rect.left + "px";
+        suggestionsBox.style.top = rect.bottom + "px";
+        suggestionsBox.style.width = rect.width + "px";
+    }
 
   // General autocomplete technique
 export function setupTagAutocompleteInput({ input, selectedTagsProvider, autocompleteSource, onTagSelected, container }) {
@@ -393,3 +463,4 @@ export function setupTagAutocompleteInput({ input, selectedTagsProvider, autocom
         container: cell
     });
 }
+

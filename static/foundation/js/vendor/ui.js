@@ -4,17 +4,12 @@ Tabs and navigation buttons
 Toggle switch visibility for form sections
 Tooltips
 */
+import { getSchema } from "./schema-utils.js";
 const metadataJson = document.getElementById("metadata-json");
 const urlInputs = document.querySelectorAll('.url-input');
+const tabs_ext = document.querySelectorAll('.tab-links_ext a');
+const contents = document.querySelectorAll('.tab-content_ext .tab');
 
-// pop-up message for Contributor and Author tabs
-function showPopup() {
-  document.getElementById('popup').style.display = 'block';
-}
-
-function closePopup() {
-  document.getElementById('popup').style.display = 'none';
-}
 
 export function setupUI() {
   const closeBtn = document.getElementById('closePopup');
@@ -34,9 +29,6 @@ export function setupUI() {
     actionFeedback("Text copied!");
 });
   // tabs_ext
-  const tabs_ext = document.querySelectorAll('.tab-links_ext a');
-  const contents = document.querySelectorAll('.tab-content_ext .tab');
-
   tabs_ext.forEach(tab => {
       tab.addEventListener('click', function (event) {
           event.preventDefault();
@@ -99,17 +91,33 @@ export function setupUI() {
           tooltip.style.opacity = '0';
       });
   });
-
-  // toggle
-  const toggleSwitch = document.getElementById('toggleSwitch');
-  if (toggleSwitch) {
-      toggleSwitch.addEventListener('change', toggleSection);
-      window.addEventListener('load', toggleSection);
-  }
+  
+  // Initialize the state on page load
+  window.onload = function () {
+    toggleSection();
+    document.getElementById('toggleSwitch').addEventListener('change', toggleSection);
+};
   //highlightsURLs
   highlightEditableUrls(urlInputs);
 }
 
+// pop-up message for Contributor and Author tabs
+function showPopup() {
+  document.getElementById('popup').style.display = 'block';
+}
+
+function closePopup() {
+  document.getElementById('popup').style.display = 'none';
+}
+
+ // Function to check if the popup should be shown for a given tab and repo
+    function checkAndShowPopup(tab, repo) {
+        const key = `popupShown-${repo}-${tab}`;
+        if (!localStorage.getItem(key)) {
+            showPopup();
+            localStorage.setItem(key, 'true');
+        }
+    }
 // toggle
 function toggleSection() {
   var formContainer = document.getElementById('formContainer');
@@ -172,3 +180,81 @@ export function toggleCollapse() {
         });
     });
 }
+
+   // Pinkish inputs, when no metadata is extracted
+  export function validateInput(input) {
+    const skipValidationIds = [
+        'contributorGivenNameInput',
+        'contributorFamilyNameInput',
+        'contributorEmailInput',
+        'authorGivenNameInput',
+        'authorFamilyNameInput',
+        'authorEmailInput'
+    ];
+    if (skipValidationIds.includes(input.id)) {
+        return; // Skip validation for the specified inputs
+    }
+
+    // Fetch schema and validate only if field is required or recommended
+        getSchema().then(schema => {
+            const { required, recommended } = fetchRequiredAndRecommendedFields(schema);
+            const allMandatory = [...required, ...recommended];
+
+            // --- Tagging support ---
+            // If input is inside a tags-container, validate the hidden input instead
+            const tagsContainer = input.closest('.tags-container');
+            if (tagsContainer) {
+                const taggingWrapper = tagsContainer.closest('.tagging-wrapper');
+                if (taggingWrapper) {
+                    const hiddenInput = taggingWrapper.querySelector('input[type="hidden"]');
+                    const label = taggingWrapper.querySelector('.tagging-label');
+                    const taggingType = label ? label.getAttribute('data-tagging-type') : null;
+                    const key = getFieldKey(hiddenInput);
+
+                    if (allMandatory.includes(key)) {
+                        if (taggingType === "tagging_object") {
+                            // Check number of tags in the container
+                            if (isTaggingObjectEmpty(tagsContainer)) {
+                                input.classList.add("invalid");
+                            } else {
+                                input.classList.remove("invalid");
+                            }
+                        } else {
+                            // For normal tagging, check hidden input
+                            if (hiddenInput.value.trim() === "") {
+                                input.classList.add("invalid");
+                            } else {
+                                input.classList.remove("invalid");
+                            }
+                        }
+                    } else {
+                        input.classList.remove("invalid");
+                    }
+                    return;
+                }
+            }
+
+            // --- Standard input/select validation ---
+            const key = getFieldKey(input);
+            if (allMandatory.includes(key)) {
+                if (input.value.trim() === "") {
+                    input.classList.add("invalid");
+                } else {
+                    input.classList.remove("invalid");
+                }
+            } else {
+                input.classList.remove("invalid");
+            }
+        })
+        .catch(() => {
+            // On schema load error, fallback to no validation
+            input.classList.remove("invalid");
+        });
+}
+
+   function isTaggingObjectEmpty(tagsContainer) {
+        // Count the number of .tag elements inside the tagsContainer
+        const tagCount = tagsContainer.querySelectorAll('.tag').length;
+        return tagCount === 0;
+    }
+
