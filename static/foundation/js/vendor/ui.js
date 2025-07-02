@@ -258,3 +258,28 @@ export function toggleCollapse() {
         return tagCount === 0;
     }
 
+// loading spinner
+function lodder(formId, overlayId, delay = 2000) {
+    const form = document.getElementById(formId);
+    const overlay = document.getElementById(overlayId);
+
+    if (!form || !overlay) return;
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default submission
+        overlay.classList.add('active'); // Show loading overlay
+
+        setTimeout(function() {
+            form.submit(); // Submit after delay
+        }, delay);
+    });
+}
+
+// loadder Only runs ehen you sumbit the index html form
+export function loadpage() {
+    const form = document.getElementById('form1');
+    const overlay = document.getElementById('overlay');
+    if (form && overlay) {
+        lodder('form1', 'overlay');
+    }
+}
