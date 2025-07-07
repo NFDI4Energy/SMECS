@@ -23,7 +23,6 @@ function handleInputChange(input) {
   const key = input.name.split("[")[0];
   const subkey = input.name.split("[")[1]?.split("]")[0];
   const excludedInputs = [];
-
   // Collect all IDs of single input objects
   const singleInputObjectIds = Array.from(document.querySelectorAll('input[data-single-input-object]'))
    .map(input => input.name) // or .id, depending on what you want to exclude by
@@ -35,7 +34,12 @@ function handleInputChange(input) {
   const addRowFields = document.querySelectorAll('[data-add-row="true"]');
   const addRowFieldNames = Array.from(addRowFields).map(field => field.name).filter(Boolean);
   excludedInputs.push(...addRowFieldNames);
-            
+  
+    //Skip inputs inside [key]Tags divs
+  const parentDiv = input.closest('div');
+  const isInsideTagsDiv = parentDiv && parentDiv.id && parentDiv.id.endsWith('Tags');
+  if (isInsideTagsDiv) return;
+
   if (!isInTable(input) && !isInAddRowControls(input)) {
     if (!excludedInputs.includes(input.name)) {
       if (subkey) {
