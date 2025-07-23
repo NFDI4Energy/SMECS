@@ -24,7 +24,82 @@ document.addEventListener("DOMContentLoaded", function () {
     const repoName = metadata.name;
 
     let initialJson = metadataJson;
+//----------------------------------------Schema-----------------------------------------------------------//
 
+  function getNestedExpectedKeys(schema, typeName) {
+        // For JSON Schema Draft-07 and later, use $defs; for older, use definitions
+        const defs = schema.$defs || schema.definitions || {};
+        const typeDef = defs[typeName];
+        if (!typeDef || !typeDef.properties) {
+            return [];
+        }
+        // Exclude @type if you want
+        return Object.keys(typeDef.properties).filter(key => key !== "@type");
+    }
+
+    function matchKeys(allowedKeys, requiredKeys, jsonKeys) {
+        // Ensure "@type" is always allowed
+        if (!allowedKeys.includes("@type")) {
+            allowedKeys = allowedKeys.concat("@type");
+        }
+        const lowerAllowedKeys = allowedKeys.map(key => key.toLowerCase());
+        const lowerRequiredKeys = requiredKeys.map(key => key.toLowerCase());
+        const lowerJsonKeys = jsonKeys.map(key => key.toLowerCase());
+
+        const missingKeys = lowerRequiredKeys.filter(key => !lowerJsonKeys.includes(key));
+        const extraKeys = lowerJsonKeys.filter(key => !lowerAllowedKeys.includes(key));
+
+        return { missingKeys, extraKeys };
+    }
+
+    function keysMatchRecursive(allowedKeys, requiredKeys, jsonObject, schema) {
+        const jsonKeys = Object.keys(jsonObject);
+        const { missingKeys, extraKeys } = matchKeys(allowedKeys, requiredKeys, jsonKeys);
+
+        let nestedErrors = [];
+
+        for (const key of jsonKeys) {
+            const value = jsonObject[key];
+            if (Array.isArray(value)) {
+                value.forEach((item, idx) => {
+                    if (item && typeof item === "object") {
+                        const typeName = item["@type"] || key;
+                        const expectedKeys = getNestedExpectedKeys(schema, typeName);
+                        const requiredNested = []; // Optionally, get required keys for this type from schema
+                        const result = keysMatchRecursive(expectedKeys, requiredNested, item, schema);
+                        if (!result.isMatch) {
+                            nestedErrors.push(
+                                `In ${key}[${idx}] with ${typeName}: Missing Keys: ${result.missingKeys.join(", ")}, Extra Keys: ${result.extraKeys.join(", ")}`
+                            );
+                            if (result.nestedErrors.length > 0) {
+                                nestedErrors = nestedErrors.concat(result.nestedErrors);
+                            }
+                        }
+                    }
+                });
+            } else if (value && typeof value === "object") {
+                const typeName = value["@type"] || key;
+                const expectedKeys = getNestedExpectedKeys(schema, typeName);
+                const requiredNested = [];
+                const result = keysMatchRecursive(expectedKeys, requiredNested, value, schema);
+                if (!result.isMatch) {
+                    nestedErrors.push(
+                        `In ${key}: Missing Keys: ${result.missingKeys.join(", ")}, Extra Keys: ${result.extraKeys.join(", ")}`
+                    );
+                    if (result.nestedErrors.length > 0) {
+                        nestedErrors = nestedErrors.concat(result.nestedErrors);
+                    }
+                }
+            }
+        }
+
+        return {
+            isMatch: missingKeys.length === 0 && extraKeys.length === 0 && nestedErrors.length === 0,
+            missingKeys,
+            extraKeys,
+            nestedErrors
+        };
+    }
     // Helper: Fetch required and recommended fields from schema
     function fetchRequiredAndRecommendedFields(schema) {
         // Required fields: standard JSON Schema
@@ -128,60 +203,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
         });
     }
+//--------------------------------- Scheme End ------------------------------------------------------//
 
-    // pop-up message for Contributor and Author tabs
-    function showPopup() {
-        document.getElementById('popup').style.display = 'block';
-    }
-    var closeBtn = document.getElementById('closePopup');
-    closeBtn.onclick = function () {
-        document.getElementById('popup').style.display = 'none';
-    }
 
-    window.onclick = function (event) {
-        if (event.target == document.getElementById('popup')) {
-            document.getElementById('popup').style.display = 'none';
-        }
-    }
 
-    // Function to check if the popup should be shown for a given tab and repo
-    function checkAndShowPopup(tab, repo) {
-        const key = `popupShown-${repo}-${tab}`;
-        if (!localStorage.getItem(key)) {
-            showPopup();
-            localStorage.setItem(key, 'true');
-        }
-    }
-
-    document.querySelectorAll('.custom-tooltip-metadata').forEach(function (element) {
-        const tooltip = element.querySelector('.tooltip-text-metadata');
-        const icon = element.querySelector('i');
-        element.addEventListener('mouseenter', function () {
-            tooltip.style.display = 'block';
-            tooltip.style.visibility = 'visible';
-            tooltip.style.opacity = '1';
-            tooltip.style.position = 'fixed';
-            tooltip.style.zIndex = '9999';
-            // Get the icon's position
-            const rect = icon.getBoundingClientRect();
-            const margin = 16;
-            let left = rect.right;
-            let top = rect.top + margin;          
-
-            tooltip.style.left = left + 'px';
-            tooltip.style.top = top + 'px';
-        });
-
-        element.addEventListener('mouseleave', function () {
-            tooltip.style.display = 'none';
-            tooltip.style.visibility = 'hidden';
-            tooltip.style.opacity = '0';
-        });
-
-    });
-
-    // show highlighted tag for keywords
-   
+//---------------------------------- Tagging-------------------------------------------//
     // Tagging Logic
     function setupTagging({
         containerId,
@@ -518,7 +544,138 @@ document.addEventListener("DOMContentLoaded", function () {
             jsonKey: key
         });
     });
-    
+
+        // General autocomplete technique
+    function setupTagAutocompleteInput({ input, selectedTagsProvider, autocompleteSource, onTagSelected, container }) {
+        // Create or get suggestions box
+        let suggestionsBox = container.querySelector('.tag-suggestions-global');
+        if (!suggestionsBox) {
+            suggestionsBox = createSuggestionsBox(container);
+        }
+
+        input.addEventListener('input', function () {
+            const query = input.value.trim().toLowerCase();
+            suggestionsBox.innerHTML = '';
+            if (!query) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            const selectedTags = selectedTagsProvider();
+            const filtered = autocompleteSource.filter(
+                tag => tag.toLowerCase().startsWith(query) && !selectedTags.includes(tag)
+            );
+            if (filtered.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            filtered.forEach(tag => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = tag;
+                div.style.cursor = 'pointer';
+                div.onclick = function () {
+                    onTagSelected(tag);
+                    suggestionsBox.style.display = 'none';
+                };
+                suggestionsBox.appendChild(div);
+            });
+            // Position suggestions below the input
+            updateSuggestionsBoxPosition(input, suggestionsBox);
+            suggestionsBox.style.display = 'block';
+        });
+
+        input.addEventListener('focus', function () {
+            suggestionsBox.innerHTML = '';
+            const query = input.value.trim().toLowerCase();
+            const selectedTags = selectedTagsProvider();
+            // Show all suggestions if input is empty, or filtered if not
+            const filtered = autocompleteSource.filter(
+                tag => !selectedTags.includes(tag) && (query === "" || tag.toLowerCase().startsWith(query))
+            );
+            if (filtered.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            filtered.forEach(tag => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = tag;
+                div.style.cursor = 'pointer';
+                div.onclick = function () {
+                    onTagSelected(tag);
+                    suggestionsBox.style.display = 'none';
+                };
+                suggestionsBox.appendChild(div);
+            });
+            // Position suggestions below the input
+            updateSuggestionsBoxPosition(input, suggestionsBox);
+            suggestionsBox.style.display = 'block';
+        });
+
+        // Hide suggestions on blur/click outside
+        input.addEventListener('blur', function () {
+            setTimeout(() => { suggestionsBox.style.display = 'none'; }, 200);
+        });
+    }
+
+    // Enable tagging autocomplete
+    function setupTableTagAutocomplete({ cell, autocompleteSource }) {
+        const input = cell.querySelector('.tag-input');
+        if (!input) return;
+        const tagsList = cell.querySelector('.tags-list');
+        setupTagAutocompleteInput({
+            input,
+            selectedTagsProvider: () => Array.from(tagsList.querySelectorAll('.tag')).map(t => t.textContent.trim().replace('×', '').trim()),
+            autocompleteSource,
+            onTagSelected: (tag) => {
+                input.value = tag;
+                input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+            },
+            container: cell
+        });
+    }
+
+        function createSuggestionsBox() {
+        let suggestionsBox = document.querySelector('.tag-suggestions-global');
+        if (!suggestionsBox) {
+            suggestionsBox = document.createElement('div');
+            suggestionsBox.className = 'tag-suggestions tag-suggestions-global';
+            suggestionsBox.style.position = 'absolute';
+            suggestionsBox.style.background = '#fff';
+            suggestionsBox.style.border = '1px solid #ccc';
+            suggestionsBox.style.zIndex = 10000;
+            suggestionsBox.style.display = 'none';
+            document.body.appendChild(suggestionsBox);
+        }
+        return suggestionsBox;
+    }
+
+    function showInvalidTagMessage(container, input, message) {
+        // Remove any existing invalid message
+        const existing = container.querySelector('.invalid-tag-message');
+        if (existing) existing.remove();
+
+        const msg = document.createElement("span");
+        msg.classList.add("highlight-tag", "invalid-tag-message");
+        msg.innerHTML = `❌ ${message} <span class="acknowledge-tag">Got it!</span>`;
+        container.insertBefore(msg, input);
+
+        // Remove on click or after a timeout
+        msg.querySelector('.acknowledge-tag').onclick = () => msg.remove();
+        setTimeout(() => { if (msg.parentNode) msg.remove(); }, 2500);
+    }
+
+    function updateSuggestionsBoxPosition(input, suggestionsBox) {
+        const rect = input.getBoundingClientRect();
+        suggestionsBox.style.left = rect.left + "px";
+        suggestionsBox.style.top = rect.bottom + "px";
+        suggestionsBox.style.width = rect.width + "px";
+    }
+
+//-----------------------------tagging end-----------------------------------//
+
+//--------------------------------drop down------------------------------------//
+
     // Create a general dropdown class
     class DynamicDropdown {
         constructor(dropdownId, jsonSchemaUrl, schemaProperty) {
@@ -577,7 +734,9 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error(`Dropdown with ID "${dropdownId}" is missing required attributes.`);
         }
     });
+// -----------------------------drop down end------------------------------------//
 
+// -------------------------------------table-----------------------------------//
     // New table    
     function updateTableHiddenInput(key) {
         // Get all rows of the table
@@ -772,6 +931,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             });
     }
+   // Initialize tables on load
+    highlightEmptyAddRowControls();
 
     // Add Row functionality for all auto-property-tables
     document.querySelectorAll('.add-row-btn').forEach(function (btn) {
@@ -1083,43 +1244,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    function createSuggestionsBox() {
-        let suggestionsBox = document.querySelector('.tag-suggestions-global');
-        if (!suggestionsBox) {
-            suggestionsBox = document.createElement('div');
-            suggestionsBox.className = 'tag-suggestions tag-suggestions-global';
-            suggestionsBox.style.position = 'absolute';
-            suggestionsBox.style.background = '#fff';
-            suggestionsBox.style.border = '1px solid #ccc';
-            suggestionsBox.style.zIndex = 10000;
-            suggestionsBox.style.display = 'none';
-            document.body.appendChild(suggestionsBox);
-        }
-        return suggestionsBox;
-    }
-
-    function showInvalidTagMessage(container, input, message) {
-        // Remove any existing invalid message
-        const existing = container.querySelector('.invalid-tag-message');
-        if (existing) existing.remove();
-
-        const msg = document.createElement("span");
-        msg.classList.add("highlight-tag", "invalid-tag-message");
-        msg.innerHTML = `❌ ${message} <span class="acknowledge-tag">Got it!</span>`;
-        container.insertBefore(msg, input);
-
-        // Remove on click or after a timeout
-        msg.querySelector('.acknowledge-tag').onclick = () => msg.remove();
-        setTimeout(() => { if (msg.parentNode) msg.remove(); }, 2500);
-    }
-
-    function updateSuggestionsBoxPosition(input, suggestionsBox) {
-        const rect = input.getBoundingClientRect();
-        suggestionsBox.style.left = rect.left + "px";
-        suggestionsBox.style.top = rect.bottom + "px";
-        suggestionsBox.style.width = rect.width + "px";
-    }
-
     // functionanilties within all auto-property-tables
     document.querySelectorAll('table.auto-property-table').forEach(function (table) { 
         table.addEventListener('click', function (e) {
@@ -1353,95 +1477,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     initializeTableTaggingCells();
 
-    // General autocomplete technique
-    function setupTagAutocompleteInput({ input, selectedTagsProvider, autocompleteSource, onTagSelected, container }) {
-        // Create or get suggestions box
-        let suggestionsBox = container.querySelector('.tag-suggestions-global');
-        if (!suggestionsBox) {
-            suggestionsBox = createSuggestionsBox(container);
-        }
 
-        input.addEventListener('input', function () {
-            const query = input.value.trim().toLowerCase();
-            suggestionsBox.innerHTML = '';
-            if (!query) {
-                suggestionsBox.style.display = 'none';
-                return;
-            }
-            const selectedTags = selectedTagsProvider();
-            const filtered = autocompleteSource.filter(
-                tag => tag.toLowerCase().startsWith(query) && !selectedTags.includes(tag)
-            );
-            if (filtered.length === 0) {
-                suggestionsBox.style.display = 'none';
-                return;
-            }
-            filtered.forEach(tag => {
-                const div = document.createElement('div');
-                div.className = 'suggestion-item';
-                div.textContent = tag;
-                div.style.cursor = 'pointer';
-                div.onclick = function () {
-                    onTagSelected(tag);
-                    suggestionsBox.style.display = 'none';
-                };
-                suggestionsBox.appendChild(div);
-            });
-            // Position suggestions below the input
-            updateSuggestionsBoxPosition(input, suggestionsBox);
-            suggestionsBox.style.display = 'block';
-        });
-
-        input.addEventListener('focus', function () {
-            suggestionsBox.innerHTML = '';
-            const query = input.value.trim().toLowerCase();
-            const selectedTags = selectedTagsProvider();
-            // Show all suggestions if input is empty, or filtered if not
-            const filtered = autocompleteSource.filter(
-                tag => !selectedTags.includes(tag) && (query === "" || tag.toLowerCase().startsWith(query))
-            );
-            if (filtered.length === 0) {
-                suggestionsBox.style.display = 'none';
-                return;
-            }
-            filtered.forEach(tag => {
-                const div = document.createElement('div');
-                div.className = 'suggestion-item';
-                div.textContent = tag;
-                div.style.cursor = 'pointer';
-                div.onclick = function () {
-                    onTagSelected(tag);
-                    suggestionsBox.style.display = 'none';
-                };
-                suggestionsBox.appendChild(div);
-            });
-            // Position suggestions below the input
-            updateSuggestionsBoxPosition(input, suggestionsBox);
-            suggestionsBox.style.display = 'block';
-        });
-
-        // Hide suggestions on blur/click outside
-        input.addEventListener('blur', function () {
-            setTimeout(() => { suggestionsBox.style.display = 'none'; }, 200);
-        });
-    }
-
-    // Enable tagging autocomplete
-    function setupTableTagAutocomplete({ cell, autocompleteSource }) {
-        const input = cell.querySelector('.tag-input');
-        if (!input) return;
-        const tagsList = cell.querySelector('.tags-list');
-        setupTagAutocompleteInput({
-            input,
-            selectedTagsProvider: () => Array.from(tagsList.querySelectorAll('.tag')).map(t => t.textContent.trim().replace('×', '').trim()),
-            autocompleteSource,
-            onTagSelected: (tag) => {
-                input.value = tag;
-                input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
-            },
-            container: cell
-        });
-    }
 
     // Hide all tag-inputs when clicking outside
     document.addEventListener('click', function () {
@@ -1449,7 +1485,62 @@ document.addEventListener("DOMContentLoaded", function () {
             input.style.display = 'none';
         });
     });
+// ---------------------------------------------table end-----------------------------//
 
+// ---------------------------------------UI------------------------//
+
+  // pop-up message for Contributor and Author tabs
+    function showPopup() {
+        document.getElementById('popup').style.display = 'block';
+    }
+    var closeBtn = document.getElementById('closePopup');
+    closeBtn.onclick = function () {
+        document.getElementById('popup').style.display = 'none';
+    }
+
+    window.onclick = function (event) {
+        if (event.target == document.getElementById('popup')) {
+            document.getElementById('popup').style.display = 'none';
+        }
+    }
+
+    // Function to check if the popup should be shown for a given tab and repo
+    function checkAndShowPopup(tab, repo) {
+        const key = `popupShown-${repo}-${tab}`;
+        if (!localStorage.getItem(key)) {
+            showPopup();
+            localStorage.setItem(key, 'true');
+        }
+    }
+
+    document.querySelectorAll('.custom-tooltip-metadata').forEach(function (element) {
+        const tooltip = element.querySelector('.tooltip-text-metadata');
+        const icon = element.querySelector('i');
+        element.addEventListener('mouseenter', function () {
+            tooltip.style.display = 'block';
+            tooltip.style.visibility = 'visible';
+            tooltip.style.opacity = '1';
+            tooltip.style.position = 'fixed';
+            tooltip.style.zIndex = '9999';
+            // Get the icon's position
+            const rect = icon.getBoundingClientRect();
+            const margin = 16;
+            let left = rect.right;
+            let top = rect.top + margin;          
+
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
+        });
+
+        element.addEventListener('mouseleave', function () {
+            tooltip.style.display = 'none';
+            tooltip.style.visibility = 'hidden';
+            tooltip.style.opacity = '0';
+        });
+
+    });
+
+    // show highlighted tag for keywords
     // copy button for json
     copyBtn.addEventListener('click', function (event) {
         event.preventDefault();
@@ -1572,6 +1663,13 @@ document.addEventListener("DOMContentLoaded", function () {
         toggleSection();
         document.getElementById('toggleSwitch').addEventListener('change', toggleSection);
     };
+  function toggleCollapse() {
+        const content = document.getElementById('contributor-explanation');
+        if (content) {
+            content.style.display = (content.style.display === 'none' || content.style.display === '') ? 'block' : 'none';
+        }
+    }
+    window.toggleCollapse = toggleCollapse;
 
     function isTaggingObjectEmpty(tagsContainer) {
         // Count the number of .tag elements inside the tagsContainer
@@ -1651,11 +1749,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 input.classList.remove("invalid");
             });
     }
-      
-    // Initialize tables on load
-    highlightEmptyAddRowControls();
-
-    
+//------------------------------ UI end-------------------------------//
+ 
+//--------------------------------------- form update------------------------------//  
     inputs.forEach(input => validateInput(input));
 
     inputs.forEach((input) => {
@@ -1710,7 +1806,11 @@ document.addEventListener("DOMContentLoaded", function () {
     function isInAddRowControls(element) {
         return !!element.closest('.add-row-controls');
     }
+//--------------------------------- form update -------------------------------------//
 
+
+
+// ------------------------------------- Bi direcional --------------------------------------//
     function updateFormFromJson(jsonObject) {
         inputs.forEach((input) => {
             
@@ -1792,91 +1892,13 @@ document.addEventListener("DOMContentLoaded", function () {
             };
         });
     }
-
-    function getNestedExpectedKeys(schema, typeName) {
-        // For JSON Schema Draft-07 and later, use $defs; for older, use definitions
-        const defs = schema.$defs || schema.definitions || {};
-        const typeDef = defs[typeName];
-        if (!typeDef || !typeDef.properties) {
-            return [];
-        }
-        // Exclude @type if you want
-        return Object.keys(typeDef.properties).filter(key => key !== "@type");
-    }
-
-    function matchKeys(allowedKeys, requiredKeys, jsonKeys) {
-        // Ensure "@type" is always allowed
-        if (!allowedKeys.includes("@type")) {
-            allowedKeys = allowedKeys.concat("@type");
-        }
-        const lowerAllowedKeys = allowedKeys.map(key => key.toLowerCase());
-        const lowerRequiredKeys = requiredKeys.map(key => key.toLowerCase());
-        const lowerJsonKeys = jsonKeys.map(key => key.toLowerCase());
-
-        const missingKeys = lowerRequiredKeys.filter(key => !lowerJsonKeys.includes(key));
-        const extraKeys = lowerJsonKeys.filter(key => !lowerAllowedKeys.includes(key));
-
-        return { missingKeys, extraKeys };
-    }
-
-    function keysMatchRecursive(allowedKeys, requiredKeys, jsonObject, schema) {
-        const jsonKeys = Object.keys(jsonObject);
-        const { missingKeys, extraKeys } = matchKeys(allowedKeys, requiredKeys, jsonKeys);
-
-        let nestedErrors = [];
-
-        for (const key of jsonKeys) {
-            const value = jsonObject[key];
-            if (Array.isArray(value)) {
-                value.forEach((item, idx) => {
-                    if (item && typeof item === "object") {
-                        const typeName = item["@type"] || key;
-                        const expectedKeys = getNestedExpectedKeys(schema, typeName);
-                        const requiredNested = []; // Optionally, get required keys for this type from schema
-                        const result = keysMatchRecursive(expectedKeys, requiredNested, item, schema);
-                        if (!result.isMatch) {
-                            nestedErrors.push(
-                                `In ${key}[${idx}] with ${typeName}: Missing Keys: ${result.missingKeys.join(", ")}, Extra Keys: ${result.extraKeys.join(", ")}`
-                            );
-                            if (result.nestedErrors.length > 0) {
-                                nestedErrors = nestedErrors.concat(result.nestedErrors);
-                            }
-                        }
-                    }
-                });
-            } else if (value && typeof value === "object") {
-                const typeName = value["@type"] || key;
-                const expectedKeys = getNestedExpectedKeys(schema, typeName);
-                const requiredNested = [];
-                const result = keysMatchRecursive(expectedKeys, requiredNested, value, schema);
-                if (!result.isMatch) {
-                    nestedErrors.push(
-                        `In ${key}: Missing Keys: ${result.missingKeys.join(", ")}, Extra Keys: ${result.extraKeys.join(", ")}`
-                    );
-                    if (result.nestedErrors.length > 0) {
-                        nestedErrors = nestedErrors.concat(result.nestedErrors);
-                    }
-                }
-            }
-        }
-
-        return {
-            isMatch: missingKeys.length === 0 && extraKeys.length === 0 && nestedErrors.length === 0,
-            missingKeys,
-            extraKeys,
-            nestedErrors
-        };
-    }
-
-    function toggleCollapse() {
-        const content = document.getElementById('contributor-explanation');
-        if (content) {
-            content.style.display = (content.style.display === 'none' || content.style.display === '') ? 'block' : 'none';
-        }
-    }
-    window.toggleCollapse = toggleCollapse;
+//---------------------------- bi driectional end -----------------------------//
 
 
+
+  
+
+//--------------------------download file ----------------------------------------//
     function downloadFile(event) {
         event.preventDefault();
 
@@ -1991,4 +2013,5 @@ document.addEventListener("DOMContentLoaded", function () {
     downloadBtn.addEventListener("click", (event) => {
         downloadFile(event);
     });
+//------------------------------------ download end file------------------------//
 });
