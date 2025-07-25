@@ -37,6 +37,9 @@
       type="text/javascript"
       src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script
+      type="module"
+      src="{% static 'foundation/js/vendor/init.js' %}"></script>
   </head>
 
   <body>
@@ -77,10 +80,6 @@
       </nav>
       {% block content %}{% endblock %}
     </div>
-
-    <script
-      type="module"
-      src="{% static 'foundation/js/vendor/init.js' %}"></script>
 
     {% block scripts %}{% endblock %}
   </body>
