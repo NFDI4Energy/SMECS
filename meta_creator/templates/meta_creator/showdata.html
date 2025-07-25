@@ -6,19 +6,8 @@
 <!-- <button class="new-url-extraction-page" id="new-url-extraction-page" title="Enter another URL and extract metadata" onclick="window.location.href = '/'">Try New URL</button> -->
 
 <div class="whole-extraction-page">
-    <!-- whole-extraction-page -->
-    <!-- JSON viewer toggle -->
-    <!-- <div class="toggle">
-       
-    </div> -->
-
     <div class="main-container container-fluid">
-        <!-- main div -->
-        <!-- Categories for extracted metadata -->
-         <div class="row flex-column-reverse">
-            
-             <div class="col-3">
-                    <div id="metadataFormDisplay" class="metadata-form-display">
+         <div id="metadataFormDisplay" class="metadata-form-display col-lg-3 col-md-12 order-1">
                         <!-- metadataFormDisplay -->
                         <form id="metadata-form-display">
                             {% csrf_token %}
@@ -42,12 +31,10 @@
                             </div>
                             <textarea name="txtareaJSON" id="metadata-json">{{ my_json_str }}</textarea>
                         </form>
-                    </div><!-- metadataFormDisplay -->
-            </div> 
-             <div class="col-9">
-                <div class="form-container">
+        </div><!-- metadataFormDisplay -->
+         <div id="formContainer" class="form-container col-lg-12 col-md-12" >
                     <!-- tabs -->
-                    <div class="tab-links_ext">
+                    <div class=" nav justify-content-center">
                         <ul class="tab-links_ext">
                             {% for tab_name, metadata_dict in extracted_metadata.items %}
                             {% if forloop.first %}
@@ -64,22 +51,24 @@
                         <div class="row">
                             <div class="col-3 color-code">
                                 <span class="red"></span>
-                                <span class="color-code-text">Missing required or recommended metadata</span>
+                                <span class="fs-6">Missing required or recommended metadata</span>
                             </div>
                             <div class="col-3 color-code">
                                 <span class="yellow"></span>
-                                <span class="color-code-text">Better to curate the metadata</span>
+                                <span class="fs-6">Better to curate the metadata</span>
                             </div>
                             <div class="col-3 color-code">
                                 <span class="symbol"></span>
-                                <span class="color-code-text">Mandatory elements</span>
+                                <span class="fs-6">Mandatory elements</span>
                             </div>
                             <div class="col-3 toggle">
                                 <label title="Press to ON/OFF the JSON viewer" class="toggle-switch">
                                 <input type="checkbox" id="toggleSwitch" checked>
                                 <span class="slider">JSON</span>
                                 </label>
+
                             </div>
+                            
                          </div>
                             <!-- 
                                             <div class="color-code">
@@ -281,12 +270,15 @@
                                                 <i class="fa fa-info-circle" aria-hidden="true"></i>
                                             </div>
                                             {% elif key == "contributor" %}
-                                            <button type="button" class="collapsible-button" onclick="toggleCollapse()">Who are Contributors and Authors?</button>
-                                            <div class="person-info collapsible-content" id="contributor-explanation">
-                                                <h5>Who is a Contributor?</h5>
+                                            <div class="relative-wrapper">
+                                            <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Who are Contributors?</button>
+                                            <div class="person-info collapsible-content collapse" id="multiCollapseExample2">
                                                 <p>A "contributor" refers to anyone who aids in software development in any capacity, from coding to testing, highlighting the collaborative nature of software projects.</p>
-                                                <h5>Who is an Author?</h5>
+                                            </div>
+                                             <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapseExample" aria-expanded="false" aria-controls="multiCollapseExample">Who are Authors?</button>
+                                            <div class="person-info collapsible-content collapse" id="multiCollapseExample">
                                                 <p>An "author" in software authorship is someone who significantly contributes to the creation and development of software, including roles like coding, project management, and documentation.</p>
+                                            </div>
                                             </div>
                                             {% endif %}
                                             <input type="hidden" id="{{ key }}TableHiddenInput" name="{{ key }}TableHiddenInput"
@@ -428,16 +420,8 @@
                             </div>
                         </div>
                     </form>
-                </div> 
-            </div>
-            
-             
-           
-            
-         </div>
-        
-            <!-- tabs -->
-                <!-- Showing extracted metadata as JSON format in the textarea -->
+        </div> 
+         
     </div><!-- main div -->
 </div><!-- whole-extraction-page -->
 {% endblock content %}
