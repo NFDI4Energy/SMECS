@@ -12,6 +12,7 @@ const inputs = document.querySelectorAll(
 );
 
 export function setupForm() {
+  inputs.forEach((input) => validateInput(input));
   inputs.forEach((input) => {
     input.addEventListener("input", () => handleInputChange(input));
     input.addEventListener("change", () => handleInputChange(input));
