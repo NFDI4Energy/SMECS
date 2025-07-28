@@ -1,75 +1,6 @@
 /* Style for SMECS */
 
 /******************** General ********************/
-/* body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background: #fefefe;
-    font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
-    font-weight: normal;
-    line-height: 2.5;
-}
-
-div,
-dl,
-dt,
-dd,
-ul,
-ol,
-li,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-pre,
-form,
-blockquote,
-th,
-td {
-    margin: 0;
-    padding: 0;
-}
-
-
-hr {
-    clear: both;
-    max-width: 75rem;
-    height: 0;
-    margin: 1.25rem auto;
-    border-top: 0;
-    border-right: 0;
-    border-bottom: 1px solid #cacaca;
-    border-left: 0;
-}
-
-ul,
-ol,
-dl {
-    margin-bottom: 1rem;
-    list-style-position: outside;
-    line-height: 1.6;
-}
-
-li {
-    font-size: inherit;
-}
-
-ul {
-    margin-left: 1.25rem;
-    list-style-type: disc;
-}
-
-ol {
-    margin-left: 1.25rem;
-}
-
-    ul ul, ol ul, ul ol, ol ol {
-        margin-left: 1.25rem;
-        margin-bottom: 0;
-    } */
 
 [type="text"],
 [type="password"],
@@ -90,7 +21,6 @@ textarea {
   box-sizing: border-box;
   width: 100%;
   height: 2.4375rem;
-  /* margin: 0 0 1rem; */
   padding: 0.5rem;
   border: 1px solid #cacaca;
   border-radius: 0;
@@ -108,32 +38,18 @@ textarea {
 }
 
 /********************* SMECS navigation bar  **********************/
+
 #main-nav {
   background-color: #055f82;
-  /* overflow: hidden;
-    padding: 0;
-    margin: 0; */
 }
-/* 
-    #main-nav .nav-list {
-        list-style-type: none;
-        font-size: 15px;
-        display: inline;
-        float: left;
-        margin: 0 50px;
-        padding: 15px;
-    } */
 
 #main-nav .nav-item {
-  /* float: left; */
   padding: 5px;
-  /* margin-right: 20px; */
 }
 
 #main-nav .nav-link {
   display: block;
   color: white;
-  /* text-align: center; */
   padding: 5px 10px;
   text-decoration: none;
 }
@@ -144,14 +60,9 @@ textarea {
 }
 
 #main-nav a.logo {
-  /* float: left; */
   color: #fff;
   font-size: 24px;
   font-weight: bold;
-  /* text-align: center; */
-  /* padding: 0px 20px; */
-  /* text-decoration: none;
-        transition: red 0.3s ease; */
 }
 
 #main-nav a.logo:hover::after {
@@ -163,18 +74,19 @@ textarea {
   background-color: #4ba0af;
   color: #fff;
 }
+.navbar .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+.navbar .navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.5);
+}
 
 /******************** Initial Form of the software metadata Extractor (index.html) ********************/
 .InitialFormContainer {
-  /* max-width: 60%;
-    margin: 40px; */
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 5px;
   margin-top: 9rem;
-  /* display: flex;
-    flex-direction: column;
-    align-items: center; */
 }
 
 .mainHeader {
@@ -205,7 +117,6 @@ textarea {
 
 #form1 input[type="url"],
 #form1 input[type="text"] {
-  /* width: 500px; */
   padding: 8px;
   border-radius: 4px;
   border: 1px solid #ccc;
@@ -221,8 +132,6 @@ button.ExData {
   border-radius: 4px;
 
   cursor: pointer;
-  /* font-size: 1rem; */
-  /* margin: auto; */
   font-weight: bold;
   margin-top: 3.5rem;
 }
@@ -230,15 +139,10 @@ button.ExData {
 button.TrySMECS {
   background-color: #055f82;
   color: white;
-  /* padding: 1% 2%; */
   border: #ccc;
   border-radius: 4px;
-
   cursor: pointer;
-  /* font-size: 1rem; */
-  /* margin: auto; */
   font-weight: bold;
-  /* margin-top: 3.5rem; */
 }
 
 button.ExData:hover,
@@ -251,16 +155,9 @@ button#new-url-extraction-page {
   background-color: #4ba0af;
   border: 1px solid white;
   color: white;
-  /* padding: 0.5% 0.8%; */
   border-radius: 4px;
   cursor: pointer;
-  /* font-size: 72%; */
-  /* margin: auto; */
   font-weight: bold;
-  /* margin-top: 1.5rem; */
-  /* position: absolute;
-    left: 93.8%;
-    bottom: 94.5%; */
 }
 
 button#new-url-extraction-page:hover {
@@ -529,15 +426,6 @@ select:focus {
 }
 
 /* Styles for the metadata display section */
-/* .form-container {
-  height: 60vh;
-  overflow: hidden;
-  justify-content: space-between;
-  width: 70%;
-  float: left;
-  height: 500px;
-  width: 200px;
-} */
 
 .metadata-container {
   flex: 1;
@@ -565,22 +453,9 @@ button#new-url {
 
 .main-container {
   display: flex;
-  /* justify-content: space-between; */
   transition: all 0.3s ease;
-  /* margin: 0.4%; */
   height: 100%;
 }
-
-/* .form-container {
-  width: 74%;
-  flex: 1;
-} */
-
-/* .metadata-form-display {
-  float: right;
-  height: 500px;
-  width: 25%;
-} */
 
 /* Error page / connection time out */
 div.error-container {
@@ -614,10 +489,11 @@ div.error-container a:hover {
 }
 
 /********************************* Style for auto table **********************************/
+
 /* Fixed width and equal column distribution for auto-property-table */
 .auto-property-table {
   margin-top: 8px;
-  width: 110%; /* Same as .long_field */
+  width: 115%; /* Same as .long_field */
   min-width: 500px; /* Optional: for usability */
   table-layout: auto; /* Ensures equal column width */
   margin-bottom: 1rem;
@@ -864,8 +740,6 @@ div.input-container input::placeholder {
 /********************* SMECS Information page  **********************/
 
 .info-page {
-  /* max-width: 60%;
-    margin: 50px auto; */
   padding: 30px;
   background-color: #fff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -880,19 +754,6 @@ div.input-container input::placeholder {
   margin-top: 9rem;
 }
 
-/* .info-header h3 {
-    text-align: center;
-    font-size: 2em;
-    color: #333;
-    margin-bottom: 30px;
-} */
-
-/* .info-content p {
-    font-size: 1.1em;
-    text-align: justify;
-    margin-bottom: 20px;
-} */
-
 .info-content a {
   color: #007bff;
   text-decoration: none;
@@ -903,75 +764,8 @@ div.input-container input::placeholder {
 }
 
 .info-content h4 {
-  /* font-size: 1.5em; */
   color: #333;
-  /* margin-top: 20px;
-    margin-bottom: 10px; */
 }
-
-/* .info-content ul,
-.info-content ol {
-    margin: 20px 0;
-    padding-left: 20px;
-} */
-
-/* .info-content ul li,
-    .info-content ol li {
-        margin-bottom: 10px;
-    } */
-
-/* button.TrySMECS {
-    margin: 20% auto;
-    padding: 1% 2%;
-} */
-
-/* @media (max-width: 992px) {
-    .info-page {
-        max-width: 80%;
-    }
-
-    .info-header h3 {
-        font-size: 1.6em;
-    }
-
-    .info-content p {
-        font-size: 0.95em;
-    }
-}
-
-@media (max-width: 768px) {
-    .info-page {
-        max-width: 90%;
-    }
-
-    .info-header h3 {
-        font-size: 1.4em;
-    }
-
-    .info-content p {
-        font-size: 0.9em;
-    }
-}
-
-@media (max-width: 576px) {
-    .info-page {
-        max-width: 95%;
-        padding: 20px;
-    }
-
-    .info-header h3 {
-        font-size: 1.2em;
-    }
-
-    .info-content p {
-        font-size: 0.85em;
-    }
-
-    button.TrySMECS {
-        font-size: 0.9em;
-        padding: 8px 16px;
-    }
-} */
 
 /********************* SMECS First page tool-tips  **********************/
 
@@ -1006,10 +800,6 @@ div.input-container input::placeholder {
   border-radius: 6px;
   padding: 5px;
   z-index: 1000;
-  /*top: 100%;
-    left: 50%;
-    position: absolute;
-    */
   position: fixed;
   left: 0; /* Will be set dynamically */
   top: 0; /* Will be set dynamically */
@@ -1207,15 +997,9 @@ div.input-container input::placeholder {
 }
 
 /************************************** JSON toggle **************************************/
-body,
-html {
-  /* overflow: hidden; Prevent page scrolling */
-}
 
 .toggle {
   text-align: right;
-  /* padding-top: 28px; */
-  /* height: 0.1%; */
 }
 
 .form-container,
@@ -1224,7 +1008,6 @@ html {
   border: 1px solid #ccc;
   border-radius: 5px;
   transition: all 0.3s ease;
-  /* height: 96%; */
   overflow: overlay;
   margin: 2px;
   width: 100%;
@@ -1425,19 +1208,11 @@ input:checked + .slider:before {
 /* Create info strings to explain color and other codes */
 .color-code-container {
   background-color: #f2f2f2;
-  /* align-items: center;
-  background-color: #ccc;
-  width: 99.9%;
-  
-  padding-top: 0.7%;
-  height: 14%; */
 }
 
 .color-code {
   display: flex;
   align-items: center;
-  /* margin-right: 20px; */
-  /* width: 30%; */
   padding: 5px;
 }
 
@@ -1448,10 +1223,6 @@ input:checked + .slider:before {
   display: inline-block;
   margin-right: 8px;
 }
-
-/* .color-code-text {
-  font-size: 55%;
-} */
 
 .red {
   background-color: #e15e5e;
@@ -1493,32 +1264,10 @@ input:checked + .slider:before {
 }
 
 @media (min-width: 1024px) and (max-width: 1700px) {
-  /* .InitialFormContainer {
-        height: 73%;
-        margin-top: 3rem;
-    } */
-
-  /* button.ExData {
-        margin-top: 5%;
-        font-size: 73%;
-        font-weight: normal;
-        padding: 6px 12px;
-    } */
-
   .custom-tooltip .tooltip-text {
     width: 25rem;
     left: 8%;
   }
-
-  /* .info-page {
-        max-width: 81%;
-        font-size: 85%;
-    } */
-
-  /* .tab-links_ext a {
-    font-size: 50%;
-    padding: 7px 7px;
-  } */
 
   #form1 h6 {
     font-size: 87%;
@@ -1554,22 +1303,6 @@ input:checked + .slider:before {
     font-weight: bold;
   }
 
-  /* button#new-url-extraction-page {
-        background-color: #4BA0AF;
-        border: 1px solid white;
-        color: white;
-        padding: 0.5% 0.8%;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 72%;
-        margin: auto;
-        font-weight: bold;
-        margin-top: 1.5rem;
-        position: absolute;
-        left: 93.8%;
-        bottom: 94.5%;
-    } */
-
   .fa-copy:before,
   .fa-download:before {
     font-size: 80%;
@@ -1582,14 +1315,6 @@ input:checked + .slider:before {
   #metadata-form-display h4 {
     font-size: medium;
   }
-
-  /* .slider {
-    top: -16%;
-    right: 20%;
-    font-size: 71%;
-    width: 94%;
-    height: 48%;
-  } */
 
   .metadata-container {
     margin-left: 2%;
@@ -1629,10 +1354,6 @@ input:checked + .slider:before {
 /* ******************************************** */
 
 @media (min-width: 2320px) AND (max-width: 2560px) {
-  /* button#new-url-extraction-page {
-        font-size: 86%;
-    } */
-
   .tab-links_ext a {
     font-size: 58%;
   }
@@ -1746,10 +1467,6 @@ input:checked + .slider:before {
     left: 15%;
     font-size: 89%;
   }
-  /* 
-    button.ExData {
-        margin-top: 3.5rem;
-    } */
 
   .color-code-text {
     font-size: 79%;
@@ -1759,7 +1476,6 @@ input:checked + .slider:before {
 /* *********************Fixed width when editing cells*********************** */
 .table-cell {
   white-space: nowrap;
-  /*overflow: hidden;*/
   text-overflow: ellipsis;
 }
 
@@ -1881,7 +1597,6 @@ div div p#contributor-explanation {
 }
 
 .collapsible-content {
-  /* display: none; */
   position: absolute;
   top: 100%; /* Below the button */
   left: 0;
@@ -1889,9 +1604,11 @@ div div p#contributor-explanation {
   margin-top: 10px;
   z-index: 2000;
 }
-
+.relative-wrapper {
+  position: relative;
+  display: flex;
+}
 .collapsible-button {
-  /* position: absolute; */
   top: 19%;
   left: 14%;
   width: fit-content;

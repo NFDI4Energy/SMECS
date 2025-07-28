@@ -271,12 +271,12 @@
                                             </div>
                                             {% elif key == "contributor" %}
                                             <div class="relative-wrapper">
-                                            <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Who are Contributors?</button>
-                                            <div class="person-info collapsible-content collapse" id="multiCollapseExample2">
+                                            <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapseContributors" aria-expanded="false" aria-controls="multiCollapseContributors">Who are Contributors?</button>
+                                            <div class="person-info collapsible-content collapse" id="multiCollapseContributors">
                                                 <p>A "contributor" refers to anyone who aids in software development in any capacity, from coding to testing, highlighting the collaborative nature of software projects.</p>
                                             </div>
-                                             <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapseExample" aria-expanded="false" aria-controls="multiCollapseExample">Who are Authors?</button>
-                                            <div class="person-info collapsible-content collapse" id="multiCollapseExample">
+                                             <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapseAuthors" aria-expanded="false" aria-controls="multiCollapseAuthors">Who are Authors?</button>
+                                            <div class="person-info collapsible-content collapse" id="multiCollapseAuthors">
                                                 <p>An "author" in software authorship is someone who significantly contributes to the creation and development of software, including roles like coding, project management, and documentation.</p>
                                             </div>
                                             </div>
@@ -337,7 +337,7 @@
                                                         {% endfor %}
                                                         {% if unique_tab %}
                                                         {% for col, value in metadata_dict.items %}
-                                                        <td data-col="{{ col }}" data-coltype="element">
+                                                        <td data-col="{{ col }}" data-coltype="element" class="text-center">
                                                             {% if col == key %}
                                                             <input type="checkbox" class="checkbox-element" data-role="{{ col }}" name="checkbox-{{ col }}" checked>
                                                             {% elif col == "author" %}
@@ -350,7 +350,7 @@
                                                         </td>
                                                         {% endfor %}
                                                         {% endif %}
-                                                        <td>
+                                                        <td class="d-flex justify-content-center align-items-center" style="height: 50px;">
                                                             <i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i>
                                                         </td>
                                                     </tr>
@@ -386,12 +386,12 @@
                                                         {% endfor %}
                                                         {% if unique_tab %}
                                                         {% for col, value in metadata_dict.items %}
-                                                        <td data-col="{{ col }}" data-coltype="element">                                                    
+                                                        <td data-col="{{ col }}" data-coltype="element" class="text-center">                                                    
                                                             <input type="checkbox" class="checkbox-element" data-role="{{ col }}" name="checkbox-{{ col }}">
                                                         </td>
                                                         {% endfor %}
                                                         {% endif %}
-                                                        <td>
+                                                        <td class="text-center">
                                                             <button type="button" class="add-row-btn" data-table-key="{{ key }}">Add</button>
                                                         </td>
                                                     </tr>
