@@ -1,5 +1,5 @@
 # Core Django and JSON handling
-django==4.1.10
+Django>=4.2.22
 django_jsonforms==1.1.2
 environs==9.3.5
 marshmallow>=3.10,<3.20
