@@ -60,7 +60,7 @@ def load_description_dict_from_schema(schema: dict) -> dict[str, str]:
     description_dict['GeneralInformation'] = "This section gives general information about the software."
     description_dict['Provenance'] = "This section describes the creation history of the software."
     description_dict['RelatedPersons'] = "This section lists all relevant persons who are connected to the software."
-    description_dict['TechnicalAspects'] = "This section decribes the technical aspects of the software."
+    description_dict['TechnicalAspects'] = "This section describes the technical aspects of the software."
 
     return description_dict
 
