@@ -1653,3 +1653,39 @@ div div p#contributor-explanation {
   color: inherit;
   cursor: pointer;
 }
+
+.suggestion-item.active {
+  background-color: #3d7eb3;
+  color: white;
+}
+
+/*  Enhanced dropdown styling for <select> elements */
+select {
+  background-color: #fff;
+  border: 1px solid #cacaca;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 1rem;
+  font-family: inherit;
+  color: #333;
+  appearance: none; /* Remove default styling */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23333' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px 16px;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+select:focus {
+  outline: none;
+  border-color: #055f82;
+  box-shadow: 0 0 0 2px rgba(5, 95, 130, 0.2);
+}
+
+select option:checked {
+  background-color: #055f82;
+  color: white;
+}

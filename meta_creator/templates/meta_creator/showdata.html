@@ -14,13 +14,9 @@
                             <h4>Metdata in JSON format</h4>
 
                             <div class="metadata-container">
-
                                 <div class="left">
                                     <span id="actionFeedback" class="feedback"></span>
                                 </div>
-
-
-
                                 <div class="right">
                                     {% comment %} <button id="updateFormBtn">Update Form</button>  {% endcomment %}
                                     <i class="fas fa-download ExData" id="downloadButton" title="Download the JSON file."></i>
@@ -135,7 +131,7 @@
                                                 <i class="fa fa-info-circle" aria-hidden="true"></i>
                                             </div>
                                             <select name="{{ key }}" id="{{ key }}" data-dropdown-schema="{{ key }}">
-                                                <option value=""></option>
+                                                <option value="" class="suggestion-item"></option>
                                             </select>
                                             <div id="{{ key }}Suggestions"></div>
                                         </div>
