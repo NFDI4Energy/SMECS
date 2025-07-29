@@ -11,9 +11,11 @@ def validate_codemeta(json):
         print("Not a JSON-LD file")
         return False
     
-    if context == "https://doi.org/10.5063/schema/codemeta-2.0":
+    # if context == "https://doi.org/10.5063/schema/codemeta-2.0":
+    if context == "https://w3id.org/codemeta/3.0":
         # Temp replacement for https resolution issues for schema.org
-        context = "https://raw.githubusercontent.com/caltechlibrary/convert_codemeta/main/codemeta.jsonld"
+        # context = "https://raw.githubusercontent.com/caltechlibrary/convert_codemeta/main/codemeta.jsonld"
+        context = "https://raw.githubusercontent.com/codemeta/codemeta/3.0/codemeta.jsonld"
         json["@context"] = context
 
     if context == "https://w3id.org/codemeta/3.0":

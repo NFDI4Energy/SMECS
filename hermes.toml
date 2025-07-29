@@ -1,9 +1,5 @@
-# SPDX-FileCopyrightText: 2023 German Aerospace Center (DLR)
-#
-# SPDX-License-Identifier: CC0-1.0
-
 [harvest]
-sources = [ "githublab", "cff", "codemeta", ] # ordered priority (first one is most important)
+sources = [ "githublab", "cff", "codemeta",]
 
 [deposit]
 target = "invenio_rdm"
