@@ -97,7 +97,7 @@ def run_hermes_commands(url, token=None):
                 'warnings': warnings
             }
         else:
-        errors = []
+            errors = []
 
     # Construct the path to hermes.json
     hermes_json_path = os.path.join(base_directory, ".hermes", "process", "hermes.json")
