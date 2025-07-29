@@ -82,7 +82,7 @@ def run_hermes_commands(url, token=None):
         for file_name in file_names:
             file_path = os.path.join(base_directory, ".hermes", "harvest", file_name)
             os.remove(file_path)
-            print(f"Removed{file_path}")
+            print(f"Removed {file_path}")
             process_command = subprocess.run(['hermes', 'process'], capture_output=True, text=True, cwd=base_directory)
 
             if process_command.returncode == 0:
