@@ -258,15 +258,7 @@
                                                 {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
                                             </span>
                                             <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                        </div>
-                                        {% elif key == "contributor" %}
-                                        <button type="button" class="collapsible-button" onclick="toggleCollapse()">Who are Contributors and Authors?</button>
-                                        <div class="person-info collapsible-content" id="contributor-explanation">
-                                            <h5>Who is a Contributor?</h5>
-                                            <p>A "contributor" refers to anyone who aids in software development in any capacity, from coding to testing, highlighting the collaborative nature of software projects.</p>
-                                            <h5>Who is an Author?</h5>
-                                            <p>An "author" in software authorship is someone who significantly contributes to the creation and development of software, including roles like coding, project management, and documentation.</p>
-                                        </div>
+                                        </div>                                        
                                         {% endif %}
                                         <input type="hidden" id="{{ key }}TableHiddenInput" name="{{ key }}TableHiddenInput"
                                                value='{{ value }}'>

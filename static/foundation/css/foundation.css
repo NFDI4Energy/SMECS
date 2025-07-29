@@ -585,7 +585,7 @@ div.error-container {
         text-align: left;
         padding: 8px;
         border: 1px solid #ccc;
-        overflow: hidden;
+        overflow: visible;
         text-overflow: ellipsis;
         white-space: nowrap;
         min-width: 100px;
@@ -1818,7 +1818,7 @@ input:checked + .slider {
 /* *********************Fixed width when editing cells*********************** */
 .table-cell {
     white-space: nowrap;
-    /*overflow: hidden;*/
+    overflow: visible;
     text-overflow: ellipsis;
 }
 
