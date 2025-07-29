@@ -53,7 +53,6 @@ def index(request):
                 error_messages = ['Error in extraction:'] + errors
             else:
                 error_messages = ['Error in extraction:', errors]          
-            error_messages = ['Error in extraction:', result.get('errors')]
             return render(request, 'meta_creator/error.html', {
                 'error_message': "; ".join(error_messages)
                 })
