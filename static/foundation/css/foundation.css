@@ -340,7 +340,25 @@ form.data-form3 {
 
 .tab .form-group {
     width: 90%;
-    margin: 0px 0% 1% 9%;
+    margin: 5% 0% 0% 5%;
+    text-align: left;
+    display: block;
+}
+
+.tab-description {
+    background: #f5f7fa;
+    border-left: 4px solid #0078d4;
+    color: #222;
+    padding: 0em 0em;
+    margin-bottom: 0em;
+    border-radius: 4px;
+    font-size: 1.08em;
+    font-style: italic;
+    text-align: center;
+    width: 90%;
+    margin-left: 0;
+    margin-right: 0;
+    margin: 0 auto 0 auto;
 }
 
 .form-group label {
@@ -348,7 +366,7 @@ form.data-form3 {
     font-weight: bold;
 }
 
-.form-group input[type="text"], select {
+.form-group .single_inputs input[type="text"], .single_inputs select {
     width: 110%;
     padding: 8px;
     border-radius: 4px;
@@ -358,10 +376,10 @@ form.data-form3 {
 
 /* style for general single input elements */
 .form-group .single_inputs {
-    width: 40%;
+    width: 42%;
     float: left;
-    margin-right: 10%;
-    margin-bottom: 0.2%;
+    margin-right: 8%;
+    margin-bottom: 0.1em;
     box-sizing: border-box;
 }
 
@@ -372,12 +390,43 @@ form.data-form3 {
 
 /* style for general single input elements with longer values */
 .form-group .long_field {
-    width: 85%;
-    margin-bottom: 0.2%;
+    width: 100%;
+    margin-bottom: 0.1em;
+    float: left;
+    box-sizing: border-box;
+}
+
+    .form-group .long_field input[type="text"], select {
+        width: 100%;
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        transition: border-color 0.2s ease-in-out;
+    }
+
+
+.form-group .big_field {
+    width: 100%;
+    margin-bottom: 0.1em;
     margin-right: 10%;
     float: left;
     box-sizing: border-box;
 }
+
+    .form-group .big_field textarea {
+        width: 100%;
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        transition: border-color 0.2s ease-in-out;
+        min-height: 5em; /* or rows="3" in HTML */
+        resize: vertical;
+        font-size: 1em;
+        line-height: 1.5;
+        box-sizing: border-box;
+        white-space: pre-wrap; /* Allow line breaks */
+        word-break: break-word; /* Break long words */
+    }
 
 .form-group legend {
     font-size: 0.8em;
@@ -390,16 +439,6 @@ form.data-form3 {
     border: 1px solid #ada8a8;
     border-radius: 4px;
 }
-
-    .form-group fieldset.fieldset_content, .form-group fieldset.copyrightHolder {
-        width: 40%;
-        float: right;
-        margin-right: 15px;
-        margin-left: 5px;
-        margin-top: 5px;
-        margin-bottom: 5px;
-    }
-
 
     .form-group fieldset label, .data-form3 label {
         display: inline;
@@ -421,7 +460,7 @@ form.data-form3 {
     border-radius: 4px;
     border: 1px solid #ccc;
     transition: border-color 0.2s ease-in-out;
-    margin-bottom: 5px;
+    margin-bottom: 0.1em;
     margin-left: 4px;
 }
 
@@ -458,9 +497,14 @@ form.data-form3 {
     margin-bottom: 2px;
 }
 
-.invalid {
-    border: 1px solid rgba(226, 7, 7, 0.535);
-    background-color: rgba(225, 94, 94, 0.377);
+input.invalid-required, textarea.invalid-required, select.invalid-required {
+    border: 2px solid #ff0000;
+    background-color: #ffd6d6;
+}
+
+input.invalid-recommended, textarea.invalid-recommended, select.invalid-recommended {
+    border: 2px solid #ffe066;
+    background-color: #fef6da;
 }
 
 
@@ -521,16 +565,19 @@ div.error-container {
         }
 
 /********************************* Style for auto table **********************************/
-/* Fixed width and equal column distribution for auto-property-table */
+/* Flexible columns distribution */
 .auto-property-table {
     margin-top: 8px;
-    width: 110%; /* Same as .long_field */
+    width: 100%; /* Same as .long_field */
     min-width: 500px; /* Optional: for usability */
-    table-layout: auto; /* Ensures equal column width */
+    table-layout: auto;
     margin-bottom: 1rem;
     border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
 }
 
+    /* Set properties of table head and table data for auto-property table */
     .auto-property-table th,
     .auto-property-table td {
         padding: 8px 12px;
@@ -538,13 +585,14 @@ div.error-container {
         text-align: left;
         padding: 8px;
         border: 1px solid #ccc;
-        overflow: hidden;
+        overflow: visible;
         text-overflow: ellipsis;
         white-space: nowrap;
-        min-width: 80px;
-        max-width: 200px;
+        min-width: 100px;
+        max-width: 300px;
     }
 
+        /* Set fixed width for first row */
         .auto-property-table th:first-child,
         .auto-property-table td:first-child {
             max-width: 200px;
@@ -555,6 +603,7 @@ div.error-container {
             white-space: nowrap;
         }
 
+/* for the add-row-control row (last row) */
 tr.add-row-controls,
 tr.add-row-controls td {
     display: table-row;
@@ -565,18 +614,27 @@ tr.add-row-controls td {
     background: #f9f9f9; /* Optional: subtle highlight */
 }
 
+    /* For the table elements in the add-row-control row*/
     tr.add-row-controls td {
         /* Remove any display:block/flex if present */
         display: table-cell;
     }
 
-.auto-property-table td .tags-table-container,
-.auto-property-table .add-row-tags-container {
-    width: 100% !important;
-    max-width: 100% !important;
+/* Set the properties for the tags-table-container*/
+.auto-property-table td .tags-table-container {
+    width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
     padding: 0;
 }
+
+    /* Set properties for inputs of tags-table-container */
+    .auto-property-table td .tags-table-container input[type="text"] {
+        width: 95% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+        padding: 0;
+    }
 
     .auto-property-table td .tags-table-container input[type="text"],
     .auto-property-table .add-row-tags-container input[type="text"] {
@@ -590,6 +648,7 @@ tr.add-row-controls td {
         font-size: 1em;
     }
 
+/* Set properties for tags-list */
 .auto-property-table td .tags-list {
     width: auto !important;
     display: flex;
@@ -600,10 +659,35 @@ tr.add-row-controls td {
     padding: 0;
 }
 
-    .add-row-controls.invalid {
-        background-color: #ffd6d6; /* light red */
-        border: 1px solid #ff0000;
-    }
+.add-row-tags-container .tag {
+    display: inline-flex !important;
+    width: auto !important;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.add-row-controls .tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+    width: auto;
+}
+
+/* Set colors for add-row-controls */
+.add-row-controls.invalid-required,
+.add-row-controls.invalid-required td {
+    background-color: #ffd6d6; /* light red */
+    border: 2px solid #ff0000;
+}
+
+.add-row-controls.invalid-recommended,
+.add-row-controls.invalid-recommended td {
+    background-color: #fef6da; /* light yellow */
+    border: 2px solid #ffe066;
+}
+
+/* Set properties for classes in add-row-controls */
 
 .add-row-controls .add-row-input,
 .add-row-controls .add-row-tag-input,
@@ -641,6 +725,19 @@ td.table-tagging-cell {
         max-width: 100%;
         box-sizing: border-box;
         min-width: 0;
+    }
+
+.tab.unique-tab {
+    width: 100%;
+    transform-origin: top center; /* Adjust origin as needed */
+    text-align: center; /* Center the inner content horizontally */
+    position: relative;
+}
+
+    .tab.unique-tab .unique-tab-inner {
+        transform: scale(0.8);
+        transform-origin: top center;
+        display: inline-block;
     }
 
 /* Make the tags-list a flex container so tags wrap and only take as much space as needed */
@@ -944,10 +1041,35 @@ button.TrySMECS {
     cursor: pointer;
 }
 
+.label-content,
+label > .asterisk,
+label > .fa-info-circle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25em; /* optional: space between elements */
+}
+
+.asterisk {
+    color: red;
+    font-size: 1em; /* match the label font size */
+    font-weight: bold;
+    line-height: 1;
+    vertical-align: middle;
+}
+
 .fa-info-circle {
     opacity: 0.5;
-    font-size: 12px;
     z-index: 1;
+    font-size: 1em; /* match the label font size */
+    vertical-align: middle;
+    line-height: 1;
+}
+
+/* Ensure both the info icon and asterisk are aligned */
+.fa-info-circle,
+.asterisk {
+    vertical-align: middle;
+    /* Optionally, adjust font-size or line-height if needed */
 }
 
 .tooltip-text-metadata {
@@ -1087,14 +1209,14 @@ button.TrySMECS {
     }
 
     .navigation-buttons .backwardBtn {
-        margin-left: 9%; 
+        margin-left: 5%; 
         display: block;
         float: left;
         margin-bottom: 3%;
     }
 
     .navigation-buttons .forwardBtn {
-        margin-right: 3%;
+        margin-right: 5%;
         float: right;
         display: block;
         margin-bottom: 3%;
@@ -1371,20 +1493,39 @@ input:checked + .slider {
 /************************************Color-code-info**************************************/
 /* Create info strings to explain color and other codes */
 .color-code-container {
-    align-items: center;
+    /*align-items: center;
     background-color: #ccc;
     width: 99.9%;
     background-color: #f2f2f2;
     padding-top: 0.7%;
-    height: 14%;
+    height: 14%;*/
+    background-color: #f2f2f2;
+    margin: 0;
+    width: 100%;
+    padding: 0.5rem 0.5rem;
+    border-radius: 6px;
+}
+
+.color-code-inner {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    max-width: 600px; /* or your preferred max width */
+    margin: 0 auto;
+    width: 100%;
 }
 
 .color-code {
     display: flex;
     align-items: center;
-    margin-right: 20px;
+    margin-right: 5px;
+    min-width: 340px; /* Ensures a minimum width for longer text */
     width: 30%;
     padding: 5px;
+    gap: 0.5rem;
+    box-sizing: border-box;
 }
 
     .color-code > span:first-child {
@@ -1396,7 +1537,7 @@ input:checked + .slider {
     }
 
 .color-code-text {
-    font-size: 55%;
+    font-size: 85%;
 }
 
 .red {
@@ -1610,10 +1751,6 @@ input:checked + .slider {
         font-size: 1em;
     }
 
-    .form-group .single_inputs {
-        margin-bottom: 0.5%;
-    }
-
     #metadata-json {
         font-size: 100%;
     }
@@ -1680,7 +1817,7 @@ input:checked + .slider {
 /* *********************Fixed width when editing cells*********************** */
 .table-cell {
     white-space: nowrap;
-    /*overflow: hidden;*/
+    overflow: visible;
     text-overflow: ellipsis;
 }
 

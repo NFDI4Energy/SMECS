@@ -19,6 +19,13 @@ SMECS supports typical field types in the curation interface. The following type
      * Cardinality: 1
      * Type: string
 
+### Big Field
+* tag: big_field
+* full page field for longer text with multiple rows
+* Typical used for:
+     * Cardinality: 1
+     * Type: string
+
 ### Dropdown
 * tag: dropdown
 * full page dropdown field

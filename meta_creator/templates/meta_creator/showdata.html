@@ -34,17 +34,19 @@
 
             <!-- Displaying the color coding -->
             <div class="color-code-container">
-                <div class="color-code">
-                    <span class="red"></span>
-                    <span class="color-code-text">Missing required or recommended metadata</span>
-                </div>
-                <div class="color-code">
-                    <span class="yellow"></span>
-                    <span class="color-code-text">Better to curate the metadata</span>
-                </div>
-                <div class="color-code">
-                    <span class="symbol"></span>
-                    <span class="color-code-text">Mandatory elements</span>
+                <div class="color-code-inner">
+                    <div class="color-code">
+                        <span class="red"></span>
+                        <span class="color-code-text">Missing required metadata</span>
+                    </div>
+                    <div class="color-code">
+                        <span class="yellow"></span>
+                        <span class="color-code-text">Missing recommended metadata</span>
+                    </div>
+                    <div class="color-code">
+                        <span class="symbol"></span>
+                        <span class="color-code-text">Mandatory elements</span>
+                    </div>
                 </div>
             </div>
 
@@ -54,7 +56,7 @@
                     <span class="close-btn" id="closePopup">&times;</span>
                     <h1>Extra Hints!</h1>
                     <p><strong>1.</strong> Edit table information directly by clicking on any cell.</p>
-                    <p><strong>2.</strong> Add a contributor to the authors' table by clicking the "Copy" icon.</p>
+                    <p><strong>2.</strong> Add a new row by adding content in the last row and clicking add.</p>
                     <p><strong>3.</strong> Toggle the JSON viewer on or off using the JSON toggle button.</p>
                     <p><strong>4.</strong> All changes made in the form are automatically reflected in the JSON viewer.</p>
                     <p><strong>5.</strong> Your changes are saved in real-time, and you can download your updated output at any time.</p>
@@ -72,316 +74,333 @@
                     {% with unique_tab=type_metadata|all_types_same:metadata_dict %}
                     <!-- {{tab_name}}_info -->
                     {% if forloop.first %}
-                    <div id="{{ tab_name }}" class="tab active">
+                    <div id="{{ tab_name }}" class="tab active{% if unique_tab %} unique-tab{% endif %}">
                         {% else %}
-                        <div id="{{ tab_name }}" class="tab">
+                        <div id="{{ tab_name }}" class="tab{% if unique_tab %} unique-tab{% endif %}">
                             {% endif %}
-                            {% for key, value in metadata_dict.items %}
-                            <div class="form-group">
-                                {% if type_metadata|get:key == "hidden" %}
-                                <!-- Hidden element -->
-                                <div class="single_inputs" hidden>
-                                    <label for="{{ key }}" hidden>{{ key }}</label>
-                                    <div class="custom-tooltip-metadata" hidden>
-                                        <span class="tooltip-text-metadata" hidden>
-                                            {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
-                                        </span>
-                                        <i class="fa fa-info-circle" aria-hidden="true" hidden></i>
-                                    </div>
-                                    <input title="{{ value }}" id="{{ key }}" name="{{ key }}" type="text" value="{{ value }}" hidden><br>
-                                </div>
-                                {% elif type_metadata|get:key == "dropdown" %}
-                                <!-- Dropdown element -->
-                                <div class="single_inputs">
-                                    <label for="{{ key }}">{{ key|camel_to_spaces_lower }}</label>
-                                    <div class="custom-tooltip-metadata">
-                                        <span class="tooltip-text-metadata">
-                                            {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
-                                        </span>
-                                        <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                    </div>
-                                    <select name="{{ key }}" id="{{ key }}" data-dropdown-schema="{{ key }}">
-                                        <option value=""></option>
-                                    </select>
-                                    <div id="{{ key }}Suggestions"></div>
-                                </div>
-                                {% elif type_metadata|get:key == "tagging" %}
-                                <!-- Tagging element -->
-                                <div class="single_inputs tagging-wrapper" id="{{ key }}Wrapper">
-                                    <label class="tagging-label" for="{{ key }}Input"
-                                           data-tagging="{{ key }}"
-                                           data-tagging-type="tagging">
-                                        {{ key|camel_to_spaces_lower }}
-                                    </label>
-                                    <div class="custom-tooltip-metadata">
-                                        <span class="tooltip-text-metadata">
-                                            {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
-                                        </span>
-                                        <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                    </div>
-                                    <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" value="{{ value|join:", " }}">
-                                    <div class="tags-container" id="{{ key }}Tags">
-                                        {% for item in value %}
-                                        {% if item is string %}
-                                        <span class="tag" data-value="{{ item }}">
-                                            {{ item }}
-                                            <span class="remove-tag" data-value="{{ item }}">×</span>
-                                        </span>
-                                        {% endif %}
-                                        {% endfor %}
-                                        <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type and press Enter to add..." />
-                                    </div>
-                                </div>
-                                {% elif type_metadata|get:key == "tagging_object" %}
-                                <!-- Tagging object (for nested information) -->
-                                {% with default_type=value.0|get:"@type" %}
-                                <div class="single_inputs tagging-wrapper" id="{{ key }}Wrapper">
-                                    <label class="tagging-label" for="{{ key }}Input"
-                                           data-tagging="{{ key }}"
-                                           data-tagging-type="tagging_object"
-                                           data-tagging-object-key="identifier"
-                                           data-tagging-object-type="@type"
-                                           data-constant-type="{{ default_type }}">
-                                        {{ key|camel_to_spaces_lower }}
-                                    </label>
-                                    <div class="custom-tooltip-metadata">
-                                        <span class="tooltip-text-metadata">
-                                            {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
-                                        </span>
-                                        <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                    </div>
-                                    <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" value="{{ value|prepare_array|escape }}">
-                                    <div class="tags-container" id="{{ key }}Tags">
-                                        {% for item in value %}
-                                        <span class="tag" data-value="{{ item|get:'identifier' }}">
-                                            {{ item|get:"identifier" }}{% if item|get:"@type" %} <span class="tag-type">({{ item|get:"@type" }})</span>{% endif %}
-                                            <span class="remove-tag" data-value="{{ item|get:"identifier" }}">×</span>
-                                        </span>
-                                        {% endfor %}
-                                        <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type and press Enter to add an identifier..." />
-                                    </div>
-                                </div>
-                                {% endwith %}
-                                <!-- Tagging autocomplete element -->
-                                {% elif type_metadata|get:key == "tagging_autocomplete" %}
-                                <div class="single_inputs tagging-wrapper" id="{{ key }}Wrapper">
-                                    <label class="tagging-label" for="{{ key }}Input" data-tagging="{{ key }}" data-tagging-type="tagging_autocomplete">
-                                        {{ key|camel_to_spaces_lower }}
-                                    </label>
-                                    <div class="custom-tooltip-metadata">
-                                        <span class="tooltip-text-metadata">
-                                            {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
-                                        </span>
-                                        <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                    </div>
+                            {% if unique_tab %}
+                            <div class="unique-tab-inner">
+                                {% endif %}
 
-                                    <!-- Hidden input to store actual value as JSON or comma-separated for backend -->
-                                    <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" value='{{ value|join:", " }}'>
+                                {% if description_metadata|get:tab_name %}
+                                <div class="tab-description">
+                                    {{ description_metadata|get:tab_name }}
+                                </div>
+                                {% endif %}
 
-                                    <!-- Tag display and input -->
-                                    <div class="tags-container" id="{{ key }}Tags">
-                                        {% for item in value %}
-                                        {% if item %}
-                                        <span class="tag" data-value="{{ item }}">
-                                            {{ item }}
-                                            <span class="remove-tag" data-value="{{ item }}">×</span>
-                                        </span>
-                                        {% endif %}
-                                        {% endfor %}
-                                        <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type and select from list" />
+                                {% for key, value in metadata_dict.items %}
+                                <div class="form-group">
+                                    {% if type_metadata|get:key == "hidden" %}
+                                    <!-- Hidden element -->
+                                    <div class="single_inputs" hidden>
+                                        <label for="{{ key }}" hidden>{{ key }}</label>
+                                        <div class="custom-tooltip-metadata" hidden>
+                                            <span class="tooltip-text-metadata" hidden>
+                                                {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
+                                            </span>
+                                            <i class="fa fa-info-circle" aria-hidden="true" hidden></i>
+                                        </div>
+                                        <input title="{{ value }}" id="{{ key }}" name="{{ key }}" type="text" value="{{ value }}" hidden><br>
                                     </div>
-                                    <div id="{{ key }}Suggestions" class="tag-suggestions"></div>
-                                </div>
-                                {% elif type_metadata|get:key == "single_input_object" %}
-                                <!-- Single input element (for a nested object) -->
-                                <div class="single_inputs single-input-object-wrapper" id="{{ key }}Wrapper">
-                                    <label class="single-input-object-label" for="{{ key }}Input"
-                                           data-single-input-object="{{ key }}"
-                                           data-single-input-object-type="{{ value|get:'@type' }}">
-                                        {{ key|camel_to_spaces_lower }}
-                                    </label>
-                                    <div class="custom-tooltip-metadata">
-                                        <span class="tooltip-text-metadata">
-                                            {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
-                                        </span>
-                                        <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                    {% elif type_metadata|get:key == "dropdown" %}
+                                    <!-- Dropdown element -->
+                                    <div class="single_inputs">
+                                        <label for="{{ key }}">{{ key|camel_to_spaces_lower }}</label>
+                                        <div class="custom-tooltip-metadata">
+                                            <span class="tooltip-text-metadata">
+                                                {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
+                                            </span>
+                                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                        </div>
+                                        <select name="{{ key }}" id="{{ key }}" data-dropdown-schema="{{ key }}">
+                                            <option value=""></option>
+                                        </select>
+                                        <div id="{{ key }}Suggestions"></div>
                                     </div>
-                                    <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" value="{{ value|prepare_single|escape }}">
-                                    <div class="single-object-container" id="{{ key }}Object">
-                                        <input type="text" id="{{ key }}Input" name="{{ key }}" data-single-input-object="true" placeholder="Identifier..." value="{{ value|get:'identifier' }}" />
-                                    </div>
-                                </div>
-                                {% elif type_metadata|get:key == "single_inputs" or type_metadata|get:key == "long_field"  %}
-                                <!-- Single input and long field element -->
-                                <div class={{type_metadata|get:key}}>
-                                    <label for="{{ key }}">{{ key|camel_to_spaces_lower }}</label>
-                                    <div class="custom-tooltip-metadata">
-                                        <span class="tooltip-text-metadata">
-                                            {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
-                                        </span>
-                                        <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                    </div>
-                                    <input title="{{ value }}" id="{{ key }}" name="{{ key }}" type="text" value="{{ value }}"><br>
-                                </div>
-                                {% elif forloop.first or not unique_tab %}
-                                <!-- small_table -->
-                                <div class="long_field">
-                                    {% with specific_types=type_metadata|get_array:key default_type=value.0|get:"@type"%}
-                                    {% if not unique_tab %}
-                                    <label for="{{ key }}">{{ key|camel_to_spaces_lower }}</label>
-                                    <div class="custom-tooltip-metadata">
-                                        <span class="tooltip-text-metadata">
-                                            {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
-                                        </span>
-                                        <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                    </div>
-                                    {% elif key == "contributor" %}
-                                    <button type="button" class="collapsible-button" onclick="toggleCollapse()">Who are Contributors and Authors?</button>
-                                    <div class="person-info collapsible-content" id="contributor-explanation">
-                                        <h5>Who is a Contributor?</h5>
-                                        <p>A "contributor" refers to anyone who aids in software development in any capacity, from coding to testing, highlighting the collaborative nature of software projects.</p>
-                                        <h5>Who is an Author?</h5>
-                                        <p>An "author" in software authorship is someone who significantly contributes to the creation and development of software, including roles like coding, project management, and documentation.</p>
-                                    </div>
-                                    {% endif %}
-                                    <input type="hidden" id="{{ key }}TableHiddenInput" name="{{ key }}TableHiddenInput"
-                                           value='{{ value }}'>
-                                    <table class="auto-property-table" id="{{ key }}Table" data-at-type={{default_type}} unique-tab={{unique_tab}}>
-                                        <thead>
-                                            <tr>
-                                                {% for col, value in specific_types.items %}
-                                                <th data-col="{{ col }}" data-coltype="{{ value }}">
-                                                    {{ col|camel_to_spaces_lower }}
-                                                    <div class="custom-tooltip-metadata">
-                                                        <span class="tooltip-text-metadata">
-                                                            {% if col in description_metadata %}{{ description_metadata|get:col }}{% endif %}
-                                                        </span>
-                                                        <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                                    </div>
-                                                </th>
-                                                {% endfor %}
-                                                {% if unique_tab %}
-                                                {% for col, value in metadata_dict.items %}
-                                                <th data-col="{{ col }}" data-coltype="element">
-                                                    {{ col|camel_to_spaces_lower }}
-                                                    <div class="custom-tooltip-metadata">
-                                                        <span class="tooltip-text-metadata">
-                                                            {% if col in description_metadata %}{{ description_metadata|get:col }}{% endif %}
-                                                        </span>
-                                                        <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                                    </div>
-                                                </th>
-                                                {% endfor %}
-                                                {% endif %}
-                                                <th data-col="del" data-coltype="delete">Row Control</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for row in value %}
-                                            {% if row|row_has_values:specific_types.keys %}
-                                            <tr>
-                                                {% for col, value in specific_types.items %}
-                                                {% if value == 'tagging' or value == 'tagging_autocomplete' or value == 'dropdown' %}
-                                                <td class="table-tagging-cell" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" data-row="{{ forloop.parentloop.counter0 }}">
-                                                    <div class="tags-list">
-                                                        {% for tag in row|get:col %}
-                                                        <span class="tag" data-tag="{{ tag }}">{{ tag }} <span class="remove-tag" data-tag="{{ tag }}">×</span></span>
-                                                        {% endfor %}
-                                                    </div>
-                                                    {% if value == 'tagging' %}
-                                                    <input class="tag-input" type="text" style="display:none;" placeholder="Add tag and press Enter" />
-                                                    {% else %}
-                                                    <input class="tag-input" type="text" style="display:none;" placeholder="Type and select from list" />
-                                                    {% endif %}
-                                                </td>
-                                                {% else %}
-                                                <td>{{ row|get:col }} </td>
-                                                {% endif %}
-                                                {% endfor %}
-                                                {% if unique_tab %}
-                                                {% for col, value in metadata_dict.items %}
-                                                <td data-col="{{ col }}" data-coltype="element">
-                                                    {% if col == key %}
-                                                    <input type="checkbox" class="checkbox-element" data-role="{{ col }}" name="checkbox-{{ col }}" checked>
-                                                    {% elif col == "author" %}
-                                                    <input type="checkbox" class="checkbox-element" data-role="{{ col }}" name="checkbox-{{ col }}" {% if metadata_dict|check_author:contributor %}checked{% endif %}>
-                                                    {% elif col == "maintainer" %}
-                                                    <input type="checkbox" class="checkbox-element" data-role="{{ col }}" name="checkbox-{{ col }}" {% if metadata_dict|check_maintainer:contributor %}checked{% endif %}>
-                                                    {% else %}
-                                                    <input type="checkbox" class="checkbox-element" data-role="{{ col }}" name="checkbox-{{ col }}">
-                                                    {% endif %}
-                                                </td>
-                                                {% endfor %}
-                                                {% endif %}
-                                                <td>
-                                                    <i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i>
-                                                </td>
-                                            </tr>
+                                    {% elif type_metadata|get:key == "tagging" %}
+                                    <!-- Tagging element -->
+                                    <div class="single_inputs tagging-wrapper" id="{{ key }}Wrapper">
+                                        <label class="tagging-label" for="{{ key }}Input"
+                                               data-tagging="{{ key }}"
+                                               data-tagging-type="tagging">
+                                            {{ key|camel_to_spaces_lower }}
+                                        </label>
+                                        <div class="custom-tooltip-metadata">
+                                            <span class="tooltip-text-metadata">
+                                                {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
+                                            </span>
+                                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                        </div>
+                                        <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" value="{{ value|join:", " }}">
+                                        <div class="tags-container" id="{{ key }}Tags">
+                                            {% for item in value %}
+                                            {% if item is string %}
+                                            <span class="tag" data-value="{{ item }}">
+                                                {{ item }}
+                                                <span class="remove-tag" data-value="{{ item }}">×</span>
+                                            </span>
                                             {% endif %}
                                             {% endfor %}
-                                    <!-- Add Row Inputs -->
-                                            <tr class="add-row-controls" data-table-key="{{ key }}">
-                                                {% for col, value in specific_types.items %}
-                                                {% if value == 'tagging' or value == 'tagging_autocomplete' %}
-                                                <td class="tags-table-container add-row-tags-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
-                                                    <!-- Tags will be inserted here by JS -->
-                                                    {% if value == "tagging" %}
-                                                    <input type="text" class="add-row-tag-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Add tag for {{col|camel_to_spaces_lower}} and press Enter" />
-                                                    {% else %}
-                                                    <input type="text" class="add-row-tag-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Type and select from list for {{col|camel_to_spaces_lower}}" />
+                                            <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type and press Enter to add..." />
+                                        </div>
+                                    </div>
+                                    {% elif type_metadata|get:key == "tagging_object" %}
+                                    <!-- Tagging object (for nested information) -->
+                                    {% with default_type=value.0|get:"@type" %}
+                                    <div class="single_inputs tagging-wrapper" id="{{ key }}Wrapper">
+                                        <label class="tagging-label" for="{{ key }}Input"
+                                               data-tagging="{{ key }}"
+                                               data-tagging-type="tagging_object"
+                                               data-tagging-object-key="identifier"
+                                               data-tagging-object-type="@type"
+                                               data-constant-type="{{ default_type }}">
+                                            {{ key|camel_to_spaces_lower }}
+                                        </label>
+                                        <div class="custom-tooltip-metadata">
+                                            <span class="tooltip-text-metadata">
+                                                {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
+                                            </span>
+                                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                        </div>
+                                        <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" value="{{ value|prepare_array|escape }}">
+                                        <div class="tags-container" id="{{ key }}Tags">
+                                            {% for item in value %}
+                                            <span class="tag" data-value="{{ item|get:'identifier' }}">
+                                                {{ item|get:"identifier" }}{% if item|get:"@type" %} <span class="tag-type">({{ item|get:"@type" }})</span>{% endif %}
+                                                <span class="remove-tag" data-value="{{ item|get:"identifier" }}">×</span>
+                                            </span>
+                                            {% endfor %}
+                                            <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type and press Enter to add an identifier..." />
+                                        </div>
+                                    </div>
+                                    {% endwith %}
+                                    <!-- Tagging autocomplete element -->
+                                    {% elif type_metadata|get:key == "tagging_autocomplete" %}
+                                    <div class="single_inputs tagging-wrapper" id="{{ key }}Wrapper">
+                                        <label class="tagging-label" for="{{ key }}Input" data-tagging="{{ key }}" data-tagging-type="tagging_autocomplete">
+                                            {{ key|camel_to_spaces_lower }}
+                                        </label>
+                                        <div class="custom-tooltip-metadata">
+                                            <span class="tooltip-text-metadata">
+                                                {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
+                                            </span>
+                                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                        </div>
+
+                                        <!-- Hidden input to store actual value as JSON or comma-separated for backend -->
+                                        <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" value='{{ value|join:", " }}'>
+
+                                        <!-- Tag display and input -->
+                                        <div class="tags-container" id="{{ key }}Tags">
+                                            {% for item in value %}
+                                            {% if item %}
+                                            <span class="tag" data-value="{{ item }}">
+                                                {{ item }}
+                                                <span class="remove-tag" data-value="{{ item }}">×</span>
+                                            </span>
+                                            {% endif %}
+                                            {% endfor %}
+                                            <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type and select from list" />
+                                        </div>
+                                        <div id="{{ key }}Suggestions" class="tag-suggestions"></div>
+                                    </div>
+                                    {% elif type_metadata|get:key == "single_input_object" %}
+                                    <!-- Single input element (for a nested object) -->
+                                    <div class="single_inputs single-input-object-wrapper" id="{{ key }}Wrapper">
+                                        <label class="single-input-object-label" for="{{ key }}Input"
+                                               data-single-input-object="{{ key }}"
+                                               data-single-input-object-type="{{ value|get:'@type' }}">
+                                            {{ key|camel_to_spaces_lower }}
+                                        </label>
+                                        <div class="custom-tooltip-metadata">
+                                            <span class="tooltip-text-metadata">
+                                                {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
+                                            </span>
+                                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                        </div>
+                                        <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" value="{{ value|prepare_single|escape }}">
+                                        <div class="single-object-container" id="{{ key }}Object">
+                                            <input type="text" id="{{ key }}Input" name="{{ key }}" data-single-input-object="true" placeholder="Identifier..." value="{{ value|get:'identifier' }}" />
+                                        </div>
+                                    </div>
+                                    {% elif type_metadata|get:key == "single_inputs" or type_metadata|get:key == "long_field"  %}
+                                    <!-- Single input and long field element -->
+                                    <div class={{type_metadata|get:key}}>
+                                        <label for="{{ key }}">{{ key|camel_to_spaces_lower }}</label>
+                                        <div class="custom-tooltip-metadata">
+                                            <span class="tooltip-text-metadata">
+                                                {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
+                                            </span>
+                                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                        </div>
+                                        <input title="{{ value }}" id="{{ key }}" name="{{ key }}" type="text" value="{{ value }}"><br>
+                                    </div>
+                                    {% elif type_metadata|get:key == "big_field" %}
+                                    <!-- Single input and long field element -->
+                                    <div class={{type_metadata|get:key}}>
+                                        <label for="{{ key }}">{{ key|camel_to_spaces_lower }}</label>
+                                        <div class="custom-tooltip-metadata">
+                                            <span class="tooltip-text-metadata">
+                                                {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
+                                            </span>
+                                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                        </div>
+                                        <textarea title="{{ value }}" id="{{ key }}" name="{{ key }}" rows="3">{{ value }}</textarea><br>
+                                    </div>
+                                    {% elif forloop.first or not unique_tab %}
+                                    <!-- small_table -->
+                                    <div class="long_field">
+                                        {% with specific_types=type_metadata|get_array:key default_type=value.0|get:"@type"%}
+                                        {% if not unique_tab %}
+                                        <label for="{{ key }}">{{ key|camel_to_spaces_lower }}</label>
+                                        <div class="custom-tooltip-metadata">
+                                            <span class="tooltip-text-metadata">
+                                                {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
+                                            </span>
+                                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                        </div>                                        
+                                        {% endif %}
+                                        <input type="hidden" id="{{ key }}TableHiddenInput" name="{{ key }}TableHiddenInput"
+                                               value='{{ value }}'>
+                                        <table class="auto-property-table" id="{{ key }}Table" data-at-type={{default_type}} unique-tab={{unique_tab}}>
+                                            <thead>
+                                                <tr>
+                                                    {% for col, value in specific_types.items %}
+                                                    <th data-col="{{ col }}" data-coltype="{{ value }}">
+                                                        {{ col|camel_to_spaces_lower }}
+                                                        <div class="custom-tooltip-metadata">
+                                                            <span class="tooltip-text-metadata">
+                                                                {% if col in description_metadata %}{{ description_metadata|get:col }}{% endif %}
+                                                            </span>
+                                                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                                        </div>
+                                                    </th>
+                                                    {% endfor %}
+                                                    {% if unique_tab %}
+                                                    {% for col, value in metadata_dict.items %}
+                                                    <th data-col="{{ col }}" data-coltype="element">
+                                                        {{ col|camel_to_spaces_lower }}
+                                                        <div class="custom-tooltip-metadata">
+                                                            <span class="tooltip-text-metadata">
+                                                                {% if col in description_metadata %}{{ description_metadata|get:col }}{% endif %}
+                                                            </span>
+                                                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                                        </div>
+                                                    </th>
+                                                    {% endfor %}
                                                     {% endif %}
-                                                </td>
-                                                {% elif value == 'dropdown' %}
-                                                <td class="tags-table-container add-row-tags-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
-                                                    <select class="add-row-dropdown-select"
-                                                            data-type="{{ default_type }}"
-                                                            data-coltype="{{ value }}"
-                                                            data-col="{{ col }}">
-                                                        <option value="">Select...</option>
-                                                        <!-- Options will be populated by JS -->
-                                                    </select>
-                                                </td>
-                                                {% else %}
-                                                <td class="tags-table-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
-                                                    <input type="text" class="add-row-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="{{ col|camel_to_spaces_lower }}"/>
-                                                </td>
+                                                    <th data-col="del" data-coltype="delete">Row Control</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for row in value %}
+                                                {% if row|row_has_values:specific_types.keys %}
+                                                <tr>
+                                                    {% for col, value in specific_types.items %}
+                                                    {% if value == 'tagging' or value == 'tagging_autocomplete' or value == 'dropdown' %}
+                                                    <td class="table-tagging-cell" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" data-row="{{ forloop.parentloop.counter0 }}">
+                                                        <div class="tags-list">
+                                                            {% for tag in row|get:col %}
+                                                            <span class="tag" data-tag="{{ tag }}">{{ tag }} <span class="remove-tag" data-tag="{{ tag }}">×</span></span>
+                                                            {% endfor %}
+                                                        </div>
+                                                        {% if value == 'tagging' %}
+                                                        <input class="tag-input" type="text" style="display:none;" placeholder="Add tag and press Enter" />
+                                                        {% else %}
+                                                        <input class="tag-input" type="text" style="display:none;" placeholder="Type and select from list" />
+                                                        {% endif %}
+                                                    </td>
+                                                    {% else %}
+                                                    <td>{{ row|get:col }} </td>
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                    {% if unique_tab %}
+                                                    {% for col, value in metadata_dict.items %}
+                                                    <td data-col="{{ col }}" data-coltype="element">
+                                                        {% if col == key %}
+                                                        <input type="checkbox" class="checkbox-element" data-role="{{ col }}" name="checkbox-{{ col }}" checked>
+                                                        {% elif col == "author" %}
+                                                        <input type="checkbox" class="checkbox-element" data-role="{{ col }}" name="checkbox-{{ col }}" {% if metadata_dict|check_author:contributor %}checked{% endif %}>
+                                                        {% elif col == "maintainer" %}
+                                                        <input type="checkbox" class="checkbox-element" data-role="{{ col }}" name="checkbox-{{ col }}" {% if metadata_dict|check_maintainer:contributor %}checked{% endif %}>
+                                                        {% else %}
+                                                        <input type="checkbox" class="checkbox-element" data-role="{{ col }}" name="checkbox-{{ col }}">
+                                                        {% endif %}
+                                                    </td>
+                                                    {% endfor %}
+                                                    {% endif %}
+                                                    <td>
+                                                        <i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i>
+                                                    </td>
+                                                </tr>
                                                 {% endif %}
                                                 {% endfor %}
-                                                {% if unique_tab %}
-                                                {% for col, value in metadata_dict.items %}
-                                                <td data-col="{{ col }}" data-coltype="element">                                                    
-                                                    <input type="checkbox" class="checkbox-element" data-role="{{ col }}" name="checkbox-{{ col }}">
-                                                </td>
-                                                {% endfor %}
-                                                {% endif %}
-                                                <td>
-                                                    <button type="button" class="add-row-btn" data-table-key="{{ key }}">Add</button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                <!-- Add Row Inputs -->
+                                                <tr class="add-row-controls" data-table-key="{{ key }}">
+                                                    {% for col, value in specific_types.items %}
+                                                    {% if value == 'tagging' or value == 'tagging_autocomplete' %}
+                                                    <td class="tags-table-container add-row-tags-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
+                                                        <!-- Tags will be inserted here by JS -->
+                                                        {% if value == "tagging" %}
+                                                        <input type="text" class="add-row-tag-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Add tag for {{col|camel_to_spaces_lower}} and press Enter" />
+                                                        {% else %}
+                                                        <input type="text" class="add-row-tag-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Type and select from list for {{col|camel_to_spaces_lower}}" />
+                                                        {% endif %}
+                                                    </td>
+                                                    {% elif value == 'dropdown' %}
+                                                    <td class="tags-table-container add-row-tags-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
+                                                        <select class="add-row-dropdown-select"
+                                                                data-type="{{ default_type }}"
+                                                                data-coltype="{{ value }}"
+                                                                data-col="{{ col }}">
+                                                            <option value="">Select...</option>
+                                                            <!-- Options will be populated by JS -->
+                                                        </select>
+                                                    </td>
+                                                    {% else %}
+                                                    <td class="tags-table-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
+                                                        <input type="text" class="add-row-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="{{ col|camel_to_spaces_lower }}" />
+                                                    </td>
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                    {% if unique_tab %}
+                                                    {% for col, value in metadata_dict.items %}
+                                                    <td data-col="{{ col }}" data-coltype="element">
+                                                        <input type="checkbox" class="checkbox-element" data-role="{{ col }}" name="checkbox-{{ col }}">
+                                                    </td>
+                                                    {% endfor %}
+                                                    {% endif %}
+                                                    <td>
+                                                        <button type="button" class="add-row-btn" data-table-key="{{ key }}">Add</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                         {% endwith %}
                                     </div>
-                                {% endif %}
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                                <div class="navigation-buttons">
+                                    {% if not forloop.first %}
+                                    <button class="backwardBtn"></button>
+                                    {% endif %}
+                                    {% if not forloop.last %}
+                                    <button class="forwardBtn"></button>
+                                    {% else %}
+                                    <button class="ExData" id="downloadBtn" title="Download the JSON file.">Download JSON</button>
+                                    {% endif %}
+                                </div>
                             </div>
-                            {% endfor %}
-                            <div class="navigation-buttons">
-                                {% if not forloop.first %}
-                                <button class="backwardBtn"></button>
-                                {% endif %}
-                                {% if not forloop.last %}
-                                <button class="forwardBtn"></button>
-                                {% else %}
-                                <button class="ExData" id="downloadBtn" title="Download the JSON file.">Download JSON</button>
-                                {% endif %}
-                            </div>
+                            <!-- tab_contributors -->
+                            {% if unique_tab %}
                         </div>
-                        <!-- tab_contributors -->
+                        {% endif %}
                         {% endwith %}
                         {% endfor %}
                         <!-- </form> -->
                     </div>
-            </form>
+</form>
         </div> <!-- tabs -->
     <!-- Showing extracted metadata as JSON format in the textarea -->
     <div id="metadataFormDisplay" class="metadata-form-display">

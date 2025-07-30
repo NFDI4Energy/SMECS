@@ -88,7 +88,7 @@ export function setupTagging({
         updateHidden();
         input.value = "";
         if (suggestionsBox) suggestionsBox.style.display = "none";
-        input.classList.remove("invalid"); // Remove invalid color immediately
+        input.classList.remove("invalid", "invalid-required", "invalid-recommended"); // Remove invalid color immediately
     }
 
     // Show yellow tag once if any tag exists
@@ -96,6 +96,12 @@ export function setupTagging({
         const highlightTag = document.createElement("span");
         highlightTag.classList.add("highlight-tag");
         highlightTag.innerHTML = `⚠️ Suggestion: Curate here <span class="acknowledge-tag">Got it!</span>`;
+        container.insertBefore(highlightTag, input);
+    }
+    else if (!useAutocomplete) {
+        const highlightTag = document.createElement("span");
+        highlightTag.classList.add("highlight-tag");
+        highlightTag.innerHTML = `⚠️ Multiple entries supported: please press enter after typing each <span class="acknowledge-tag">Got it!</span>`;
         container.insertBefore(highlightTag, input);
     }
 
@@ -162,11 +168,8 @@ export function setupTagging({
 
             // Position the suggestion box
             const rect = input.getBoundingClientRect();
+            updateSuggestionsBoxPosition(input, suggestionsBox)
             suggestionsBox.style.position = "fixed";
-            suggestionsBox.style.left = rect.left + "px";
-            suggestionsBox.style.top = rect.bottom + "px";
-            suggestionsBox.style.width = rect.width + "px";
-            suggestionsBox.style.display = "block";
         });
 
         document.addEventListener("click", (e) => {

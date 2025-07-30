@@ -177,6 +177,7 @@ export function setMandatoryFieldsFromSchema() {
           }
           if (label && !label.innerHTML.includes("*")) {
             const asterisk = document.createElement("span");
+            asterisk.className = 'asterisk';
             asterisk.style.color = "red";
             asterisk.style.fontSize = "18px";
             asterisk.textContent = "*";
