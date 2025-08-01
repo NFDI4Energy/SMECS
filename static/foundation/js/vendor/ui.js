@@ -103,10 +103,15 @@ export function setupUI() {
 
   // Initialize the state on page load
   window.onload = function () {
+    const toggleSwitch = document.getElementById("toggleSwitch");
+    if (window.screen.width <= 990) {
+      toggleSwitch.checked = false;
+    }
+
     toggleSection();
-    document
-      .getElementById("toggleSwitch")
-      .addEventListener("change", toggleSection);
+
+    toggleSwitch.addEventListener("change", toggleSection);
+    window.addEventListener("resize", toggleSection);
   };
   //highlightsURLs
   highlightEditableUrls(urlInputs);
@@ -137,6 +142,13 @@ function toggleSection() {
   var toggleSwitch = document.getElementById("toggleSwitch");
   var personInfoElements = document.querySelectorAll(".person-info"); // Select all elements with the class 'person-info'
 
+  if (window.screen.width <= 990 && toggleSwitch.checked == false) {
+    formContainer.style.height = "100%";
+  } else if (window.screen.width <= 990 && toggleSwitch.checked) {
+    formContainer.style.height = "50%";
+  } else {
+    formContainer.style.height = "100%";
+  }
   if (toggleSwitch.checked) {
     metadataFormDisplay.style.display = "block";
     formContainer.classList.remove("col-lg-12");
@@ -321,5 +333,18 @@ function initAutoCloseCollapses(collapseSelector = ".collapsible-content") {
           }
         });
     });
+  });
+  //  Add click listener to close collapses when clicking outside
+  document.addEventListener("click", function (e) {
+    const isInsideToggle = e.target.closest('[data-bs-toggle="collapse"]');
+    const isInsideCollapse = e.target.closest(collapseSelector);
+
+    if (!isInsideToggle && !isInsideCollapse) {
+      document
+        .querySelectorAll(`${collapseSelector}.show`)
+        .forEach((openCollapse) => {
+          new bootstrap.Collapse(openCollapse, { toggle: false }).hide();
+        });
+    }
   });
 }

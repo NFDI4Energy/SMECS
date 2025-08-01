@@ -218,7 +218,9 @@
                                                 </span>
                                                 {% endif %}
                                                 {% endfor %}
-                                                <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type and select from list" />
+                                               
+                                                <input type="text" id="{{ key }}Input"  class=" searchable-dropdown" name="{{ key }}" placeholder="Search and select from the list" />
+                                                
                                             </div>
                                             <div id="{{ key }}Suggestions" class="tag-suggestions"></div>
                                         </div>
@@ -274,6 +276,10 @@
                                              <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapseAuthors" aria-expanded="false" aria-controls="multiCollapseAuthors">Who are Authors?</button>
                                             <div class="person-info collapsible-content collapse" id="multiCollapseAuthors">
                                                 <p>An "author" in software authorship is someone who significantly contributes to the creation and development of software, including roles like coding, project management, and documentation.</p>
+                                            </div>
+                                             <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapseMaintainer" aria-expanded="false" aria-controls="multiCollapseMaintainer">Who are Maintainer?</button>
+                                            <div class="person-info collapsible-content collapse" id="multiCollapseMaintainer">
+                                                <p>An "maintainer" in software authorship is someone who significantly maintainers to the creation and development of software, including roles like coding, project management, and documentation.</p>
                                             </div>
                                             </div>
                                             {% endif %}

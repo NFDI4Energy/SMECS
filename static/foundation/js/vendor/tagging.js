@@ -247,7 +247,11 @@ export function setupTagging({
 
   // Remove tag logic
   container.addEventListener("click", (e) => {
-    if (e.target.classList.contains("remove-tag")) {
+    const isRemove = e.target.classList.contains("remove-tag");
+    const isTag = e.target.classList.contains("tag");
+
+    // 🔴 Remove tag logic
+    if (isRemove) {
       const value = e.target.dataset.value;
       if (taggingType === "tagging_object") {
         selectedTags = selectedTags.filter((item) => item.identifier !== value);
@@ -257,8 +261,24 @@ export function setupTagging({
       e.target.parentElement.remove();
       updateHidden();
     }
-    if (e.target.classList.contains("acknowledge-tag")) {
-      e.target.parentElement.remove();
+
+    // 🟡 Edit tag logic
+    if (isTag) {
+      const value = e.target.dataset.value;
+
+      // Remove from list
+      if (taggingType === "tagging_object") {
+        selectedTags = selectedTags.filter((item) => item.identifier !== value);
+      } else {
+        selectedTags = selectedTags.filter((tag) => tag !== value);
+      }
+
+      updateHidden();
+      renderTags();
+
+      // Populate input for editing
+      input.value = value;
+      input.focus();
     }
   });
 
@@ -308,6 +328,8 @@ export function setupTagging({
 
   // Initial render
   renderTags();
+  enableEditableTagsInTable();
+  setupAcknowledgeTags();
 }
 
 export function initializeTaggingFields() {
@@ -572,5 +594,64 @@ export function setupTableTagAutocomplete({ cell, autocompleteSource }) {
       input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
     },
     container: cell,
+  });
+}
+export function enableEditableTagsInTable() {
+  document.querySelectorAll(".table-tagging-cell").forEach((cell) => {
+    const tagList = cell.querySelector(".tags-list");
+    const input = cell.querySelector(".tag-input");
+
+    if (!tagList || !input) return;
+
+    // ✅ Only add one listener (delegated)
+    if (!tagList.dataset.bound) {
+      tagList.addEventListener("click", (e) => {
+        if (e.target.closest(".highlight-tag")) return;
+
+        const tagEl = e.target.closest(".tag");
+        const removeEl = e.target.closest(".remove-tag");
+
+        if (!tagEl || !tagList.contains(tagEl)) return;
+
+        const tagValue = tagEl.dataset.tag;
+
+        if (removeEl) {
+          tagEl.remove(); // delete tag
+          return;
+        }
+        //First click both removes tag and enables input
+        e.preventDefault();
+        e.stopPropagation();
+        // Edit tag
+        tagEl.remove();
+        input.style.display = "inline-block";
+        input.value = tagValue;
+        input.focus();
+      });
+
+      tagList.dataset.bound = "true"; // Prevent multiple bindings
+    }
+
+    // Hide input when empty and blurred
+    if (!input.dataset.bound) {
+      input.addEventListener("blur", () => {
+        if (input.value.trim() === "") {
+          input.style.display = "none";
+        }
+      });
+
+      input.dataset.bound = "true"; // ✅ Prevent rebinding blur
+    }
+  });
+}
+function setupAcknowledgeTags() {
+  document.querySelectorAll(".acknowledge-tag").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      const wrapper = el.closest(".highlight-tag");
+      if (wrapper) {
+        wrapper.style.display = "none";
+        e.stopPropagation(); // prevent tag click logic from hijacking this
+      }
+    });
   });
 }

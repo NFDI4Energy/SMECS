@@ -1011,6 +1011,7 @@ div.input-container input::placeholder {
   overflow: overlay;
   margin: 2px;
   width: 100%;
+  height: 100%;
 }
 
 .full-width {
@@ -1255,11 +1256,12 @@ input:checked + .slider:before {
 
 /********************* Responsiveness  **********************/
 @media (min-width: 300px) and (max-width: 990px) {
-  #metadata-json {
-    height: 30%;
+  .form-container {
+    height: 50%;
   }
   .main-container {
-    display: list-item;
+    /* display: list-item; */
+    flex-wrap: wrap;
   }
 }
 
@@ -1619,6 +1621,12 @@ div div p#contributor-explanation {
   font-weight: bold;
   text-align: left;
 }
+.collapsible-button:focus {
+  background-color: #055f82;
+  color: white;
+  border-radius: 5px;
+  font-weight: normal;
+}
 
 .highlight-tag {
   background-color: #fef6da;
@@ -1688,4 +1696,17 @@ select:focus {
 select option:checked {
   background-color: #055f82;
   color: white;
+}
+/* dropdown searcable */
+
+.searchable-dropdown {
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23333' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px 16px;
+  cursor: pointer;
+}
+
+.searchable-dropdown:focus::placeholder {
+  color: transparent;
 }
