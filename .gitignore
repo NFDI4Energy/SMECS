@@ -19,3 +19,7 @@ env/
 .hermes/process/hermes.json
 hermes.log
 hermes.toml
+
+*.sln
+*.pyproj
+*.user

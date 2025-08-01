@@ -524,6 +524,7 @@ div.error-container a:hover {
   white-space: nowrap;
 }
 
+/* for the add-row-control row (last row) */
 tr.add-row-controls,
 tr.add-row-controls td {
   display: table-row;
@@ -559,6 +560,7 @@ tr.add-row-controls td {
   font-size: 1em;
 }
 
+/* Set properties for tags-list */
 .auto-property-table td .tags-list {
   width: auto !important;
   display: flex;
@@ -780,6 +782,22 @@ div.input-container input::placeholder {
   position: relative;
   display: inline-block;
   cursor: pointer;
+}
+
+.label-content,
+label > .asterisk,
+label > .fa-info-circle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em; /* optional: space between elements */
+}
+
+.asterisk {
+  color: red;
+  font-size: 1em; /* match the label font size */
+  font-weight: bold;
+  line-height: 1;
+  vertical-align: middle;
 }
 
 .fa-info-circle {

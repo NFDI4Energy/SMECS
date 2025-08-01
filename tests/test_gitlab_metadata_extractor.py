@@ -44,7 +44,7 @@ class test_gitlab_metadata_extractor(unittest.TestCase):
             result, "Failed to convert metadata to JSON format")
 
     def test_validate_codemeta(self):
-        json_data = {'@context': 'https://doi.org/10.5063/schema/codemeta-2.0',
+        json_data = {'@context': 'https://w3id.org/codemeta/3.0',
                      '@type': 'SoftwareSourceCode', 'name': 'TestProject'}
         result = validate_codemeta(json_data)
         self.assertTrue(result, "Failed to validate Codemeta JSON")
