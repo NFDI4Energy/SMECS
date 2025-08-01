@@ -13,6 +13,7 @@ import {
   updateSuggestionsBoxPosition,
   setupTableTagAutocomplete,
   createSuggestionsBox,
+  enableEditableTagsInTable,
 } from "./tagging.js";
 
 const metadataJson = document.getElementById("metadata-json");
@@ -217,7 +218,6 @@ export function setupTables() {
       const inputs = addRowControls.querySelectorAll(
         ".add-row-input, .add-row-tag-input, .add-row-dropdown-select"
       );
-      console.log({ inputs });
       const values = Array.from(inputs).map((input) => input.value.trim());
 
       // Prevent adding if all fields are empty
@@ -248,6 +248,7 @@ export function setupTables() {
         const col = input ? input.getAttribute("data-col") : null;
         const dataType = table.getAttribute("data-at-type");
         const td = document.createElement("td");
+        td.className = "text-center";
         console.log({ header, input, col, colType, dataType });
         if (colType === "element") {
           // Find the checkbox in the add-row-controls row
@@ -336,6 +337,8 @@ export function setupTables() {
         newRow.appendChild(td);
       }
       const deleteTd = document.createElement("td");
+      deleteTd.className = "d-flex justify-content-center align-items-center";
+      deleteTd.style.height = "50px";
       deleteTd.innerHTML =
         '<i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i>';
       newRow.appendChild(deleteTd);
@@ -344,7 +347,7 @@ export function setupTables() {
       addRowControls.parentNode.insertBefore(newRow, addRowControls);
 
       initializeTableTaggingCells();
-
+      enableEditableTagsInTable();
       // Clear input fields
       inputs.forEach((input) => {
         if (input.tagName === "SELECT") {
@@ -358,7 +361,7 @@ export function setupTables() {
       updateTableHiddenInput(key);
 
       // Remove color
-      addRowControls.classList.remove('invalid-required', 'invalid-recommended');
+      addRowControls.classList.remove("invalid");
     });
   });
 
@@ -412,7 +415,10 @@ export function setupTables() {
         });
         // Position suggestions below the input
         const inputRect = input.getBoundingClientRect();
-        updateSuggestionsBoxPosition(input, suggestionsBox);
+        suggestionsBox.style.left = inputRect.left + "px";
+        suggestionsBox.style.top = inputRect.bottom + "px";
+        suggestionsBox.style.width = input.offsetWidth + "px";
+        suggestionsBox.style.display = "block";
       });
 
       input.addEventListener("focus", function () {
@@ -480,9 +486,7 @@ export function setupTables() {
             .map((opt) => `<option value="${opt}">${opt}</option>`)
             .join("");
         // Replace the input with the select
-        if (input) {
-          input.style.display = 'none';
-        }
+        input.style.display = "none";
         container.appendChild(select);
 
         // On change, update addRowTags or values as needed
@@ -645,18 +649,17 @@ export function highlightEmptyAddRowControls() {
       );
       if (!addRowControls) return;
 
-        addRowControls.classList.remove('invalid-required', 'invalid-recommended');
-
-        const tbody = table.querySelector('tbody');
-        const dataRows = tbody
-            ? Array.from(tbody.querySelectorAll('tr')).filter(row => !row.classList.contains('add-row-controls'))
-            : [];
-
-        if (required.includes(key) && dataRows.length === 0) {
-            addRowControls.classList.add('invalid-required');
-        } else if (recommended.includes(key) && dataRows.length === 0) {
-            addRowControls.classList.add('invalid-recommended');
+      if (allMandatory.includes(key)) {
+        const tbody = table.querySelector("tbody");
+        const rows = tbody ? tbody.querySelectorAll("tr") : [];
+        if (rows.length === 0) {
+          addRowControls.classList.add("invalid");
+        } else {
+          addRowControls.classList.remove("invalid");
         }
+      } else {
+        addRowControls.classList.remove("invalid");
+      }
     });
   });
 }
@@ -729,9 +732,7 @@ export function initializeTableTaggingCells() {
           function finalizeSelection() {
             const selectedValue = select.value;
             cell.setAttribute("data-value", selectedValue);
-            setTimeout(() => {
-              cell.innerHTML = selectedValue;
-            }, 0);
+            cell.innerHTML = selectedValue;
 
             // Remove this event listener to avoid duplicate dropdowns
             cell.removeEventListener("click", handleDropdownCellClick);

@@ -4,11 +4,7 @@ Tabs and navigation buttons
 Toggle switch visibility for form sections
 Tooltips
 */
-import {
-  getSchema,
-  getFieldKey,
-  fetchRequiredAndRecommendedFields,
-} from "./schema-utils.js";
+import { getSchema } from "./schema-utils.js";
 const metadataJson = document.getElementById("metadata-json");
 const urlInputs = document.querySelectorAll(".url-input");
 const tabs_ext = document.querySelectorAll(".tab-links_ext a");
@@ -83,47 +79,20 @@ export function setupUI() {
   document
     .querySelectorAll(".custom-tooltip-metadata")
     .forEach(function (element) {
-        const tooltip = element.querySelector(".tooltip-text-metadata");
-        const icon = element.querySelector("i");
-
-        // Helper to get scale factor from parent (default 1)
-        function getScaleFactor(el) {
-            let scale = 1;
-            let parent = el;
-            while (parent) {
-                const transform = window.getComputedStyle(parent).transform;
-                if (transform && transform !== "none") {
-                    const match = transform.match(/matrix\(([^,]+),[^,]+,[^,]+,[^,]+,[^,]+,[^,]+\)/);
-                    if (match) {
-                        scale *= parseFloat(match[1]);
-                    }
-                }
-                parent = parent.parentElement;
-            }
-            return scale;
-        }
-
-
-        element.addEventListener("mouseenter", function () {
-          tooltip.style.display = "block";
-          tooltip.style.visibility = "visible";
-          tooltip.style.opacity = "1";
-          tooltip.style.position = "absolute";
-          tooltip.style.zIndex = "9999";
-          const rect = icon.getBoundingClientRect();
-          const margin = 16;
-
-          // Find the scale factor (if any) from the closest scaled parent
-          const scale = getScaleFactor(icon.parentElement);
-          console.info("Tooltip scale factor:", scale);
-
-          // Adjust position for scale
-          //let left = rect.right * scale;
-          //let top = (rect.top + margin) * scale;
-          let left = 16;
-          let top = 16;
-          tooltip.style.left = left + "px";
-          tooltip.style.top = top + "px";
+      const tooltip = element.querySelector(".tooltip-text-metadata");
+      const icon = element.querySelector("i");
+      element.addEventListener("mouseenter", function () {
+        tooltip.style.display = "block";
+        tooltip.style.visibility = "visible";
+        tooltip.style.opacity = "1";
+        tooltip.style.position = "fixed";
+        tooltip.style.zIndex = "9999";
+        const rect = icon.getBoundingClientRect();
+        const margin = 16;
+        let left = rect.right;
+        let top = rect.top + margin;
+        tooltip.style.left = left + "px";
+        tooltip.style.top = top + "px";
       });
       element.addEventListener("mouseleave", function () {
         tooltip.style.display = "none";
@@ -134,13 +103,19 @@ export function setupUI() {
 
   // Initialize the state on page load
   window.onload = function () {
+    const toggleSwitch = document.getElementById("toggleSwitch");
+    if (window.screen.width <= 990) {
+      toggleSwitch.checked = false;
+    }
+
     toggleSection();
-    document
-      .getElementById("toggleSwitch")
-      .addEventListener("change", toggleSection);
+
+    toggleSwitch.addEventListener("change", toggleSection);
+    window.addEventListener("resize", toggleSection);
   };
   //highlightsURLs
   highlightEditableUrls(urlInputs);
+  initAutoCloseCollapses();
 }
 
 // pop-up message for Contributor and Author tabs
@@ -167,17 +142,26 @@ function toggleSection() {
   var toggleSwitch = document.getElementById("toggleSwitch");
   var personInfoElements = document.querySelectorAll(".person-info"); // Select all elements with the class 'person-info'
 
+  if (window.screen.width <= 990 && toggleSwitch.checked == false) {
+    formContainer.style.height = "100%";
+  } else if (window.screen.width <= 990 && toggleSwitch.checked) {
+    formContainer.style.height = "50%";
+  } else {
+    formContainer.style.height = "100%";
+  }
   if (toggleSwitch.checked) {
     metadataFormDisplay.style.display = "block";
-    formContainer.classList.remove("full-width");
-    formContainer.classList.add("half-width");
+    formContainer.classList.remove("col-lg-12");
+    formContainer.classList.add("col-lg-9");
+    metadataFormDisplay.classList.add("col-lg-3");
     personInfoElements.forEach(function (element) {
       // element.style.width = '57%';
     });
   } else {
     metadataFormDisplay.style.display = "none";
-    formContainer.classList.remove("half-width");
-    formContainer.classList.add("full-width");
+    formContainer.classList.remove("col-lg-9");
+    formContainer.classList.add("col-lg-12");
+    metadataFormDisplay.classList.remove("col-lg-3");
     personInfoElements.forEach(function (element) {
       element.style.width = "70%";
     });
@@ -238,16 +222,14 @@ export function validateInput(input) {
   ];
   if (skipValidationIds.includes(input.id)) {
     return; // Skip validation for the specified inputs
-    }
-
-   // Always remove highlight classes before validation
-   input.classList.remove("invalid", "invalid-required", "invalid-recommended");
+  }
 
   // Fetch schema and validate only if field is required or recommended
   getSchema()
     .then((schema) => {
       const { required, recommended } =
         fetchRequiredAndRecommendedFields(schema);
+      const allMandatory = [...required, ...recommended];
 
       // --- Tagging support ---
       // If input is inside a tags-container, validate the hidden input instead
@@ -264,19 +246,21 @@ export function validateInput(input) {
             : null;
           const key = getFieldKey(hiddenInput);
 
-          if (required.includes(key)) {
-            if (
-              (taggingType === "tagging_object" && isTaggingObjectEmpty(tagsContainer)) ||
-              (taggingType !== "tagging_object" && hiddenInput.value.trim() === "")
-               ) {
-                 input.classList.add("invalid-required");
-            }
-          } else if (recommended.includes(key)) {
-            if (
-              (taggingType === "tagging_object" && isTaggingObjectEmpty(tagsContainer)) ||
-              (taggingType !== "tagging_object" && hiddenInput.value.trim() === "")
-               ) {
-                 input.classList.add("invalid-recommended");
+          if (allMandatory.includes(key)) {
+            if (taggingType === "tagging_object") {
+              // Check number of tags in the container
+              if (isTaggingObjectEmpty(tagsContainer)) {
+                input.classList.add("invalid");
+              } else {
+                input.classList.remove("invalid");
+              }
+            } else {
+              // For normal tagging, check hidden input
+              if (hiddenInput.value.trim() === "") {
+                input.classList.add("invalid");
+              } else {
+                input.classList.remove("invalid");
+              }
             }
           } else {
             input.classList.remove("invalid");
@@ -287,19 +271,19 @@ export function validateInput(input) {
 
       // --- Standard input/select validation ---
       const key = getFieldKey(input);
-      if (required.includes(key)) {
+      if (allMandatory.includes(key)) {
         if (input.value.trim() === "") {
-                input.classList.add("invalid-required");
+          input.classList.add("invalid");
+        } else {
+          input.classList.remove("invalid");
         }
-      } else if (recommended.includes(key)) {
-          if (input.value.trim() === "") {
-              input.classList.add("invalid-recommended");
-          }
+      } else {
+        input.classList.remove("invalid");
       }
     })
     .catch(() => {
-        // On schema load error, fallback to no validation
-        input.classList.remove("invalid", "invalid-required", "invalid-recommended");
+      // On schema load error, fallback to no validation
+      input.classList.remove("invalid");
     });
 }
 
@@ -333,4 +317,34 @@ export function loadpage() {
   if (form && overlay) {
     lodder("form1", "overlay");
   }
+}
+
+function initAutoCloseCollapses(collapseSelector = ".collapsible-content") {
+  document.querySelectorAll('[data-bs-toggle="collapse"]').forEach((button) => {
+    button.addEventListener("click", function () {
+      const targetId = this.getAttribute("data-bs-target");
+      const targetCollapse = document.querySelector(targetId);
+
+      document
+        .querySelectorAll(`${collapseSelector}.show`)
+        .forEach((openCollapse) => {
+          if (openCollapse !== targetCollapse) {
+            new bootstrap.Collapse(openCollapse, { toggle: false }).hide();
+          }
+        });
+    });
+  });
+  //  Add click listener to close collapses when clicking outside
+  document.addEventListener("click", function (e) {
+    const isInsideToggle = e.target.closest('[data-bs-toggle="collapse"]');
+    const isInsideCollapse = e.target.closest(collapseSelector);
+
+    if (!isInsideToggle && !isInsideCollapse) {
+      document
+        .querySelectorAll(`${collapseSelector}.show`)
+        .forEach((openCollapse) => {
+          new bootstrap.Collapse(openCollapse, { toggle: false }).hide();
+        });
+    }
+  });
 }
