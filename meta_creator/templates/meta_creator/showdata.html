@@ -24,9 +24,9 @@
                 <ul class="tab-links_ext">
                     {% for tab_name, metadata_dict in extracted_metadata.items %}
                     {% if forloop.first %}
-                    <li class="active"><a href="#{{tab_name}}">{{tab_name|camel_to_spaces_lower}}</a></li>
+                    <li class="active"><a href="#{{tab_name}}" title="{{ description_metadata|get:tab_name }}">{{tab_name|camel_to_spaces_lower}}</a></li>
                     {% else %}
-                    <li><a href="#{{tab_name}}">{{tab_name|camel_to_spaces_lower}}</a></li>
+                    <li><a href="#{{tab_name}}" title="{{ description_metadata|get:tab_name }}">{{tab_name|camel_to_spaces_lower}}</a></li>
                     {% endif %}
                     {% endfor %}
                 </ul>
