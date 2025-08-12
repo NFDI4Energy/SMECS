@@ -327,8 +327,27 @@ form.data-form3 {
 }
 
 .tab .form-group {
-  width: 90%;
-  margin: 0px 0% 1% 9%;
+
+    width: 90%;
+    margin: 5% 0% 0% 5%;
+    text-align: left;
+    display: block;
+}
+
+.tab-description {
+    background: #f5f7fa;
+    border-left: 4px solid #0078d4;
+    color: #222;
+    padding: 0em 0em;
+    margin-bottom: 0em;
+    border-radius: 4px;
+    font-size: 1.08em;
+    font-style: italic;
+    text-align: center;
+    width: 90%;
+    margin-left: 0;
+    margin-right: 0;
+    margin: 0 auto 0 auto;
 }
 
 .form-group label {
@@ -336,13 +355,13 @@ form.data-form3 {
   font-weight: bold;
 }
 
-.form-group input[type="text"],
-select {
-  width: 110%;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  transition: border-color 0.2s ease-in-out;
+
+.form-group .single_inputs input[type="text"], .single_inputs select {
+    width: 110%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    transition: border-color 0.2s ease-in-out;
 }
 
 /* style for general single input elements */
@@ -352,6 +371,7 @@ select {
   margin-right: 10%;
   margin-bottom: 0.2%;
   box-sizing: border-box;
+
 }
 
 .form-group input[type="text"]:focus,
@@ -362,12 +382,44 @@ select:focus {
 
 /* style for general single input elements with longer values */
 .form-group .long_field {
-  width: 85%;
-  margin-bottom: 0.2%;
-  margin-right: 10%;
-  float: left;
-  box-sizing: border-box;
+
+    width: 100%;
+    margin-bottom: 0.1em;
+    float: left;
+    box-sizing: border-box;
 }
+
+    .form-group .long_field input[type="text"], select {
+        width: 100%;
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        transition: border-color 0.2s ease-in-out;
+    }
+
+
+.form-group .big_field {
+    width: 100%;
+    margin-bottom: 0.1em;
+    margin-right: 10%;
+    float: left;
+    box-sizing: border-box;
+}
+
+    .form-group .big_field textarea {
+        width: 100%;
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        transition: border-color 0.2s ease-in-out;
+        min-height: 5em; /* or rows="3" in HTML */
+        resize: vertical;
+        font-size: 1em;
+        line-height: 1.5;
+        box-sizing: border-box;
+        white-space: pre-wrap; /* Allow line breaks */
+        word-break: break-word; /* Break long words */
+    }
 
 .form-group legend {
   font-size: 0.8em;
@@ -380,6 +432,7 @@ select:focus {
   border: 1px solid #ada8a8;
   border-radius: 4px;
 }
+
 
 .form-group fieldset.fieldset_content,
 .form-group fieldset.copyrightHolder {
@@ -398,6 +451,7 @@ select:focus {
   font-size: 98%;
 }
 
+
 .data-form3 label:first-letter {
   text-transform: uppercase;
 }
@@ -407,6 +461,7 @@ select:focus {
 }
 
 .form-group fieldset input[type="text"] {
+
   width: 97%;
   padding: 8px;
   border-radius: 4px;
@@ -439,10 +494,19 @@ select:focus {
   border-radius: 4px;
   margin-bottom: 2px;
 }
-
 .invalid {
   border: 1px solid rgba(226, 7, 7, 0.535);
   background-color: rgba(225, 94, 94, 0.377);
+
+input.invalid-required, textarea.invalid-required, select.invalid-required {
+    border: 2px solid #ff0000;
+    background-color: #ffd6d6;
+}
+
+input.invalid-recommended, textarea.invalid-recommended, select.invalid-recommended {
+    border: 2px solid #ffe066;
+    background-color: #fef6da;
+
 }
 
 button#new-url {
@@ -489,41 +553,46 @@ div.error-container a:hover {
 }
 
 /********************************* Style for auto table **********************************/
-
-/* Fixed width and equal column distribution for auto-property-table */
+/* Flexible columns distribution */
 .auto-property-table {
-  margin-top: 8px;
-  width: 115%; /* Same as .long_field */
-  min-width: 500px; /* Optional: for usability */
-  table-layout: auto; /* Ensures equal column width */
-  margin-bottom: 1rem;
-  border-collapse: collapse;
+    margin-top: 8px;
+    width: 100%; /* Same as .long_field */
+    min-width: 500px; /* Optional: for usability */
+    table-layout: auto;
+    margin-bottom: 1rem;
+    border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.auto-property-table th,
-.auto-property-table td {
-  padding: 8px 12px;
-  width: auto; /* Let table-layout: fixed handle equal width */
-  text-align: left;
-  padding: 8px;
-  border: 1px solid #ccc;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  min-width: 80px;
-  max-width: 200px;
-}
+    /* Set properties of table head and table data for auto-property table */
+    .auto-property-table th,
+    .auto-property-table td {
+        padding: 8px 12px;
+        width: auto; /* Let table-layout: fixed handle equal width */
+        text-align: left;
+        padding: 8px;
+        border: 1px solid #ccc;
+        overflow: visible;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        min-width: 100px;
+        max-width: 300px;
+    }
 
-.auto-property-table th:first-child,
-.auto-property-table td:first-child {
-  max-width: 200px;
-  min-width: 20px;
-  width: 15%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+        /* Set fixed width for first row */
+        .auto-property-table th:first-child,
+        .auto-property-table td:first-child {
+            max-width: 200px;
+            min-width: 20px;
+            width: 15%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
 
+
+/* for the add-row-control row (last row) */
 tr.add-row-controls,
 tr.add-row-controls td {
   display: table-row;
@@ -534,31 +603,42 @@ tr.add-row-controls td {
   background: #f9f9f9; /* Optional: subtle highlight */
 }
 
-tr.add-row-controls td {
-  /* Remove any display:block/flex if present */
-  display: table-cell;
+    /* For the table elements in the add-row-control row*/
+    tr.add-row-controls td {
+        /* Remove any display:block/flex if present */
+        display: table-cell;
+    }
+
+/* Set the properties for the tags-table-container*/
+.auto-property-table td .tags-table-container {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0;
 }
 
-.auto-property-table td .tags-table-container,
-.auto-property-table .add-row-tags-container {
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box;
-  padding: 0;
-}
+    /* Set properties for inputs of tags-table-container */
+    .auto-property-table td .tags-table-container input[type="text"] {
+        width: 95% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+        padding: 0;
+    }
 
-.auto-property-table td .tags-table-container input[type="text"],
-.auto-property-table .add-row-tags-container input[type="text"] {
-  width: 95% !important;
-  max-width: 95% !important;
-  margin-left: 8px;
-  margin-right: 8px;
-  box-sizing: border-box;
-  min-width: 0;
-  padding: 4px 0;
-  font-size: 1em;
-}
+    .auto-property-table td .tags-table-container input[type="text"],
+    .auto-property-table .add-row-tags-container input[type="text"] {
+        width: 95% !important;
+        max-width: 95% !important;
+        margin-left: 8px;
+        margin-right: 8px;
+        box-sizing: border-box;
+        min-width: 0;
+        padding: 4px 0;
+        font-size: 1em;
+    }
 
+
+/* Set properties for tags-list */
 .auto-property-table td .tags-list {
   width: auto !important;
   display: flex;
@@ -569,10 +649,36 @@ tr.add-row-controls td {
   padding: 0;
 }
 
-.add-row-controls.invalid {
-  background-color: #ffd6d6; /* light red */
-  border: 1px solid #ff0000;
+
+.add-row-tags-container .tag {
+    display: inline-flex !important;
+    width: auto !important;
+    max-width: 100%;
+    min-width: 0;
 }
+
+.add-row-controls .tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+    width: auto;
+}
+
+/* Set colors for add-row-controls */
+.add-row-controls.invalid-required,
+.add-row-controls.invalid-required td {
+    background-color: #ffd6d6; /* light red */
+    border: 2px solid #ff0000;
+}
+
+.add-row-controls.invalid-recommended,
+.add-row-controls.invalid-recommended td {
+    background-color: #fef6da; /* light yellow */
+    border: 2px solid #ffe066;
+}
+
+/* Set properties for classes in add-row-controls */
 
 .add-row-controls .add-row-input,
 .add-row-controls .add-row-tag-input,
@@ -611,6 +717,19 @@ td.table-tagging-cell select.table-dropdown-select {
   box-sizing: border-box;
   min-width: 0;
 }
+
+.tab.unique-tab {
+    width: 100%;
+    transform-origin: top center; /* Adjust origin as needed */
+    text-align: center; /* Center the inner content horizontally */
+    position: relative;
+}
+
+    .tab.unique-tab .unique-tab-inner {
+        transform: scale(0.8);
+        transform-origin: top center;
+        display: inline-block;
+    }
 
 /* Make the tags-list a flex container so tags wrap and only take as much space as needed */
 .tags-list {
@@ -782,10 +901,36 @@ div.input-container input::placeholder {
   cursor: pointer;
 }
 
+.label-content,
+label > .asterisk,
+label > .fa-info-circle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25em; /* optional: space between elements */
+}
+
+.asterisk {
+    color: red;
+    font-size: 1em; /* match the label font size */
+    font-weight: bold;
+    line-height: 1;
+    vertical-align: middle;
+}
+
 .fa-info-circle {
-  opacity: 0.5;
-  font-size: 12px;
-  z-index: 1;
+
+    opacity: 0.5;
+    z-index: 1;
+    font-size: 1em; /* match the label font size */
+    vertical-align: middle;
+    line-height: 1;
+}
+
+/* Ensure both the info icon and asterisk are aligned */
+.fa-info-circle,
+.asterisk {
+    vertical-align: middle;
+    /* Optionally, adjust font-size or line-height if needed */
 }
 
 .tooltip-text-metadata {
@@ -950,6 +1095,7 @@ div.input-container input::placeholder {
 .navigation-buttons .forwardBtn:hover {
   background-color: #4ba0af;
 }
+
 
 .backwardBtn::before {
   content: "←";
@@ -1208,6 +1354,7 @@ input:checked + .slider:before {
 /************************************Color-code-info**************************************/
 /* Create info strings to explain color and other codes */
 .color-code-container {
+
   background-color: #f2f2f2;
 }
 
@@ -1223,6 +1370,7 @@ input:checked + .slider:before {
   border-radius: 50%;
   display: inline-block;
   margin-right: 8px;
+
 }
 
 .red {
@@ -1356,129 +1504,121 @@ input:checked + .slider:before {
 /* ******************************************** */
 
 @media (min-width: 2320px) AND (max-width: 2560px) {
-  .tab-links_ext a {
-    font-size: 58%;
-  }
 
-  .color-code-container {
-    height: 12%;
-  }
+    button#new-url-extraction-page {
+        font-size: 86%;
+    }
 
-  .contributors-table,
-  .authors-table {
-    font-size: 60%;
-  }
+    .tab-links_ext a {
+        font-size: 58%;
+    }
 
-  .navigation-buttons .backwardBtn,
-  .navigation-buttons .forwardBtn {
-    width: 55px;
-    height: 55px;
-  }
+    .color-code-container {
+        height: 12%;
+    }
 
-  .backwardBtn::before,
-  .forwardBtn::before {
-    font-size: 18px;
-  }
+    .contributors-table, .authors-table {
+        font-size: 60%;
+    }
 
-  button.contributorBTN,
-  button.authorBTN {
-    padding: 7px 9px;
-    font-size: 15px;
-  }
+    .navigation-buttons .backwardBtn, .navigation-buttons .forwardBtn {
+        width: 55px;
+        height: 55px;
+    }
 
-  .contributors-table td,
-  .authors-table td,
-  .contributors-table th,
-  .authors-table th {
-    padding: 8px;
-    font-size: 1.5em;
-  }
+    .backwardBtn::before, .forwardBtn::before {
+        font-size: 18px;
+    }
 
-  .fa-trash-alt:before,
-  .fa-trash-can:before,
-  .fa-copy:before,
-  .fa-download:before {
-    font-size: 110%;
-  }
+    button.contributorBTN, button.authorBTN {
+        padding: 7px 9px;
+        font-size: 15px;
+    }
 
-  .form-group input[type="text"],
-  select {
-    padding: 6px;
-    height: 6%;
-    font-size: 1em;
-  }
+    .contributors-table td, .authors-table td, .contributors-table th, .authors-table th {
+        padding: 8px;
+        font-size: 1.5em;
+    }
 
-  .form-group .single_inputs {
-    margin-bottom: 0.5%;
-  }
+    .fa-trash-alt:before, .fa-trash-can:before, .fa-copy:before, .fa-download:before {
+        font-size: 110%;
+    }
 
-  #metadata-json {
-    font-size: 100%;
-  }
+    .form-group input[type="text"], select {
+        padding: 6px;
+        height: 6%;
+        font-size: 1em;
+    }
 
-  form.data-form2,
-  form.data-form3 {
-    padding: 0px;
-  }
+    #metadata-json {
+        font-size: 100%;
+    }
 
-  .navigation-buttons {
-    margin-bottom: 20px;
-  }
+    form.data-form2, form.data-form3 {
+        padding: 0px;
+    }
 
-  .navigation-buttons button.ExData {
-    padding: 0.5%;
-    font-size: 80%;
-  }
+    .navigation-buttons {
+        margin-bottom: 20px;
+    }
 
-  .fa-download,
-  .fa-copy,
-  .fa-trash-alt {
-    margin-bottom: 2.5%;
-  }
+    .navigation-buttons button.ExData {
+        padding: 0.5%;
+        font-size: 80%;
+    }
 
-  .form-group legend {
-    font-size: 0.8em;
-  }
+    .fa-download, .fa-copy, .fa-trash-alt {
+        margin-bottom: 2.5%;
+    }
 
-  .form-group fieldset.fieldset_content,
-  .form-group fieldset.copyrightHolder {
-    margin-top: 22px;
-  }
+    .form-group legend {
+        font-size: 0.8em;
+    }
 
-  .suggestion-item {
-    padding: 1px;
-    font-size: 66%;
-    width: 100%;
-  }
+    .form-group fieldset.fieldset_content, .form-group fieldset.copyrightHolder {
+        margin-top: 22px;
+    }
 
-  .scrollable-table {
-    max-height: 50%;
-  }
+    .suggestion-item {
+        padding: 1px;
+        font-size: 66%;
+        width: 100%;
+    }
 
-  .custom-tooltip .tooltip-text {
-    transform: translateY(-18%);
-    font-size: 77%;
-    width: 30em;
-    left: 15%;
-  }
+    .scrollable-table {
+        max-height: 50%;
+    }
 
-  .InitialFormContainer {
-    max-width: 45%;
-    max-height: 77%;
-    overflow: hidden;
-    left: 15%;
-    font-size: 89%;
-  }
+    .custom-tooltip .tooltip-text {
+        transform: translateY(-18%);
+        font-size: 77%;
+        width: 30em;
+        left: 15%;
+    }
 
-  .color-code-text {
-    font-size: 79%;
-  }
+    .InitialFormContainer {
+        max-width: 45%;
+        max-height: 77%;
+        overflow: hidden;
+        left: 15%;
+        font-size: 89%;
+    }
+
+    button.ExData {
+        margin-top: 3.5rem;
+    }
+
+    .color-code-text {
+        font-size: 79%;
+    }
 }
 
 /* *********************Fixed width when editing cells*********************** */
 .table-cell {
-  white-space: nowrap;
-  text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: ellipsis;
+
 }
 
 .editable-input {

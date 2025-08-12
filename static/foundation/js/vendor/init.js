@@ -10,11 +10,11 @@ import { setMandatoryFieldsFromSchema } from "./schema-utils.js";
 // Entry point: called when DOM is fully loaded
 document.addEventListener("DOMContentLoaded", () => {
   loadpage();
-  setupForm();
   initializeTaggingFields();
   setupTables();
   setupDownload();
-  setupUI();
   initializeDynamicDropdowns();
   setMandatoryFieldsFromSchema();
+  setupForm();
+  setupUI();
 });

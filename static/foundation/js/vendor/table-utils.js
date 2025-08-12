@@ -218,6 +218,7 @@ export function setupTables() {
       const inputs = addRowControls.querySelectorAll(
         ".add-row-input, .add-row-tag-input, .add-row-dropdown-select"
       );
+
       const values = Array.from(inputs).map((input) => input.value.trim());
 
       // Prevent adding if all fields are empty
@@ -337,6 +338,7 @@ export function setupTables() {
         newRow.appendChild(td);
       }
       const deleteTd = document.createElement("td");
+
       deleteTd.className = "d-flex justify-content-center align-items-center";
       deleteTd.style.height = "50px";
       deleteTd.innerHTML =
@@ -348,6 +350,7 @@ export function setupTables() {
 
       initializeTableTaggingCells();
       enableEditableTagsInTable();
+
       // Clear input fields
       inputs.forEach((input) => {
         if (input.tagName === "SELECT") {
@@ -361,7 +364,7 @@ export function setupTables() {
       updateTableHiddenInput(key);
 
       // Remove color
-      addRowControls.classList.remove("invalid");
+      addRowControls.classList.remove('invalid-required', 'invalid-recommended');
     });
   });
 
@@ -415,10 +418,7 @@ export function setupTables() {
         });
         // Position suggestions below the input
         const inputRect = input.getBoundingClientRect();
-        suggestionsBox.style.left = inputRect.left + "px";
-        suggestionsBox.style.top = inputRect.bottom + "px";
-        suggestionsBox.style.width = input.offsetWidth + "px";
-        suggestionsBox.style.display = "block";
+        updateSuggestionsBoxPosition(input, suggestionsBox);
       });
 
       input.addEventListener("focus", function () {
@@ -486,7 +486,9 @@ export function setupTables() {
             .map((opt) => `<option value="${opt}">${opt}</option>`)
             .join("");
         // Replace the input with the select
-        input.style.display = "none";
+        if (input) {
+          input.style.display = 'none';
+        }
         container.appendChild(select);
 
         // On change, update addRowTags or values as needed
@@ -649,17 +651,18 @@ export function highlightEmptyAddRowControls() {
       );
       if (!addRowControls) return;
 
-      if (allMandatory.includes(key)) {
-        const tbody = table.querySelector("tbody");
-        const rows = tbody ? tbody.querySelectorAll("tr") : [];
-        if (rows.length === 0) {
-          addRowControls.classList.add("invalid");
-        } else {
-          addRowControls.classList.remove("invalid");
+        addRowControls.classList.remove('invalid-required', 'invalid-recommended');
+
+        const tbody = table.querySelector('tbody');
+        const dataRows = tbody
+            ? Array.from(tbody.querySelectorAll('tr')).filter(row => !row.classList.contains('add-row-controls'))
+            : [];
+
+        if (required.includes(key) && dataRows.length === 0) {
+            addRowControls.classList.add('invalid-required');
+        } else if (recommended.includes(key) && dataRows.length === 0) {
+            addRowControls.classList.add('invalid-recommended');
         }
-      } else {
-        addRowControls.classList.remove("invalid");
-      }
     });
   });
 }
@@ -732,7 +735,9 @@ export function initializeTableTaggingCells() {
           function finalizeSelection() {
             const selectedValue = select.value;
             cell.setAttribute("data-value", selectedValue);
-            cell.innerHTML = selectedValue;
+            setTimeout(() => {
+              cell.innerHTML = selectedValue;
+            }, 0);
 
             // Remove this event listener to avoid duplicate dropdowns
             cell.removeEventListener("click", handleDropdownCellClick);

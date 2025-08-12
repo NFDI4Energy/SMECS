@@ -13,6 +13,7 @@
                             {% csrf_token %}
                             <h4>Metdata in JSON format</h4>
 
+
                             <div class="metadata-container">
                                 <div class="left">
                                     <span id="actionFeedback" class="feedback"></span>
@@ -47,11 +48,11 @@
                         <div class="row">
                             <div class="col-3 color-code">
                                 <span class="red"></span>
-                                <span class="fs-6">Missing required or recommended metadata</span>
+                                <span class="fs-6">Missing required metadata</span>
                             </div>
                             <div class="col-3 color-code">
                                 <span class="yellow"></span>
-                                <span class="fs-6">Better to curate the metadata</span>
+                                <span class="fs-6">Missing recommended metadata</span>
                             </div>
                             <div class="col-3 color-code">
                                 <span class="symbol"></span>
@@ -102,10 +103,19 @@
                             {% with unique_tab=type_metadata|all_types_same:metadata_dict %}
                             <!-- {{tab_name}}_info -->
                             {% if forloop.first %}
-                            <div id="{{ tab_name }}" class="tab active">
+                             <div id="{{ tab_name }}" class="tab active{% if unique_tab %} unique-tab{% endif %}">
                                 {% else %}
-                                <div id="{{ tab_name }}" class="tab">
+                                <div id="{{ tab_name }}" class="tab{% if unique_tab %} unique-tab{% endif %}">
                                     {% endif %}
+                                  {% if unique_tab %}
+                            <div class="unique-tab-inner">
+                                {% endif %}
+
+                                {% if description_metadata|get:tab_name %}
+                                <div class="tab-description">
+                                    {{ description_metadata|get:tab_name }}
+                                </div>
+                                {% endif %}
                                     {% for key, value in metadata_dict.items %}
                                     <div class="form-group">
                                         {% if type_metadata|get:key == "hidden" %}
@@ -255,6 +265,18 @@
                                             </div>
                                             <input title="{{ value }}" id="{{ key }}" name="{{ key }}" type="text" value="{{ value }}"><br>
                                         </div>
+                                      {% elif type_metadata|get:key == "big_field" %}
+                                    <!-- Single input and long field element -->
+                                    <div class={{type_metadata|get:key}}>
+                                        <label for="{{ key }}">{{ key|camel_to_spaces_lower }}</label>
+                                        <div class="custom-tooltip-metadata">
+                                            <span class="tooltip-text-metadata">
+                                                {% if key in description_metadata %}{{ description_metadata|get:key }}{% endif %}
+                                            </span>
+                                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                        </div>
+                                        <textarea title="{{ value }}" id="{{ key }}" name="{{ key }}" rows="3">{{ value }}</textarea><br>
+                                    </div>
                                         {% elif forloop.first or not unique_tab %}
                                         <!-- small_table -->
                                         <div class="long_field">
@@ -416,14 +438,18 @@
                                     </div>
                                 </div>
                                 <!-- tab_contributors -->
+                            {% if unique_tab %}
+                        </div>
+                               {% endif %}
                                 {% endwith %}
                                 {% endfor %}
                                 <!-- </form> -->
+
                             </div>
-                        </div>
+                           
+
                     </form>
         </div> 
-         
     </div><!-- main div -->
 </div><!-- whole-extraction-page -->
 {% endblock content %}

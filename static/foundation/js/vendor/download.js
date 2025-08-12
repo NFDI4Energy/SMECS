@@ -9,16 +9,17 @@ import { keysMatchRecursive } from "./schema-utils.js";
 
 const JsonSchema = "/static/schema/codemeta_schema.json";
 const metadataJson = document.getElementById("metadata-json");
-const downloadButton = document.getElementById("downloadButton");
-const downloadBtn = document.getElementById("downloadBtn");
+const downloadButtons = [
+  document.getElementById("downloadButton"),
+  document.getElementById("downloadBtn"),
+];
 
 // Function to trigger file download from JSON textarea
 export function setupDownload() {
-  downloadButton.addEventListener("click", (event) => {
-    downloadFile(event);
-  });
-  downloadBtn.addEventListener("click", (event) => {
-    downloadFile(event);
+  downloadButtons.forEach((btn) => {
+    if (btn) {
+      btn.addEventListener("click", downloadFile);
+    }
   });
 }
 

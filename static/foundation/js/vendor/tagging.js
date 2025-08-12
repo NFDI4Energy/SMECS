@@ -9,6 +9,7 @@ const SPDX_URL =
   "https://raw.githubusercontent.com/spdx/license-list-data/master/json/licenses.json";
 const metadataJson = document.getElementById("metadata-json");
 let enterHandledBySuggestion = false;
+
 // show highlighted tag for keywords
 
 // Tagging Logic
@@ -96,7 +97,7 @@ export function setupTagging({
     updateHidden();
     input.value = "";
     if (suggestionsBox) suggestionsBox.style.display = "none";
-    input.classList.remove("invalid"); // Remove invalid color immediately
+    input.classList.remove("invalid", "invalid-required", "invalid-recommended"); // Remove invalid color immediately
     input.blur();
   }
 
@@ -107,6 +108,12 @@ export function setupTagging({
     highlightTag.innerHTML = `⚠️ Suggestion: Curate here <span class="acknowledge-tag">Got it!</span>`;
     container.insertBefore(highlightTag, input);
   }
+   else if (!useAutocomplete) {
+        const highlightTag = document.createElement("span");
+        highlightTag.classList.add("highlight-tag");
+        highlightTag.innerHTML = `⚠️ Multiple entries supported: please press enter after typing each <span class="acknowledge-tag">Got it!</span>`;
+        container.insertBefore(highlightTag, input);
+   }
 
   if (useAutocomplete && suggestionsBox) {
     input.addEventListener("input", () => {
@@ -231,11 +238,8 @@ export function setupTagging({
 
       // Position the suggestion box
       const rect = input.getBoundingClientRect();
-      suggestionsBox.style.position = "fixed";
-      suggestionsBox.style.left = rect.left + "px";
-      suggestionsBox.style.top = rect.bottom + "px";
-      suggestionsBox.style.width = rect.width + "px";
-      suggestionsBox.style.display = "block";
+       updateSuggestionsBoxPosition(input, suggestionsBox)
+       suggestionsBox.style.position = "fixed";
     });
 
     document.addEventListener("click", (e) => {
@@ -655,3 +659,4 @@ function setupAcknowledgeTags() {
     });
   });
 }
+

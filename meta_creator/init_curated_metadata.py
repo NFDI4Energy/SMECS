@@ -56,6 +56,12 @@ def load_description_dict_from_schema(schema: dict) -> dict[str, str]:
                 if desc and key not in description_dict:
                     description_dict[key] = desc
 
+    ## Define descriptions for tabs
+    description_dict['GeneralInformation'] = "This section gives general information about the software."
+    description_dict['Provenance'] = "This section describes the creation history of the software."
+    description_dict['RelatedPersons'] = "This section lists all relevant persons who are connected to the software."
+    description_dict['TechnicalAspects'] = "This section describes the technical aspects of the software."
+
     return description_dict
 
 # Define required field_type per element
@@ -94,15 +100,16 @@ def define_field_type(schema: dict, types: dict, array = False) -> dict[str, str
             else:
                 type_dict[key] = "single_input_object"
         elif value.get("type") == "string":
-            type_dict[key] = "long_field" if key == "description" else "single_inputs"
+            if key == "description":
+                type_dict[key] = "big_field"
+            elif key == "abstract":
+                type_dict[key] = "long_field"
+            else:
+                type_dict[key] = "single_inputs"
         elif value.get("type") == "array":
             items = value.get("items", {})  # Safely get "items" or default to an empty dict
-            if "enum" in items:
-                enum_values = items.get("enum")
-                if enum_values is not None and len(enum_values) > 10:
-                    type_dict[key] = "tagging_autocomplete"
-                else:
-                    type_dict[key] = "tagging_dropdown"
+            if "enum" in items:            
+                type_dict[key] = "tagging_autocomplete"
             elif items.get("type") == "string":
                 type_dict[key] = "tagging"
             elif "$ref" in items:
@@ -205,7 +212,7 @@ def create_empty_metadata(schema: dict) -> dict[str, dict[str, str]]:
     properties_list = load_properties_list_from_schema(schema)
     metadata = {"GeneralInformation": create_empty_metadata_dict_from_properties_list(properties_list, schema, "name", "copyrightHolder"),
                 "Provenance": create_empty_metadata_dict_from_properties_list(properties_list, schema, "softwareVersion", "funding"),
-                "Contributors": create_empty_metadata_dict_from_properties_list(properties_list, schema, "contributor", "maintainer"),
+                "RelatedPersons": create_empty_metadata_dict_from_properties_list(properties_list, schema, "contributor", "maintainer"),
                 "TechnicalAspects": create_empty_metadata_dict_from_properties_list(properties_list, schema, "downloadUrl", "targetProduct")
         }
     return metadata
