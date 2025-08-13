@@ -1,6 +1,9 @@
 /* Style for SMECS */
 
 /******************** General ********************/
+body {
+  overflow: hidden;
+}
 
 [type="text"],
 [type="password"],
@@ -482,11 +485,13 @@ select {
 }
 
 #metadata-json {
+  overflow: scroll;
   width: 100%;
-  height: 100%;
+  height: 92%;
   padding: 8px;
   border-radius: 4px;
   margin-bottom: 2px;
+  font-size: medium;
 }
 .invalid {
   border: 1px solid rgba(226, 7, 7, 0.535);
@@ -1147,10 +1152,10 @@ label > .fa-info-circle {
   border: 1px solid #ccc;
   border-radius: 5px;
   transition: all 0.3s ease;
-  overflow: overlay;
+  overflow: hidden;
   margin: 2px;
   width: 100%;
-  height: 100%;
+  height: 99%;
 }
 
 .full-width {
@@ -1401,6 +1406,9 @@ input:checked + .slider:before {
   .main-container {
     /* display: list-item; */
     flex-wrap: wrap;
+  }
+  .metadata-form-display {
+    overflow: scroll;
   }
 }
 

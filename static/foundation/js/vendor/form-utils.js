@@ -8,11 +8,10 @@ import { validateInput } from "./ui.js";
 
 const metadataJson = document.getElementById("metadata-json");
 const inputs = document.querySelectorAll(
-  "#metadata-form input, #metadata-form select"
+  "#metadata-form input, #metadata-form select, #metadata-form textarea"
 );
 
 export function setupForm() {
-
   inputs.forEach((input) => validateInput(input));
   inputs.forEach((input) => {
     input.addEventListener("input", () => handleInputChange(input));

@@ -291,16 +291,16 @@
                                             </div>
                                             {% elif key == "contributor" %}
                                             <div class="relative-wrapper">
-                                            <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapseContributors" aria-expanded="false" aria-controls="multiCollapseContributors">Who are Contributors?</button>
-                                            <div class="person-info collapsible-content collapse" id="multiCollapseContributors">
+                                            <!-- <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapseContributors" aria-expanded="false" aria-controls="multiCollapseContributors">Who are Contributors?</button> -->
+                                            <div class="person-info collapsible-content collapse" id="multiCollapsecontributor">
                                                 <p>A "contributor" refers to anyone who aids in software development in any capacity, from coding to testing, highlighting the collaborative nature of software projects.</p>
                                             </div>
-                                             <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapseAuthors" aria-expanded="false" aria-controls="multiCollapseAuthors">Who are Authors?</button>
-                                            <div class="person-info collapsible-content collapse" id="multiCollapseAuthors">
+                                             <!-- <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapseauthor" aria-expanded="false" aria-controls="multiCollapseAuthors">Who are Authors?</button> -->
+                                            <div class="person-info collapsible-content collapse" id="multiCollapseauthor">
                                                 <p>An "author" in software authorship is someone who significantly contributes to the creation and development of software, including roles like coding, project management, and documentation.</p>
                                             </div>
-                                             <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapseMaintainer" aria-expanded="false" aria-controls="multiCollapseMaintainer">Who are Maintainer?</button>
-                                            <div class="person-info collapsible-content collapse" id="multiCollapseMaintainer">
+                                             <!-- <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapseMaintainer" aria-expanded="false" aria-controls="multiCollapseMaintainer">Who are Maintainer?</button> -->
+                                            <div class="person-info collapsible-content collapse" id="multiCollapsemaintainer">
                                                 <p>An "maintainer" in software authorship is someone who significantly maintainers to the creation and development of software, including roles like coding, project management, and documentation.</p>
                                             </div>
                                             </div>
@@ -324,8 +324,11 @@
                                                         {% if unique_tab %}
                                                         {% for col, value in metadata_dict.items %}
                                                         <th data-col="{{ col }}" data-coltype="element">
-                                                            {{ col|camel_to_spaces_lower }}
-                                                            <div class="custom-tooltip-metadata">
+                                                           <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapse{{ col }}" aria-expanded="false" aria-controls="multiCollapseContributors">{{ col|camel_to_spaces_lower }}</button> 
+                                                            <!-- <div class="person-info collapsible-content collapse" id="multiCollapse{{ col }}">
+                                                             <p>{% if col in description_metadata %}{{ description_metadata|get:col }}{% endif %}</p>
+                                                             </div> -->
+                                                           <div class="custom-tooltip-metadata">
                                                                 <span class="tooltip-text-metadata">
                                                                     {% if col in description_metadata %}{{ description_metadata|get:col }}{% endif %}
                                                                 </span>
