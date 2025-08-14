@@ -5,17 +5,23 @@
 {% block content %}
 
 
-<div class="info-page">
-  <div class="info-header">
-    <h3>What is SMECS ?</h3>
+<div class="info-page container overflow-auto">
+  <div class="row">
+    <div class="col-12">
+          <div class="info-header text-center"><h3>What is SMECS ?</h3></div>
+    </div>
+    <div class="col-12">
+        <div class="info-content">
+          <p>Software Metadata Extraction and Curation Software or SMECS is a web application to extract and curate software metadata following the CodeMeta software metadata standard.</p>
+          <p>SMECS facilitates the extraction of software metadata from repositories on GitHub/GitLab. It offers a user-friendly graphical user interface for visualizing the retrieved metadata. This empowers Research Software Engineers (RSE) to curate the extracted metadata according to their requirements. Ultimately, SMECS delivers the curated metadata in JSON format, enhancing usability and accessibility.
+          </p>
+          <p>To get more information about this tool and to access the source code please visit <a href="https://github.com/NFDI4Energy/SMECS">SMECS GitHub</a></p>
+      </div>
+    </div>
   </div>
-  <div class="info-content">
-    <p>Software Metadata Extraction and Curation Software or SMECS is a web application to extract and curate software metadata following the CodeMeta software metadata standard.</p>
-    <p>SMECS facilitates the extraction of software metadata from repositories on GitHub/GitLab. It offers a user-friendly graphical user interface for visualizing the retrieved metadata. This empowers Research Software Engineers (RSE) to curate the extracted metadata according to their requirements. Ultimately, SMECS delivers the curated metadata in JSON format, enhancing usability and accessibility.
-    </p>
-    <p>To get more information about this tool and to access the source code please visit <a href="https://github.com/NFDI4Energy/SMECS">SMECS GitHub</a></p>
+  <div class="d-grid gap-2 d-md-block mx-auto">
+    <button class="TrySMECS btn" title="Enter a specific URL and extract metadata" onclick="window.location.href = '/'">Try SMECS</button>
+    </div>
   </div>
-  <button class="TrySMECS" title="Enter a specific URL and extract metadata" onclick="window.location.href = '/'">Try SMECS</button>
-</div>
 
 {% endblock content %}

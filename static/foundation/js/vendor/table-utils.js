@@ -13,6 +13,7 @@ import {
   updateSuggestionsBoxPosition,
   setupTableTagAutocomplete,
   createSuggestionsBox,
+  enableEditableTagsInTable,
 } from "./tagging.js";
 
 const metadataJson = document.getElementById("metadata-json");
@@ -217,7 +218,7 @@ export function setupTables() {
       const inputs = addRowControls.querySelectorAll(
         ".add-row-input, .add-row-tag-input, .add-row-dropdown-select"
       );
-      console.log({ inputs });
+
       const values = Array.from(inputs).map((input) => input.value.trim());
 
       // Prevent adding if all fields are empty
@@ -248,6 +249,7 @@ export function setupTables() {
         const col = input ? input.getAttribute("data-col") : null;
         const dataType = table.getAttribute("data-at-type");
         const td = document.createElement("td");
+        td.className = "text-center";
         console.log({ header, input, col, colType, dataType });
         if (colType === "element") {
           // Find the checkbox in the add-row-controls row
@@ -336,6 +338,9 @@ export function setupTables() {
         newRow.appendChild(td);
       }
       const deleteTd = document.createElement("td");
+
+      deleteTd.className = "d-flex justify-content-center align-items-center";
+      deleteTd.style.height = "50px";
       deleteTd.innerHTML =
         '<i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i>';
       newRow.appendChild(deleteTd);
@@ -344,6 +349,7 @@ export function setupTables() {
       addRowControls.parentNode.insertBefore(newRow, addRowControls);
 
       initializeTableTaggingCells();
+      enableEditableTagsInTable();
 
       // Clear input fields
       inputs.forEach((input) => {

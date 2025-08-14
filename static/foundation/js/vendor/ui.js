@@ -124,6 +124,7 @@ export function setupUI() {
           let top = 16;
           tooltip.style.left = left + "px";
           tooltip.style.top = top + "px";
+
       });
       element.addEventListener("mouseleave", function () {
         tooltip.style.display = "none";
@@ -134,13 +135,19 @@ export function setupUI() {
 
   // Initialize the state on page load
   window.onload = function () {
+    const toggleSwitch = document.getElementById("toggleSwitch");
+    if (window.screen.width <= 990) {
+      toggleSwitch.checked = false;
+    }
+
     toggleSection();
-    document
-      .getElementById("toggleSwitch")
-      .addEventListener("change", toggleSection);
+
+    toggleSwitch.addEventListener("change", toggleSection);
+    window.addEventListener("resize", toggleSection);
   };
   //highlightsURLs
   highlightEditableUrls(urlInputs);
+  initAutoCloseCollapses();
 }
 
 // pop-up message for Contributor and Author tabs
@@ -166,18 +173,28 @@ function toggleSection() {
   var metadataFormDisplay = document.getElementById("metadataFormDisplay");
   var toggleSwitch = document.getElementById("toggleSwitch");
   var personInfoElements = document.querySelectorAll(".person-info"); // Select all elements with the class 'person-info'
-
+  if (window.screen.width <= 990 && toggleSwitch.checked == false) {
+    formContainer.style.height = "100%";
+  } else if (window.screen.width <= 990 && toggleSwitch.checked) {
+    formContainer.style.height = "50%";
+  } else {
+    formContainer.style.height = "100%";
+  }
   if (toggleSwitch.checked) {
     metadataFormDisplay.style.display = "block";
-    formContainer.classList.remove("full-width");
-    formContainer.classList.add("half-width");
+    formContainer.classList.remove("col-lg-12");
+    formContainer.classList.add("col-lg-9");
+    metadataFormDisplay.classList.add("col-lg-3");
+
     personInfoElements.forEach(function (element) {
       // element.style.width = '57%';
     });
   } else {
     metadataFormDisplay.style.display = "none";
-    formContainer.classList.remove("half-width");
-    formContainer.classList.add("full-width");
+    formContainer.classList.remove("col-lg-9");
+    formContainer.classList.add("col-lg-12");
+    metadataFormDisplay.classList.remove("col-lg-3");
+
     personInfoElements.forEach(function (element) {
       element.style.width = "70%";
     });
@@ -243,12 +260,12 @@ export function validateInput(input) {
    // Always remove highlight classes before validation
    input.classList.remove("invalid", "invalid-required", "invalid-recommended");
 
+
   // Fetch schema and validate only if field is required or recommended
   getSchema()
     .then((schema) => {
       const { required, recommended } =
         fetchRequiredAndRecommendedFields(schema);
-
       // --- Tagging support ---
       // If input is inside a tags-container, validate the hidden input instead
       const tagsContainer = input.closest(".tags-container");
@@ -263,6 +280,7 @@ export function validateInput(input) {
             ? label.getAttribute("data-tagging-type")
             : null;
           const key = getFieldKey(hiddenInput);
+
 
           if (required.includes(key)) {
             if (
@@ -334,3 +352,33 @@ export function loadpage() {
     lodder("form1", "overlay");
   }
 }
+function initAutoCloseCollapses(collapseSelector = ".collapsible-content") {
+  document.querySelectorAll('[data-bs-toggle="collapse"]').forEach((button) => {
+    button.addEventListener("click", function () {
+      const targetId = this.getAttribute("data-bs-target");
+      const targetCollapse = document.querySelector(targetId);
+
+      document
+        .querySelectorAll(`${collapseSelector}.show`)
+        .forEach((openCollapse) => {
+          if (openCollapse !== targetCollapse) {
+            new bootstrap.Collapse(openCollapse, { toggle: false }).hide();
+          }
+        });
+    });
+  });
+  //  Add click listener to close collapses when clicking outside
+  document.addEventListener("click", function (e) {
+    const isInsideToggle = e.target.closest('[data-bs-toggle="collapse"]');
+    const isInsideCollapse = e.target.closest(collapseSelector);
+
+    if (!isInsideToggle && !isInsideCollapse) {
+      document
+        .querySelectorAll(`${collapseSelector}.show`)
+        .forEach((openCollapse) => {
+          new bootstrap.Collapse(openCollapse, { toggle: false }).hide();
+        });
+    }
+  });
+}
+

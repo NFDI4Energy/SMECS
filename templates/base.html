@@ -6,16 +6,11 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}SMECS{% endblock %}</title>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{% static 'foundation/css/foundation.css' %}" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;family=Fira+Code&amp;display=swap"
-      rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{% static 'foundation/css/foundation.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;family=Fira+Code&amp;display=swap" rel="stylesheet">
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link
       rel="stylesheet"
@@ -37,21 +32,21 @@
       type="text/javascript"
       src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script
+      <script
       type="module"
       src="{% static 'foundation/js/vendor/init.js' %}"></script>
-  </head>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+</head>
 
   <body>
-    <div class="{% block body-class %}l-bg-color u-vh--100{% endblock %}">
-      <nav id="main-nav">
-        <a
-          href="https://github.com/NFDI4Energy/SMECS"
-          title="Software Metadata Extraction and Curation Software"
-          class="logo"
-          >SMECS</a
-        >
-        <ul class="nav-list">
+     <nav id="main-nav" class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid">
+        <a href="https://github.com/NFDI4Energy/SMECS" title="Software Metadata Extraction and Curation Software" class="logo navbar-brand">SMECS</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+     <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
             <a
               class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
@@ -77,10 +72,17 @@
             >
           </li>
         </ul>
-      </nav>
+        {% if from_showdata %}
+        <button class="btn ms-auto" id="new-url-extraction-page" title="Enter another URL and extract metadata" onclick="window.location.href = '/'">
+          Try New URL
+        </button>
+      {% endif %}
+        </div>
+        </div>
+    </nav>
+    
       {% block content %}{% endblock %}
-    </div>
-
+     
     {% block scripts %}{% endblock %}
   </body>
 </html>
