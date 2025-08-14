@@ -97,7 +97,11 @@ export function setupTagging({
     updateHidden();
     input.value = "";
     if (suggestionsBox) suggestionsBox.style.display = "none";
-    input.classList.remove("invalid", "invalid-required", "invalid-recommended"); // Remove invalid color immediately
+    input.classList.remove(
+      "invalid",
+      "invalid-required",
+      "invalid-recommended"
+    ); // Remove invalid color immediately
     input.blur();
   }
 
@@ -107,13 +111,12 @@ export function setupTagging({
     highlightTag.classList.add("highlight-tag");
     highlightTag.innerHTML = `⚠️ Suggestion: Curate here <span class="acknowledge-tag">Got it!</span>`;
     container.insertBefore(highlightTag, input);
+  } else if (!useAutocomplete) {
+    const highlightTag = document.createElement("span");
+    highlightTag.classList.add("highlight-tag");
+    highlightTag.innerHTML = `⚠️ Multiple entries supported: please press enter after typing each <span class="acknowledge-tag">Got it!</span>`;
+    container.insertBefore(highlightTag, input);
   }
-   else if (!useAutocomplete) {
-        const highlightTag = document.createElement("span");
-        highlightTag.classList.add("highlight-tag");
-        highlightTag.innerHTML = `⚠️ Multiple entries supported: please press enter after typing each <span class="acknowledge-tag">Got it!</span>`;
-        container.insertBefore(highlightTag, input);
-   }
 
   if (useAutocomplete && suggestionsBox) {
     input.addEventListener("input", () => {
@@ -203,7 +206,6 @@ export function setupTagging({
       // Show all suggestions if input is empty, or filtered if not
       const query = input.value.trim().toLowerCase();
       suggestionsBox.innerHTML = "";
-
       // Filter as in your input event
       const filtered = autocompleteSource.filter(
         (tag) =>
@@ -237,9 +239,10 @@ export function setupTagging({
       });
 
       // Position the suggestion box
-      const rect = input.getBoundingClientRect();
-       updateSuggestionsBoxPosition(input, suggestionsBox)
-       suggestionsBox.style.position = "fixed";
+      // const rect = input.getBoundingClientRect();
+      updateSuggestionsBoxPosition(input, suggestionsBox);
+      suggestionsBox.style.display = "block";
+      suggestionsBox.style.position = "fixed";
     });
 
     document.addEventListener("click", (e) => {
@@ -659,4 +662,3 @@ function setupAcknowledgeTags() {
     });
   });
 }
-
