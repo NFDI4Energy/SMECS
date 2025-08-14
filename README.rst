@@ -1,39 +1,70 @@
 
 Software Metadata Extraction and Curation Software (SMECS)
 __________________________________________________________
-| A web application to extract and curate research software metadata following the `codemeta <https://codemeta.github.io/>`_ software metadata standard.
+| A web application to extract and curate research software metadata following the `CodeMeta <https://codemeta.github.io/>`_ (`version 3.0 <https://raw.githubusercontent.com/codemeta/codemeta/3.0/codemeta.jsonld>`_) software metadata standard.
 |
-| SMECS facilitates the extraction of research software metadata from repositories on GitHub/GitLab. It offers a user-friendly graphical user interface for visualizing the retrieved metadata. This empowers researchers to create good metadata for their research software without reentering data which is already available elsewhere. Ultimately, SMECS delivers the curated metadata in JSON format, enhancing usability and accessibility.
+| SMECS facilitates the extraction of research software metadata from GitHub and GitLab repositories. It provides a user-friendly graphical interface for visualizing the retrieved metadata, enabling researchers and research software engineers to create high-quality metadata without reentering information already available elsewhere. The curated metadata is exported as CodeMeta-compliant JSON, ensuring integration with other tools and enhancing the discoverability, reuse, and impact of research software.
 |
+| 📄 For more details, see our `Preprint <http://doi.org/10.48550/arXiv.2507.18159>`_.
 |
 | **Authors:** Stephan Ferenz, Aida Jafarbigloo
 |
-Key Stages in SMECS
+Phases in SMECS
 __________________________________________________________
-| The figure below illustrates the sequential processes and data flows within SMECS. First, users input data, triggering the tool to extract metadata associated with specific URLs. This metadata is then visualized, allowing users to review and interact with it. Users can curate, modify, and finalize the metadata according to their needs. Once satisfied, they can download the curated metadata in JSON format, providing an interoperable output for further use.
+| The workflow of SMECS consists of four sequential phases: **Start**, **Extraction**, **Curation**, and **Export**.
 |
-|
-.. image:: https://github.com/NFDI4Energy/SMECS/blob/master/docs/diagram.png
-   :alt: SMECS Workflow Visualization
+.. image:: https://github.com/NFDI4Energy/SMECS/blob/master/docs/Extraction_via_hermes-1.png
+   :alt: SMECS Workflow
    :width: 1000px
 |
-#.  **Metadata Extraction Stage**
-     * **Metadata Extraction**
-        * SMECS extracts metadata from GitHub and GitLab repositories. For details on the specific metadata that SMECS can extract, please refer to `Metadata Terms in SMECS <https://github.com/NFDI4Energy/SMECS/blob/master/docs/metadata-terms.md>`_
-     * **API Interactions:** Use GitHub and GitLab APIs to fetch relevant metadata.
-     * **Data Parsing:** Analyze the retrieved metadata and translate it into CodeMeta metadata for further processing.
-     * **Cross-Walk and Metadata Mapping**
-        * **Standardization:** Align metadata fields from GitHub and GitLab to a common dictionary.
-        * **Field Matching:** Map equivalent fields between GitHub and GitLab. For example, mapping GitHub "topics" to GitLab "keywords".
-#.  **Visualization and Curation Stage**
-     * **Visualization:** Extracted metadata is displayed in a structured form.
-     * **User Interface:** Interactive and simple UI for exploring the extracted and curated metadata.
-     * **Metadata Curation:** Refine the extracted metadata based on user preferences.
-     * **Missing Metadata Identification:** Identify and highlight fields where metadata is absent.
-     * **User Input for Missing Metadata:** Enable users to add missing metadata directly via the user interface.
-     * **Real-Time Metadata Curation:**  Enable the possibility of representing the JSON format of the metadata based on the CodeMeta standard in real time, allowing one-direction changes from form format to JSON to show real-time metadata curation.
-#.  **Export Stage**
-     * **Export Formats:** Save extracted and curated metadata in JSON format.
+
+1. **Start Phase**
+__________________________________________________________
+In the Start phase, users provide two key inputs:
+      - A repository link (GitHub or GitLab)
+      - A personal access token for the corresponding platform
+SMECS can operate without user-provided tokens for some repositories by using internal default tokens. However:
+      - For other GitLab instances, a user-provided token is always required.
+      - Providing a token can enable SMECS to extract more detailed metadata from certain repositories.
+|
+2. **Extraction Phase**
+__________________________________________________________
+The Extraction phase uses `HERMES <https://github.com/softwarepub/hermes>`_ harvesting steps to retrieve metadata from multiple sources. For details on the metadata fields, see: `Metadata Terms in SMECS <https://github.com/NFDI4Energy/SMECS/blob/master/static/schema/codemeta_schema.json>`_. Once the inputs from the Start phase are submitted, SMECS initiates metadata retrieval using four HERMES harvesters:
+      - GitHub
+      - GitLab
+      - CFF (`Citation File Format <https://citation-file-format.github.io/>`_)
+      - CodeMeta
+GitHub and GitLab metadata are harvested via the `HERMES GitHub/GitLab plugin <https://github.com/softwarepub/hermes-plugin-github-gitlab>`_.
+
+All harvested metadata are mapped to CodeMeta using existing crosswalks from CodeMeta and HERMES, plus a custom crosswalk we created for GitLab.
+The metadata are then processed and merged via the HERMES processing step, producing a unified set of metadata.
+These results are displayed in the Curation phase. The HERMES-based approach ensures an interoperable, modular architecture that makes it easy to integrate additional harvesting sources in the future.
+
+|
+3. **Curation Phase**
+__________________________________________________________
+The Curation phase allows users to edit and refine the extracted metadata. The metadata are displayed in a form-based interface organized into four main tabs:
+   #. General Information
+   #. Provenance
+   #. Related Persons
+   #. Technical Aspects
+
+Key visualization and curation features include:
+   - **Metadata Visualization & User-Friendly Interface:** Metadata is displayed in a structured, easy-to-read format. The interface is intuitive, responsive, and allows smooth    navigation through metadata fields.
+   - **Missing Metadata Identification:** SMECS flags fields where metadata is absent.
+   - **Required Metadata Properties:** Certain fields are marked as mandatory to ensure completeness of the final output.
+   - **Editable Fields:** Users can directly edit or correct metadata within the interface.
+   - **Tagging Feature:** Some fields allow multiple values for better metadata organization.
+   - **Suggestion Lists:** For selected fields, SMECS provides suggestions to reduce manual input and ensure consistency.
+   - **Form-to-JSON Synchronization:** Updates in the form are mirrored in the JSON view (one-directional) so users can track changes instantly.
+
+
+4. **Export Phase**
+_________________________________________________________
+In the Export phase, the curated metadata can be downloaded as a CodeMeta 3.0–compliant JSON file. Users can:
+     - Include this file in their repository to make their research software more FAIR
+     - Use it for other purposes, such as uploading metadata to a software registry
+  
 |
 |
 Installation and Usage
@@ -41,41 +72,81 @@ __________________________________________________________
 Install from GitHub
 ----------
 
-#. Cloning the repository
-     * Copy URL of the project from Clone with HTTPS.
-     * Change the current working directory to   the desired location.
-     * Run ``git clone <URL>`` in command prompt. (GitBash can be used as well)
-#. Creating virtual environment
-     * Make sure `Python <https://www.python.org/>`_ is installed.
-     * Ensure you can run Python from command prompt.
-         * On Windows: Run ``py --version``. 
-         * On Unix/MacOS: Run ``python3 --version``. 
-     * Create the virtual environment by running this code in the command prompt.
-         * On Windows: Run ``py -m venv <name-of-virtual-environment>``.
-         * On Unix/MacOS: Run ``python3 -m venv <name-of-virtual-environment>``.
+* Cloning the repository
+.. code-block:: shell
+
+   git clone https://github.com/NFDI4Energy/SMECS.git
+
+* Creating virtual environment
+     * Ensure that `Python 3.10 or higher <https://www.python.org/>`_ is installed on your system.
+         - **Windows:** Check the version with ``py --version``. 
+         - **Unix/MacOS:** Check the version with ``python3 --version``.
+     * Create the virtual environment.
+         * **Windows:** 
+         .. code-block:: shell
+
+            py -m venv my-env
+
+         * **Unix/MacOS:**
+         .. code-block:: shell
+
+          python3 -m venv my-env
+
        | for more details visit `Creation of virtual environments <https://docs.python.org/3/library/venv.html>`_
+
      * Activate virtual environment.
-         * On Windows: Run ``env\Scripts\activate``. 
-         * On Unix/MacOS: Run ``source env/bin/activate``.
-       env is the selected name for the virtual environment.
-       Note that activating the virtual environment change the shell's prompt and show what virtual
-       environment is being used.
-#. Managing Packages with pip
-     * Ensure you can run pip from command prompt.
-         * On Windows: Run ``py -m pip --version``.
-         * On Unix/MacOS: Run ``python3 -m pip --version``.
-     * Install a list of requirements specified in a *Requirements.txt*.
-         * On Windows: Run ``py -m pip install -r requirements.txt``.
-         * On Unix/MacOS: Run ``python3 -m pip install -r requirements.txt``.
+         * **Windows:**
+         .. code-block:: shell
+
+          env\Scripts\activate
+
+         * **Unix/MacOS:**
+         .. code-block:: shell
+
+          source env/bin/activate
+
+
+       (Note that activating the virtual environment change the shell's prompt and show what virtual environment is being used.)
+
+* Managing Packages with pip
+   * Ensure you can run pip from command prompt.
+      * **Windows:**
+      .. code-block:: shell
+
+         py -m pip --version
+
+      * **Unix/MacOS:**
+      .. code-block:: shell         
+         
+         python3 -m pip --version
+
+   * Install a list of requirements specified in a *Requirements.txt*.
+         * **Windows:** 
+         .. code-block:: shell
+
+          py -m pip install -r requirements.txt
+
+         * **Unix/MacOS:** 
+         .. code-block:: shell
+
+          python3 -m pip install -r requirements.txt
+
    | for more details visit `Installing Packages <https://packaging.python.org/en/latest/tutorials/installing-packages/>`_
 |   
 |
-**Running the project**
+* **Running the project**
+    * Open and run the project in an editor (e.g. VS code).
+    * Run the project.
+        * **Windows:** 
+        .. code-block:: shell
 
-* Open and run the project in an editor (e.g. VS code).
-* Run the project.
-    * On Windows: Run ``py manage.py runserver``.
-    * On Unix/MacOS: Run ``python3 manage.py runserver``.
+          py manage.py runserver
+
+        * **Unix/MacOS:** 
+        .. code-block:: shell
+
+          python3 manage.py runserver
+
 * To see the output on the browser follow the link shown in the terminal. (e.g. http://127.0.0.1:8000/)
 |
 |
@@ -129,8 +200,8 @@ Collaboration
 __________________________________________________________
 | We believe in the power of collaboration and welcome contributions from the community to enhance the SMECS workflow. Whether you have found a bug, have a feature idea, or want to share feedback, your contribution matters. Feel free to submit a pull request, open up an issue, or reach out with any questions or concerns.
 |
-To see upcoming features, please refer to our `open issues <https://github.com/NFDI4Energy/SMECS/issues?q=is%3Aopen+is%3Aissue>`_.
-
+| To see upcoming features in SMECS, please refer to our `open issues <https://github.com/NFDI4Energy/SMECS/issues?q=is%3Aopen+is%3Aissue>`_.
+| To stay updated on upcoming changes to the `HERMES GitHub and GitLab Plugin <https://github.com/softwarepub/hermes-plugin-github-gitlab>`_, visit the `project’s issues page <https://github.com/softwarepub/hermes-plugin-github-gitlab/issues>`_. And if you have questions, suggestions, feedback, or need to report a bug, please open a new issue `there <https://github.com/softwarepub/hermes-plugin-github-gitlab/issues>`_.
 |
 License and Citation
 __________________________________________________________
