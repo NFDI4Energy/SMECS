@@ -5,6 +5,7 @@ __________________________________________________________
 |
 | SMECS facilitates the extraction of research software metadata from GitHub and GitLab repositories. It provides a user-friendly graphical interface for visualizing the retrieved metadata, enabling researchers and research software engineers to create high-quality metadata without reentering information already available elsewhere. The curated metadata is exported as CodeMeta-compliant JSON, ensuring integration with other tools and enhancing the discoverability, reuse, and impact of research software.
 |
+| 📄 For more details, see our `Preprint <http://doi.org/10.48550/arXiv.2507.18159>`_.
 |
 | **Authors:** Stephan Ferenz, Aida Jafarbigloo
 |
@@ -12,13 +13,9 @@ Phases in SMECS
 __________________________________________________________
 | The workflow of SMECS consists of four sequential phases: **Start**, **Extraction**, **Curation**, and **Export**.
 |
-|
-
 .. image:: https://github.com/NFDI4Energy/SMECS/blob/master/docs/Extraction_via_hermes-1.png
    :alt: SMECS Workflow
    :width: 1000px
-
-|
 |
 
 1. **Start Phase**
@@ -32,7 +29,7 @@ SMECS can operate without user-provided tokens for some repositories by using in
 |
 2. **Extraction Phase**
 __________________________________________________________
-The Extraction phase uses `HERMES <https://github.com/softwarepub/hermes>`_ harvesting steps to retrieve metadata from multiple sources. For details on the specific metadata fields, see: `Metadata Terms in SMECS <https://github.com/NFDI4Energy/SMECS/blob/master/docs/metadata-terms.md>`_. Once the inputs from the Start phase are submitted, SMECS initiates metadata retrieval using four HERMES harvesters:
+The Extraction phase uses `HERMES <https://github.com/softwarepub/hermes>`_ harvesting steps to retrieve metadata from multiple sources. For details on the metadata fields, see: `Metadata Terms in SMECS <https://github.com/NFDI4Energy/SMECS/blob/master/static/schema/codemeta_schema.json>`_. Once the inputs from the Start phase are submitted, SMECS initiates metadata retrieval using four HERMES harvesters:
       - GitHub
       - GitLab
       - CFF (`Citation File Format <https://citation-file-format.github.io/>`_)
