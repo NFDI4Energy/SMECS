@@ -206,6 +206,7 @@ export function setupTagging({
       // Show all suggestions if input is empty, or filtered if not
       const query = input.value.trim().toLowerCase();
       suggestionsBox.innerHTML = "";
+
       // Filter as in your input event
       const filtered = autocompleteSource.filter(
         (tag) =>
@@ -319,6 +320,14 @@ export function setupTagging({
         addTag(newTag);
       }
     }
+  });
+  input.addEventListener("blur", () => {
+    const value = input.value.trim();
+    if (value !== "") {
+      // Reuse Enter key handling
+      input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+    }
+    // input.style.display = "none";
   });
 
   // Update hidden input and JSON
@@ -642,9 +651,11 @@ export function enableEditableTagsInTable() {
     // Hide input when empty and blurred
     if (!input.dataset.bound) {
       input.addEventListener("blur", () => {
-        if (input.value.trim() === "") {
-          input.style.display = "none";
+        const value = input.value.trim();
+        if (value !== "") {
+          input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
         }
+        input.style.display = "none";
       });
 
       input.dataset.bound = "true"; // ✅ Prevent rebinding blur
