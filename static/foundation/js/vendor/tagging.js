@@ -5,6 +5,7 @@ Highlights suggested input
 Provides reusable autocomplete logic for table cells and forms*/
 
 import { getSchema } from "./schema-utils.js";
+import { validateInput } from "./ui.js";
 const SPDX_URL =
   "https://raw.githubusercontent.com/spdx/license-list-data/master/json/licenses.json";
 const metadataJson = document.getElementById("metadata-json");
@@ -102,6 +103,7 @@ export function setupTagging({
       "invalid-required",
       "invalid-recommended"
     ); // Remove invalid color immediately
+    validateInput(input);
     input.blur();
   }
 
@@ -268,6 +270,7 @@ export function setupTagging({
       }
       e.target.parentElement.remove();
       updateHidden();
+      validateInput(input);
     }
 
     // 🟡 Edit tag logic
@@ -283,7 +286,7 @@ export function setupTagging({
 
       updateHidden();
       renderTags();
-
+      validateInput(input);
       // Populate input for editing
       input.value = value;
       input.focus();
@@ -327,7 +330,6 @@ export function setupTagging({
       // Reuse Enter key handling
       input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
     }
-    // input.style.display = "none";
   });
 
   // Update hidden input and JSON
@@ -340,6 +342,7 @@ export function setupTagging({
     const jsonObject = JSON.parse(metadataJson.value);
     jsonObject[jsonKey] = selectedTags;
     metadataJson.value = JSON.stringify(jsonObject, null, 2);
+    validateInput(input);
   }
 
   // Initial render
@@ -577,6 +580,7 @@ export function setupTagAutocompleteInput({
       div.onclick = function () {
         onTagSelected(tag);
         suggestionsBox.style.display = "none";
+        input.focus();
       };
       suggestionsBox.appendChild(div);
     });
