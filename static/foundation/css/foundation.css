@@ -133,7 +133,6 @@ button.ExData {
   padding: 5px;
   border: #ccc;
   border-radius: 4px;
-
   cursor: pointer;
   font-weight: bold;
   margin-top: 3.5rem;
@@ -151,6 +150,7 @@ button.TrySMECS {
 button.ExData:hover,
 button.TrySMECS:hover {
   background-color: #4ba0af;
+  color: white;
   cursor: pointer;
 }
 
@@ -334,6 +334,13 @@ form.data-form3 {
   margin: 5% 0% 0% 5%;
   text-align: left;
   display: block;
+}
+#RelatedPersons .form-group {
+  margin: 5% 0% 0% 0%;
+}
+
+#Relatedpersons .tab.active {
+  display: grid;
 }
 
 .tab-description {
@@ -557,7 +564,7 @@ div.error-container a:hover {
 
 /********************************* Style for auto table **********************************/
 /* Flexible columns distribution */
-.auto-property-table {
+.auto-property {
   margin-top: 8px;
   width: 100%; /* Same as .long_field */
   min-width: 500px; /* Optional: for usability */
@@ -568,11 +575,14 @@ div.error-container a:hover {
   margin-right: auto;
 }
 
+.table {
+  --bs-table-bg: #f2f2f2 !important;
+}
+
 /* Set properties of table head and table data for auto-property table */
-.auto-property-table th,
-.auto-property-table td {
+.auto-property th {
   padding: 8px 12px;
-  width: auto; /* Let table-layout: fixed handle equal width */
+  width: auto;
   text-align: left;
   padding: 8px;
   border: 1px solid #ccc;
@@ -584,7 +594,7 @@ div.error-container a:hover {
 }
 
 /* Set fixed width for first row */
-.auto-property-table th:first-child,
+.auto-property th:first-child,
 .auto-property-table td:first-child {
   max-width: 200px;
   min-width: 20px;
@@ -597,7 +607,7 @@ div.error-container a:hover {
 /* for the add-row-control row (last row) */
 tr.add-row-controls,
 tr.add-row-controls td {
-  display: table-row;
+  /* display: table-row; */
   width: auto;
   box-sizing: border-box;
   padding: 0.5em;
@@ -1353,6 +1363,7 @@ input:checked + .slider:before {
 /* Create info strings to explain color and other codes */
 .color-code-container {
   background-color: #f2f2f2;
+  padding: 1% 3% 0%;
 }
 
 .color-code {
@@ -1768,7 +1779,6 @@ div div p#contributor-explanation {
   width: fit-content;
   cursor: pointer;
   border: none;
-  padding: 10px;
   font-size: 16px;
   font-weight: bold;
   text-align: left;

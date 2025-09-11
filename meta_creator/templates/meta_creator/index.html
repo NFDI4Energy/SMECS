@@ -25,7 +25,9 @@
         {% csrf_token %}
         <h6 class="custom-tooltip">
           Project URL
-          <span class="tooltip-text"> The GitHub repository URL </span>
+          <span class="tooltip-text">
+            The GitHub or GitLab repository URL
+          </span>
           <i class="fa fa-info-circle" aria-hidden="true"></i>
         </h6>
         <input
@@ -77,13 +79,15 @@
           >{{ error_message_token }}</span
         >
         {% endif %}
-        <button
-          id="submitBtn"
-          class="ExData btn-lg"
-          type="submit"
-          title="Run the Extraction process">
-          Extract Metadata
-        </button>
+        <div class="d-grid col-4 mx-auto">
+          <button
+            id="submitBtn"
+            class="ExData btn"
+            type="submit"
+            title="Run the Extraction process">
+            Extract Metadata
+          </button>
+        </div>
       </form>
     </div>
   </div>

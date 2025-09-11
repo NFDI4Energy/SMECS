@@ -50,7 +50,7 @@
                                 <span class="red"></span>
                                 <span class="fs-6">Missing required metadata</span>
                             </div>
-                            <div class="col-3 color-code">
+                            <div class="col-4 color-code">
                                 <span class="yellow"></span>
                                 <span class="fs-6">Missing recommended metadata</span>
                             </div>
@@ -58,7 +58,8 @@
                                 <span class="symbol"></span>
                                 <span class="fs-6">Mandatory elements</span>
                             </div>
-                            <div class="col-3 toggle">
+                          
+                            <div class="col-2 toggle">
                                 <label title="Press to ON/OFF the JSON viewer" class="toggle-switch">
                                 <input type="checkbox" id="toggleSwitch" checked>
                                 <span class="slider">JSON</span>
@@ -94,7 +95,7 @@
                     </div>
 
                     <!-- Tabs -->
-                    <form class="data-form3" id="metadata-form">
+                    <form class="data-form3 col-12" id="metadata-form">
                         {% csrf_token %}
                         <!-- content in tabs -->
                         <div class="tab-content_ext">
@@ -117,7 +118,7 @@
                                 </div>
                                 {% endif %}
                                     {% for key, value in metadata_dict.items %}
-                                    <div class="form-group">
+                                    <div class="form-group ">
                                         {% if type_metadata|get:key == "hidden" %}
                                         <!-- Hidden element -->
                                         <div class="single_inputs" hidden>
@@ -307,11 +308,11 @@
                                             {% endif %}
                                             <input type="hidden" id="{{ key }}TableHiddenInput" name="{{ key }}TableHiddenInput"
                                                 value='{{ value }}'>
-                                            <table class="auto-property-table" id="{{ key }}Table" data-at-type={{default_type}} unique-tab={{unique_tab}}>
+                                            <table class="auto-property table table-responsive table-bordered table-hover" id="{{ key }}Table" data-at-type={{default_type}} unique-tab={{unique_tab}}>
                                                 <thead>
                                                     <tr>
                                                         {% for col, value in specific_types.items %}
-                                                        <th data-col="{{ col }}" data-coltype="{{ value }}">
+                                                        <th data-col="{{ col }}" data-coltype="{{ value }}" class="align-items-center"> 
                                                             {{ col|camel_to_spaces_lower }}
                                                             <div class="custom-tooltip-metadata">
                                                                 <span class="tooltip-text-metadata">
