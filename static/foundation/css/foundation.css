@@ -339,10 +339,6 @@ form.data-form3 {
   margin: 5% 0% 0% 0%;
 }
 
-#Relatedpersons .tab.active {
-  display: grid;
-}
-
 .tab-description {
   background: #f5f7fa;
   border-left: 4px solid #0078d4;

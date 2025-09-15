@@ -175,12 +175,14 @@ export function setupTagging({
         e.preventDefault();
         items[activeSuggestionIndex].click();
         enterHandledBySuggestion = true;
+        setTimeout(() => input.focus(), 200);
         return;
       }
 
-      if (e.key === "Escape") {
+      if (e.key === "Escape" || e.key === "Tab") {
         suggestionsBox.style.display = "none";
         activeSuggestionIndex = -1;
+        input.blur();
       }
     });
 
@@ -230,7 +232,7 @@ export function setupTagging({
         div.onclick = () => addTag(tag);
         suggestionsBox.appendChild(div);
         div.addEventListener("mouseenter", () => {
-          activeSuggestionIndex = -1; // reset keyboard tracking
+          // activeSuggestionIndex = -1; // reset keyboard tracking
           const allItems = suggestionsBox.querySelectorAll(".suggestion-item");
           allItems.forEach((item) => item.classList.remove("active"));
           div.classList.add("active");
@@ -298,6 +300,7 @@ export function setupTagging({
     if (e.key === "Enter") {
       if (enterHandledBySuggestion) {
         enterHandledBySuggestion = false;
+
         return;
       }
 
@@ -322,6 +325,7 @@ export function setupTagging({
         e.preventDefault();
         addTag(newTag);
       }
+      setTimeout(() => input.focus(), 0);
     }
   });
   input.addEventListener("blur", () => {

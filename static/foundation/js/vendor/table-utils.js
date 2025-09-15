@@ -247,8 +247,8 @@ export function setupTables() {
         const col = input ? input.getAttribute("data-col") : null;
         const dataType = table.getAttribute("data-at-type");
         const td = document.createElement("td");
-        td.className = "text-center";
-        console.log({ header, input, col, colType, dataType });
+        td.classList.add("text-left");
+        // td.className = "text-center";
         if (colType === "element") {
           // Find the checkbox in the add-row-controls row
           console.log("Looking for checkbox with data-role:", col);
@@ -262,17 +262,16 @@ export function setupTables() {
           checkbox.name = `checkbox-${col}`;
           console.log("Try to check for checkbox");
           console.log({ checkboxInput });
+
           // Set checked state based on add-row-controls checkbox
           if (checkboxInput && checkboxInput.checked) {
             checkbox.checked = true;
-            console.log("Copyied checked state");
           }
           td.setAttribute("data-col", col);
           td.setAttribute("data-coltype", "element");
           td.setAttribute("data-type", dataType);
           td.appendChild(checkbox);
         } else if (colType === "dropdown") {
-          console.log("Got to dropdown");
           td.className = "table-tagging-cell";
           td.setAttribute("data-col", col);
           td.setAttribute("data-coltype", "dropdown");
@@ -280,7 +279,6 @@ export function setupTables() {
 
           // Show the selected value as plain text
           const value = input ? input.value : "";
-          console.log("Selected value:", input.value);
           td.textContent = value;
         } else if (
           colType === "tagging" ||
@@ -345,7 +343,13 @@ export function setupTables() {
 
       // Insert new row above add-row-controls
       addRowControls.parentNode.insertBefore(newRow, addRowControls);
-
+      // Check if this td contains a checkbox
+      document.querySelectorAll("td").forEach((td) => {
+        if (td.querySelector('input[type="checkbox"]')) {
+          td.classList.remove("text-left"); // remove old alignment
+          td.classList.add("text-center"); // add new alignment
+        }
+      });
       initializeTableTaggingCells();
       enableEditableTagsInTable();
 
