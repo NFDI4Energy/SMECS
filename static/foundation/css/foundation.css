@@ -595,7 +595,7 @@ div.error-container a:hover {
   max-width: 200px;
   min-width: 20px;
   width: 15%;
-  overflow: hidden;
+  overflow: visible;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
