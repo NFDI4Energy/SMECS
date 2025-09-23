@@ -76,6 +76,7 @@ def index(request):
             "description_metadata":description_metadata,
             "extracted_metadata":extracted_metadata,
             "my_json_str": my_json_str,
+            "from_showdata": True,
             }, request))
 
     except ConnectTimeout:

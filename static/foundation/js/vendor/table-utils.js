@@ -13,6 +13,7 @@ import {
   updateSuggestionsBoxPosition,
   setupTableTagAutocomplete,
   createSuggestionsBox,
+  enableEditableTagsInTable,
 } from "./tagging.js";
 
 const metadataJson = document.getElementById("metadata-json");
@@ -169,36 +170,34 @@ export function extractCellValue(cell, coltype) {
 
 // Set up event listeners on all auto-property-tables
 export function setupTables() {
-  // Loop over all tables with the class 'auto-property-table'
-  document
-    .querySelectorAll("table.auto-property-table")
-    .forEach(function (table) {
-      // Extract the key from the table's id (assumes id is like 'copyrightHolderTable')
-      const tableId = table.id;
-      if (!tableId || !tableId.endsWith("Table")) return;
-      const key = tableId.replace(/Table$/, "");
+  // Loop over all tables with the class 'auto-property'
+  document.querySelectorAll("table.auto-property").forEach(function (table) {
+    // Extract the key from the table's id (assumes id is like 'copyrightHolderTable')
+    const tableId = table.id;
+    if (!tableId || !tableId.endsWith("Table")) return;
+    const key = tableId.replace(/Table$/, "");
 
-      // Attach a listener for cell edits (blur on any input or td)
-      table.addEventListener(
-        "blur",
-        function (e) {
-          if (e.target.tagName === "TD" || e.target.tagName === "INPUT") {
-            updateTableHiddenInput(key);
-          }
-        },
-        true
-      );
-
-      table.addEventListener("change", function (e) {
-        if (e.target.classList.contains("checkbox-element")) {
+    // Attach a listener for cell edits (blur on any input or td)
+    table.addEventListener(
+      "blur",
+      function (e) {
+        if (e.target.tagName === "TD" || e.target.tagName === "INPUT") {
           updateTableHiddenInput(key);
         }
-      });
+      },
+      true
+    );
 
-      // Optionally, update on row addition/removal or other events as needed
-      // For initial sync
-      updateTableHiddenInput(key);
+    table.addEventListener("change", function (e) {
+      if (e.target.classList.contains("checkbox-element")) {
+        updateTableHiddenInput(key);
+      }
     });
+
+    // Optionally, update on row addition/removal or other events as needed
+    // For initial sync
+    updateTableHiddenInput(key);
+  });
   // Add Row functionality for all auto-property-tables
   document.querySelectorAll(".add-row-btn").forEach(function (btn) {
     btn.addEventListener("click", function () {
@@ -217,7 +216,7 @@ export function setupTables() {
       const inputs = addRowControls.querySelectorAll(
         ".add-row-input, .add-row-tag-input, .add-row-dropdown-select"
       );
-      console.log({ inputs });
+
       const values = Array.from(inputs).map((input) => input.value.trim());
 
       // Prevent adding if all fields are empty
@@ -248,7 +247,8 @@ export function setupTables() {
         const col = input ? input.getAttribute("data-col") : null;
         const dataType = table.getAttribute("data-at-type");
         const td = document.createElement("td");
-        console.log({ header, input, col, colType, dataType });
+        td.classList.add("text-left");
+        // td.className = "text-center";
         if (colType === "element") {
           // Find the checkbox in the add-row-controls row
           console.log("Looking for checkbox with data-role:", col);
@@ -262,17 +262,16 @@ export function setupTables() {
           checkbox.name = `checkbox-${col}`;
           console.log("Try to check for checkbox");
           console.log({ checkboxInput });
+
           // Set checked state based on add-row-controls checkbox
           if (checkboxInput && checkboxInput.checked) {
             checkbox.checked = true;
-            console.log("Copyied checked state");
           }
           td.setAttribute("data-col", col);
           td.setAttribute("data-coltype", "element");
           td.setAttribute("data-type", dataType);
           td.appendChild(checkbox);
         } else if (colType === "dropdown") {
-          console.log("Got to dropdown");
           td.className = "table-tagging-cell";
           td.setAttribute("data-col", col);
           td.setAttribute("data-coltype", "dropdown");
@@ -280,7 +279,6 @@ export function setupTables() {
 
           // Show the selected value as plain text
           const value = input ? input.value : "";
-          console.log("Selected value:", input.value);
           td.textContent = value;
         } else if (
           colType === "tagging" ||
@@ -336,14 +334,24 @@ export function setupTables() {
         newRow.appendChild(td);
       }
       const deleteTd = document.createElement("td");
+
+      deleteTd.className = "d-flex justify-content-center align-items-center";
+      deleteTd.style.height = "50px";
       deleteTd.innerHTML =
         '<i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i>';
       newRow.appendChild(deleteTd);
 
       // Insert new row above add-row-controls
       addRowControls.parentNode.insertBefore(newRow, addRowControls);
-
+      // Check if this td contains a checkbox
+      document.querySelectorAll("td").forEach((td) => {
+        if (td.querySelector('input[type="checkbox"]')) {
+          td.classList.remove("text-left"); // remove old alignment
+          td.classList.add("text-center"); // add new alignment
+        }
+      });
       initializeTableTaggingCells();
+      enableEditableTagsInTable();
 
       // Clear input fields
       inputs.forEach((input) => {
@@ -358,7 +366,10 @@ export function setupTables() {
       updateTableHiddenInput(key);
 
       // Remove color
-      addRowControls.classList.remove('invalid-required', 'invalid-recommended');
+      addRowControls.classList.remove(
+        "invalid-required",
+        "invalid-recommended"
+      );
     });
   });
 
@@ -481,7 +492,7 @@ export function setupTables() {
             .join("");
         // Replace the input with the select
         if (input) {
-          input.style.display = 'none';
+          input.style.display = "none";
         }
         container.appendChild(select);
 
@@ -553,67 +564,65 @@ export function setupTables() {
   });
 
   // functionanilties within all auto-property-tables
-  document
-    .querySelectorAll("table.auto-property-table")
-    .forEach(function (table) {
-      table.addEventListener("click", function (e) {
-        // Delete rows
-        if (e.target.classList.contains("delete-row-btn")) {
-          const row = e.target.closest("tr");
-          if (row) {
-            row.remove();
-            // Update the hidden input
-            const tableId = table.id;
-            if (tableId && tableId.endsWith("Table")) {
-              const key = tableId.replace(/Table$/, "");
-              updateTableHiddenInput(key);
-            }
-          }
-        }
-
-        // Update other fields
-        // Only allow editing on <td> that is not the last column (delete icon)
-        const cell = e.target.closest("td");
-        if (!cell) return;
-        if (cell.classList.contains("table-tagging-cell")) return;
-        if (cell.classList.contains("table-tagging-cell")) return;
-        const row = cell.parentElement;
-        const allCells = Array.from(row.children);
-        // Don't edit the last cell (delete icon)
-        if (allCells.indexOf(cell) === allCells.length - 1) return;
-        // Prevent multiple inputs
-        if (cell.querySelector("input")) return;
-
-        const oldValue = cell.textContent;
-        cell.innerHTML = "";
-        const input = document.createElement("input");
-        input.type = "text";
-        input.value = oldValue;
-        input.style.width = "100%";
-        input.style.boxSizing = "border-box";
-        cell.appendChild(input);
-        input.focus();
-
-        // Save on blur or Enter
-        function save() {
-          cell.textContent = input.value;
-          // Update the hidden input for this table
+  document.querySelectorAll("table.auto-property").forEach(function (table) {
+    table.addEventListener("click", function (e) {
+      // Delete rows
+      if (e.target.classList.contains("delete-row-btn")) {
+        const row = e.target.closest("tr");
+        if (row) {
+          row.remove();
+          // Update the hidden input
           const tableId = table.id;
           if (tableId && tableId.endsWith("Table")) {
             const key = tableId.replace(/Table$/, "");
             updateTableHiddenInput(key);
           }
         }
-        input.addEventListener("blur", save);
-        input.addEventListener("keydown", function (evt) {
-          if (evt.key === "Enter") {
-            input.blur();
-          } else if (evt.key === "Escape") {
-            cell.textContent = oldValue;
-          }
-        });
+      }
+
+      // Update other fields
+      // Only allow editing on <td> that is not the last column (delete icon)
+      const cell = e.target.closest("td");
+      if (!cell) return;
+      if (cell.classList.contains("table-tagging-cell")) return;
+      if (cell.classList.contains("table-tagging-cell")) return;
+      const row = cell.parentElement;
+      const allCells = Array.from(row.children);
+      // Don't edit the last cell (delete icon)
+      if (allCells.indexOf(cell) === allCells.length - 1) return;
+      // Prevent multiple inputs
+      if (cell.querySelector("input")) return;
+
+      const oldValue = cell.textContent;
+      cell.innerHTML = "";
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = oldValue;
+      input.style.width = "100%";
+      input.style.boxSizing = "border-box";
+      cell.appendChild(input);
+      input.focus();
+
+      // Save on blur or Enter
+      function save() {
+        cell.textContent = input.value;
+        // Update the hidden input for this table
+        const tableId = table.id;
+        if (tableId && tableId.endsWith("Table")) {
+          const key = tableId.replace(/Table$/, "");
+          updateTableHiddenInput(key);
+        }
+      }
+      input.addEventListener("blur", save);
+      input.addEventListener("keydown", function (evt) {
+        if (evt.key === "Enter") {
+          input.blur();
+        } else if (evt.key === "Escape") {
+          cell.textContent = oldValue;
+        }
       });
     });
+  });
 
   initializeTableTaggingCells();
 
@@ -634,7 +643,7 @@ export function highlightEmptyAddRowControls() {
     const { required, recommended } = fetchRequiredAndRecommendedFields(schema);
     const allMandatory = [...required, ...recommended];
 
-    document.querySelectorAll("table.auto-property-table").forEach((table) => {
+    document.querySelectorAll("table.auto-property").forEach((table) => {
       const tableId = table.id;
       if (!tableId || !tableId.endsWith("Table")) return;
       const key = tableId.replace(/Table$/, "");
@@ -645,18 +654,23 @@ export function highlightEmptyAddRowControls() {
       );
       if (!addRowControls) return;
 
-        addRowControls.classList.remove('invalid-required', 'invalid-recommended');
+      addRowControls.classList.remove(
+        "invalid-required",
+        "invalid-recommended"
+      );
 
-        const tbody = table.querySelector('tbody');
-        const dataRows = tbody
-            ? Array.from(tbody.querySelectorAll('tr')).filter(row => !row.classList.contains('add-row-controls'))
-            : [];
+      const tbody = table.querySelector("tbody");
+      const dataRows = tbody
+        ? Array.from(tbody.querySelectorAll("tr")).filter(
+            (row) => !row.classList.contains("add-row-controls")
+          )
+        : [];
 
-        if (required.includes(key) && dataRows.length === 0) {
-            addRowControls.classList.add('invalid-required');
-        } else if (recommended.includes(key) && dataRows.length === 0) {
-            addRowControls.classList.add('invalid-recommended');
-        }
+      if (required.includes(key) && dataRows.length === 0) {
+        addRowControls.classList.add("invalid-required");
+      } else if (recommended.includes(key) && dataRows.length === 0) {
+        addRowControls.classList.add("invalid-recommended");
+      }
     });
   });
 }
