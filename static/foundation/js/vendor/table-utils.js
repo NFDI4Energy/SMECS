@@ -223,6 +223,38 @@ export function setupTables() {
       const allEmpty = values.every((val) => val === "");
       if (allEmpty) return;
 
+      // ✅ Combination Validation
+      const getInputVal = (col) =>
+        Array.from(inputs)
+          .find((i) => i.getAttribute("data-col") === col)
+          ?.value.trim() || "";
+
+      const identifier = getInputVal("identifier");
+      const givenName = getInputVal("givenName");
+      const familyName = getInputVal("familyName");
+
+      let emailTagValue = "";
+      const emailTagContainer = addRowControls.querySelector(
+        '.add-row-tags-container[data-col="email"]'
+      );
+      if (emailTagContainer) {
+        const emailTag = emailTagContainer.querySelector(".tag");
+        if (emailTag) emailTagValue = emailTag.dataset.tag.trim();
+      }
+      // Condition 1: Identifier + Given Name + Family Name
+      const condition1 = identifier && givenName && familyName;
+
+      // Condition 2: Given Name + Family Name + Email
+      const condition2 = givenName && familyName && emailTagValue;
+
+      // If neither condition is satisfied → stop row creation
+      if (!condition1 && !condition2) {
+        alert(
+          "Please fill either: Identifier + Given Name + Family Name OR Given Name + Family Name + Email."
+        );
+        return;
+      }
+
       // Create new row
       const newRow = document.createElement("tr");
       // Get column headers
@@ -271,19 +303,7 @@ export function setupTables() {
           td.setAttribute("data-coltype", "element");
           td.setAttribute("data-type", dataType);
           td.appendChild(checkbox);
-        } else if (colType === "dropdown") {
-          td.className = "table-tagging-cell";
-          td.setAttribute("data-col", col);
-          td.setAttribute("data-coltype", "dropdown");
-          td.setAttribute("data-type", dataType);
-
-          // Show the selected value as plain text
-          const value = input ? input.value : "";
-          td.textContent = value;
-        } else if (
-          colType === "tagging" ||
-          colType === "tagging_autocomplete"
-        ) {
+        } else if (colType === "tagging") {
           td.className = "table-tagging-cell";
           td.setAttribute("data-col", col);
           td.setAttribute("data-coltype", "tagging");
@@ -317,17 +337,6 @@ export function setupTables() {
               .querySelectorAll(".tag")
               .forEach((tagEl) => tagEl.remove());
           }
-          // If tagging_autocomplete, initialize autocomplete for this cell
-          if (colType === "tagging_autocomplete") {
-            getSchema().then((schema) => {
-              const autocompleteSource =
-                schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum ||
-                [];
-              if (autocompleteSource.length > 0) {
-                setupTableTagAutocomplete({ cell: td, autocompleteSource });
-              }
-            });
-          }
         } else {
           td.textContent = input ? input.value : "";
         }
@@ -355,11 +364,12 @@ export function setupTables() {
 
       // Clear input fields
       inputs.forEach((input) => {
-        if (input.tagName === "SELECT") {
-          input.selectedIndex = 0;
-        } else {
-          input.value = "";
-        }
+        // if (input.tagName === "SELECT") {
+        //   input.selectedIndex = 0;
+        // } else {
+        input.value = "";
+
+        // }
       });
 
       // Update hidden input
@@ -504,11 +514,21 @@ export function setupTables() {
       });
     }
 
-    // Add tag on Enter
     input.addEventListener("keydown", function (e) {
       if (e.key === "Enter" && input.value.trim() !== "") {
         e.preventDefault();
         const tag = input.value.trim();
+
+        // ✅ Check if this field is email column
+        if (col === "email") {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(tag)) {
+            alert("Please enter a valid Email address.");
+            input.value = "";
+            return; // ❌ Stop tag creation
+          }
+        }
+
         if (colType === "tagging_autocomplete") {
           if (autocompleteSource.includes(tag)) {
             if (!addRowTags[col].includes(tag)) {
@@ -528,13 +548,7 @@ export function setupTables() {
             input.value = "";
             if (suggestionsBox) suggestionsBox.style.display = "none";
           } else {
-            showInvalidTagMessage(
-              container,
-              input,
-              "Please select a value from the list."
-            );
-            input.classList.add("invalid");
-            setTimeout(() => input.classList.remove("invalid"), 1000);
+            alert("Please select a value from the list.");
             input.value = "";
           }
         } else {
@@ -635,6 +649,18 @@ export function setupTables() {
       });
   });
 
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+
+      const activeElement = document.activeElement;
+
+      if (activeElement.classList.contains("checkbox-element")) {
+        activeElement.checked = !activeElement.checked; // toggle
+      }
+    }
+  });
+
   highlightEmptyAddRowControls();
 }
 // Add function to color add items when element is required or recommended and empty
@@ -692,16 +718,11 @@ export function initializeTableTaggingCells() {
       input.placeholder = "Add tag and press Enter";
       cell.appendChild(input);
     }
-    // ------------------------------Contributors table ends----------------------------////
-
-    //--------------- --- Autocomplete logic: fetch source and setup --------------//
-
-    // You can set data-autocomplete-source on the cell or column header, or fetch from schema
 
     const col = cell.getAttribute("data-col");
     const colType = cell.getAttribute("data-coltype");
     const dataType = cell.getAttribute("data-type");
-    // Example: fetch from schema if available
+
     if (colType == "tagging_autocomplete") {
       getSchema().then((schema) => {
         autocompleteSource =
@@ -711,15 +732,12 @@ export function initializeTableTaggingCells() {
         }
       });
     } else if (colType === "dropdown") {
-      // Show value as plain text initially
       const currentValue =
         cell.getAttribute("data-value") || cell.textContent.trim() || "";
       cell.innerHTML = "";
       cell.textContent = currentValue;
 
-      // Only show dropdown on cell click
       cell.addEventListener("click", function handleDropdownCellClick(e) {
-        // Prevent multiple dropdowns
         if (cell.querySelector("select")) return;
         getSchema().then((schema) => {
           const options =
@@ -734,12 +752,10 @@ export function initializeTableTaggingCells() {
               .join("");
           select.value = currentValue;
 
-          // Replace cell content with select
           cell.innerHTML = "";
           cell.appendChild(select);
           select.focus();
 
-          // On change or blur, update cell and data
           function finalizeSelection() {
             const selectedValue = select.value;
             cell.setAttribute("data-value", selectedValue);
@@ -747,15 +763,11 @@ export function initializeTableTaggingCells() {
               cell.innerHTML = selectedValue;
             }, 0);
 
-            // Remove this event listener to avoid duplicate dropdowns
             cell.removeEventListener("click", handleDropdownCellClick);
-
-            // Re-attach the click event for future edits
             setTimeout(() => {
               cell.addEventListener("click", handleDropdownCellClick);
             }, 0);
 
-            // Update the hidden input and main JSON
             const table = cell.closest("table");
             if (table && table.id.endsWith("Table")) {
               const key = table.id.replace(/Table$/, "");
@@ -767,14 +779,13 @@ export function initializeTableTaggingCells() {
           select.addEventListener("blur", finalizeSelection);
         });
 
-        // Remove this event listener to prevent re-entry until finished
         cell.removeEventListener("click", handleDropdownCellClick);
       });
 
-      return; // Skip further tag logic for dropdowns
+      return;
     }
 
-    // Show input when cell is clicked (not on tag or remove)
+    // Show input when cell is clicked
     cell.addEventListener("click", function (e) {
       if (
         e.target.classList.contains("remove-tag") ||
@@ -786,7 +797,6 @@ export function initializeTableTaggingCells() {
       e.stopPropagation();
     });
 
-    // Hide input when focus is lost
     input.addEventListener("blur", function () {
       setTimeout(function () {
         input.style.display = "none";
@@ -799,6 +809,17 @@ export function initializeTableTaggingCells() {
         e.preventDefault();
         e.stopPropagation();
         const tag = input.value.trim();
+
+        // ✅ Email Validation
+        if (col === "email") {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(tag)) {
+            alert("Please enter a valid Email address.");
+            input.value = "";
+            return; // ❌ Stop tag creation
+          }
+        }
+
         if (
           [...tagsList.querySelectorAll(".tag")].some(
             (t) => t.textContent.trim() === tag + "×"
@@ -807,29 +828,21 @@ export function initializeTableTaggingCells() {
           input.value = "";
           return;
         }
-        // Get autocompleteSource for this cell/column
+
         let autocompleteSource = [];
-        const col = cell.getAttribute("data-col");
-        const dataType = cell.getAttribute("data-type");
         const colType = cell.getAttribute("data-coltype");
         if (colType === "tagging_autocomplete") {
-          // You may want to cache this for performance
           getSchema().then((schema) => {
             autocompleteSource =
               schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];
             if (!autocompleteSource.includes(tag)) {
-              showInvalidTagMessage(
-                cell,
-                input,
-                "Please select a value from the list."
-              );
-              input.classList.add("invalid");
-              setTimeout(() => input.classList.remove("invalid"), 1000);
+              alert("Please select a value from the list.");
               input.value = "";
               return;
             }
           });
         }
+
         const span = document.createElement("span");
         span.className = "tag";
         span.setAttribute("data-tag", tag);
@@ -837,6 +850,7 @@ export function initializeTableTaggingCells() {
           tag + ' <span class="remove-tag" data-tag="' + tag + '">×</span>';
         tagsList.appendChild(span);
         input.value = "";
+
         const table = cell.closest("table");
         if (table && table.id.endsWith("Table")) {
           const key = table.id.replace(/Table$/, "");
@@ -845,7 +859,7 @@ export function initializeTableTaggingCells() {
       }
     });
 
-    // Remove tag on click (cell-local)
+    // Remove tag on click
     tagsList.addEventListener("click", function (e) {
       if (e.target.classList.contains("remove-tag")) {
         e.target.parentElement.remove();
