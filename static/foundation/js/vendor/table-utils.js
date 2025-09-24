@@ -204,6 +204,7 @@ export function setupTables() {
       const key = btn.getAttribute("data-table-key");
       const table = document.getElementById(key + "Table");
       const hiddenInput = document.getElementById(key + "TableHiddenInput");
+
       if (!table || !hiddenInput) return;
 
       // Find the add-row-controls row
@@ -241,18 +242,21 @@ export function setupTables() {
         const emailTag = emailTagContainer.querySelector(".tag");
         if (emailTag) emailTagValue = emailTag.dataset.tag.trim();
       }
-      // Condition 1: Identifier + Given Name + Family Name
-      const condition1 = identifier && givenName && familyName;
 
-      // Condition 2: Given Name + Family Name + Email
-      const condition2 = givenName && familyName && emailTagValue;
+      if (table.id !== "copyrightHolderTable") {
+        // Condition 1: Identifier + Given Name + Family Name
+        const condition1 = identifier && givenName && familyName;
 
-      // If neither condition is satisfied → stop row creation
-      if (!condition1 && !condition2) {
-        alert(
-          "Please fill either: Identifier + Given Name + Family Name OR Given Name + Family Name + Email."
-        );
-        return;
+        // Condition 2: Given Name + Family Name + Email
+        const condition2 = givenName && familyName && emailTagValue;
+
+        // If neither condition is satisfied → stop row creation
+        if (!condition1 && !condition2) {
+          alert(
+            "Please fill either: Identifier + Given Name + Family Name OR Given Name + Family Name + Email."
+          );
+          return;
+        }
       }
 
       // Create new row
@@ -362,16 +366,12 @@ export function setupTables() {
       initializeTableTaggingCells();
       enableEditableTagsInTable();
 
-      // Clear input fields
-      inputs.forEach((input) => {
-        // if (input.tagName === "SELECT") {
-        //   input.selectedIndex = 0;
-        // } else {
-        input.value = "";
-
-        // }
-      });
-
+      // Clear input fields and checkboxes
+      inputs.forEach((input) => (input.value = "")); // reset text/tag inputs
+      const checkboxes = addRowControls.querySelectorAll(
+        'input[type="checkbox"]'
+      );
+      checkboxes.forEach((cb) => (cb.checked = false));
       // Update hidden input
       updateTableHiddenInput(key);
 
@@ -485,35 +485,36 @@ export function setupTables() {
           suggestionsBox.style.display = "none";
         }, 200);
       });
-    } else if (colType === "dropdown") {
-      getSchema().then((schema) => {
-        const options =
-          schema["$defs"]?.[dataType]?.properties?.[col]?.enum || [];
-        const select = document.createElement("select");
-        select.className = "add-row-dropdown-select";
-        select.name = "selectElement";
-        select.setAttribute("data-col", col);
-        select.setAttribute("data-type", dataType);
-        select.setAttribute("data-coltype", "dropdown");
-        select.innerHTML =
-          '<option value="">Select...</option>' +
-          options
-            .map((opt) => `<option value="${opt}">${opt}</option>`)
-            .join("");
-        // Replace the input with the select
-        if (input) {
-          input.style.display = "none";
-        }
-        container.appendChild(select);
-
-        // On change, update addRowTags or values as needed
-        select.addEventListener("change", function () {
-          addRowTags[col] = [select.value];
-          console.log("Selected value:", select.value);
-        });
-      });
     }
+    // else if (colType === "dropdown") {
+    //   getSchema().then((schema) => {
+    //     const options =
+    //       schema["$defs"]?.[dataType]?.properties?.[col]?.enum || [];
+    //     const select = document.createElement("select");
+    //     select.className = "add-row-dropdown-select";
+    //     select.name = "selectElement";
+    //     select.setAttribute("data-col", col);
+    //     select.setAttribute("data-type", dataType);
+    //     select.setAttribute("data-coltype", "dropdown");
+    //     select.innerHTML =
+    //       '<option value="">Select...</option>' +
+    //       options
+    //         .map((opt) => `<option value="${opt}">${opt}</option>`)
+    //         .join("");
+    //     // Replace the input with the select
+    //     if (input) {
+    //       input.style.display = "none";
+    //     }
+    //     container.appendChild(select);
 
+    //     // On change, update addRowTags or values as needed
+    //     select.addEventListener("change", function () {
+    //       addRowTags[col] = [select.value];
+    //       console.log("Selected value:", select.value);
+    //     });
+    //   });
+    // }
+    // Add tag on Enter
     input.addEventListener("keydown", function (e) {
       if (e.key === "Enter" && input.value.trim() !== "") {
         e.preventDefault();
@@ -525,45 +526,53 @@ export function setupTables() {
           if (!emailRegex.test(tag)) {
             alert("Please enter a valid Email address.");
             input.value = "";
-            return; // ❌ Stop tag creation
+            return;
           }
         }
 
-        if (colType === "tagging_autocomplete") {
-          if (autocompleteSource.includes(tag)) {
-            if (!addRowTags[col].includes(tag)) {
-              addRowTags[col].push(tag);
+        // if (colType === "tagging_autocomplete") {
+        //   if (autocompleteSource.includes(tag)) {
+        //     if (!addRowTags[col].includes(tag)) {
+        //       addRowTags[col].push(tag);
 
-              // Create tag element
-              const span = document.createElement("span");
-              span.className = "tag";
-              span.setAttribute("data-tag", tag);
-              span.innerHTML =
-                tag +
-                ' <span class="remove-tag" data-tag="' +
-                tag +
-                '">×</span>';
-              container.insertBefore(span, input);
-            }
-            input.value = "";
-            if (suggestionsBox) suggestionsBox.style.display = "none";
-          } else {
-            alert("Please select a value from the list.");
-            input.value = "";
-          }
-        } else {
-          // For plain tagging, just add the tag
-          if (!addRowTags[col].includes(tag)) {
-            addRowTags[col].push(tag);
-            const span = document.createElement("span");
-            span.className = "tag";
-            span.setAttribute("data-tag", tag);
-            span.innerHTML =
-              tag + ' <span class="remove-tag" data-tag="' + tag + '">×</span>';
-            container.insertBefore(span, input);
-          }
-          input.value = "";
+        //       // Create tag element
+        //       const span = document.createElement("span");
+        //       span.className = "tag";
+        //       span.setAttribute("data-tag", tag);
+        //       span.innerHTML =
+        //         tag +
+        //         ' <span class="remove-tag" data-tag="' +
+        //         tag +
+        //         '">×</span>';
+        //       container.insertBefore(span, input);
+        //     }
+        //     input.value = "";
+        //     if (suggestionsBox) suggestionsBox.style.display = "none";
+        //   } else {
+        //     showInvalidTagMessage(
+        //       container,
+        //       input,
+        //       "Please select a value from the list."
+        //     );
+        //     input.classList.add("invalid");
+        //     setTimeout(() => input.classList.remove("invalid"), 1000);
+        //     input.value = "";
+        //   }
+        // }
+        // For plain tagging, just add the tag
+        if (!addRowTags[col].includes(tag)) {
+          addRowTags[col].push(tag);
+          const span = document.createElement("span");
+          span.className = "tag";
+          span.setAttribute("data-tag", tag);
+          span.innerHTML =
+            tag + ' <span class="remove-tag" data-tag="' + tag + '">×</span>';
+          container.insertBefore(span, input);
         }
+        input.value = "";
+        // else {
+
+        // }
       }
     });
 
@@ -816,6 +825,8 @@ export function initializeTableTaggingCells() {
           if (!emailRegex.test(tag)) {
             alert("Please enter a valid Email address.");
             input.value = "";
+            input.classList.add("invalid");
+            setTimeout(() => input.classList.remove("invalid"), 2000);
             return; // ❌ Stop tag creation
           }
         }
