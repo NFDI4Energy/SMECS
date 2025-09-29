@@ -391,101 +391,101 @@ export function setupTables() {
     const col = container.getAttribute("data-col");
     addRowTags[col] = [];
     const input = container.querySelector(".add-row-tag-input");
-    const colType = container.getAttribute("data-coltype");
-    const dataType = container.getAttribute("data-type");
-    // --- Autocomplete setup ---
-    let autocompleteSource = [];
-    let suggestionsBox = createSuggestionsBox(container);
+    // const colType = container.getAttribute("data-coltype");
+    // const dataType = container.getAttribute("data-type");
+    // // --- Autocomplete setup ---
+    // let autocompleteSource = [];
+    // let suggestionsBox = createSuggestionsBox(container);
 
-    if (colType === "tagging_autocomplete") {
-      getSchema().then((schema) => {
-        autocompleteSource =
-          schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];
-      });
+    // if (colType === "tagging_autocomplete") {
+    //   getSchema().then((schema) => {
+    //     autocompleteSource =
+    //       schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];
+    //   });
 
-      input.addEventListener("input", function () {
-        const query = input.value.trim().toLowerCase();
-        suggestionsBox.innerHTML = "";
-        if (!query || autocompleteSource.length === 0) {
-          suggestionsBox.style.display = "none";
-          return;
-        }
-        const selectedTags = addRowTags[col];
-        const filtered = autocompleteSource.filter(
-          (tag) =>
-            tag.toLowerCase().startsWith(query) && !selectedTags.includes(tag)
-        );
-        if (filtered.length === 0) {
-          suggestionsBox.style.display = "none";
-          return;
-        }
-        filtered.forEach((tag) => {
-          const div = document.createElement("div");
-          div.className = "suggestion-item";
-          div.textContent = tag;
-          div.style.cursor = "pointer";
-          div.onclick = function () {
-            input.value = tag;
-            input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
-            suggestionsBox.style.display = "none";
-          };
-          suggestionsBox.appendChild(div);
-        });
-        // Position suggestions below the input
-        const inputRect = input.getBoundingClientRect();
-        updateSuggestionsBoxPosition(input, suggestionsBox);
-      });
+    //   input.addEventListener("input", function () {
+    //     const query = input.value.trim().toLowerCase();
+    //     suggestionsBox.innerHTML = "";
+    //     if (!query || autocompleteSource.length === 0) {
+    //       suggestionsBox.style.display = "none";
+    //       return;
+    //     }
+    //     const selectedTags = addRowTags[col];
+    //     const filtered = autocompleteSource.filter(
+    //       (tag) =>
+    //         tag.toLowerCase().startsWith(query) && !selectedTags.includes(tag)
+    //     );
+    //     if (filtered.length === 0) {
+    //       suggestionsBox.style.display = "none";
+    //       return;
+    //     }
+    //     filtered.forEach((tag) => {
+    //       const div = document.createElement("div");
+    //       div.className = "suggestion-item";
+    //       div.textContent = tag;
+    //       div.style.cursor = "pointer";
+    //       div.onclick = function () {
+    //         input.value = tag;
+    //         input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+    //         suggestionsBox.style.display = "none";
+    //       };
+    //       suggestionsBox.appendChild(div);
+    //     });
+    //     // Position suggestions below the input
+    //     const inputRect = input.getBoundingClientRect();
+    //     updateSuggestionsBoxPosition(input, suggestionsBox);
+    //   });
 
-      input.addEventListener("focus", function () {
-        suggestionsBox.innerHTML = "";
-        if (!autocompleteSource.length) {
-          suggestionsBox.style.display = "none";
-          return;
-        }
-        const query = input.value.trim().toLowerCase();
-        const selectedTags = addRowTags[col];
-        const filtered = autocompleteSource.filter(
-          (tag) =>
-            !selectedTags.includes(tag) &&
-            (query === "" || tag.toLowerCase().startsWith(query))
-        );
-        if (filtered.length === 0) {
-          suggestionsBox.style.display = "none";
-          return;
-        }
-        filtered.forEach((tag) => {
-          const div = document.createElement("div");
-          div.className = "suggestion-item";
-          div.textContent = tag;
-          div.style.cursor = "pointer";
-          div.onclick = function () {
-            input.value = tag;
-            input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
-            suggestionsBox.style.display = "none";
-          };
-          suggestionsBox.appendChild(div);
-        });
-        // Position suggestions below the input
-        updateSuggestionsBoxPosition(input, suggestionsBox);
-        suggestionsBox.style.display = "block";
-      });
+    //   input.addEventListener("focus", function () {
+    //     suggestionsBox.innerHTML = "";
+    //     if (!autocompleteSource.length) {
+    //       suggestionsBox.style.display = "none";
+    //       return;
+    //     }
+    //     const query = input.value.trim().toLowerCase();
+    //     const selectedTags = addRowTags[col];
+    //     const filtered = autocompleteSource.filter(
+    //       (tag) =>
+    //         !selectedTags.includes(tag) &&
+    //         (query === "" || tag.toLowerCase().startsWith(query))
+    //     );
+    //     if (filtered.length === 0) {
+    //       suggestionsBox.style.display = "none";
+    //       return;
+    //     }
+    //     filtered.forEach((tag) => {
+    //       const div = document.createElement("div");
+    //       div.className = "suggestion-item";
+    //       div.textContent = tag;
+    //       div.style.cursor = "pointer";
+    //       div.onclick = function () {
+    //         input.value = tag;
+    //         input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+    //         suggestionsBox.style.display = "none";
+    //       };
+    //       suggestionsBox.appendChild(div);
+    //     });
+    //     // Position suggestions below the input
+    //     updateSuggestionsBoxPosition(input, suggestionsBox);
+    //     suggestionsBox.style.display = "block";
+    //   });
 
-      window.addEventListener(
-        "scroll",
-        () => updateSuggestionsBoxPosition(input, suggestionsBox),
-        true
-      );
-      window.addEventListener("resize", () =>
-        updateSuggestionsBoxPosition(input, suggestionsBox)
-      );
+    //   window.addEventListener(
+    //     "scroll",
+    //     () => updateSuggestionsBoxPosition(input, suggestionsBox),
+    //     true
+    //   );
+    //   window.addEventListener("resize", () =>
+    //     updateSuggestionsBoxPosition(input, suggestionsBox)
+    //   );
 
-      // Hide suggestions on blur/click outside
-      input.addEventListener("blur", function () {
-        setTimeout(() => {
-          suggestionsBox.style.display = "none";
-        }, 200);
-      });
-    }
+    //   // Hide suggestions on blur/click outside
+    //   input.addEventListener("blur", function () {
+    //     setTimeout(() => {
+    //       suggestionsBox.style.display = "none";
+    //     }, 200);
+    //   });
+    // }
     // else if (colType === "dropdown") {
     //   getSchema().then((schema) => {
     //     const options =
@@ -667,6 +667,9 @@ export function setupTables() {
       if (activeElement.classList.contains("checkbox-element")) {
         activeElement.checked = !activeElement.checked; // toggle
       }
+      if (activeElement.classList.contains("add-row-btn")) {
+        activeElement.click();
+      }
     }
   });
 
@@ -733,63 +736,63 @@ export function initializeTableTaggingCells() {
     const dataType = cell.getAttribute("data-type");
 
     if (colType == "tagging_autocomplete") {
-      getSchema().then((schema) => {
-        autocompleteSource =
-          schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];
-        if (autocompleteSource.length > 0) {
-          setupTableTagAutocomplete({ cell, autocompleteSource });
-        }
-      });
+      // getSchema().then((schema) => {
+      //   autocompleteSource =
+      //     schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];
+      //   if (autocompleteSource.length > 0) {
+      //     setupTableTagAutocomplete({ cell, autocompleteSource });
+      //   }
+      // });
     } else if (colType === "dropdown") {
       const currentValue =
         cell.getAttribute("data-value") || cell.textContent.trim() || "";
       cell.innerHTML = "";
       cell.textContent = currentValue;
 
-      cell.addEventListener("click", function handleDropdownCellClick(e) {
-        if (cell.querySelector("select")) return;
-        getSchema().then((schema) => {
-          const options =
-            schema["$defs"]?.[dataType]?.properties?.[col]?.enum || [];
-          const select = document.createElement("select");
-          select.className = "table-dropdown-select";
-          select.name = "ChangingSelect";
-          select.innerHTML =
-            '<option value="">Select...</option>' +
-            options
-              .map((opt) => `<option value="${opt}">${opt}</option>`)
-              .join("");
-          select.value = currentValue;
+      // cell.addEventListener("click", function handleDropdownCellClick(e) {
+      //   if (cell.querySelector("select")) return;
+      //   getSchema().then((schema) => {
+      //     const options =
+      //       schema["$defs"]?.[dataType]?.properties?.[col]?.enum || [];
+      //     const select = document.createElement("select");
+      //     select.className = "table-dropdown-select";
+      //     select.name = "ChangingSelect";
+      //     select.innerHTML =
+      //       '<option value="">Select...</option>' +
+      //       options
+      //         .map((opt) => `<option value="${opt}">${opt}</option>`)
+      //         .join("");
+      //     select.value = currentValue;
 
-          cell.innerHTML = "";
-          cell.appendChild(select);
-          select.focus();
+      //     cell.innerHTML = "";
+      //     cell.appendChild(select);
+      //     select.focus();
 
-          function finalizeSelection() {
-            const selectedValue = select.value;
-            cell.setAttribute("data-value", selectedValue);
-            setTimeout(() => {
-              cell.innerHTML = selectedValue;
-            }, 0);
+      //     function finalizeSelection() {
+      //       const selectedValue = select.value;
+      //       cell.setAttribute("data-value", selectedValue);
+      //       setTimeout(() => {
+      //         cell.innerHTML = selectedValue;
+      //       }, 0);
 
-            cell.removeEventListener("click", handleDropdownCellClick);
-            setTimeout(() => {
-              cell.addEventListener("click", handleDropdownCellClick);
-            }, 0);
+      //       cell.removeEventListener("click", handleDropdownCellClick);
+      //       setTimeout(() => {
+      //         cell.addEventListener("click", handleDropdownCellClick);
+      //       }, 0);
 
-            const table = cell.closest("table");
-            if (table && table.id.endsWith("Table")) {
-              const key = table.id.replace(/Table$/, "");
-              updateTableHiddenInput(key);
-            }
-          }
+      //       const table = cell.closest("table");
+      //       if (table && table.id.endsWith("Table")) {
+      //         const key = table.id.replace(/Table$/, "");
+      //         updateTableHiddenInput(key);
+      //       }
+      //     }
 
-          select.addEventListener("change", finalizeSelection);
-          select.addEventListener("blur", finalizeSelection);
-        });
+      //     select.addEventListener("change", finalizeSelection);
+      //     select.addEventListener("blur", finalizeSelection);
+      //   });
 
-        cell.removeEventListener("click", handleDropdownCellClick);
-      });
+      //   cell.removeEventListener("click", handleDropdownCellClick);
+      // });
 
       return;
     }
@@ -825,8 +828,6 @@ export function initializeTableTaggingCells() {
           if (!emailRegex.test(tag)) {
             alert("Please enter a valid Email address.");
             input.value = "";
-            input.classList.add("invalid");
-            setTimeout(() => input.classList.remove("invalid"), 2000);
             return; // ❌ Stop tag creation
           }
         }
@@ -840,19 +841,19 @@ export function initializeTableTaggingCells() {
           return;
         }
 
-        let autocompleteSource = [];
-        const colType = cell.getAttribute("data-coltype");
-        if (colType === "tagging_autocomplete") {
-          getSchema().then((schema) => {
-            autocompleteSource =
-              schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];
-            if (!autocompleteSource.includes(tag)) {
-              alert("Please select a value from the list.");
-              input.value = "";
-              return;
-            }
-          });
-        }
+        // let autocompleteSource = [];
+        // const colType = cell.getAttribute("data-coltype");
+        // if (colType === "tagging_autocomplete") {
+        //   getSchema().then((schema) => {
+        //     autocompleteSource =
+        //       schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];
+        //     if (!autocompleteSource.includes(tag)) {
+        //       alert("Please select a value from the list.");
+        //       input.value = "";
+        //       return;
+        //     }
+        //   });
+        // }
 
         const span = document.createElement("span");
         span.className = "tag";
