@@ -317,7 +317,7 @@ form.data-form2 {
 }
 
 form.data-form3 {
-  /* overflow-y: auto; */
+  overflow-y: auto;
   height: 90%;
   border-radius: 2px;
   margin-top: 0;
@@ -386,7 +386,7 @@ select:focus {
 
 /* style for general single input elements with longer values */
 .form-group .long_field {
-  width: 100%;
+  width: 94%;
   margin-bottom: 0.1em;
   float: left;
   box-sizing: border-box;
@@ -402,7 +402,7 @@ select {
 }
 
 .form-group .big_field {
-  width: 100%;
+  width: 94%;
   margin-bottom: 0.1em;
   margin-right: 10%;
   float: left;
