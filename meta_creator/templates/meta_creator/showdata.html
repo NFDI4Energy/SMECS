@@ -280,7 +280,7 @@
                                     </div>
                                         {% elif forloop.first or not unique_tab %}
                                         <!-- small_table -->
-                                        <div class="long_field">
+                                        <div class="long_field copyright_table">
                                             {% with specific_types=type_metadata|get_array:key default_type=value.0|get:"@type"%}
                                             {% if not unique_tab %}
                                             <label for="{{ key }}">{{ key|camel_to_spaces_lower }}</label>

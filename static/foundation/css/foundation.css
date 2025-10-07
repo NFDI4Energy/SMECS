@@ -391,6 +391,9 @@ select:focus {
   float: left;
   box-sizing: border-box;
 }
+.copyright_table {
+  width: 94%;
+}
 
 .form-group .long_field input[type="text"],
 select {
