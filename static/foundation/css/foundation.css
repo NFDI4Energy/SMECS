@@ -330,7 +330,7 @@ form.data-form3 {
 }
 
 .tab .form-group {
-  width: 90%;
+  /* width: 90%; */
   margin: 5% 0% 0% 5%;
   text-align: left;
   display: block;
@@ -343,16 +343,16 @@ form.data-form3 {
   background: #f5f7fa;
   border-left: 4px solid #0078d4;
   color: #222;
-  padding: 0em 0em;
-  margin-bottom: 0em;
+  /* padding: 0em 0em; */
+  /* margin-bottom: 0em; */
   border-radius: 4px;
   font-size: 1.08em;
   font-style: italic;
   text-align: center;
-  width: 90%;
-  margin-left: 0;
+  /* width: 90%; */
+  /* margin-left: 0;
   margin-right: 0;
-  margin: 0 auto 0 auto;
+  margin: 0 auto 0 auto; */
 }
 
 .form-group label {
@@ -386,7 +386,7 @@ select:focus {
 
 /* style for general single input elements with longer values */
 .form-group .long_field {
-  width: 94%;
+  width: 100%;
   margin-bottom: 0.1em;
   float: left;
   box-sizing: border-box;
@@ -490,12 +490,17 @@ select {
 #metadata-json {
   /* overflow: scroll; */
   width: 100%;
-  height: 90%;
+  height: 93%;
   padding: 8px;
   border-radius: 4px;
   margin-bottom: 2px;
   font-size: medium;
 }
+/* @media (width >= 2000px) {
+  #metadata-json {
+    height: 9%;
+  }
+} */
 .invalid {
   border: 1px solid rgba(226, 7, 7, 0.535);
   background-color: rgba(225, 94, 94, 0.377);
@@ -524,7 +529,7 @@ button#new-url {
 .main-container {
   display: flex;
   transition: all 0.3s ease;
-  height: 100%;
+  height: 90%;
 }
 
 /* Error page / connection time out */
@@ -562,13 +567,19 @@ div.error-container a:hover {
 /* Flexible columns distribution */
 .auto-property {
   margin-top: 8px;
-  width: 100%; /* Same as .long_field */
+  /* width: 100%; Same as .long_field */
   min-width: 500px; /* Optional: for usability */
   table-layout: auto;
   margin-bottom: 1rem;
-  border-collapse: collapse;
-  margin-left: auto;
-  margin-right: auto;
+  /* border-collapse: collapse; */
+  /* margin-left: auto;
+  margin-right: auto; */
+  display: block;
+}
+@media (width>=2000px) {
+  .auto-property {
+    display: inline-table;
+  }
 }
 
 .table {
@@ -732,6 +743,8 @@ td.table-tagging-cell select.table-dropdown-select {
 }
 
 .tab.unique-tab .unique-tab-inner {
+  width: 100%;
+  height: 100px;
   transform: scale(0.8);
   transform-origin: top center;
   display: inline-block;
@@ -1035,8 +1048,7 @@ label > .fa-info-circle {
 }
 
 .fa-download,
-.fa-copy,
-.fa-trash-alt {
+.fa-copy {
   border: none;
   float: right;
   margin-bottom: 0.5%;
@@ -1046,7 +1058,11 @@ label > .fa-info-circle {
   background-color: none;
   margin-left: 2.5%;
 }
-
+.fa-trash-alt {
+  color: #055f82;
+  font-size: 1.2em;
+  background-color: none;
+}
 .fa-download:hover,
 .fa-copy:hover,
 .fa-trash-alt:hover {

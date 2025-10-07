@@ -83,48 +83,48 @@ export function setupUI() {
   document
     .querySelectorAll(".custom-tooltip-metadata")
     .forEach(function (element) {
-        const tooltip = element.querySelector(".tooltip-text-metadata");
-        const icon = element.querySelector("i");
+      const tooltip = element.querySelector(".tooltip-text-metadata");
+      const icon = element.querySelector("i");
 
-        // Helper to get scale factor from parent (default 1)
-        function getScaleFactor(el) {
-            let scale = 1;
-            let parent = el;
-            while (parent) {
-                const transform = window.getComputedStyle(parent).transform;
-                if (transform && transform !== "none") {
-                    const match = transform.match(/matrix\(([^,]+),[^,]+,[^,]+,[^,]+,[^,]+,[^,]+\)/);
-                    if (match) {
-                        scale *= parseFloat(match[1]);
-                    }
-                }
-                parent = parent.parentElement;
+      // Helper to get scale factor from parent (default 1)
+      function getScaleFactor(el) {
+        let scale = 1;
+        let parent = el;
+        while (parent) {
+          const transform = window.getComputedStyle(parent).transform;
+          if (transform && transform !== "none") {
+            const match = transform.match(
+              /matrix\(([^,]+),[^,]+,[^,]+,[^,]+,[^,]+,[^,]+\)/
+            );
+            if (match) {
+              scale *= parseFloat(match[1]);
             }
-            return scale;
+          }
+          parent = parent.parentElement;
         }
+        return scale;
+      }
 
+      element.addEventListener("mouseenter", function () {
+        tooltip.style.display = "block";
+        tooltip.style.visibility = "visible";
+        tooltip.style.opacity = "1";
+        tooltip.style.position = "absolute";
+        tooltip.style.zIndex = "9999";
+        const rect = icon.getBoundingClientRect();
+        const margin = 16;
 
-        element.addEventListener("mouseenter", function () {
-          tooltip.style.display = "block";
-          tooltip.style.visibility = "visible";
-          tooltip.style.opacity = "1";
-          tooltip.style.position = "absolute";
-          tooltip.style.zIndex = "9999";
-          const rect = icon.getBoundingClientRect();
-          const margin = 16;
+        // Find the scale factor (if any) from the closest scaled parent
+        const scale = getScaleFactor(icon.parentElement);
+        console.info("Tooltip scale factor:", scale);
 
-          // Find the scale factor (if any) from the closest scaled parent
-          const scale = getScaleFactor(icon.parentElement);
-          console.info("Tooltip scale factor:", scale);
-
-          // Adjust position for scale
-          //let left = rect.right * scale;
-          //let top = (rect.top + margin) * scale;
-          let left = 16;
-          let top = 16;
-          tooltip.style.left = left + "px";
-          tooltip.style.top = top + "px";
-
+        // Adjust position for scale
+        //let left = rect.right * scale;
+        //let top = (rect.top + margin) * scale;
+        let left = 16;
+        let top = 16;
+        tooltip.style.left = left + "px";
+        tooltip.style.top = top + "px";
       });
       element.addEventListener("mouseleave", function () {
         tooltip.style.display = "none";
@@ -178,7 +178,7 @@ function toggleSection() {
   } else if (window.screen.width <= 990 && toggleSwitch.checked) {
     formContainer.style.height = "50%";
   } else {
-    formContainer.style.height = "100%";
+    formContainer.style.height = "99%";
   }
   if (toggleSwitch.checked) {
     metadataFormDisplay.style.display = "block";
@@ -255,11 +255,10 @@ export function validateInput(input) {
   ];
   if (skipValidationIds.includes(input.id)) {
     return; // Skip validation for the specified inputs
-    }
+  }
 
-   // Always remove highlight classes before validation
-   input.classList.remove("invalid", "invalid-required", "invalid-recommended");
-
+  // Always remove highlight classes before validation
+  input.classList.remove("invalid", "invalid-required", "invalid-recommended");
 
   // Fetch schema and validate only if field is required or recommended
   getSchema()
@@ -281,20 +280,23 @@ export function validateInput(input) {
             : null;
           const key = getFieldKey(hiddenInput);
 
-
           if (required.includes(key)) {
             if (
-              (taggingType === "tagging_object" && isTaggingObjectEmpty(tagsContainer)) ||
-              (taggingType !== "tagging_object" && hiddenInput.value.trim() === "")
-               ) {
-                 input.classList.add("invalid-required");
+              (taggingType === "tagging_object" &&
+                isTaggingObjectEmpty(tagsContainer)) ||
+              (taggingType !== "tagging_object" &&
+                hiddenInput.value.trim() === "")
+            ) {
+              input.classList.add("invalid-required");
             }
           } else if (recommended.includes(key)) {
             if (
-              (taggingType === "tagging_object" && isTaggingObjectEmpty(tagsContainer)) ||
-              (taggingType !== "tagging_object" && hiddenInput.value.trim() === "")
-               ) {
-                 input.classList.add("invalid-recommended");
+              (taggingType === "tagging_object" &&
+                isTaggingObjectEmpty(tagsContainer)) ||
+              (taggingType !== "tagging_object" &&
+                hiddenInput.value.trim() === "")
+            ) {
+              input.classList.add("invalid-recommended");
             }
           } else {
             input.classList.remove("invalid");
@@ -307,17 +309,21 @@ export function validateInput(input) {
       const key = getFieldKey(input);
       if (required.includes(key)) {
         if (input.value.trim() === "") {
-                input.classList.add("invalid-required");
+          input.classList.add("invalid-required");
         }
       } else if (recommended.includes(key)) {
-          if (input.value.trim() === "") {
-              input.classList.add("invalid-recommended");
-          }
+        if (input.value.trim() === "") {
+          input.classList.add("invalid-recommended");
+        }
       }
     })
     .catch(() => {
-        // On schema load error, fallback to no validation
-        input.classList.remove("invalid", "invalid-required", "invalid-recommended");
+      // On schema load error, fallback to no validation
+      input.classList.remove(
+        "invalid",
+        "invalid-required",
+        "invalid-recommended"
+      );
     });
 }
 
@@ -381,4 +387,3 @@ function initAutoCloseCollapses(collapseSelector = ".collapsible-content") {
     }
   });
 }
-
