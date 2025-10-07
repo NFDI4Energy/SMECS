@@ -392,7 +392,7 @@ select:focus {
   box-sizing: border-box;
 }
 .copyright_table {
-  width: 94%;
+  width: 94% !important;
 }
 
 .form-group .long_field input[type="text"],
