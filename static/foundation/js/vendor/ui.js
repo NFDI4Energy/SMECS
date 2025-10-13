@@ -387,3 +387,50 @@ function initAutoCloseCollapses(collapseSelector = ".collapsible-content") {
     }
   });
 }
+
+export function showToast(message, type = "info") {
+  // Toast container create if not exist
+  let container = document.getElementById("toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "toast-container";
+    container.style.position = "fixed";
+    container.style.top = "20px";
+    container.style.right = "20px";
+    container.style.zIndex = "9999";
+    document.body.appendChild(container);
+  }
+
+  // Toast element
+  const toast = document.createElement("div");
+  toast.textContent = message;
+  toast.style.padding = "10px 20px";
+  toast.style.marginTop = "10px";
+  toast.style.borderRadius = "6px";
+  toast.style.color = "#fff";
+  toast.style.fontSize = "14px";
+  toast.style.fontFamily = "sans-serif";
+  toast.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
+  toast.style.opacity = "0";
+  toast.style.transition = "opacity 0.5s";
+
+  // Type based color
+  if (type === "error") {
+    toast.style.background = "#e74c3c"; // red
+  } else if (type === "success") {
+    toast.style.background = "#2ecc71"; // green
+  } else {
+    toast.style.background = "#3498db"; // blue
+  }
+
+  container.appendChild(toast);
+
+  // Fade in
+  setTimeout(() => (toast.style.opacity = "1"), 100);
+
+  // Auto remove after 3 sec
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    setTimeout(() => toast.remove(), 500);
+  }, 3000);
+}

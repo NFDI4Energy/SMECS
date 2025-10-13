@@ -16,6 +16,8 @@ import {
   enableEditableTagsInTable,
 } from "./tagging.js";
 
+import { showToast } from "./ui.js";
+
 const metadataJson = document.getElementById("metadata-json");
 
 // New table
@@ -252,8 +254,12 @@ export function setupTables() {
 
         // If neither condition is satisfied → stop row creation
         if (!condition1 && !condition2) {
-          alert(
-            "Please fill either: Identifier + Given Name + Family Name OR Given Name + Family Name + Email."
+          // alert(
+          //   "Please fill either: Identifier + Given Name + Family Name OR Given Name + Family Name + Email."
+          // );
+          showToast(
+            "Please fill either: Identifier + Given Name + Family Name OR Given Name + Family Name + Email.",
+            "error"
           );
           return;
         }
@@ -363,6 +369,7 @@ export function setupTables() {
 
       // Insert new row above add-row-controls
       addRowControls.parentNode.insertBefore(newRow, addRowControls);
+      showToast("New row has been added", "success");
       // Check if this td contains a checkbox
       document.querySelectorAll("td").forEach((td) => {
         if (td.querySelector('input[type="checkbox"]')) {
@@ -531,7 +538,8 @@ export function setupTables() {
         if (col === "email") {
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           if (!emailRegex.test(tag)) {
-            alert("Please enter a valid Email address.");
+            // alert("Please enter a valid Email address.");
+            showToast("Please enter a valid Email address.", "error");
             input.value = "";
             return;
           }
@@ -755,12 +763,120 @@ export function setupTables() {
     mergeRowIcon.style.display = "none";
   });
 
-  // ✅ Optional: handle merge confirmation (YES button)
+  // ✅ Handle merge confirmation (YES button)
   document.querySelector(".mergeRow").addEventListener("click", function () {
-    // Implement your merge logic here
+    const selectedCheckboxes = document.querySelectorAll(
+      ".checkbox-select:checked"
+    );
+    // if (selectedCheckboxes.length >= 2) {
+    //   alert("Please select at least two rows to merge.");
+    //   return;
+    // }
+
+    const firstRow = selectedCheckboxes[0].closest("tr");
+    const table = firstRow.closest("table");
+    const headers = Array.from(table.querySelectorAll("thead th")).map((th) =>
+      th.getAttribute("data-col")
+    );
+
+    const givenNameIdx = headers.indexOf("givenName");
+    const familyNameIdx = headers.indexOf("familyName");
+    const emailIdx = headers.indexOf("email");
+
+    // 🔹 Extract data for all selected rows
+    const selectedData = Array.from(selectedCheckboxes).map((checkbox) => {
+      const row = checkbox.closest("tr");
+      const cells = row.querySelectorAll("td");
+
+      const givenName = cells[givenNameIdx]?.textContent.trim() || "";
+      const familyName = cells[familyNameIdx]?.textContent.trim() || "";
+
+      // Collect all emails (from tags if available)
+      let emails = [];
+      if (emailIdx !== -1) {
+        const emailCell = cells[emailIdx];
+        const tags = emailCell.querySelectorAll(".tag");
+        if (tags.length > 0) {
+          emails = Array.from(tags).map((t) => t.dataset.tag);
+        } else if (emailCell.textContent.trim() !== "") {
+          emails = [emailCell.textContent.trim()];
+        }
+      }
+
+      return { row, givenName, familyName, emails };
+    });
+
+    // 🔹 Group selected rows by Given Name + Family Name
+    const grouped = {};
+    selectedData.forEach((item) => {
+      const key = `${item.givenName.toLowerCase()}-${item.familyName.toLowerCase()}`;
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push(item);
+    });
+
+    let merged = false;
+
+    // 🔹 Merge logic for rows with same Given + Family
+    Object.values(grouped).forEach((group) => {
+      if (group.length > 1) {
+        merged = true;
+        const mainRow = group[0].row; // keep first row
+        const allEmails = [...new Set(group.flatMap((g) => g.emails))]; // merge + dedupe
+
+        // Update mainRow's email cell
+        if (emailIdx !== -1) {
+          const emailCell = mainRow.querySelectorAll("td")[emailIdx];
+          const tagsList = emailCell.querySelector(".tags-list");
+
+          if (tagsList) {
+            tagsList.innerHTML = "";
+            allEmails.forEach((email) => {
+              const span = document.createElement("span");
+              span.className = "tag";
+              span.setAttribute("data-tag", email);
+              span.innerHTML =
+                email +
+                ' <span class="remove-tag" data-tag="' +
+                email +
+                '">×</span>';
+              tagsList.appendChild(span);
+            });
+          } else {
+            emailCell.textContent = allEmails.join(", ");
+          }
+        }
+
+        // Remove other duplicate rows
+        group.slice(1).forEach((g) => g.row.remove());
+      }
+    });
+
+    // ✅ Update hidden input JSON
+    if (table && typeof updateTableHiddenInput === "function") {
+      const key = table.id.replace(/Table$/, "");
+      updateTableHiddenInput(key);
+    }
+
+    // ✅ UI cleanup
     mergeRowConfirm.style.display = "none";
     deleteIcon.style.display = "none";
     mergeRowIcon.style.display = "none";
+    selectedCheckboxes.forEach((cb) => (cb.checked = false));
+    table
+      .querySelectorAll("tr")
+      .forEach((row) => row.classList.remove("table-secondary"));
+
+    if (merged) {
+      showToast(
+        "Rows with matching names have been merged successfully!",
+        "success"
+      );
+    } else {
+      showToast(
+        "No matching Given Name + Family Name found among selected rows.",
+        "error"
+      );
+    }
   });
 }
 
@@ -915,7 +1031,7 @@ export function initializeTableTaggingCells() {
         if (col === "email") {
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           if (!emailRegex.test(tag)) {
-            alert("Please enter a valid Email address.");
+            showToast("Please enter a valid Email address.", "error");
             input.value = "";
             return; // ❌ Stop tag creation
           }
