@@ -352,20 +352,24 @@ export function setupTables() {
         }
         newRow.appendChild(td);
       }
-      // const deleteTd = document.createElement("td");
 
-      // deleteTd.className = "d-flex justify-content-center align-items-center";
-      // deleteTd.style.height = "50px";
-      // deleteTd.innerHTML =
-      //   '<i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i>';
-      // newRow.appendChild(deleteTd);
-      if (newRow.firstElementChild) {
-        newRow.removeChild(newRow.firstElementChild);
+      if (table.id !== "copyrightHolderTable") {
+        if (newRow.firstElementChild) {
+          newRow.removeChild(newRow.firstElementChild);
+        }
+        const selectcheckbox = document.createElement("td");
+        selectcheckbox.className = "text-center";
+        selectcheckbox.innerHTML = `<input type="checkbox" class="checkbox-select" data-role="select" name="checkbox-select">`;
+        newRow.prepend(selectcheckbox);
+      } else {
+        const deleteTd = document.createElement("td");
+
+        deleteTd.className = "d-flex justify-content-center align-items-center";
+        deleteTd.style.height = "50px";
+        deleteTd.innerHTML =
+          '<i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i>';
+        newRow.appendChild(deleteTd);
       }
-      const selectcheckbox = document.createElement("td");
-      selectcheckbox.className = "text-center";
-      selectcheckbox.innerHTML = `<input type="checkbox" class="checkbox-select" data-role="select" name="checkbox-select">`;
-      newRow.prepend(selectcheckbox);
 
       // Insert new row above add-row-controls
       addRowControls.parentNode.insertBefore(newRow, addRowControls);
