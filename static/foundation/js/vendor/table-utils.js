@@ -346,13 +346,20 @@ export function setupTables() {
         }
         newRow.appendChild(td);
       }
-      const deleteTd = document.createElement("td");
+      // const deleteTd = document.createElement("td");
 
-      deleteTd.className = "d-flex justify-content-center align-items-center";
-      deleteTd.style.height = "50px";
-      deleteTd.innerHTML =
-        '<i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i>';
-      newRow.appendChild(deleteTd);
+      // deleteTd.className = "d-flex justify-content-center align-items-center";
+      // deleteTd.style.height = "50px";
+      // deleteTd.innerHTML =
+      //   '<i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i>';
+      // newRow.appendChild(deleteTd);
+      if (newRow.firstElementChild) {
+        newRow.removeChild(newRow.firstElementChild);
+      }
+      const selectcheckbox = document.createElement("td");
+      selectcheckbox.className = "text-center";
+      selectcheckbox.innerHTML = `<input type="checkbox" class="checkbox-select" data-role="select" name="checkbox-select">`;
+      newRow.prepend(selectcheckbox);
 
       // Insert new row above add-row-controls
       addRowControls.parentNode.insertBefore(newRow, addRowControls);
@@ -674,7 +681,89 @@ export function setupTables() {
   });
 
   highlightEmptyAddRowControls();
+
+  // deleteRow and MergeRow
+  const deleteIcon = document.querySelector(".action .delete-row-btn");
+  const mergeRowIcon = document.querySelector(".action .fa-table-list");
+  const deleteRowConfirm = document.querySelector(".action .delete-row");
+  const mergeRowConfirm = document.querySelector(".action .merge-row");
+
+  // ✅ Use event delegation for checkbox handling
+  document.addEventListener("change", function (e) {
+    if (e.target.classList.contains("checkbox-select")) {
+      const checkbox = e.target;
+      const row = checkbox.closest("tr");
+
+      // Highlight selected row
+      if (checkbox.checked) {
+        row.classList.add("table-secondary");
+      } else {
+        row.classList.remove("table-secondary");
+      }
+
+      // Count selected checkboxes
+      const selectedCount = document.querySelectorAll(
+        ".checkbox-select:checked"
+      ).length;
+
+      // Show/hide icons based on selection count
+      deleteIcon.style.display = selectedCount >= 1 ? "" : "none";
+      mergeRowIcon.style.display = selectedCount >= 2 ? "" : "none";
+    }
+  });
+
+  // ✅ Handle delete icon click
+  deleteIcon.addEventListener("click", function () {
+    deleteRowConfirm.style.display = "";
+    deleteIcon.style.display = "none";
+    mergeRowIcon.style.display = "none";
+  });
+
+  // ✅ Handle merge icon click
+  mergeRowIcon.addEventListener("click", function () {
+    mergeRowConfirm.style.display = "";
+    deleteIcon.style.display = "none";
+    mergeRowIcon.style.display = "none";
+  });
+
+  // ✅ Handle delete confirmation (YES button)
+  document.querySelector(".deleteRow").addEventListener("click", function () {
+    const selectedCheckboxes = document.querySelectorAll(
+      ".checkbox-select:checked"
+    );
+
+    selectedCheckboxes.forEach((checkbox) => {
+      const row = checkbox.closest("tr");
+      const table = row.closest("table");
+
+      if (row) row.remove();
+
+      // Update hidden input for that table
+      if (table && table.id && table.id.endsWith("Table")) {
+        const key = table.id.replace(/Table$/, "");
+        if (typeof updateTableHiddenInput === "function") {
+          updateTableHiddenInput(key);
+        }
+      }
+    });
+
+    // Hide confirmation prompt
+    deleteRowConfirm.style.display = "none";
+
+    // Reset icons
+    deleteIcon.style.display = "none";
+    mergeRowIcon.style.display = "none";
+  });
+
+  // ✅ Optional: handle merge confirmation (YES button)
+  document.querySelector(".mergeRow").addEventListener("click", function () {
+    // Implement your merge logic here
+    mergeRowConfirm.style.display = "none";
+    deleteIcon.style.display = "none";
+    mergeRowIcon.style.display = "none";
+  });
 }
+
 // Add function to color add items when element is required or recommended and empty
 export function highlightEmptyAddRowControls() {
   getSchema().then((schema) => {

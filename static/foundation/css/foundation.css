@@ -349,9 +349,9 @@ form.data-form3 {
   font-size: 1.08em;
   font-style: italic;
   text-align: center;
-  /* width: 90%; */
-  /* margin-left: 0;
-  margin-right: 0;
+  width: 90%;
+  margin-left: 5%;
+  /* margin-right: 0;
   margin: 0 auto 0 auto; */
 }
 
@@ -577,8 +577,16 @@ div.error-container a:hover {
   /* border-collapse: collapse; */
   /* margin-left: auto;
   margin-right: auto; */
+  /* display: block; */
+}
+#contributorTable {
   display: block;
 }
+/* @media (width<=1800px) {
+  .auto-property {
+    display: inline-block;
+  }
+} */
 @media (width>=2000px) {
   .auto-property {
     display: inline-table;
@@ -748,7 +756,7 @@ td.table-tagging-cell select.table-dropdown-select {
 .tab.unique-tab .unique-tab-inner {
   width: 100%;
   height: 100px;
-  transform: scale(0.8);
+  transform: scale(0.97);
   transform-origin: top center;
   display: inline-block;
 }
@@ -1061,14 +1069,18 @@ label > .fa-info-circle {
   background-color: none;
   margin-left: 2.5%;
 }
-.fa-trash-alt {
+.fa-trash-alt,
+.fa-table-list {
+  float: right;
   color: #055f82;
   font-size: 1.2em;
-  background-color: none;
+  padding-top: 14px;
+  padding-right: 14px;
 }
 .fa-download:hover,
 .fa-copy:hover,
-.fa-trash-alt:hover {
+.fa-trash-alt:hover,
+.fa-table-list:hover {
   color: #4ba0af;
   cursor: pointer;
 }
@@ -1886,4 +1898,46 @@ select option:checked {
 
 .searchable-dropdown:focus::placeholder {
   color: transparent;
+}
+
+.action {
+  width: 100%;
+  position: relative;
+}
+
+.selected-row {
+  background-color: #c8e6c9; /* halka green highlight */
+}
+
+table input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #cfcfcf;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #ffffff;
+  /* display: grid;
+  place-content: center; */
+}
+
+table input[type="checkbox"]:checked {
+  background-color: #055f82;
+}
+
+/* table input[type="checkbox"]:after {
+
+  display: none;
+} */
+
+table input[type="checkbox"]:checked:after {
+  font-family: "Font Awesome 5 Free";
+  content: "\f00c";
+  font-weight: 900;
+  font-size: 12px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* text-align: center; */
 }

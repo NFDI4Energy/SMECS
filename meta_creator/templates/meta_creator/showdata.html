@@ -27,6 +27,7 @@
                                 </div>
                             </div>
                             <textarea name="txtareaJSON" id="metadata-json">{{ my_json_str }}</textarea>
+                            
                         </form>
         </div><!-- metadataFormDisplay -->
          <div id="formContainer" class="form-container col-lg-12 col-md-12" >
@@ -304,7 +305,15 @@
                                             <div class="person-info collapsible-content collapse" id="multiCollapsemaintainer">
                                                 <p>An "maintainer" in software authorship is someone who significantly maintainers to the creation and development of software, including roles like coding, project management, and documentation.</p>
                                             </div>
-                                            <span class="highlight-tag"> ⚠️ Click on contributors, authors, or maintainers to see the description<span class="acknowledge-tag">Got it!</span></span>
+                                            <div class="action"> 
+                                                <span class="highlight-tag"> ⚠️ Click on contributors, authors, or maintainers to see the description<span class="acknowledge-tag">Got it!</span></span>
+                                               
+                                                <span><i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer; display: none;"></i></span>
+                                                <span><i class="fa-solid fa-table-list" title="Merge Rows" style="cursor:pointer; display: none;"></i></span>
+                                                 <span class="highlight-tag delete-row" style="float: right; display: none;"> Do You want to delete row?<span class="acknowledge-tag deleteRow">YES</span><span class="acknowledge-tag" style="color: red;">NO</span></span>
+                                                 <span class="highlight-tag merge-row" style="float: right; display: none;"> Do You want to merges selected rows?<span class="acknowledge-tag mergeRow">YES</span><span class="acknowledge-tag" style="color: red;">NO</span></span>
+                                            </div>
+                                           
                                             </div>
 
                                             {% endif %}
@@ -313,6 +322,7 @@
                                             <table class="auto-property table table-responsive table-bordered table-hover" id="{{ key }}Table" data-at-type={{default_type}} unique-tab={{unique_tab}}>
                                                 <thead>
                                                     <tr>
+                                                        <th class="text-center">Select</th>
                                                         {% for col, value in specific_types.items %}
                                                         <th data-col="{{ col }}" data-coltype="{{ value }}" class="align-items-center"> 
                                                             {{ col|camel_to_spaces_lower }}
@@ -347,6 +357,9 @@
                                                     {% for row in value %}
                                                     {% if row|row_has_values:specific_types.keys %}
                                                     <tr>
+                                                        <td class="text-center">
+                                                            <input type="checkbox" class="checkbox-select" data-role="select" name="checkbox-select">
+                                                        </td>
                                                         {% for col, value in specific_types.items %}
                                                         {% if value == 'tagging' or value == 'tagging_autocomplete' or value == 'dropdown' %}
                                                         <td class="table-tagging-cell" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" data-row="{{ forloop.parentloop.counter0 }}">
@@ -380,14 +393,15 @@
                                                         </td>
                                                         {% endfor %}
                                                         {% endif %}
-                                                        <td class="d-flex justify-content-center align-items-center" style="height: 50px;">
+                                                        <!-- <td class="d-flex justify-content-center align-items-center" style="height: 50px;">
                                                             <i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i>
-                                                        </td>
+                                                        </td> -->
                                                     </tr>
                                                     {% endif %}
                                                     {% endfor %}
                                             <!-- Add Row Inputs -->
                                                     <tr class="add-row-controls" data-table-key="{{ key }}">
+                                                        <td></td>
                                                         {% for col, value in specific_types.items %}
                                                         {% if value == 'tagging' or value == 'tagging_autocomplete' %}
                                                         <td class="tags-table-container add-row-tags-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
