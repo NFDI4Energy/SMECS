@@ -319,10 +319,13 @@
                                             {% endif %}
                                             <input type="hidden" id="{{ key }}TableHiddenInput" name="{{ key }}TableHiddenInput"
                                                 value='{{ value }}'>
+                                            {% if key == "contributor" %}
+                                            <div class="scrollable">
+                                                {% endif %}
                                             <table class="auto-property table table-responsive table-bordered table-hover" id="{{ key }}Table" data-at-type={{default_type}} unique-tab={{unique_tab}}>
                                                 <thead>
                                                     <tr>
-                                                        <th class="text-center">Select</th>
+                                                        <th class="text-center" style="width: fit-content;">Select</th>
                                                         {% for col, value in specific_types.items %}
                                                         <th data-col="{{ col }}" data-coltype="{{ value }}" class="align-items-center"> 
                                                             {{ col|camel_to_spaces_lower }}
@@ -350,7 +353,7 @@
                                                         </th>
                                                         {% endfor %}
                                                         {% endif %}
-                                                        <th data-col="del" data-coltype="delete">Row Control</th>
+                                                        <!-- <th data-col="del" data-coltype="delete">Row Control</th> -->
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -439,8 +442,12 @@
                                                             <button type="button" class="add-row-btn" data-table-key="{{ key }}">Add</button>
                                                         </td>
                                                     </tr>
+                                                
                                                 </tbody>
                                             </table>
+                                            {% if key == "contributor" %}
+                                            </div>
+                                            {% endif %}
                                                 {% endwith %}
                                             </div>
                                         {% endif %}

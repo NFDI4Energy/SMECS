@@ -579,9 +579,18 @@ div.error-container a:hover {
   margin-right: auto; */
   /* display: block; */
 }
-#contributorTable {
-  display: block;
+#contributorTable th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
+
+#contributorTable th:last-child,
+#contributorTable td:last-child {
+  border: none !important;
+  border-collapse: collapse;
+}
+
 /* @media (width<=1800px) {
   .auto-property {
     display: inline-block;
@@ -590,6 +599,7 @@ div.error-container a:hover {
 @media (width>=2000px) {
   .auto-property {
     display: inline-table;
+    width: 100%;
   }
 }
 
@@ -609,6 +619,11 @@ div.error-container a:hover {
   white-space: nowrap;
   min-width: 100px;
   max-width: 300px;
+}
+
+.scrollable {
+  height: 500px;
+  overflow-y: auto;
 }
 
 /* Set fixed width for first row */
@@ -967,7 +982,7 @@ label > .fa-info-circle {
   font-size: 70%;
   min-width: 200px;
   max-width: 260px;
-  width: auto;
+  /* width: auto; */
   background-color: #5e5b5b;
   color: #fff;
   text-align: left;
@@ -975,8 +990,8 @@ label > .fa-info-circle {
   padding: 5px;
   z-index: 1000;
   position: fixed;
-  left: 0; /* Will be set dynamically */
-  top: 0; /* Will be set dynamically */
+  left: 0;
+  top: 0;
   transition: opacity 0.3s;
   pointer-events: none;
   opacity: 0;

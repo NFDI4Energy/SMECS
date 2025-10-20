@@ -110,7 +110,7 @@ export function setupUI() {
         tooltip.style.visibility = "visible";
         tooltip.style.opacity = "1";
         tooltip.style.position = "absolute";
-        tooltip.style.zIndex = "9999";
+        // tooltip.style.zIndex = "9999";
         const rect = icon.getBoundingClientRect();
         const margin = 16;
 
@@ -121,10 +121,12 @@ export function setupUI() {
         // Adjust position for scale
         //let left = rect.right * scale;
         //let top = (rect.top + margin) * scale;
+        let width = 1;
         let left = 16;
         let top = 16;
         tooltip.style.left = left + "px";
         tooltip.style.top = top + "px";
+        tooltip.style.width = width + "px";
       });
       element.addEventListener("mouseleave", function () {
         tooltip.style.display = "none";
@@ -420,7 +422,9 @@ export function showToast(message, type = "info") {
   } else if (type === "success") {
     toast.style.background = "#2ecc71"; // green
   } else {
-    toast.style.background = "#3498db"; // blue
+    toast.style.background = "#fef6da"; // yellow
+    toast.style.color = "#202020ff";
+    toast.style.fontWeight = "bold";
   }
 
   container.appendChild(toast);

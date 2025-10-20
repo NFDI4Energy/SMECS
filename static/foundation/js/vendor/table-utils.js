@@ -224,7 +224,10 @@ export function setupTables() {
 
       // Prevent adding if all fields are empty
       const allEmpty = values.every((val) => val === "");
-      if (allEmpty) return;
+      if (allEmpty) {
+        showToast("Please fill the given fields before adding row", "error");
+        return;
+      }
 
       // ✅ Combination Validation
       const getInputVal = (col) =>
@@ -293,7 +296,6 @@ export function setupTables() {
         // td.className = "text-center";
         if (colType === "element") {
           // Find the checkbox in the add-row-controls row
-          console.log("Looking for checkbox with data-role:", col);
           const checkboxInput = addRowControls.querySelector(
             `input[type="checkbox"][data-role="${header}"]`
           );
@@ -302,8 +304,6 @@ export function setupTables() {
           checkbox.classList.add("checkbox-element");
           checkbox.setAttribute("data-role", col);
           checkbox.name = `checkbox-${col}`;
-          console.log("Try to check for checkbox");
-          console.log({ checkboxInput });
 
           // Set checked state based on add-row-controls checkbox
           if (checkboxInput && checkboxInput.checked) {
@@ -758,7 +758,9 @@ export function setupTables() {
         }
       }
     });
-
+    if (selectedCheckboxes.length >= 2) {
+      showToast("Selected Rows have been deleted", "success");
+    } else showToast("Selected Row has been deleted", "success");
     // Hide confirmation prompt
     deleteRowConfirm.style.display = "none";
 
@@ -772,10 +774,6 @@ export function setupTables() {
     const selectedCheckboxes = document.querySelectorAll(
       ".checkbox-select:checked"
     );
-    // if (selectedCheckboxes.length >= 2) {
-    //   alert("Please select at least two rows to merge.");
-    //   return;
-    // }
 
     const firstRow = selectedCheckboxes[0].closest("tr");
     const table = firstRow.closest("table");
@@ -882,6 +880,9 @@ export function setupTables() {
       );
     }
   });
+  // removeSelectColumn("copyrightHolderTable");
+  removeColumnFromTable("copyrightHolderTable", "select");
+  // removeColumnFromTable("contributorTable", "Row Control");
 }
 
 // Add function to color add items when element is required or recommended and empty
@@ -944,67 +945,68 @@ export function initializeTableTaggingCells() {
     const colType = cell.getAttribute("data-coltype");
     const dataType = cell.getAttribute("data-type");
 
-    if (colType == "tagging_autocomplete") {
-      // getSchema().then((schema) => {
-      //   autocompleteSource =
-      //     schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];
-      //   if (autocompleteSource.length > 0) {
-      //     setupTableTagAutocomplete({ cell, autocompleteSource });
-      //   }
-      // });
-    } else if (colType === "dropdown") {
-      const currentValue =
-        cell.getAttribute("data-value") || cell.textContent.trim() || "";
-      cell.innerHTML = "";
-      cell.textContent = currentValue;
+    // if (colType == "tagging_autocomplete") {
+    //   // getSchema().then((schema) => {
+    //   //   autocompleteSource =
+    //   //     schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];
+    //   //   if (autocompleteSource.length > 0) {
+    //   //     setupTableTagAutocomplete({ cell, autocompleteSource });
+    //   //   }
+    //   // });
+    // } else
+    // if (colType === "dropdown") {
+    //   const currentValue =
+    //     cell.getAttribute("data-value") || cell.textContent.trim() || "";
+    //   cell.innerHTML = "";
+    //   cell.textContent = currentValue;
 
-      // cell.addEventListener("click", function handleDropdownCellClick(e) {
-      //   if (cell.querySelector("select")) return;
-      //   getSchema().then((schema) => {
-      //     const options =
-      //       schema["$defs"]?.[dataType]?.properties?.[col]?.enum || [];
-      //     const select = document.createElement("select");
-      //     select.className = "table-dropdown-select";
-      //     select.name = "ChangingSelect";
-      //     select.innerHTML =
-      //       '<option value="">Select...</option>' +
-      //       options
-      //         .map((opt) => `<option value="${opt}">${opt}</option>`)
-      //         .join("");
-      //     select.value = currentValue;
+    //   // cell.addEventListener("click", function handleDropdownCellClick(e) {
+    //   //   if (cell.querySelector("select")) return;
+    //   //   getSchema().then((schema) => {
+    //   //     const options =
+    //   //       schema["$defs"]?.[dataType]?.properties?.[col]?.enum || [];
+    //   //     const select = document.createElement("select");
+    //   //     select.className = "table-dropdown-select";
+    //   //     select.name = "ChangingSelect";
+    //   //     select.innerHTML =
+    //   //       '<option value="">Select...</option>' +
+    //   //       options
+    //   //         .map((opt) => `<option value="${opt}">${opt}</option>`)
+    //   //         .join("");
+    //   //     select.value = currentValue;
 
-      //     cell.innerHTML = "";
-      //     cell.appendChild(select);
-      //     select.focus();
+    //   //     cell.innerHTML = "";
+    //   //     cell.appendChild(select);
+    //   //     select.focus();
 
-      //     function finalizeSelection() {
-      //       const selectedValue = select.value;
-      //       cell.setAttribute("data-value", selectedValue);
-      //       setTimeout(() => {
-      //         cell.innerHTML = selectedValue;
-      //       }, 0);
+    //   //     function finalizeSelection() {
+    //   //       const selectedValue = select.value;
+    //   //       cell.setAttribute("data-value", selectedValue);
+    //   //       setTimeout(() => {
+    //   //         cell.innerHTML = selectedValue;
+    //   //       }, 0);
 
-      //       cell.removeEventListener("click", handleDropdownCellClick);
-      //       setTimeout(() => {
-      //         cell.addEventListener("click", handleDropdownCellClick);
-      //       }, 0);
+    //   //       cell.removeEventListener("click", handleDropdownCellClick);
+    //   //       setTimeout(() => {
+    //   //         cell.addEventListener("click", handleDropdownCellClick);
+    //   //       }, 0);
 
-      //       const table = cell.closest("table");
-      //       if (table && table.id.endsWith("Table")) {
-      //         const key = table.id.replace(/Table$/, "");
-      //         updateTableHiddenInput(key);
-      //       }
-      //     }
+    //   //       const table = cell.closest("table");
+    //   //       if (table && table.id.endsWith("Table")) {
+    //   //         const key = table.id.replace(/Table$/, "");
+    //   //         updateTableHiddenInput(key);
+    //   //       }
+    //   //     }
 
-      //     select.addEventListener("change", finalizeSelection);
-      //     select.addEventListener("blur", finalizeSelection);
-      //   });
+    //   //     select.addEventListener("change", finalizeSelection);
+    //   //     select.addEventListener("blur", finalizeSelection);
+    //   //   });
 
-      //   cell.removeEventListener("click", handleDropdownCellClick);
-      // });
+    //   //   cell.removeEventListener("click", handleDropdownCellClick);
+    //   // });
 
-      return;
-    }
+    //   return;
+    // }
 
     // Show input when cell is clicked
     cell.addEventListener("click", function (e) {
@@ -1094,5 +1096,29 @@ export function initializeTableTaggingCells() {
         e.stopPropagation();
       }
     });
+  });
+}
+
+function removeColumnFromTable(tableId, columnName) {
+  const table = document.getElementById(tableId);
+  if (!table) return;
+
+  const headers = Array.from(table.querySelectorAll("thead th"));
+  const headerIndex = headers.findIndex(
+    (th) => th.textContent.trim().toLowerCase() === columnName.toLowerCase()
+  );
+
+  // If header not found, stop
+  if (headerIndex === -1) return;
+
+  // 🔹 Remove the header cell
+  headers[headerIndex].remove();
+
+  // 🔹 Remove the corresponding <td> in each row (same index)
+  table.querySelectorAll("tbody tr").forEach((row) => {
+    const cells = row.querySelectorAll("td");
+    if (cells[headerIndex]) {
+      cells[headerIndex].remove();
+    }
   });
 }
