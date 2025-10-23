@@ -984,7 +984,7 @@ label > .fa-info-circle {
 .tooltip-text-metadata {
   visibility: hidden;
   font-size: 70%;
-  min-width: 200px;
+  min-width: 165px;
   max-width: 260px;
   /* width: auto; */
   background-color: #5e5b5b;
@@ -993,9 +993,9 @@ label > .fa-info-circle {
   border-radius: 6px;
   padding: 5px;
   z-index: 1000;
-  position: fixed;
-  left: 0;
-  top: 0;
+  position: absolute;
+  left: -20px;
+  top: 25px;
   transition: opacity 0.3s;
   pointer-events: none;
   opacity: 0;
@@ -1003,7 +1003,8 @@ label > .fa-info-circle {
   white-space: normal; /* Allow text to wrap */
   box-sizing: border-box;
   overflow-wrap: break-word; /* Ensure wrapping for long words */
-  display: none;
+  display: block;
+  font-weight: 400;
 }
 
 .custom-tooltip-metadata:hover .tooltip-text-metadata {
@@ -1029,7 +1030,7 @@ label > .fa-info-circle {
   pointer-events: none;
 }
 
-.custom-tooltip-metadata .tooltip-text-metadata {
+/* .custom-tooltip-metadata .tooltip-text-metadata {
   visibility: hidden;
   font-size: 70%;
   width: 100%;
@@ -1042,7 +1043,7 @@ label > .fa-info-circle {
   top: 0;
   transition: opacity 0.3s;
   pointer-events: none;
-}
+} */
 
 .custom-tooltip:hover .tooltip-text,
 .custom-tooltip .tooltip-text:hover {
@@ -1051,10 +1052,10 @@ label > .fa-info-circle {
   pointer-events: auto;
 }
 
-.custom-tooltip-metadata:hover .tooltip-text-metadata {
+/* .custom-tooltip-metadata:hover .tooltip-text-metadata {
   visibility: visible;
   opacity: 1;
-}
+} */
 
 .custom-tooltip .tooltip-text a {
   color: rgb(112, 155, 233);

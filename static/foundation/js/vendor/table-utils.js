@@ -892,6 +892,8 @@ export function setupTables() {
       );
       selectedCheckboxes.forEach((checkbox) => {
         checkbox.checked = false;
+        if (!checkbox.checked)
+          checkbox.closest("tr").classList.remove("table-secondary");
       });
     });
   });

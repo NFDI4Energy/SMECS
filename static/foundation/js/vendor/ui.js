@@ -80,60 +80,60 @@ export function setupUI() {
   });
 
   // custom tooltips
-  document
-    .querySelectorAll(".custom-tooltip-metadata")
-    .forEach(function (element) {
-      const tooltip = element.querySelector(".tooltip-text-metadata");
-      const icon = element.querySelector("i");
+  // document
+  //   .querySelectorAll(".custom-tooltip-metadata")
+  //   .forEach(function (element) {
+  //     const tooltip = element.querySelector(".tooltip-text-metadata");
+  //     const icon = element.querySelector("i");
 
-      // Helper to get scale factor from parent (default 1)
-      function getScaleFactor(el) {
-        let scale = 1;
-        let parent = el;
-        while (parent) {
-          const transform = window.getComputedStyle(parent).transform;
-          if (transform && transform !== "none") {
-            const match = transform.match(
-              /matrix\(([^,]+),[^,]+,[^,]+,[^,]+,[^,]+,[^,]+\)/
-            );
-            if (match) {
-              scale *= parseFloat(match[1]);
-            }
-          }
-          parent = parent.parentElement;
-        }
-        return scale;
-      }
+  //     // Helper to get scale factor from parent (default 1)
+  //     function getScaleFactor(el) {
+  //       let scale = 1;
+  //       let parent = el;
+  //       while (parent) {
+  //         const transform = window.getComputedStyle(parent).transform;
+  //         if (transform && transform !== "none") {
+  //           const match = transform.match(
+  //             /matrix\(([^,]+),[^,]+,[^,]+,[^,]+,[^,]+,[^,]+\)/
+  //           );
+  //           if (match) {
+  //             scale *= parseFloat(match[1]);
+  //           }
+  //         }
+  //         parent = parent.parentElement;
+  //       }
+  //       return scale;
+  //     }
 
-      element.addEventListener("mouseenter", function () {
-        tooltip.style.display = "block";
-        tooltip.style.visibility = "visible";
-        tooltip.style.opacity = "1";
-        tooltip.style.position = "absolute";
-        // tooltip.style.zIndex = "9999";
-        const rect = icon.getBoundingClientRect();
-        const margin = 16;
+  //     element.addEventListener("mouseenter", function () {
+  //       tooltip.style.display = "block";
+  //       tooltip.style.visibility = "visible";
+  //       tooltip.style.opacity = "1";
+  //       tooltip.style.position = "absolute";
+  //       // tooltip.style.zIndex = "9999";
+  //       const rect = icon.getBoundingClientRect();
+  //       const margin = 16;
 
-        // Find the scale factor (if any) from the closest scaled parent
-        const scale = getScaleFactor(icon.parentElement);
-        console.info("Tooltip scale factor:", scale);
+  //       // Find the scale factor (if any) from the closest scaled parent
+  //       const scale = getScaleFactor(icon.parentElement);
+  //       console.info("Tooltip scale factor:", scale);
 
-        // Adjust position for scale
-        //let left = rect.right * scale;
-        //let top = (rect.top + margin) * scale;
-        let width = 1;
-        let left = 16;
-        let top = 16;
-        tooltip.style.left = left + "px";
-        tooltip.style.top = top + "px";
-        tooltip.style.width = width + "px";
-      });
-      element.addEventListener("mouseleave", function () {
-        tooltip.style.display = "none";
-        tooltip.style.visibility = "hidden";
-        tooltip.style.opacity = "0";
-      });
-    });
+  //       // Adjust position for scale
+  //       //let left = rect.right * scale;
+  //       //let top = (rect.top + margin) * scale;
+  //       let width = 1;
+  //       let left = 16;
+  //       let top = 16;
+  //       tooltip.style.left = left + "px";
+  //       tooltip.style.top = top + "px";
+  //       tooltip.style.width = width + "px";
+  //     });
+  //     element.addEventListener("mouseleave", function () {
+  //       tooltip.style.display = "none";
+  //       tooltip.style.visibility = "hidden";
+  //       tooltip.style.opacity = "0";
+  //     });
+  //   });
 
   // Initialize the state on page load
   window.onload = function () {
