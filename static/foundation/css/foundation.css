@@ -578,17 +578,21 @@ div.error-container a:hover {
   /* margin-left: auto;
   margin-right: auto; */
   /* display: block; */
+  border-collapse: separate;
+  border-spacing: 0;
 }
 #contributorTable th {
   position: sticky;
   top: 0;
   z-index: 10;
 }
-
+#contributorTable td {
+  border: 1px solid #ddddddbd;
+}
 #contributorTable th:last-child,
 #contributorTable td:last-child {
   border: none !important;
-  border-collapse: collapse;
+  /* border-collapse: collapse; */
 }
 
 /* @media (width<=1800px) {

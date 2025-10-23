@@ -358,9 +358,11 @@ export function setupTables() {
           newRow.removeChild(newRow.firstElementChild);
         }
         const selectcheckbox = document.createElement("td");
+        const lastcolumn = document.createElement("td");
         selectcheckbox.className = "text-center";
         selectcheckbox.innerHTML = `<input type="checkbox" class="checkbox-select" data-role="select" name="checkbox-select">`;
         newRow.prepend(selectcheckbox);
+        newRow.appendChild(lastcolumn);
       } else {
         const deleteTd = document.createElement("td");
 

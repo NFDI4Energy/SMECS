@@ -322,7 +322,7 @@
                                             {% if key == "contributor" %}
                                             <div class="scrollable">
                                                 {% endif %}
-                                            <table class="auto-property table table-responsive table-bordered table-hover" id="{{ key }}Table" data-at-type={{default_type}} unique-tab={{unique_tab}}>
+                                            <table class="auto-property table table-responsive table-hover" id="{{ key }}Table" data-at-type={{default_type}} unique-tab={{unique_tab}}>
                                                 <thead>
                                                     <tr>
                                                         <th class="text-center" style="width: fit-content;">Select</th>
@@ -340,7 +340,7 @@
                                                         {% if unique_tab %}
                                                         {% for col, value in metadata_dict.items %}
                                                         <th data-col="{{ col }}" data-coltype="element">
-                                                           <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapse{{ col }}" aria-expanded="false" aria-controls="multiCollapseContributors">{{ col|camel_to_spaces_lower }}</button> 
+                                                           <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapse{{ col }}" aria-expanded="false" aria-controls="multiCollapseContributors" added style="color: #055f82 ;">{{ col|camel_to_spaces_lower }}</button> 
                                                             <!-- <div class="person-info collapsible-content collapse" id="multiCollapse{{ col }}">
                                                              <p>{% if col in description_metadata %}{{ description_metadata|get:col }}{% endif %}</p>
                                                              </div> -->
@@ -396,9 +396,9 @@
                                                         </td>
                                                         {% endfor %}
                                                         {% endif %}
-                                                        <!-- <td class="d-flex justify-content-center align-items-center" style="height: 50px;">
-                                                            <i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i>
-                                                        </td> -->
+                                                        <td >
+                                                            <!-- <i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i> -->
+                                                        </td>
                                                     </tr>
                                                     {% endif %}
                                                     {% endfor %}
