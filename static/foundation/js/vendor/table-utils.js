@@ -701,6 +701,7 @@ export function setupTables() {
   const mergeRowIcon = document.querySelector(".action .fa-table-list");
   const deleteRowConfirm = document.querySelector(".action .delete-row");
   const mergeRowConfirm = document.querySelector(".action .merge-row");
+  const rejects = document.querySelectorAll(".reject");
 
   // ✅ Use event delegation for checkbox handling
   document.addEventListener("change", function (e) {
@@ -882,6 +883,19 @@ export function setupTables() {
       );
     }
   });
+
+  // Unselect checkboxes (No button)
+  rejects.forEach((reject) => {
+    reject.addEventListener("click", function () {
+      const selectedCheckboxes = document.querySelectorAll(
+        ".checkbox-select:checked"
+      );
+      selectedCheckboxes.forEach((checkbox) => {
+        checkbox.checked = false;
+      });
+    });
+  });
+
   // removeSelectColumn("copyrightHolderTable");
   removeColumnFromTable("copyrightHolderTable", "select");
   // removeColumnFromTable("contributorTable", "Row Control");
