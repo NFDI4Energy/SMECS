@@ -297,6 +297,7 @@ export function setupTagging({
 
   // Add tag on pressing Enter key
   input.addEventListener("keydown", (e) => {
+    if (input.classList.contains("searchable-dropdown")) return;
     if (e.key === "Enter") {
       if (enterHandledBySuggestion) {
         enterHandledBySuggestion = false;
@@ -310,16 +311,6 @@ export function setupTagging({
         if (autocompleteSource.includes(newTag)) {
           e.preventDefault();
           addTag(newTag);
-        } else {
-          e.preventDefault();
-          showInvalidTagMessage(
-            container,
-            input,
-            "Please select a value from the list."
-          );
-          input.classList.add("invalid");
-          setTimeout(() => input.classList.remove("invalid"), 1000);
-          input.value = "";
         }
       } else if (newTag) {
         e.preventDefault();
