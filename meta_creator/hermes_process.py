@@ -3,6 +3,9 @@ import subprocess
 import json
 import os
 from .token_handling_in_toml import update_token_to_toml, remove_token_from_toml
+from .utils import merge_people_metadata
+
+# hermes_utils.py
 
 def run_hermes_commands(url, token=None):
     errors = []
@@ -121,7 +124,7 @@ def run_hermes_commands(url, token=None):
 
         # Authors
         author_info = hermes_metadata_dict.get('author', [])
-        authors_metadata = [
+        authors_metadata = merge_people_metadata([
             {
                 "@type": "Person",
                 "givenName": author.get("givenName", ""),
@@ -129,11 +132,11 @@ def run_hermes_commands(url, token=None):
                 "email": author.get("email", "")
             }
             for author in author_info
-        ]
+        ])
 
         # Contributors
         contributor_info = hermes_metadata_dict.get('contributor', [])
-        contributors_metadata = [
+        contributors_metadata = merge_people_metadata([
             {
                 "@type": "Person",
                 "givenName": contributor.get("givenName", ""),
@@ -141,7 +144,7 @@ def run_hermes_commands(url, token=None):
                 "email": contributor.get("email", "")
             }
             for contributor in contributor_info
-        ]
+        ])
         
 
         hermes_metadata_dict = {
