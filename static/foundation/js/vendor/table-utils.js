@@ -267,6 +267,83 @@ export function setupTables() {
           return;
         }
       }
+      // 🧩 Duplicate check before adding new row
+      const existingRows = Array.from(
+        table.querySelectorAll("tbody tr")
+      ).filter(
+        (tr) =>
+          !tr.classList.contains("add-row-controls") && tr.querySelector("td")
+      );
+      console.log(existingRows);
+
+      // Define which columns determine uniqueness
+      const columnsToCheck = ["identifier", "givenName", "familyName", "email"];
+
+      // Build new row data
+      const newRowData = {};
+      inputs.forEach((input) => {
+        const col = input.getAttribute("data-col");
+        if (columnsToCheck.includes(col)) {
+          newRowData[col] = (input.value || "").trim().toLowerCase();
+        }
+      });
+
+      // Check tags (for email column, etc.)
+      const tagContainers = addRowControls.querySelectorAll(
+        ".add-row-tags-container"
+      );
+      tagContainers.forEach((container) => {
+        const col = container.getAttribute("data-col");
+        if (columnsToCheck.includes(col)) {
+          const tagEl = container.querySelector(".tag");
+          if (tagEl)
+            newRowData[col] = (tagEl.dataset.tag || "").trim().toLowerCase();
+        }
+      });
+
+      const keysToCompare = Object.keys(newRowData).filter(
+        (k) => newRowData[k] !== ""
+      );
+      console.log(keysToCompare);
+      if (keysToCompare.length > 0) {
+        let isDuplicate = false;
+
+        existingRows.forEach((row) => {
+          const cells = Array.from(row.querySelectorAll("td"));
+          let matches = 0;
+
+          keysToCompare.forEach((col) => {
+            // Find the header index for this column
+            const headers = Array.from(table.querySelectorAll("thead th")).map(
+              (th) => th.getAttribute("data-col")
+            );
+            console.log(headers);
+            const colIndex = headers.indexOf(col);
+            if (colIndex === -1) return;
+
+            const cell = cells[colIndex];
+            if (!cell) return;
+
+            let cellValue = cell.textContent.trim().toLowerCase();
+            const tagEl = cell.querySelector(".tag");
+            console.log(cellValue);
+            console.log(newRowData[col]);
+            if (tagEl)
+              cellValue = (tagEl.dataset.tag || "").trim().toLowerCase();
+
+            if (cellValue === newRowData[col]) matches++;
+          });
+
+          if (matches === keysToCompare.length) {
+            isDuplicate = true;
+          }
+        });
+
+        if (isDuplicate) {
+          showToast("This row already exists in the table!", "error");
+          return; // Stop adding the new row
+        }
+      }
 
       // Create new row
       const newRow = document.createElement("tr");
