@@ -325,7 +325,7 @@
                                             <table class="auto-property table table-responsive table-hover" id="{{ key }}Table" data-at-type={{default_type}} unique-tab={{unique_tab}}>
                                                 <thead>
                                                     <tr>
-                                                        <th class="text-center" style="width: fit-content;">Select</th>
+                                                        <th class="text-center" data-col=""  style="width: fit-content;">Select</th>
                                                         {% for col, value in specific_types.items %}
                                                         <th data-col="{{ col }}" data-coltype="{{ value }}" class="align-items-center"> 
                                                             {{ col|camel_to_spaces_lower }}
@@ -360,7 +360,7 @@
                                                     {% for row in value %}
                                                     {% if row|row_has_values:specific_types.keys %}
                                                     <tr>
-                                                        <td class="text-center">
+                                                        <td class="text-center" data-col="select" data-coltype="select">
                                                             <input type="checkbox" class="checkbox-select" data-role="select" name="checkbox-select">
                                                         </td>
                                                         {% for col, value in specific_types.items %}

@@ -43,12 +43,14 @@ export function updateTableHiddenInput(key) {
 
     // elements: all headers with data-coltype == 'element'
     const elements = headers
-      .filter((h) => h.coltype === "element")
+      .filter((h) => h.coltype === "element" && h.name)
       .map((h) => h.name);
 
     // subElements: all headers not 'delete' or 'element'
     const subElements = headers
-      .filter((h) => h.coltype !== "delete" && h.coltype !== "element")
+      .filter(
+        (h) => h.coltype !== "delete" && h.coltype !== "element" && h.name
+      )
       .map((h) => h.name);
 
     // Find the table body
@@ -300,7 +302,6 @@ export function setupTables() {
             newRowData[col] = (tagEl.dataset.tag || "").trim().toLowerCase();
         }
       });
-
       const keysToCompare = Object.keys(newRowData).filter(
         (k) => newRowData[k] !== ""
       );
