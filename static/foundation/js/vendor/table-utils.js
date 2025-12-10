@@ -411,7 +411,7 @@ export function setupTables() {
           input.className = "tag-input";
           input.type = "text";
           input.style.display = "none";
-          input.placeholder = "Add tag and press Enter";
+          input.placeholder = "Add Email and press Enter";
           td.appendChild(tagsList);
           td.appendChild(input);
           // Reset tags for next row
@@ -689,18 +689,23 @@ export function setupTables() {
   document.querySelectorAll("table.auto-property").forEach(function (table) {
     table.addEventListener("click", function (e) {
       // Delete rows
-      if (e.target.classList.contains("delete-row-btn")) {
-        const row = e.target.closest("tr");
-        if (row) {
-          row.remove();
-          // Update the hidden input
-          const tableId = table.id;
-          if (tableId && tableId.endsWith("Table")) {
-            const key = tableId.replace(/Table$/, "");
-            updateTableHiddenInput(key);
-          }
-        }
-      }
+      // if (e.target.classList.contains("delete-row-btn")) {
+      //   const actionCell = e.target.closest(".action");
+      //   console.log(actionCell);
+      //   const confirmBox = actionCell.querySelector(".delete-row");
+      //   confirmBox.style.display = "";
+      //   const row = e.target.closest("tr");
+
+      //   if (row) {
+      //     row.remove();
+      //     // Update the hidden input
+      //     const tableId = table.id;
+      //     if (tableId && tableId.endsWith("Table")) {
+      //       const key = tableId.replace(/Table$/, "");
+      //       updateTableHiddenInput(key);
+      //     }
+      //   }
+      // }
 
       // Update other fields
       // Only allow editing on <td> that is not the last column (delete icon)
@@ -851,10 +856,121 @@ export function setupTables() {
   });
 
   // ✅ Handle merge confirmation (YES button)
+  // document.querySelector(".mergeRow").addEventListener("click", function () {
+  //   const selectedCheckboxes = document.querySelectorAll(
+  //     ".checkbox-select:checked"
+  //   );
+
+  //   const firstRow = selectedCheckboxes[0].closest("tr");
+  //   const table = firstRow.closest("table");
+  //   const headers = Array.from(table.querySelectorAll("thead th")).map((th) =>
+  //     th.getAttribute("data-col")
+  //   );
+
+  //   const givenNameIdx = headers.indexOf("givenName");
+  //   const familyNameIdx = headers.indexOf("familyName");
+  //   const emailIdx = headers.indexOf("email");
+
+  //   // 🔹 Extract data for all selected rows
+  //   const selectedData = Array.from(selectedCheckboxes).map((checkbox) => {
+  //     const row = checkbox.closest("tr");
+  //     const cells = row.querySelectorAll("td");
+
+  //     const givenName = cells[givenNameIdx]?.textContent.trim() || "";
+  //     const familyName = cells[familyNameIdx]?.textContent.trim() || "";
+
+  //     // Collect all emails (from tags if available)
+  //     let emails = [];
+  //     if (emailIdx !== -1) {
+  //       const emailCell = cells[emailIdx];
+  //       const tags = emailCell.querySelectorAll(".tag");
+  //       if (tags.length > 0) {
+  //         emails = Array.from(tags).map((t) => t.dataset.tag);
+  //       } else if (emailCell.textContent.trim() !== "") {
+  //         emails = [emailCell.textContent.trim()];
+  //       }
+  //     }
+
+  //     return { row, givenName, familyName, emails };
+  //   });
+
+  //   // 🔹 Group selected rows by Given Name + Family Name
+  //   const grouped = {};
+  //   selectedData.forEach((item) => {
+  //     const key = `${item.givenName.toLowerCase()}-${item.familyName.toLowerCase()}`;
+  //     if (!grouped[key]) grouped[key] = [];
+  //     grouped[key].push(item);
+  //   });
+
+  //   let merged = false;
+
+  //   // 🔹 Merge logic for rows with same Given + Family
+  //   Object.values(grouped).forEach((group) => {
+  //     if (group.length > 1) {
+  //       merged = true;
+  //       const mainRow = group[0].row; // keep first row
+  //       const allEmails = [...new Set(group.flatMap((g) => g.emails))]; // merge + dedupe
+
+  //       // Update mainRow's email cell
+  //       if (emailIdx !== -1) {
+  //         const emailCell = mainRow.querySelectorAll("td")[emailIdx];
+  //         const tagsList = emailCell.querySelector(".tags-list");
+
+  //         if (tagsList) {
+  //           tagsList.innerHTML = "";
+  //           allEmails.forEach((email) => {
+  //             const span = document.createElement("span");
+  //             span.className = "tag";
+  //             span.setAttribute("data-tag", email);
+  //             span.innerHTML =
+  //               email +
+  //               ' <span class="remove-tag" data-tag="' +
+  //               email +
+  //               '">×</span>';
+  //             tagsList.appendChild(span);
+  //           });
+  //         } else {
+  //           emailCell.textContent = allEmails.join(", ");
+  //         }
+  //       }
+
+  //       // Remove other duplicate rows
+  //       group.slice(1).forEach((g) => g.row.remove());
+  //     }
+  //   });
+
+  //   // ✅ Update hidden input JSON
+  //   if (table && typeof updateTableHiddenInput === "function") {
+  //     const key = table.id.replace(/Table$/, "");
+  //     updateTableHiddenInput(key);
+  //   }
+
+  //   // ✅ UI cleanup
+  //   mergeRowConfirm.style.display = "none";
+  //   deleteIcon.style.display = "none";
+  //   mergeRowIcon.style.display = "none";
+  //   selectedCheckboxes.forEach((cb) => (cb.checked = false));
+  //   table
+  //     .querySelectorAll("tr")
+  //     .forEach((row) => row.classList.remove("table-secondary"));
+
+  //   if (merged) {
+  //     showToast(
+  //       "Rows with matching names have been merged successfully!",
+  //       "success"
+  //     );
+  //   } else {
+  //     showToast(
+  //       "No matching Given Name + Family Name found among selected rows.",
+  //       "error"
+  //     );
+  //   }
+  // });
   document.querySelector(".mergeRow").addEventListener("click", function () {
     const selectedCheckboxes = document.querySelectorAll(
       ".checkbox-select:checked"
     );
+    if (selectedCheckboxes.length === 0) return;
 
     const firstRow = selectedCheckboxes[0].closest("tr");
     const table = firstRow.closest("table");
@@ -866,7 +982,7 @@ export function setupTables() {
     const familyNameIdx = headers.indexOf("familyName");
     const emailIdx = headers.indexOf("email");
 
-    // 🔹 Extract data for all selected rows
+    // 🔹 Extract data for all selected rows (including roles)
     const selectedData = Array.from(selectedCheckboxes).map((checkbox) => {
       const row = checkbox.closest("tr");
       const cells = row.querySelectorAll("td");
@@ -874,11 +990,12 @@ export function setupTables() {
       const givenName = cells[givenNameIdx]?.textContent.trim() || "";
       const familyName = cells[familyNameIdx]?.textContent.trim() || "";
 
-      // Collect all emails (from tags if available)
+      // Extract emails
       let emails = [];
       if (emailIdx !== -1) {
         const emailCell = cells[emailIdx];
         const tags = emailCell.querySelectorAll(".tag");
+
         if (tags.length > 0) {
           emails = Array.from(tags).map((t) => t.dataset.tag);
         } else if (emailCell.textContent.trim() !== "") {
@@ -886,10 +1003,26 @@ export function setupTables() {
         }
       }
 
-      return { row, givenName, familyName, emails };
+      // 🔹 Extract roles using data-role
+      const contributorChecked =
+        row.querySelector('[data-role="contributor"]')?.checked || false;
+      const authorChecked =
+        row.querySelector('[data-role="author"]')?.checked || false;
+      const maintainerChecked =
+        row.querySelector('[data-role="maintainer"]')?.checked || false;
+
+      return {
+        row,
+        givenName,
+        familyName,
+        emails,
+        contributorChecked,
+        authorChecked,
+        maintainerChecked,
+      };
     });
 
-    // 🔹 Group selected rows by Given Name + Family Name
+    // 🔹 Group rows by (givenName + familyName)
     const grouped = {};
     selectedData.forEach((item) => {
       const key = `${item.givenName.toLowerCase()}-${item.familyName.toLowerCase()}`;
@@ -899,14 +1032,20 @@ export function setupTables() {
 
     let merged = false;
 
-    // 🔹 Merge logic for rows with same Given + Family
+    // 🔹 Merge logic
     Object.values(grouped).forEach((group) => {
       if (group.length > 1) {
         merged = true;
-        const mainRow = group[0].row; // keep first row
-        const allEmails = [...new Set(group.flatMap((g) => g.emails))]; // merge + dedupe
 
-        // Update mainRow's email cell
+        const mainRow = group[0].row;
+        const allEmails = [...new Set(group.flatMap((g) => g.emails))];
+
+        // 🔸 Aggregate roles (OR logic)
+        const groupContributor = group.some((g) => g.contributorChecked);
+        const groupAuthor = group.some((g) => g.authorChecked);
+        const groupMaintainer = group.some((g) => g.maintainerChecked);
+
+        // 🔸 Update email cell in main row
         if (emailIdx !== -1) {
           const emailCell = mainRow.querySelectorAll("td")[emailIdx];
           const tagsList = emailCell.querySelector(".tags-list");
@@ -916,12 +1055,8 @@ export function setupTables() {
             allEmails.forEach((email) => {
               const span = document.createElement("span");
               span.className = "tag";
-              span.setAttribute("data-tag", email);
-              span.innerHTML =
-                email +
-                ' <span class="remove-tag" data-tag="' +
-                email +
-                '">×</span>';
+              span.dataset.tag = email;
+              span.innerHTML = `${email} <span class="remove-tag" data-tag="${email}">×</span>`;
               tagsList.appendChild(span);
             });
           } else {
@@ -929,36 +1064,45 @@ export function setupTables() {
           }
         }
 
-        // Remove other duplicate rows
+        // 🔸 Assign merged roles to the main row
+        const mainContributor = mainRow.querySelector(
+          '[data-role="contributor"]'
+        );
+        if (mainContributor) mainContributor.checked = groupContributor;
+
+        const mainAuthor = mainRow.querySelector('[data-role="author"]');
+        if (mainAuthor) mainAuthor.checked = groupAuthor;
+
+        const mainMaintainer = mainRow.querySelector(
+          '[data-role="maintainer"]'
+        );
+        if (mainMaintainer) mainMaintainer.checked = groupMaintainer;
+
+        // 🔸 Remove other rows in the group
         group.slice(1).forEach((g) => g.row.remove());
       }
     });
 
-    // ✅ Update hidden input JSON
+    // Update JSON
     if (table && typeof updateTableHiddenInput === "function") {
       const key = table.id.replace(/Table$/, "");
       updateTableHiddenInput(key);
     }
 
-    // ✅ UI cleanup
+    // UI cleanup
     mergeRowConfirm.style.display = "none";
     deleteIcon.style.display = "none";
     mergeRowIcon.style.display = "none";
+
     selectedCheckboxes.forEach((cb) => (cb.checked = false));
     table
       .querySelectorAll("tr")
       .forEach((row) => row.classList.remove("table-secondary"));
 
     if (merged) {
-      showToast(
-        "Rows with matching names have been merged successfully!",
-        "success"
-      );
+      showToast("Rows merged successfully!", "success");
     } else {
-      showToast(
-        "No matching Given Name + Family Name found among selected rows.",
-        "error"
-      );
+      showToast("No rows with matching names found.", "error");
     }
   });
 
@@ -1218,3 +1362,41 @@ function removeColumnFromTable(tableId, columnName) {
     }
   });
 }
+document.addEventListener("DOMContentLoaded", function () {
+  // === DELETE CONFIRMATION FOR COPYRIGHT HOLDER ===
+
+  const table = document.getElementById("copyrightHolderTable");
+  const confirmBar = document.querySelector(".copyright_table .confirmBar");
+  const yesBtn = document.querySelector(".copyright_table .yesBtn");
+  const noBtn = document.querySelector(".copyright_table .noBtn");
+
+  if (!table || !confirmBar || !yesBtn || !noBtn) return;
+
+  let rowToDelete = null;
+
+  table.addEventListener("click", function (e) {
+    const icon = e.target.closest(".delete-row-btn");
+    if (!icon) return;
+
+    rowToDelete = icon.closest("tr");
+    confirmBar.style.display = "inline-block";
+  });
+
+  yesBtn.addEventListener("click", function () {
+    if (rowToDelete) {
+      rowToDelete.remove();
+
+      // Update hidden input
+      const key = table.id.replace(/Table$/, "");
+      updateTableHiddenInput(key);
+    }
+
+    confirmBar.style.display = "none";
+    rowToDelete = null;
+  });
+
+  noBtn.addEventListener("click", function () {
+    confirmBar.style.display = "none";
+    rowToDelete = null;
+  });
+});

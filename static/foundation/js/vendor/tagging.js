@@ -5,7 +5,7 @@ Highlights suggested input
 Provides reusable autocomplete logic for table cells and forms*/
 
 import { getSchema } from "./schema-utils.js";
-import { validateInput } from "./ui.js";
+import { validateInput, showToast } from "./ui.js";
 const SPDX_URL =
   "https://raw.githubusercontent.com/spdx/license-list-data/master/json/licenses.json";
 const metadataJson = document.getElementById("metadata-json");
@@ -151,6 +151,7 @@ export function setupTagging({
       // --- Position the suggestion box using getBoundingClientRect ---
       updateSuggestionsBoxPosition(input, suggestionsBox);
       suggestionsBox.style.display = "block";
+      suggestionsBox.style.position = "fixed";
     });
     // 🔶 NEW: keyboard navigation for suggestions
     input.addEventListener("keydown", (e) => {
@@ -174,6 +175,7 @@ export function setupTagging({
       if (e.key === "Enter" && activeSuggestionIndex !== -1) {
         e.preventDefault();
         items[activeSuggestionIndex].click();
+        input.value = "";
         enterHandledBySuggestion = true;
         setTimeout(() => input.focus(), 200);
         return;
@@ -297,7 +299,6 @@ export function setupTagging({
 
   // Add tag on pressing Enter key
   input.addEventListener("keydown", (e) => {
-    if (input.classList.contains("searchable-dropdown")) return;
     if (e.key === "Enter") {
       if (enterHandledBySuggestion) {
         enterHandledBySuggestion = false;
@@ -306,11 +307,35 @@ export function setupTagging({
       }
 
       const newTag = input.value.trim();
+      if (!newTag) return;
+      //  Duplicate tag check
+      const isDuplicate =
+        taggingType === "tagging_object"
+          ? selectedTags.some((item) => item.identifier === newTag)
+          : selectedTags.includes(newTag);
 
+      if (isDuplicate) {
+        e.preventDefault();
+        showToast("Tag has been already added", "error");
+        input.classList.add("invalid");
+        setTimeout(() => input.classList.remove("invalid"), 1000);
+        input.value = "";
+        return;
+      }
       if (useAutocomplete) {
         if (autocompleteSource.includes(newTag)) {
           e.preventDefault();
           addTag(newTag);
+        } else {
+          e.preventDefault();
+          showInvalidTagMessage(
+            container,
+            input,
+            "Please select a value from the list."
+          );
+          input.classList.add("invalid");
+          setTimeout(() => input.classList.remove("invalid"), 1000);
+          input.value = "";
         }
       } else if (newTag) {
         e.preventDefault();
@@ -319,12 +344,17 @@ export function setupTagging({
       setTimeout(() => input.focus(), 0);
     }
   });
+
   input.addEventListener("blur", () => {
-    const value = input.value.trim();
-    if (value !== "") {
-      // Reuse Enter key handling
-      input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
-    }
+    setTimeout(() => {
+      const value = input.value.trim();
+      const suggestionsVisible =
+        suggestionsBox && suggestionsBox.style.display === "block";
+
+      if (value !== "" && !suggestionsVisible) {
+        input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+      }
+    }, 150);
   });
 
   // Update hidden input and JSON
