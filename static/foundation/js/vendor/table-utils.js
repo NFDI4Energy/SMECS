@@ -231,7 +231,7 @@ export function setupTables() {
         return;
       }
 
-      // ✅ Combination Validation
+      // Combination Validation
       const getInputVal = (col) =>
         Array.from(inputs)
           .find((i) => i.getAttribute("data-col") === col)
@@ -269,7 +269,7 @@ export function setupTables() {
           return;
         }
       }
-      // 🧩 Duplicate check before adding new row
+      // Duplicate check before adding new row
       const existingRows = Array.from(
         table.querySelectorAll("tbody tr")
       ).filter(
@@ -489,193 +489,58 @@ export function setupTables() {
     const col = container.getAttribute("data-col");
     addRowTags[col] = [];
     const input = container.querySelector(".add-row-tag-input");
-    // const colType = container.getAttribute("data-coltype");
-    // const dataType = container.getAttribute("data-type");
-    // // --- Autocomplete setup ---
-    // let autocompleteSource = [];
-    // let suggestionsBox = createSuggestionsBox(container);
 
-    // if (colType === "tagging_autocomplete") {
-    //   getSchema().then((schema) => {
-    //     autocompleteSource =
-    //       schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];
-    //   });
+    //add tag from current input value (with email validation support)
+    function addTagFromInput() {
+      const raw = input.value.trim();
+      if (!raw) return;
 
-    //   input.addEventListener("input", function () {
-    //     const query = input.value.trim().toLowerCase();
-    //     suggestionsBox.innerHTML = "";
-    //     if (!query || autocompleteSource.length === 0) {
-    //       suggestionsBox.style.display = "none";
-    //       return;
-    //     }
-    //     const selectedTags = addRowTags[col];
-    //     const filtered = autocompleteSource.filter(
-    //       (tag) =>
-    //         tag.toLowerCase().startsWith(query) && !selectedTags.includes(tag)
-    //     );
-    //     if (filtered.length === 0) {
-    //       suggestionsBox.style.display = "none";
-    //       return;
-    //     }
-    //     filtered.forEach((tag) => {
-    //       const div = document.createElement("div");
-    //       div.className = "suggestion-item";
-    //       div.textContent = tag;
-    //       div.style.cursor = "pointer";
-    //       div.onclick = function () {
-    //         input.value = tag;
-    //         input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
-    //         suggestionsBox.style.display = "none";
-    //       };
-    //       suggestionsBox.appendChild(div);
-    //     });
-    //     // Position suggestions below the input
-    //     const inputRect = input.getBoundingClientRect();
-    //     updateSuggestionsBoxPosition(input, suggestionsBox);
-    //   });
+      const tag = raw;
 
-    //   input.addEventListener("focus", function () {
-    //     suggestionsBox.innerHTML = "";
-    //     if (!autocompleteSource.length) {
-    //       suggestionsBox.style.display = "none";
-    //       return;
-    //     }
-    //     const query = input.value.trim().toLowerCase();
-    //     const selectedTags = addRowTags[col];
-    //     const filtered = autocompleteSource.filter(
-    //       (tag) =>
-    //         !selectedTags.includes(tag) &&
-    //         (query === "" || tag.toLowerCase().startsWith(query))
-    //     );
-    //     if (filtered.length === 0) {
-    //       suggestionsBox.style.display = "none";
-    //       return;
-    //     }
-    //     filtered.forEach((tag) => {
-    //       const div = document.createElement("div");
-    //       div.className = "suggestion-item";
-    //       div.textContent = tag;
-    //       div.style.cursor = "pointer";
-    //       div.onclick = function () {
-    //         input.value = tag;
-    //         input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
-    //         suggestionsBox.style.display = "none";
-    //       };
-    //       suggestionsBox.appendChild(div);
-    //     });
-    //     // Position suggestions below the input
-    //     updateSuggestionsBoxPosition(input, suggestionsBox);
-    //     suggestionsBox.style.display = "block";
-    //   });
+      // If this is the email column, validate first
+      if (col === "email") {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(tag)) {
+          showToast("Please enter a valid Email address.", "error");
+          input.value = "";
+          return;
+        }
+      }
 
-    //   window.addEventListener(
-    //     "scroll",
-    //     () => updateSuggestionsBoxPosition(input, suggestionsBox),
-    //     true
-    //   );
-    //   window.addEventListener("resize", () =>
-    //     updateSuggestionsBoxPosition(input, suggestionsBox)
-    //   );
+      // Duplicate avoid
+      if (!addRowTags[col].includes(tag)) {
+        addRowTags[col].push(tag);
 
-    //   // Hide suggestions on blur/click outside
-    //   input.addEventListener("blur", function () {
-    //     setTimeout(() => {
-    //       suggestionsBox.style.display = "none";
-    //     }, 200);
-    //   });
-    // }
-    // else if (colType === "dropdown") {
-    //   getSchema().then((schema) => {
-    //     const options =
-    //       schema["$defs"]?.[dataType]?.properties?.[col]?.enum || [];
-    //     const select = document.createElement("select");
-    //     select.className = "add-row-dropdown-select";
-    //     select.name = "selectElement";
-    //     select.setAttribute("data-col", col);
-    //     select.setAttribute("data-type", dataType);
-    //     select.setAttribute("data-coltype", "dropdown");
-    //     select.innerHTML =
-    //       '<option value="">Select...</option>' +
-    //       options
-    //         .map((opt) => `<option value="${opt}">${opt}</option>`)
-    //         .join("");
-    //     // Replace the input with the select
-    //     if (input) {
-    //       input.style.display = "none";
-    //     }
-    //     container.appendChild(select);
+        const span = document.createElement("span");
+        span.className = "tag";
+        span.setAttribute("data-tag", tag);
+        span.innerHTML =
+          tag + ' <span class="remove-tag" data-tag="' + tag + '">×</span>';
+        container.insertBefore(span, input);
+        showToast("Email has been added", "success");
+      } else {
+        showToast("This email is already added", "error");
+      }
 
-    //     // On change, update addRowTags or values as needed
-    //     select.addEventListener("change", function () {
-    //       addRowTags[col] = [select.value];
-    //       console.log("Selected value:", select.value);
-    //     });
-    //   });
-    // }
+      // Clear input after success
+      input.value = "";
+    }
+
     // Add tag on Enter
     input.addEventListener("keydown", function (e) {
-      if (e.key === "Enter" && input.value.trim() !== "") {
+      if (e.key === "Enter") {
+        if (input.value.trim() === "") return;
         e.preventDefault();
-        const tag = input.value.trim();
-
-        // ✅ Check if this field is email column
-        if (col === "email") {
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailRegex.test(tag)) {
-            // alert("Please enter a valid Email address.");
-            showToast("Please enter a valid Email address.", "error");
-            input.value = "";
-            return;
-          }
-        }
-
-        // if (colType === "tagging_autocomplete") {
-        //   if (autocompleteSource.includes(tag)) {
-        //     if (!addRowTags[col].includes(tag)) {
-        //       addRowTags[col].push(tag);
-
-        //       // Create tag element
-        //       const span = document.createElement("span");
-        //       span.className = "tag";
-        //       span.setAttribute("data-tag", tag);
-        //       span.innerHTML =
-        //         tag +
-        //         ' <span class="remove-tag" data-tag="' +
-        //         tag +
-        //         '">×</span>';
-        //       container.insertBefore(span, input);
-        //     }
-        //     input.value = "";
-        //     if (suggestionsBox) suggestionsBox.style.display = "none";
-        //   } else {
-        //     showInvalidTagMessage(
-        //       container,
-        //       input,
-        //       "Please select a value from the list."
-        //     );
-        //     input.classList.add("invalid");
-        //     setTimeout(() => input.classList.remove("invalid"), 1000);
-        //     input.value = "";
-        //   }
-        // }
-        // For plain tagging, just add the tag
-        if (!addRowTags[col].includes(tag)) {
-          addRowTags[col].push(tag);
-          const span = document.createElement("span");
-          span.className = "tag";
-          span.setAttribute("data-tag", tag);
-          span.innerHTML =
-            tag + ' <span class="remove-tag" data-tag="' + tag + '">×</span>';
-          container.insertBefore(span, input);
-        }
-        input.value = "";
-        // else {
-
-        // }
+        addTagFromInput();
       }
     });
 
-    // Remove tag on click
+    // Add tag when input loses focus (blur)
+    input.addEventListener("blur", function () {
+      addTagFromInput();
+    });
+
+    // Remove tag on click (same as before)
     container.addEventListener("click", function (e) {
       if (e.target.classList.contains("remove-tag")) {
         const tag = e.target.getAttribute("data-tag");
@@ -856,116 +721,6 @@ export function setupTables() {
   });
 
   // ✅ Handle merge confirmation (YES button)
-  // document.querySelector(".mergeRow").addEventListener("click", function () {
-  //   const selectedCheckboxes = document.querySelectorAll(
-  //     ".checkbox-select:checked"
-  //   );
-
-  //   const firstRow = selectedCheckboxes[0].closest("tr");
-  //   const table = firstRow.closest("table");
-  //   const headers = Array.from(table.querySelectorAll("thead th")).map((th) =>
-  //     th.getAttribute("data-col")
-  //   );
-
-  //   const givenNameIdx = headers.indexOf("givenName");
-  //   const familyNameIdx = headers.indexOf("familyName");
-  //   const emailIdx = headers.indexOf("email");
-
-  //   // 🔹 Extract data for all selected rows
-  //   const selectedData = Array.from(selectedCheckboxes).map((checkbox) => {
-  //     const row = checkbox.closest("tr");
-  //     const cells = row.querySelectorAll("td");
-
-  //     const givenName = cells[givenNameIdx]?.textContent.trim() || "";
-  //     const familyName = cells[familyNameIdx]?.textContent.trim() || "";
-
-  //     // Collect all emails (from tags if available)
-  //     let emails = [];
-  //     if (emailIdx !== -1) {
-  //       const emailCell = cells[emailIdx];
-  //       const tags = emailCell.querySelectorAll(".tag");
-  //       if (tags.length > 0) {
-  //         emails = Array.from(tags).map((t) => t.dataset.tag);
-  //       } else if (emailCell.textContent.trim() !== "") {
-  //         emails = [emailCell.textContent.trim()];
-  //       }
-  //     }
-
-  //     return { row, givenName, familyName, emails };
-  //   });
-
-  //   // 🔹 Group selected rows by Given Name + Family Name
-  //   const grouped = {};
-  //   selectedData.forEach((item) => {
-  //     const key = `${item.givenName.toLowerCase()}-${item.familyName.toLowerCase()}`;
-  //     if (!grouped[key]) grouped[key] = [];
-  //     grouped[key].push(item);
-  //   });
-
-  //   let merged = false;
-
-  //   // 🔹 Merge logic for rows with same Given + Family
-  //   Object.values(grouped).forEach((group) => {
-  //     if (group.length > 1) {
-  //       merged = true;
-  //       const mainRow = group[0].row; // keep first row
-  //       const allEmails = [...new Set(group.flatMap((g) => g.emails))]; // merge + dedupe
-
-  //       // Update mainRow's email cell
-  //       if (emailIdx !== -1) {
-  //         const emailCell = mainRow.querySelectorAll("td")[emailIdx];
-  //         const tagsList = emailCell.querySelector(".tags-list");
-
-  //         if (tagsList) {
-  //           tagsList.innerHTML = "";
-  //           allEmails.forEach((email) => {
-  //             const span = document.createElement("span");
-  //             span.className = "tag";
-  //             span.setAttribute("data-tag", email);
-  //             span.innerHTML =
-  //               email +
-  //               ' <span class="remove-tag" data-tag="' +
-  //               email +
-  //               '">×</span>';
-  //             tagsList.appendChild(span);
-  //           });
-  //         } else {
-  //           emailCell.textContent = allEmails.join(", ");
-  //         }
-  //       }
-
-  //       // Remove other duplicate rows
-  //       group.slice(1).forEach((g) => g.row.remove());
-  //     }
-  //   });
-
-  //   // ✅ Update hidden input JSON
-  //   if (table && typeof updateTableHiddenInput === "function") {
-  //     const key = table.id.replace(/Table$/, "");
-  //     updateTableHiddenInput(key);
-  //   }
-
-  //   // ✅ UI cleanup
-  //   mergeRowConfirm.style.display = "none";
-  //   deleteIcon.style.display = "none";
-  //   mergeRowIcon.style.display = "none";
-  //   selectedCheckboxes.forEach((cb) => (cb.checked = false));
-  //   table
-  //     .querySelectorAll("tr")
-  //     .forEach((row) => row.classList.remove("table-secondary"));
-
-  //   if (merged) {
-  //     showToast(
-  //       "Rows with matching names have been merged successfully!",
-  //       "success"
-  //     );
-  //   } else {
-  //     showToast(
-  //       "No matching Given Name + Family Name found among selected rows.",
-  //       "error"
-  //     );
-  //   }
-  // });
   document.querySelector(".mergeRow").addEventListener("click", function () {
     const selectedCheckboxes = document.querySelectorAll(
       ".checkbox-select:checked"
@@ -981,8 +736,9 @@ export function setupTables() {
     const givenNameIdx = headers.indexOf("givenName");
     const familyNameIdx = headers.indexOf("familyName");
     const emailIdx = headers.indexOf("email");
+    const identifierIdx = headers.indexOf("identifier");
 
-    // 🔹 Extract data for all selected rows (including roles)
+    // 🔹 Extract data for all selected rows (including roles + identifier)
     const selectedData = Array.from(selectedCheckboxes).map((checkbox) => {
       const row = checkbox.closest("tr");
       const cells = row.querySelectorAll("td");
@@ -990,7 +746,7 @@ export function setupTables() {
       const givenName = cells[givenNameIdx]?.textContent.trim() || "";
       const familyName = cells[familyNameIdx]?.textContent.trim() || "";
 
-      // Extract emails
+      // Emails
       let emails = [];
       if (emailIdx !== -1) {
         const emailCell = cells[emailIdx];
@@ -1003,7 +759,13 @@ export function setupTables() {
         }
       }
 
-      // 🔹 Extract roles using data-role
+      // Identifier (simple text based)
+      const identifier =
+        identifierIdx !== -1
+          ? cells[identifierIdx]?.textContent.trim() || ""
+          : "";
+
+      // Roles by data-role
       const contributorChecked =
         row.querySelector('[data-role="contributor"]')?.checked || false;
       const authorChecked =
@@ -1016,6 +778,7 @@ export function setupTables() {
         givenName,
         familyName,
         emails,
+        identifier,
         contributorChecked,
         authorChecked,
         maintainerChecked,
@@ -1035,10 +798,39 @@ export function setupTables() {
     // 🔹 Merge logic
     Object.values(grouped).forEach((group) => {
       if (group.length > 1) {
-        merged = true;
-
         const mainRow = group[0].row;
         const allEmails = [...new Set(group.flatMap((g) => g.emails))];
+
+        // 🔸 Aggregate identifier + decide if we can merge
+        let mergedIdentifier = "";
+        let canMergeThisGroup = true;
+
+        if (identifierIdx !== -1) {
+          const identifiers = group
+            .map((g) => g.identifier && g.identifier.trim())
+            .filter((id) => id); // non-empty only
+
+          if (identifiers.length === 0) {
+            mergedIdentifier = "";
+          } else {
+            const uniqueIds = [...new Set(identifiers)];
+
+            if (uniqueIds.length === 1) {
+              mergedIdentifier = uniqueIds[0];
+            } else {
+              //  multiple different non-empty identifiers → DON'T MERGE THIS GROUP
+              canMergeThisGroup = false;
+            }
+          }
+        }
+
+        // Agar identifiers clash kar gaye → is group ko skip karo
+        if (!canMergeThisGroup) {
+          return; // no merged=true, no row removal, group as-is
+        }
+
+        // Yahan tak pohanch gaye matlab merge allowed hai
+        merged = true;
 
         // 🔸 Aggregate roles (OR logic)
         const groupContributor = group.some((g) => g.contributorChecked);
@@ -1064,7 +856,15 @@ export function setupTables() {
           }
         }
 
-        // 🔸 Assign merged roles to the main row
+        // Update identifier cell in main row (only if we got a non-empty one)
+        if (identifierIdx !== -1) {
+          const identifierCell = mainRow.querySelectorAll("td")[identifierIdx];
+          if (mergedIdentifier) {
+            identifierCell.textContent = mergedIdentifier;
+          }
+        }
+
+        // 🔸 Apply merged roles to the main row
         const mainContributor = mainRow.querySelector(
           '[data-role="contributor"]'
         );
@@ -1100,9 +900,16 @@ export function setupTables() {
       .forEach((row) => row.classList.remove("table-secondary"));
 
     if (merged) {
-      showToast("Rows merged successfully!", "success");
+      showToast(
+        "Rows with matching names have been merged successfully!",
+        "success"
+      );
     } else {
-      showToast("No rows with matching names found.", "error");
+      // includes both: no name matches, or all blocked due to identifier mismatch
+      showToast(
+        "No rows were merged. Check Given/Family Name and Identifier values.",
+        "error"
+      );
     }
   });
 
@@ -1389,6 +1196,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // Update hidden input
       const key = table.id.replace(/Table$/, "");
       updateTableHiddenInput(key);
+      showToast("Row has been deleted", "success");
     }
 
     confirmBar.style.display = "none";

@@ -3,8 +3,12 @@
 /******************** General ********************/
 body {
   overflow: hidden;
+  caret-color: transparent;
 }
-
+input,
+textarea {
+  caret-color: auto; /* or you can set a color like black */
+}
 [type="text"],
 [type="password"],
 [type="date"],
@@ -586,7 +590,8 @@ div.error-container a:hover {
   top: 0;
   z-index: 10;
 }
-#contributorTable td {
+#contributorTable td,
+#copyrightHolderTable td {
   border: 1px solid #ddddddbd;
 }
 #contributorTable th:last-child,
