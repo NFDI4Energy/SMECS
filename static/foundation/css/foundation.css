@@ -1834,6 +1834,7 @@ div div p#contributor-explanation {
   font-size: 16px;
   font-weight: bold;
   text-align: left;
+  color: #055f82;
 }
 .collapsible-button:focus {
   background-color: #055f82;

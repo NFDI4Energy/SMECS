@@ -380,14 +380,14 @@ export function setupTables() {
           const checkbox = document.createElement("input");
           checkbox.type = "checkbox";
           checkbox.classList.add("checkbox-element");
-          checkbox.setAttribute("data-role", col);
-          checkbox.name = `checkbox-${col}`;
+          checkbox.setAttribute("data-role", header);
+          checkbox.name = `checkbox-${header}`;
 
           // Set checked state based on add-row-controls checkbox
           if (checkboxInput && checkboxInput.checked) {
             checkbox.checked = true;
           }
-          td.setAttribute("data-col", col);
+          td.setAttribute("data-col", header);
           td.setAttribute("data-coltype", "element");
           td.setAttribute("data-type", dataType);
           td.appendChild(checkbox);
@@ -824,12 +824,10 @@ export function setupTables() {
           }
         }
 
-        // Agar identifiers clash kar gaye → is group ko skip karo
         if (!canMergeThisGroup) {
-          return; // no merged=true, no row removal, group as-is
+          return;
         }
 
-        // Yahan tak pohanch gaye matlab merge allowed hai
         merged = true;
 
         // 🔸 Aggregate roles (OR logic)

@@ -346,7 +346,7 @@
                                                         {% if unique_tab %}
                                                         {% for col, value in metadata_dict.items %}
                                                         <th data-col="{{ col }}" data-coltype="element">
-                                                           <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapse{{ col }}" aria-expanded="false" aria-controls="multiCollapseContributors" added style="color: #055f82 ;">{{ col|camel_to_spaces_lower }}</button> 
+                                                           <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapse{{ col }}" aria-expanded="false" aria-controls="multiCollapseContributors" added >{{ col|camel_to_spaces_lower }}</button> 
                                                             <!-- <div class="person-info collapsible-content collapse" id="multiCollapse{{ col }}">
                                                              <p>{% if col in description_metadata %}{{ description_metadata|get:col }}{% endif %}</p>
                                                              </div> -->
