@@ -80,58 +80,60 @@ export function setupUI() {
   });
 
   // custom tooltips
-  document
-    .querySelectorAll(".custom-tooltip-metadata")
-    .forEach(function (element) {
-        const tooltip = element.querySelector(".tooltip-text-metadata");
-        const icon = element.querySelector("i");
+  // document
+  //   .querySelectorAll(".custom-tooltip-metadata")
+  //   .forEach(function (element) {
+  //     const tooltip = element.querySelector(".tooltip-text-metadata");
+  //     const icon = element.querySelector("i");
 
-        // Helper to get scale factor from parent (default 1)
-        function getScaleFactor(el) {
-            let scale = 1;
-            let parent = el;
-            while (parent) {
-                const transform = window.getComputedStyle(parent).transform;
-                if (transform && transform !== "none") {
-                    const match = transform.match(/matrix\(([^,]+),[^,]+,[^,]+,[^,]+,[^,]+,[^,]+\)/);
-                    if (match) {
-                        scale *= parseFloat(match[1]);
-                    }
-                }
-                parent = parent.parentElement;
-            }
-            return scale;
-        }
+  //     // Helper to get scale factor from parent (default 1)
+  //     function getScaleFactor(el) {
+  //       let scale = 1;
+  //       let parent = el;
+  //       while (parent) {
+  //         const transform = window.getComputedStyle(parent).transform;
+  //         if (transform && transform !== "none") {
+  //           const match = transform.match(
+  //             /matrix\(([^,]+),[^,]+,[^,]+,[^,]+,[^,]+,[^,]+\)/
+  //           );
+  //           if (match) {
+  //             scale *= parseFloat(match[1]);
+  //           }
+  //         }
+  //         parent = parent.parentElement;
+  //       }
+  //       return scale;
+  //     }
 
+  //     element.addEventListener("mouseenter", function () {
+  //       tooltip.style.display = "block";
+  //       tooltip.style.visibility = "visible";
+  //       tooltip.style.opacity = "1";
+  //       tooltip.style.position = "absolute";
+  //       // tooltip.style.zIndex = "9999";
+  //       const rect = icon.getBoundingClientRect();
+  //       const margin = 16;
 
-        element.addEventListener("mouseenter", function () {
-          tooltip.style.display = "block";
-          tooltip.style.visibility = "visible";
-          tooltip.style.opacity = "1";
-          tooltip.style.position = "absolute";
-          tooltip.style.zIndex = "9999";
-          const rect = icon.getBoundingClientRect();
-          const margin = 16;
+  //       // Find the scale factor (if any) from the closest scaled parent
+  //       const scale = getScaleFactor(icon.parentElement);
+  //       console.info("Tooltip scale factor:", scale);
 
-          // Find the scale factor (if any) from the closest scaled parent
-          const scale = getScaleFactor(icon.parentElement);
-          console.info("Tooltip scale factor:", scale);
-
-          // Adjust position for scale
-          //let left = rect.right * scale;
-          //let top = (rect.top + margin) * scale;
-          let left = 16;
-          let top = 16;
-          tooltip.style.left = left + "px";
-          tooltip.style.top = top + "px";
-
-      });
-      element.addEventListener("mouseleave", function () {
-        tooltip.style.display = "none";
-        tooltip.style.visibility = "hidden";
-        tooltip.style.opacity = "0";
-      });
-    });
+  //       // Adjust position for scale
+  //       //let left = rect.right * scale;
+  //       //let top = (rect.top + margin) * scale;
+  //       let width = 1;
+  //       let left = 16;
+  //       let top = 16;
+  //       tooltip.style.left = left + "px";
+  //       tooltip.style.top = top + "px";
+  //       tooltip.style.width = width + "px";
+  //     });
+  //     element.addEventListener("mouseleave", function () {
+  //       tooltip.style.display = "none";
+  //       tooltip.style.visibility = "hidden";
+  //       tooltip.style.opacity = "0";
+  //     });
+  //   });
 
   // Initialize the state on page load
   window.onload = function () {
@@ -178,7 +180,7 @@ function toggleSection() {
   } else if (window.screen.width <= 990 && toggleSwitch.checked) {
     formContainer.style.height = "50%";
   } else {
-    formContainer.style.height = "100%";
+    formContainer.style.height = "99%";
   }
   if (toggleSwitch.checked) {
     metadataFormDisplay.style.display = "block";
@@ -255,11 +257,10 @@ export function validateInput(input) {
   ];
   if (skipValidationIds.includes(input.id)) {
     return; // Skip validation for the specified inputs
-    }
+  }
 
-   // Always remove highlight classes before validation
-   input.classList.remove("invalid", "invalid-required", "invalid-recommended");
-
+  // Always remove highlight classes before validation
+  input.classList.remove("invalid", "invalid-required", "invalid-recommended");
 
   // Fetch schema and validate only if field is required or recommended
   getSchema()
@@ -281,20 +282,23 @@ export function validateInput(input) {
             : null;
           const key = getFieldKey(hiddenInput);
 
-
           if (required.includes(key)) {
             if (
-              (taggingType === "tagging_object" && isTaggingObjectEmpty(tagsContainer)) ||
-              (taggingType !== "tagging_object" && hiddenInput.value.trim() === "")
-               ) {
-                 input.classList.add("invalid-required");
+              (taggingType === "tagging_object" &&
+                isTaggingObjectEmpty(tagsContainer)) ||
+              (taggingType !== "tagging_object" &&
+                hiddenInput.value.trim() === "")
+            ) {
+              input.classList.add("invalid-required");
             }
           } else if (recommended.includes(key)) {
             if (
-              (taggingType === "tagging_object" && isTaggingObjectEmpty(tagsContainer)) ||
-              (taggingType !== "tagging_object" && hiddenInput.value.trim() === "")
-               ) {
-                 input.classList.add("invalid-recommended");
+              (taggingType === "tagging_object" &&
+                isTaggingObjectEmpty(tagsContainer)) ||
+              (taggingType !== "tagging_object" &&
+                hiddenInput.value.trim() === "")
+            ) {
+              input.classList.add("invalid-recommended");
             }
           } else {
             input.classList.remove("invalid");
@@ -307,17 +311,21 @@ export function validateInput(input) {
       const key = getFieldKey(input);
       if (required.includes(key)) {
         if (input.value.trim() === "") {
-                input.classList.add("invalid-required");
+          input.classList.add("invalid-required");
         }
       } else if (recommended.includes(key)) {
-          if (input.value.trim() === "") {
-              input.classList.add("invalid-recommended");
-          }
+        if (input.value.trim() === "") {
+          input.classList.add("invalid-recommended");
+        }
       }
     })
     .catch(() => {
-        // On schema load error, fallback to no validation
-        input.classList.remove("invalid", "invalid-required", "invalid-recommended");
+      // On schema load error, fallback to no validation
+      input.classList.remove(
+        "invalid",
+        "invalid-required",
+        "invalid-recommended"
+      );
     });
 }
 
@@ -382,3 +390,51 @@ function initAutoCloseCollapses(collapseSelector = ".collapsible-content") {
   });
 }
 
+export function showToast(message, type = "info") {
+  // Toast container create if not exist
+  let container = document.getElementById("toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "toast-container";
+    container.style.position = "fixed";
+    container.style.top = "20px";
+    container.style.right = "20px";
+    container.style.zIndex = "9999";
+    document.body.appendChild(container);
+  }
+
+  // Toast element
+  const toast = document.createElement("div");
+  toast.textContent = message;
+  toast.style.padding = "10px 20px";
+  toast.style.marginTop = "10px";
+  toast.style.borderRadius = "6px";
+  toast.style.color = "#fff";
+  toast.style.fontSize = "14px";
+  toast.style.fontFamily = "sans-serif";
+  toast.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
+  toast.style.opacity = "0";
+  toast.style.transition = "opacity 0.5s";
+
+  // Type based color
+  if (type === "error") {
+    toast.style.background = "#e74c3c"; // red
+  } else if (type === "success") {
+    toast.style.background = "#2ecc71"; // green
+  } else {
+    toast.style.background = "#fef6da"; // yellow
+    toast.style.color = "#202020ff";
+    toast.style.fontWeight = "bold";
+  }
+
+  container.appendChild(toast);
+
+  // Fade in
+  setTimeout(() => (toast.style.opacity = "1"), 100);
+
+  // Auto remove after 3 sec
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    setTimeout(() => toast.remove(), 500);
+  }, 5000);
+}

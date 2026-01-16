@@ -3,8 +3,12 @@
 /******************** General ********************/
 body {
   overflow: hidden;
+  caret-color: transparent;
 }
-
+input,
+textarea {
+  caret-color: auto; /* or you can set a color like black */
+}
 [type="text"],
 [type="password"],
 [type="date"],
@@ -317,7 +321,7 @@ form.data-form2 {
 }
 
 form.data-form3 {
-  overflow: auto;
+  overflow-y: auto;
   height: 90%;
   border-radius: 2px;
   margin-top: 0;
@@ -330,7 +334,7 @@ form.data-form3 {
 }
 
 .tab .form-group {
-  width: 90%;
+  /* width: 90%; */
   margin: 5% 0% 0% 5%;
   text-align: left;
   display: block;
@@ -343,16 +347,16 @@ form.data-form3 {
   background: #f5f7fa;
   border-left: 4px solid #0078d4;
   color: #222;
-  padding: 0em 0em;
-  margin-bottom: 0em;
+  /* padding: 0em 0em; */
+  /* margin-bottom: 0em; */
   border-radius: 4px;
   font-size: 1.08em;
   font-style: italic;
   text-align: center;
   width: 90%;
-  margin-left: 0;
-  margin-right: 0;
-  margin: 0 auto 0 auto;
+  margin-left: 5%;
+  /* margin-right: 0;
+  margin: 0 auto 0 auto; */
 }
 
 .form-group label {
@@ -391,6 +395,9 @@ select:focus {
   float: left;
   box-sizing: border-box;
 }
+.copyright_table {
+  width: 94% !important;
+}
 
 .form-group .long_field input[type="text"],
 select {
@@ -402,7 +409,7 @@ select {
 }
 
 .form-group .big_field {
-  width: 100%;
+  width: 94%;
   margin-bottom: 0.1em;
   margin-right: 10%;
   float: left;
@@ -488,14 +495,19 @@ select {
 }
 
 #metadata-json {
-  overflow: scroll;
+  /* overflow: scroll; */
   width: 100%;
-  height: 92%;
+  height: 93%;
   padding: 8px;
   border-radius: 4px;
   margin-bottom: 2px;
   font-size: medium;
 }
+/* @media (width >= 2000px) {
+  #metadata-json {
+    height: 9%;
+  }
+} */
 .invalid {
   border: 1px solid rgba(226, 7, 7, 0.535);
   background-color: rgba(225, 94, 94, 0.377);
@@ -524,7 +536,7 @@ button#new-url {
 .main-container {
   display: flex;
   transition: all 0.3s ease;
-  height: 100%;
+  height: 90%;
 }
 
 /* Error page / connection time out */
@@ -562,13 +574,42 @@ div.error-container a:hover {
 /* Flexible columns distribution */
 .auto-property {
   margin-top: 8px;
-  width: 100%; /* Same as .long_field */
+  /* width: 100%; Same as .long_field */
   min-width: 500px; /* Optional: for usability */
   table-layout: auto;
   margin-bottom: 1rem;
-  border-collapse: collapse;
-  margin-left: auto;
-  margin-right: auto;
+  /* border-collapse: collapse; */
+  /* margin-left: auto;
+  margin-right: auto; */
+  /* display: block; */
+  border-collapse: separate;
+  border-spacing: 0;
+}
+#contributorTable th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+#contributorTable td,
+#copyrightHolderTable td {
+  border: 1px solid #ddddddbd;
+}
+#contributorTable th:last-child,
+#contributorTable td:last-child {
+  border: none !important;
+  /* border-collapse: collapse; */
+}
+
+/* @media (width<=1800px) {
+  .auto-property {
+    display: inline-block;
+  }
+} */
+@media (width>=2000px) {
+  .auto-property {
+    display: inline-table;
+    width: 100%;
+  }
 }
 
 .table {
@@ -587,6 +628,11 @@ div.error-container a:hover {
   white-space: nowrap;
   min-width: 100px;
   max-width: 300px;
+}
+
+.scrollable {
+  height: 500px;
+  overflow-y: auto;
 }
 
 /* Set fixed width for first row */
@@ -732,7 +778,9 @@ td.table-tagging-cell select.table-dropdown-select {
 }
 
 .tab.unique-tab .unique-tab-inner {
-  transform: scale(0.8);
+  width: 100%;
+  height: 100px;
+  transform: scale(0.97);
   transform-origin: top center;
   display: inline-block;
 }
@@ -941,18 +989,18 @@ label > .fa-info-circle {
 .tooltip-text-metadata {
   visibility: hidden;
   font-size: 70%;
-  min-width: 200px;
+  min-width: 165px;
   max-width: 260px;
-  width: auto;
+  /* width: auto; */
   background-color: #5e5b5b;
   color: #fff;
   text-align: left;
   border-radius: 6px;
   padding: 5px;
   z-index: 1000;
-  position: fixed;
-  left: 0; /* Will be set dynamically */
-  top: 0; /* Will be set dynamically */
+  position: absolute;
+  left: -20px;
+  top: 25px;
   transition: opacity 0.3s;
   pointer-events: none;
   opacity: 0;
@@ -960,7 +1008,8 @@ label > .fa-info-circle {
   white-space: normal; /* Allow text to wrap */
   box-sizing: border-box;
   overflow-wrap: break-word; /* Ensure wrapping for long words */
-  display: none;
+  display: block;
+  font-weight: 400;
 }
 
 .custom-tooltip-metadata:hover .tooltip-text-metadata {
@@ -986,7 +1035,7 @@ label > .fa-info-circle {
   pointer-events: none;
 }
 
-.custom-tooltip-metadata .tooltip-text-metadata {
+/* .custom-tooltip-metadata .tooltip-text-metadata {
   visibility: hidden;
   font-size: 70%;
   width: 100%;
@@ -999,7 +1048,7 @@ label > .fa-info-circle {
   top: 0;
   transition: opacity 0.3s;
   pointer-events: none;
-}
+} */
 
 .custom-tooltip:hover .tooltip-text,
 .custom-tooltip .tooltip-text:hover {
@@ -1008,10 +1057,10 @@ label > .fa-info-circle {
   pointer-events: auto;
 }
 
-.custom-tooltip-metadata:hover .tooltip-text-metadata {
+/* .custom-tooltip-metadata:hover .tooltip-text-metadata {
   visibility: visible;
   opacity: 1;
-}
+} */
 
 .custom-tooltip .tooltip-text a {
   color: rgb(112, 155, 233);
@@ -1035,8 +1084,7 @@ label > .fa-info-circle {
 }
 
 .fa-download,
-.fa-copy,
-.fa-trash-alt {
+.fa-copy {
   border: none;
   float: right;
   margin-bottom: 0.5%;
@@ -1046,10 +1094,18 @@ label > .fa-info-circle {
   background-color: none;
   margin-left: 2.5%;
 }
-
+.fa-trash-alt,
+.fa-table-list {
+  float: right;
+  color: #055f82;
+  font-size: 1.2em;
+  padding-top: 14px;
+  padding-right: 14px;
+}
 .fa-download:hover,
 .fa-copy:hover,
-.fa-trash-alt:hover {
+.fa-trash-alt:hover,
+.fa-table-list:hover {
   color: #4ba0af;
   cursor: pointer;
 }
@@ -1778,6 +1834,7 @@ div div p#contributor-explanation {
   font-size: 16px;
   font-weight: bold;
   text-align: left;
+  color: #055f82;
 }
 .collapsible-button:focus {
   background-color: #055f82;
@@ -1867,4 +1924,46 @@ select option:checked {
 
 .searchable-dropdown:focus::placeholder {
   color: transparent;
+}
+
+.action {
+  width: 100%;
+  position: relative;
+}
+
+.selected-row {
+  background-color: #c8e6c9; /* halka green highlight */
+}
+
+table input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #cfcfcf;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #ffffff;
+  /* display: grid;
+  place-content: center; */
+}
+
+table input[type="checkbox"]:checked {
+  background-color: #055f82;
+}
+
+/* table input[type="checkbox"]:after {
+
+  display: none;
+} */
+
+table input[type="checkbox"]:checked:after {
+  font-family: "Font Awesome 5 Free";
+  content: "\f00c";
+  font-weight: 900;
+  font-size: 12px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* text-align: center; */
 }
