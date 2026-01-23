@@ -38,7 +38,9 @@ textarea {
   font-weight: normal;
   line-height: 1.5;
   color: #0a0a0a;
-  transition: box-shadow 0.5s, border-color 0.25s ease-in-out;
+  transition:
+    box-shadow 0.5s,
+    border-color 0.25s ease-in-out;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -1318,7 +1320,9 @@ input:checked + .slider:before {
   font-size: 55%;
   color: #555;
   border-radius: 4px 4px 0 0;
-  transition: background-color 0.3s, color 0.3s;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 }
 
 .tab-links_ext a:hover {
@@ -1966,4 +1970,39 @@ table input[type="checkbox"]:checked:after {
   align-items: center;
   justify-content: center;
   /* text-align: center; */
+}
+
+.table-sortable th {
+  cursor: default;
+}
+
+#contributorTable th:nth-child(3),
+#contributorTable th:nth-child(4),
+#copyrightHolderTable th:nth-child(1) {
+  cursor: pointer;
+}
+
+#contributorTable th:nth-child(3)::after,
+#contributorTable th:nth-child(4)::after,
+#copyrightHolderTable th:nth-child(1)::after {
+  content: "\25b4";
+  margin-left: 5px;
+  opacity: 0.3;
+}
+
+#contributorTable th.th-sort-asc::after,
+#copyrightHolderTable th.th-sort-asc::after {
+  content: "\25b4";
+  opacity: 1;
+}
+
+#contributorTable th.th-sort-desc::after,
+#copyrightHolderTable th.th-sort-asc::after {
+  content: "\25be";
+  opacity: 1;
+}
+
+.table-sortable th.th-sort-asc,
+.table-sortable th.th-sort-desc {
+  background: #dedede;
 }
