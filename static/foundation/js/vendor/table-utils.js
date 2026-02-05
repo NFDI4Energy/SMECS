@@ -499,10 +499,11 @@ export function setupTables() {
 
       // If this is the email column, validate first
       if (col === "email") {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(tag)) {
+        const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+        const umlautRegex = /[äöüÄÖÜß]/;
+        if (!emailRegex.test(tag) || umlautRegex.test(tag)) {
           showToast("Please enter a valid Email address.", "error");
-          input.value = "";
+          // input.value = "";
           return;
         }
       }
@@ -1108,9 +1109,10 @@ export function initializeTableTaggingCells() {
         // ✅ Email Validation
         if (col === "email") {
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailRegex.test(tag)) {
+          const umlautRegex = /[äöüÄÖÜß]/;
+          if (!emailRegex.test(tag) || umlautRegex.test(tag)) {
             showToast("Please enter a valid Email address.", "error");
-            input.value = "";
+            //input.value = "";
             return; // ❌ Stop tag creation
           }
         }

@@ -4,7 +4,95 @@
 {% block content %}
 
 <!-- <button class="new-url-extraction-page" id="new-url-extraction-page" title="Enter another URL and extract metadata" onclick="window.location.href = '/'">Try New URL</button> -->
+ <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasRightLabel">Hints</h5>
+    <button type="button" class="btn ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"><i class="fa-solid fa-xmark" style="color: #ffffff;font-size: 1.2rem;"></i></button>
+  </div>
+  <div class="offcanvas-body">
+<div class="accordion accordion-flush" id="accordionFlushExample">
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+        Tagging Feature
+      </button>
+    </h2>
+    <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+      <div class="accordion-body">
+        <h6>What is the use of tags?</h6>
+        <p>Tags helps to add multiple values.</p>
+        <h6>How to create tags?</h6>
+        <p>Type a value and press Enter to create a tag.</p>
+        <h6>Which fields support tagging features?</h6>
+        <p>This feature is available for Programming Language, URL, Funding, License, Email and Keywords fields.</p>
+        <h6>How to edit the tags?</h6>
+         <p>Click on a tag to load it into the input field, edit it, and press Enter to update the tag.</p> 
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+        Related Persons Table
+      </button>
+    </h2>
+    <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+      <div class="accordion-body"> 
+            <h6>How to delete a row from the table?</h6>
+            <p>Select a row. The delete icon will appear and then click it to delete the row.</p>
 
+            <h6>How to merge two rows in the table?</h6>
+            <p>Select two rows with the same given and family name. The merge icon will appear and then click it to merge.</p>
+
+            <h6>How to add a new row to the table?</h6>
+            <p>Scroll to the end of the table, fill in the input fields, and press Enter or click the Add button to add a new row.</p>
+
+            <h6>How to assign roles?</h6>
+            <p>Click the Contributors, Authors, or Maintainer checkboxes to assign roles. The JSON will be updated accordingly.</p>
+
+            <h6>How to see the explanation of contributors, authors, and maintainers?</h6>
+            <p>Click the table header name (Contributors, Authors, or Maintainers) to see a detailed explanation.</p>
+        </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+        Table Sorting
+      </button>
+    </h2>
+    <div id="flush-collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+      <div class="accordion-body">
+            <h6>How can the Related Person table be sorted?</h6>
+            <p>The Related Person table can be sorted by Given Name and Family Name.</p>
+
+            <h6>What does this small triangle indicate?</h6>
+            <p>The triangle icon shows the sorting order: upward for ascending (A–Z, empty cells first) and downward for descending (Z–A).</p>
+            
+            <h6>How to know according to which column table is sorted?</h6>
+            <p>The highlighted column header shows which column is currently being used for sorting.</p>
+            
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseFour" aria-expanded="false" aria-controls="flush-collapseFour">
+        JSON viewer
+      </button>
+    </h2>
+    <div id="flush-collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+      <div class="accordion-body">
+        <h6>Why do we have a JSON viewer?</h6>
+        <p>The JSON viewer helps you to follow the changes which you made in the form.</p>
+        <h6>What is the use of the toggle button?</h6>
+        <p>The toggle button lets users choose whether they want to view the JSON viewer or hide it.</p>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
 <div class="whole-extraction-page">
     <div class="main-container container-fluid">
          <div id="metadataFormDisplay" class="metadata-form-display col-lg-3 col-md-12 order-1">
@@ -313,6 +401,7 @@
                                             </div>
                                             <div class="action"> 
                                                 <span class="highlight-tag"> ⚠️ Click on contributors, authors, or maintainers to see the description<span class="acknowledge-tag">Got it!</span></span>
+                                                 <span class="highlight-tag"> ⚠️Click on the Given Name or Family Name column header to sort the table.<span class="acknowledge-tag">Got it!</span></span>
                                                
                                                 <span><i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer; display: none;"></i></span>
                                                 <span><i class="fa-solid fa-table-list" title="Merge Rows" style="cursor:pointer; display: none;"></i></span>
