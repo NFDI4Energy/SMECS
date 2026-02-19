@@ -5,7 +5,6 @@ import os
 from .token_handling_in_toml import update_token_to_toml, remove_token_from_toml
 from .utils import merge_people_metadata
 
-# hermes_utils.py
 
 def run_hermes_commands(url, token=None):
     errors = []
@@ -21,7 +20,7 @@ def run_hermes_commands(url, token=None):
 
     # Step 2: Run hermes harvest with the specified URL
     print("Running hermes harvest with URL...")
-    harvest_process = subprocess.run(['hermes', 'harvest', '--path', url], capture_output=True, text=True, cwd=base_directory)
+    harvest_process = subprocess.run(['hermes', 'harvest', '--url', url, '--token', token], capture_output=True, text=True, cwd=base_directory)
     
     hermes_dir = os.path.join(base_directory, ".hermes", "harvest")
     # Print harvested files
@@ -181,4 +180,3 @@ def run_hermes_commands(url, token=None):
         'errors': errors,
         'metadata': hermes_metadata_dict if hermes_metadata_dict else {}
     }
-
