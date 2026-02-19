@@ -77,6 +77,11 @@ Install from GitHub
 
    git clone https://github.com/NFDI4Energy/SMECS.git
 
+* Navigate to the Project Directory
+      .. code-block:: shell
+
+         cd SMECS
+
 * Creating virtual environment
      * Ensure that `Python 3.10 or higher <https://www.python.org/>`_ is installed on your system.
          - **Windows:** Check the version with ``py --version``. 
@@ -98,12 +103,12 @@ Install from GitHub
          * **Windows:**
          .. code-block:: shell
 
-          env\Scripts\activate
+          my-env\Scripts\activate
 
          * **Unix/MacOS:**
          .. code-block:: shell
 
-          source env/bin/activate
+          source my-env/bin/activate
 
 
        (Note that activating the virtual environment change the shell's prompt and show what virtual environment is being used.)
@@ -119,6 +124,17 @@ Install from GitHub
       .. code-block:: shell         
          
          python3 -m pip --version
+
+   * Update pip Packages if required.
+       * **Windows:**
+      .. code-block:: shell
+
+         py -m pip install --upgrade pip
+
+      * **Unix/MacOS:**
+      .. code-block:: shell         
+         
+         python3 -m pip install --upgrade pip
 
    * Install a list of requirements specified in a *Requirements.txt*.
          * **Windows:** 
