@@ -29,7 +29,7 @@ export function updateTableHiddenInput(key) {
 
   const atType = table.getAttribute("data-at-type");
   const rows = Array.from(table.querySelectorAll("tbody tr")).filter(
-    (row) => !row.classList.contains("add-row-controls")
+    (row) => !row.classList.contains("add-row-controls"),
   ); // <-- skip add-row-controls
 
   // Check if this table is marked as unique
@@ -49,7 +49,7 @@ export function updateTableHiddenInput(key) {
     // subElements: all headers not 'delete' or 'element'
     const subElements = headers
       .filter(
-        (h) => h.coltype !== "delete" && h.coltype !== "element" && h.name
+        (h) => h.coltype !== "delete" && h.coltype !== "element" && h.name,
       )
       .map((h) => h.name);
 
@@ -57,7 +57,7 @@ export function updateTableHiddenInput(key) {
     const tbody = table.querySelector("tbody");
     const rows = tbody
       ? Array.from(tbody.querySelectorAll("tr")).filter(
-          (row) => !row.classList.contains("add-row-controls")
+          (row) => !row.classList.contains("add-row-controls"),
         )
       : [];
     const existingJson = JSON.parse(metadataJson.value);
@@ -77,7 +77,7 @@ export function updateTableHiddenInput(key) {
           (h) =>
             h.name === field &&
             h.coltype !== "element" &&
-            h.coltype !== "delete"
+            h.coltype !== "delete",
         );
         if (headerIdx >= 0 && cells[headerIdx]) {
           const coltype = headers[headerIdx].coltype;
@@ -189,7 +189,7 @@ export function setupTables() {
           updateTableHiddenInput(key);
         }
       },
-      true
+      true,
     );
 
     table.addEventListener("change", function (e) {
@@ -213,13 +213,13 @@ export function setupTables() {
 
       // Find the add-row-controls row
       const addRowControls = table.querySelector(
-        'tr.add-row-controls[data-table-key="' + key + '"]'
+        'tr.add-row-controls[data-table-key="' + key + '"]',
       );
       if (!addRowControls) return;
 
       // Get input values
       const inputs = addRowControls.querySelectorAll(
-        ".add-row-input, .add-row-tag-input, .add-row-dropdown-select"
+        ".add-row-input, .add-row-tag-input, .add-row-dropdown-select",
       );
 
       const values = Array.from(inputs).map((input) => input.value.trim());
@@ -243,7 +243,7 @@ export function setupTables() {
 
       let emailTagValue = "";
       const emailTagContainer = addRowControls.querySelector(
-        '.add-row-tags-container[data-col="email"]'
+        '.add-row-tags-container[data-col="email"]',
       );
       if (emailTagContainer) {
         const emailTag = emailTagContainer.querySelector(".tag");
@@ -264,17 +264,17 @@ export function setupTables() {
           // );
           showToast(
             "Please fill either: Identifier + Given Name + Family Name OR Given Name + Family Name + Email.",
-            "error"
+            "error",
           );
           return;
         }
       }
       // Duplicate check before adding new row
       const existingRows = Array.from(
-        table.querySelectorAll("tbody tr")
+        table.querySelectorAll("tbody tr"),
       ).filter(
         (tr) =>
-          !tr.classList.contains("add-row-controls") && tr.querySelector("td")
+          !tr.classList.contains("add-row-controls") && tr.querySelector("td"),
       );
       console.log(existingRows);
 
@@ -292,7 +292,7 @@ export function setupTables() {
 
       // Check tags (for email column, etc.)
       const tagContainers = addRowControls.querySelectorAll(
-        ".add-row-tags-container"
+        ".add-row-tags-container",
       );
       tagContainers.forEach((container) => {
         const col = container.getAttribute("data-col");
@@ -303,7 +303,7 @@ export function setupTables() {
         }
       });
       const keysToCompare = Object.keys(newRowData).filter(
-        (k) => newRowData[k] !== ""
+        (k) => newRowData[k] !== "",
       );
       console.log(keysToCompare);
       if (keysToCompare.length > 0) {
@@ -316,7 +316,7 @@ export function setupTables() {
           keysToCompare.forEach((col) => {
             // Find the header index for this column
             const headers = Array.from(table.querySelectorAll("thead th")).map(
-              (th) => th.getAttribute("data-col")
+              (th) => th.getAttribute("data-col"),
             );
             console.log(headers);
             const colIndex = headers.indexOf(col);
@@ -350,7 +350,7 @@ export function setupTables() {
       const newRow = document.createElement("tr");
       // Get column headers
       const headers = Array.from(table.querySelectorAll("thead th")).map((th) =>
-        th.getAttribute("data-col")
+        th.getAttribute("data-col"),
       );
       // Only add data columns, skip the last header ("Delete")
       for (let i = 0; i < headers.length - 1; i++) {
@@ -359,14 +359,14 @@ export function setupTables() {
         const input = Array.from(inputs).find(
           (inp) =>
             inp.getAttribute("data-col") === header &&
-            !inp.classList.contains("invalid")
+            !inp.classList.contains("invalid"),
         );
         const th = table.querySelector(`thead th[data-col="${header}"]`);
         const colType = th
           ? th.getAttribute("data-coltype")
           : input
-          ? input.getAttribute("data-coltype")
-          : null;
+            ? input.getAttribute("data-coltype")
+            : null;
         const col = input ? input.getAttribute("data-col") : null;
         const dataType = table.getAttribute("data-at-type");
         const td = document.createElement("td");
@@ -375,7 +375,7 @@ export function setupTables() {
         if (colType === "element") {
           // Find the checkbox in the add-row-controls row
           const checkboxInput = addRowControls.querySelector(
-            `input[type="checkbox"][data-role="${header}"]`
+            `input[type="checkbox"][data-role="${header}"]`,
           );
           const checkbox = document.createElement("input");
           checkbox.type = "checkbox";
@@ -418,7 +418,7 @@ export function setupTables() {
           addRowTags[col] = [];
           // Remove tag elements from add-row-controls
           const addRowContainer = document.querySelector(
-            '.add-row-tags-container[data-col="' + col + '"]'
+            '.add-row-tags-container[data-col="' + col + '"]',
           );
           if (addRowContainer) {
             addRowContainer
@@ -467,7 +467,7 @@ export function setupTables() {
       // Clear input fields and checkboxes
       inputs.forEach((input) => (input.value = "")); // reset text/tag inputs
       const checkboxes = addRowControls.querySelectorAll(
-        'input[type="checkbox"]'
+        'input[type="checkbox"]',
       );
       checkboxes.forEach((cb) => (cb.checked = false));
       // Update hidden input
@@ -476,7 +476,7 @@ export function setupTables() {
       // Remove color
       addRowControls.classList.remove(
         "invalid-required",
-        "invalid-recommended"
+        "invalid-recommended",
       );
     });
   });
@@ -499,10 +499,11 @@ export function setupTables() {
 
       // If this is the email column, validate first
       if (col === "email") {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(tag)) {
+        const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+        const umlautRegex = /[äöüÄÖÜß]/;
+        if (!emailRegex.test(tag) || umlautRegex.test(tag)) {
           showToast("Please enter a valid Email address.", "error");
-          input.value = "";
+          // input.value = "";
           return;
         }
       }
@@ -666,7 +667,7 @@ export function setupTables() {
 
       // Count selected checkboxes
       const selectedCount = document.querySelectorAll(
-        ".checkbox-select:checked"
+        ".checkbox-select:checked",
       ).length;
 
       // Show/hide icons based on selection count
@@ -692,7 +693,7 @@ export function setupTables() {
   // ✅ Handle delete confirmation (YES button)
   document.querySelector(".deleteRow").addEventListener("click", function () {
     const selectedCheckboxes = document.querySelectorAll(
-      ".checkbox-select:checked"
+      ".checkbox-select:checked",
     );
 
     selectedCheckboxes.forEach((checkbox) => {
@@ -723,14 +724,14 @@ export function setupTables() {
   // ✅ Handle merge confirmation (YES button)
   document.querySelector(".mergeRow").addEventListener("click", function () {
     const selectedCheckboxes = document.querySelectorAll(
-      ".checkbox-select:checked"
+      ".checkbox-select:checked",
     );
     if (selectedCheckboxes.length === 0) return;
 
     const firstRow = selectedCheckboxes[0].closest("tr");
     const table = firstRow.closest("table");
     const headers = Array.from(table.querySelectorAll("thead th")).map((th) =>
-      th.getAttribute("data-col")
+      th.getAttribute("data-col"),
     );
 
     const givenNameIdx = headers.indexOf("givenName");
@@ -864,7 +865,7 @@ export function setupTables() {
 
         // 🔸 Apply merged roles to the main row
         const mainContributor = mainRow.querySelector(
-          '[data-role="contributor"]'
+          '[data-role="contributor"]',
         );
         if (mainContributor) mainContributor.checked = groupContributor;
 
@@ -872,7 +873,7 @@ export function setupTables() {
         if (mainAuthor) mainAuthor.checked = groupAuthor;
 
         const mainMaintainer = mainRow.querySelector(
-          '[data-role="maintainer"]'
+          '[data-role="maintainer"]',
         );
         if (mainMaintainer) mainMaintainer.checked = groupMaintainer;
 
@@ -900,13 +901,13 @@ export function setupTables() {
     if (merged) {
       showToast(
         "Rows with matching names have been merged successfully!",
-        "success"
+        "success",
       );
     } else {
       // includes both: no name matches, or all blocked due to identifier mismatch
       showToast(
         "No rows were merged. Check Given/Family Name and Identifier values.",
-        "error"
+        "error",
       );
     }
   });
@@ -915,7 +916,7 @@ export function setupTables() {
   rejects.forEach((reject) => {
     reject.addEventListener("click", function () {
       const selectedCheckboxes = document.querySelectorAll(
-        ".checkbox-select:checked"
+        ".checkbox-select:checked",
       );
       selectedCheckboxes.forEach((checkbox) => {
         checkbox.checked = false;
@@ -928,6 +929,33 @@ export function setupTables() {
   // removeSelectColumn("copyrightHolderTable");
   removeColumnFromTable("copyrightHolderTable", "select");
   // removeColumnFromTable("contributorTable", "Row Control");
+
+  //sorting in asscending and decending order.
+  document.querySelectorAll(".table-sortable th").forEach((headerCell) => {
+    headerCell.addEventListener("click", () => {
+      const tableElement = headerCell.closest("table");
+      if (!tableElement) return;
+
+      const headerIndex = headerCell.cellIndex;
+
+      // Decide sortable columns based on table ID
+      let sortableIndexes = [];
+
+      if (tableElement.id === "contributorTable") {
+        sortableIndexes = [2, 3]; // givenname, familyname
+      } else if (tableElement.id === "copyrightHolderTable") {
+        sortableIndexes = [0];
+      } else {
+        return;
+      }
+
+      if (!sortableIndexes.includes(headerIndex)) return;
+
+      const currentIsAscending = headerCell.classList.contains("th-sort-asc");
+
+      sortTableByColumn(tableElement, headerIndex, !currentIsAscending);
+    });
+  });
 }
 
 // Add function to color add items when element is required or recommended and empty
@@ -943,19 +971,19 @@ export function highlightEmptyAddRowControls() {
 
       // Find the corresponding add-row-controls
       const addRowControls = document.querySelector(
-        `.add-row-controls[data-table-key="${key}"]`
+        `.add-row-controls[data-table-key="${key}"]`,
       );
       if (!addRowControls) return;
 
       addRowControls.classList.remove(
         "invalid-required",
-        "invalid-recommended"
+        "invalid-recommended",
       );
 
       const tbody = table.querySelector("tbody");
       const dataRows = tbody
         ? Array.from(tbody.querySelectorAll("tr")).filter(
-            (row) => !row.classList.contains("add-row-controls")
+            (row) => !row.classList.contains("add-row-controls"),
           )
         : [];
 
@@ -1081,16 +1109,17 @@ export function initializeTableTaggingCells() {
         // ✅ Email Validation
         if (col === "email") {
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailRegex.test(tag)) {
+          const umlautRegex = /[äöüÄÖÜß]/;
+          if (!emailRegex.test(tag) || umlautRegex.test(tag)) {
             showToast("Please enter a valid Email address.", "error");
-            input.value = "";
+            //input.value = "";
             return; // ❌ Stop tag creation
           }
         }
 
         if (
           [...tagsList.querySelectorAll(".tag")].some(
-            (t) => t.textContent.trim() === tag + "×"
+            (t) => t.textContent.trim() === tag + "×",
           )
         ) {
           input.value = "";
@@ -1150,7 +1179,7 @@ function removeColumnFromTable(tableId, columnName) {
 
   const headers = Array.from(table.querySelectorAll("thead th"));
   const headerIndex = headers.findIndex(
-    (th) => th.textContent.trim().toLowerCase() === columnName.toLowerCase()
+    (th) => th.textContent.trim().toLowerCase() === columnName.toLowerCase(),
   );
 
   // If header not found, stop
@@ -1206,3 +1235,46 @@ document.addEventListener("DOMContentLoaded", function () {
     rowToDelete = null;
   });
 });
+//Table sort function
+function sortTableByColumn(table, column, asc = true) {
+  const dirModifier = asc ? 1 : -1;
+  const tBody = table.tBodies[0];
+
+  // Get all rows
+  const allRows = Array.from(tBody.querySelectorAll("tr"));
+
+  // Separate the last row (do NOT sort it)
+  const lastRow = allRows.pop(); // removes and returns last row
+  const rows = allRows;
+
+  // Sort rows
+  const sortedRows = rows.sort((a, b) => {
+    const aText = a
+      .querySelector(`td:nth-child(${column + 1})`)
+      .textContent.trim();
+    const bText = b
+      .querySelector(`td:nth-child(${column + 1})`)
+      .textContent.trim();
+
+    return aText.localeCompare(bText) * dirModifier;
+  });
+  // Clear table body
+  tBody.innerHTML = "";
+
+  // Re-add sorted rows
+  tBody.append(...sortedRows);
+
+  // Re-add last row unchanged
+  if (lastRow) {
+    tBody.appendChild(lastRow);
+  }
+
+  // Update sort classes
+  table
+    .querySelectorAll("th")
+    .forEach((th) => th.classList.remove("th-sort-asc", "th-sort-desc"));
+
+  const header = table.querySelector(`th:nth-child(${column + 1})`);
+  header.classList.toggle("th-sort-asc", asc);
+  header.classList.toggle("th-sort-desc", !asc);
+}
