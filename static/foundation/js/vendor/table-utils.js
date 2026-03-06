@@ -259,9 +259,6 @@ export function setupTables() {
 
         // If neither condition is satisfied → stop row creation
         if (!condition1 && !condition2) {
-          // alert(
-          //   "Please fill either: Identifier + Given Name + Family Name OR Given Name + Family Name + Email."
-          // );
           showToast(
             "Please fill either: Identifier + Given Name + Family Name OR Given Name + Family Name + Email.",
             "error",
@@ -276,7 +273,6 @@ export function setupTables() {
         (tr) =>
           !tr.classList.contains("add-row-controls") && tr.querySelector("td"),
       );
-      console.log(existingRows);
 
       // Define which columns determine uniqueness
       const columnsToCheck = ["identifier", "givenName", "familyName", "email"];
@@ -305,7 +301,6 @@ export function setupTables() {
       const keysToCompare = Object.keys(newRowData).filter(
         (k) => newRowData[k] !== "",
       );
-      console.log(keysToCompare);
       if (keysToCompare.length > 0) {
         let isDuplicate = false;
 
@@ -343,6 +338,52 @@ export function setupTables() {
         if (isDuplicate) {
           showToast("This row already exists in the table!", "error");
           return; // Stop adding the new row
+        }
+      }
+      // Special validation for copyrightHolderTable
+      if (table.id === "copyrightHolderTable") {
+        const legalName = getInputVal("legalName");
+        const identifier = getInputVal("identifier");
+
+        // If identifier is empty → check duplicate legalName with empty identifier
+        if (!identifier) {
+          const existingRows = Array.from(
+            table.querySelectorAll("tbody tr"),
+          ).filter(
+            (tr) =>
+              !tr.classList.contains("add-row-controls") &&
+              tr.querySelector("td"),
+          );
+
+          const headers = Array.from(table.querySelectorAll("thead th")).map(
+            (th) => th.getAttribute("data-col"),
+          );
+
+          const legalNameIndex = headers.indexOf("legalName");
+          const identifierIndex = headers.indexOf("identifier");
+
+          const duplicateExists = existingRows.some((row) => {
+            const cells = row.querySelectorAll("td");
+
+            const existingLegalName =
+              cells[legalNameIndex]?.textContent.trim().toLowerCase() || "";
+
+            const existingIdentifier =
+              cells[identifierIndex]?.textContent.trim().toLowerCase() || "";
+
+            return (
+              existingLegalName === legalName.toLowerCase() &&
+              !existingIdentifier // identifier also empty
+            );
+          });
+
+          if (duplicateExists) {
+            showToast(
+              "Same Legal Name without Identifier already exists.",
+              "error",
+            );
+            return;
+          }
         }
       }
 
@@ -554,25 +595,6 @@ export function setupTables() {
   // functionanilties within all auto-property-tables
   document.querySelectorAll("table.auto-property").forEach(function (table) {
     table.addEventListener("click", function (e) {
-      // Delete rows
-      // if (e.target.classList.contains("delete-row-btn")) {
-      //   const actionCell = e.target.closest(".action");
-      //   console.log(actionCell);
-      //   const confirmBox = actionCell.querySelector(".delete-row");
-      //   confirmBox.style.display = "";
-      //   const row = e.target.closest("tr");
-
-      //   if (row) {
-      //     row.remove();
-      //     // Update the hidden input
-      //     const tableId = table.id;
-      //     if (tableId && tableId.endsWith("Table")) {
-      //       const key = tableId.replace(/Table$/, "");
-      //       updateTableHiddenInput(key);
-      //     }
-      //   }
-      // }
-
       // Update other fields
       // Only allow editing on <td> that is not the last column (delete icon)
       const cell = e.target.closest("td");
@@ -598,7 +620,37 @@ export function setupTables() {
 
       // Save on blur or Enter
       function save() {
-        cell.textContent = input.value;
+        cell.textContent = input.value.trim();
+
+        // Only validate for copyright holder table
+        if (table.id === "copyrightHolderTable") {
+          const rows = table.querySelectorAll("tbody tr");
+
+          const legalName = row.children[0].textContent.trim();
+          const identifier = row.children[1].textContent.trim();
+
+          let duplicate = false;
+
+          rows.forEach((r) => {
+            if (r === row) return;
+
+            const rLegalName = r.children[0].textContent.trim();
+            const rIdentifier = r.children[1].textContent.trim();
+
+            if (rLegalName === legalName && rIdentifier === identifier) {
+              duplicate = true;
+            }
+          });
+
+          if (duplicate) {
+            showToast(
+              "This Copyright Holder with the same Legal Name and Identifier already exists.",
+              "error",
+            );
+            cell.textContent = oldValue;
+            return;
+          }
+        }
         // Update the hidden input for this table
         const tableId = table.id;
         if (tableId && tableId.endsWith("Table")) {
@@ -754,9 +806,11 @@ export function setupTables() {
         const tags = emailCell.querySelectorAll(".tag");
 
         if (tags.length > 0) {
-          emails = Array.from(tags).map((t) => t.dataset.tag);
+          emails = Array.from(tags).map((t) =>
+            (t.dataset.tag || "").trim().toLowerCase(),
+          );
         } else if (emailCell.textContent.trim() !== "") {
-          emails = [emailCell.textContent.trim()];
+          emails = [emailCell.textContent.trim().toLowerCase()];
         }
       }
 
@@ -800,7 +854,14 @@ export function setupTables() {
     Object.values(grouped).forEach((group) => {
       if (group.length > 1) {
         const mainRow = group[0].row;
-        const allEmails = [...new Set(group.flatMap((g) => g.emails))];
+        const allEmails = [
+          ...new Set(
+            group
+              .flatMap((g) => g.emails)
+              .filter(Boolean)
+              .map((e) => e.trim().toLowerCase()),
+          ),
+        ];
 
         // 🔸 Aggregate identifier + decide if we can merge
         let mergedIdentifier = "";
@@ -1015,71 +1076,6 @@ export function initializeTableTaggingCells() {
     }
 
     const col = cell.getAttribute("data-col");
-    const colType = cell.getAttribute("data-coltype");
-    const dataType = cell.getAttribute("data-type");
-
-    // if (colType == "tagging_autocomplete") {
-    //   // getSchema().then((schema) => {
-    //   //   autocompleteSource =
-    //   //     schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];
-    //   //   if (autocompleteSource.length > 0) {
-    //   //     setupTableTagAutocomplete({ cell, autocompleteSource });
-    //   //   }
-    //   // });
-    // } else
-    // if (colType === "dropdown") {
-    //   const currentValue =
-    //     cell.getAttribute("data-value") || cell.textContent.trim() || "";
-    //   cell.innerHTML = "";
-    //   cell.textContent = currentValue;
-
-    //   // cell.addEventListener("click", function handleDropdownCellClick(e) {
-    //   //   if (cell.querySelector("select")) return;
-    //   //   getSchema().then((schema) => {
-    //   //     const options =
-    //   //       schema["$defs"]?.[dataType]?.properties?.[col]?.enum || [];
-    //   //     const select = document.createElement("select");
-    //   //     select.className = "table-dropdown-select";
-    //   //     select.name = "ChangingSelect";
-    //   //     select.innerHTML =
-    //   //       '<option value="">Select...</option>' +
-    //   //       options
-    //   //         .map((opt) => `<option value="${opt}">${opt}</option>`)
-    //   //         .join("");
-    //   //     select.value = currentValue;
-
-    //   //     cell.innerHTML = "";
-    //   //     cell.appendChild(select);
-    //   //     select.focus();
-
-    //   //     function finalizeSelection() {
-    //   //       const selectedValue = select.value;
-    //   //       cell.setAttribute("data-value", selectedValue);
-    //   //       setTimeout(() => {
-    //   //         cell.innerHTML = selectedValue;
-    //   //       }, 0);
-
-    //   //       cell.removeEventListener("click", handleDropdownCellClick);
-    //   //       setTimeout(() => {
-    //   //         cell.addEventListener("click", handleDropdownCellClick);
-    //   //       }, 0);
-
-    //   //       const table = cell.closest("table");
-    //   //       if (table && table.id.endsWith("Table")) {
-    //   //         const key = table.id.replace(/Table$/, "");
-    //   //         updateTableHiddenInput(key);
-    //   //       }
-    //   //     }
-
-    //   //     select.addEventListener("change", finalizeSelection);
-    //   //     select.addEventListener("blur", finalizeSelection);
-    //   //   });
-
-    //   //   cell.removeEventListener("click", handleDropdownCellClick);
-    //   // });
-
-    //   return;
-    // }
 
     // Show input when cell is clicked
     cell.addEventListener("click", function (e) {
@@ -1105,6 +1101,8 @@ export function initializeTableTaggingCells() {
         e.preventDefault();
         e.stopPropagation();
         const tag = input.value.trim();
+        // Normalize email (case-insensitive)
+        const normalizedTag = tag.toLowerCase();
 
         // ✅ Email Validation
         if (col === "email") {
@@ -1114,6 +1112,17 @@ export function initializeTableTaggingCells() {
             showToast("Please enter a valid Email address.", "error");
             //input.value = "";
             return; // ❌ Stop tag creation
+          }
+
+          // Check if email already exists
+          const alreadyExists = [...tagsList.querySelectorAll(".tag")].some(
+            (t) => (t.dataset.tag || "").toLowerCase() === normalizedTag,
+          );
+
+          if (alreadyExists) {
+            showToast("This email is already added.", "error");
+            input.value = "";
+            return; // Stop tag creation
           }
         }
 
@@ -1125,20 +1134,6 @@ export function initializeTableTaggingCells() {
           input.value = "";
           return;
         }
-
-        // let autocompleteSource = [];
-        // const colType = cell.getAttribute("data-coltype");
-        // if (colType === "tagging_autocomplete") {
-        //   getSchema().then((schema) => {
-        //     autocompleteSource =
-        //       schema["$defs"]?.[dataType]?.properties?.[col]?.items?.enum || [];
-        //     if (!autocompleteSource.includes(tag)) {
-        //       alert("Please select a value from the list.");
-        //       input.value = "";
-        //       return;
-        //     }
-        //   });
-        // }
 
         const span = document.createElement("span");
         span.className = "tag";
