@@ -644,7 +644,7 @@ export function setupTables() {
 
           if (duplicate) {
             showToast(
-              "This Copyright Holder with the same Legal Name and Identifier already exists.",
+              " Same Legal Name and Identifier already exists.",
               "error",
             );
             cell.textContent = oldValue;
