@@ -656,9 +656,12 @@ tr.add-row-controls td {
   box-sizing: border-box;
   padding: 0.5em;
   vertical-align: middle;
-  background: #f9f9f9; /* Optional: subtle highlight */
+  background: #dddddd; /* Optional: subtle highlight */
 }
-
+.disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
 /* For the table elements in the add-row-control row*/
 tr.add-row-controls td {
   /* Remove any display:block/flex if present */
