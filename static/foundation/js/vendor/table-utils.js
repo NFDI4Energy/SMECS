@@ -632,7 +632,7 @@ export function setupTables() {
           // Both fields empty
           if (legalName === "" && identifier === "") {
             showToast(
-              "Both Identifier and Legal Name can't be empty.",
+              "Both Identifier and Legal Name cannot be empty.",
               "error",
             );
             cell.textContent = oldValue;
@@ -667,7 +667,7 @@ export function setupTables() {
 
           if (duplicate) {
             showToast(
-              "Same Legal Name and Identifier already exists.",
+              "A record with the same Legal Name and Identifier already exists.",
               "error",
             );
             cell.textContent = oldValue;
@@ -1143,7 +1143,7 @@ export function initializeTableTaggingCells() {
           );
 
           if (alreadyExists) {
-            showToast("This email is already added.", "error");
+            showToast("This email address has already been added.", "error");
             input.value = "";
             return; // Stop tag creation
           }
