@@ -2,7 +2,7 @@
 Django>=4.2.22
 django_jsonforms==1.1.2
 environs==9.3.5
-marshmallow>=3.10,<3.20
+marshmallow>=3.26.2
 pyyaml>=6.0
 pyld==2.0.3
 
