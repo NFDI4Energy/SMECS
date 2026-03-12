@@ -499,7 +499,7 @@
                                                     {% endfor %}
                                             <!-- Add Row Inputs -->
                                                     <tr class="add-row-controls" data-table-key="{{ key }}">
-                                                        <td></td>
+                                                        <td class="disabled"></td>
                                                         {% for col, value in specific_types.items %}
                                                         {% if value == 'tagging' or value == 'tagging_autocomplete' %}
                                                         <td class="tags-table-container add-row-tags-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">

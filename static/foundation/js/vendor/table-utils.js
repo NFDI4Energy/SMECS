@@ -345,23 +345,23 @@ export function setupTables() {
         const legalName = getInputVal("legalName");
         const identifier = getInputVal("identifier");
 
+        const existingRows = Array.from(
+          table.querySelectorAll("tbody tr"),
+        ).filter(
+          (tr) =>
+            !tr.classList.contains("add-row-controls") &&
+            tr.querySelector("td"),
+        );
+
+        const headers = Array.from(table.querySelectorAll("thead th")).map(
+          (th) => th.getAttribute("data-col"),
+        );
+
+        const legalNameIndex = headers.indexOf("legalName");
+        const identifierIndex = headers.indexOf("identifier");
+
         // If identifier is empty → check duplicate legalName with empty identifier
         if (!identifier) {
-          const existingRows = Array.from(
-            table.querySelectorAll("tbody tr"),
-          ).filter(
-            (tr) =>
-              !tr.classList.contains("add-row-controls") &&
-              tr.querySelector("td"),
-          );
-
-          const headers = Array.from(table.querySelectorAll("thead th")).map(
-            (th) => th.getAttribute("data-col"),
-          );
-
-          const legalNameIndex = headers.indexOf("legalName");
-          const identifierIndex = headers.indexOf("identifier");
-
           const duplicateExists = existingRows.some((row) => {
             const cells = row.querySelectorAll("td");
 
@@ -373,7 +373,7 @@ export function setupTables() {
 
             return (
               existingLegalName === legalName.toLowerCase() &&
-              !existingIdentifier // identifier also empty
+              !existingIdentifier
             );
           });
 
@@ -629,7 +629,18 @@ export function setupTables() {
           const legalName = row.children[0].textContent.trim();
           const identifier = row.children[1].textContent.trim();
 
+          // Both fields empty
+          if (legalName === "" && identifier === "") {
+            showToast(
+              "Both Identifier and Legal Name can't be empty.",
+              "error",
+            );
+            cell.textContent = oldValue;
+            return;
+          }
+
           let duplicate = false;
+          let identifierDuplicate = false;
 
           rows.forEach((r) => {
             if (r === row) return;
@@ -637,14 +648,26 @@ export function setupTables() {
             const rLegalName = r.children[0].textContent.trim();
             const rIdentifier = r.children[1].textContent.trim();
 
+            // Check identifier uniqueness
+            if (rIdentifier === identifier && identifier !== "") {
+              identifierDuplicate = true;
+            }
+
+            // Check combination duplicate
             if (rLegalName === legalName && rIdentifier === identifier) {
               duplicate = true;
             }
           });
 
+          if (identifierDuplicate) {
+            showToast("Identifier already exists.", "error");
+            cell.textContent = oldValue;
+            return;
+          }
+
           if (duplicate) {
             showToast(
-              " Same Legal Name and Identifier already exists.",
+              "Same Legal Name and Identifier already exists.",
               "error",
             );
             cell.textContent = oldValue;
