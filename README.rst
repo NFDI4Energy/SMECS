@@ -5,7 +5,7 @@ __________________________________________________________
 |
 | SMECS facilitates the extraction of research software metadata from GitHub and GitLab repositories. It provides a user-friendly graphical interface for visualizing the retrieved metadata, enabling researchers and research software engineers to create high-quality metadata without reentering information already available elsewhere. The curated metadata is exported as CodeMeta-compliant JSON, ensuring integration with other tools and enhancing the discoverability, reuse, and impact of research software.
 |
-| 📄 For more details, see our `Preprint <http://doi.org/10.48550/arXiv.2507.18159>`_.
+| 📄 For more details, see our `Paper <http://dx.doi.org/10.14279/eceasst.v85.2708>`_.
 |
 | **Authors:** Stephan Ferenz, Aida Jafarbigloo
 |
