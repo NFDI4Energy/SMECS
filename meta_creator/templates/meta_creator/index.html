@@ -80,13 +80,13 @@
         >
         {% endif %}
         <div class="captcha-box" style="padding-top: 20px; text-align: left">
-          <!-- Error message -->
-          {% for message in messages %}
-          <div id="captcha-error" class="captcha-error">{{ message }}</div>
-          {% endfor %}
-
-          <label for="id_captcha_1">Security Check</label>
-
+          <label for="id_captcha_1" class="captcha_label"
+            >Security Check {% for message in messages %}<span
+              id="captcha-error"
+              class="captcha-error"
+              >{{ message }}</span
+            >{% endfor %}</label
+          >
           <!-- Captcha image box + refresh button -->
           <div class="captcha-image-wrapper">
             {{ captcha_form.captcha}}

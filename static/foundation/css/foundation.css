@@ -218,6 +218,11 @@ button#new-url-extraction-page:hover {
   border-color: #333;
   color: #333;
 }
+.captcha_label {
+  margin: 0;
+  padding: 0;
+  font-size: o;
+}
 
 /* Text input styling */
 #id_captcha_1 {
@@ -230,7 +235,9 @@ button#new-url-extraction-page:hover {
 
 /* Hide the default label Django renders */
 label[for="id_captcha_1"] {
-  display: none;
+  display: block;
+  font-weight: 700;
+  font-size: 0.87rem;
 }
 /************ Tool Tip Styles ************/
 .tooltip-container {
