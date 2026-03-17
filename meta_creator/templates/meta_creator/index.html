@@ -79,6 +79,28 @@
           >{{ error_message_token }}</span
         >
         {% endif %}
+        <div class="captcha-box" style="padding-top: 20px; text-align: left">
+          <!-- Error message -->
+          {% for message in messages %}
+          <div id="captcha-error" class="captcha-error">{{ message }}</div>
+          {% endfor %}
+
+          <label for="id_captcha_1">Security Check</label>
+
+          <!-- Captcha image box + refresh button -->
+          <div class="captcha-image-wrapper">
+            {{ captcha_form.captcha}}
+            <button
+              type="button"
+              class="captcha-refresh-btn"
+              id="captcha-refresh"
+              title="Refresh Captcha">
+              &#x21bb;
+            </button>
+          </div>
+
+          <!-- Hidden + text input -->
+        </div>
         <div class="d-grid col-4 mx-auto">
           <button
             id="submitBtn"

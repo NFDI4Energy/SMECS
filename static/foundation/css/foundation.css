@@ -141,7 +141,7 @@ button.ExData {
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
-  margin-top: 3.5rem;
+  margin-top: 1.5rem;
 }
 
 button.TrySMECS {
@@ -174,7 +174,64 @@ button#new-url-extraction-page:hover {
   cursor: pointer;
   border: 1px solid #4ba0af;
 }
+/******captcha******/
+/* Captcha error */
 
+.captcha-error {
+  color: #e53935;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 6px 12px;
+}
+
+/* Captcha image box */
+.captcha-image-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0;
+}
+
+.captcha-image-wrapper img {
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  background: #f9f9f9;
+  width: auto;
+  height: 50px;
+  object-fit: contain;
+  display: block;
+}
+
+/* Refresh button */
+.captcha-refresh-btn {
+  background: none;
+  border: 1px solid #055f82;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #055f82;
+  transition: all 0.2s;
+}
+
+.captcha-refresh-btn:hover {
+  background: #f0f0f0;
+  border-color: #333;
+  color: #333;
+}
+
+/* Text input styling */
+#id_captcha_1 {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  display: block;
+}
+
+/* Hide the default label Django renders */
+label[for="id_captcha_1"] {
+  display: none;
+}
 /************ Tool Tip Styles ************/
 .tooltip-container {
   display: flex;

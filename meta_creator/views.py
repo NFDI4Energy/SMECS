@@ -13,9 +13,16 @@ from django.http import HttpResponseServerError, HttpResponseForbidden
 from requests.exceptions import ConnectTimeout, ReadTimeout, RequestException
 from .metadata_extractor import data_extraction
 from .validate_jsonLD import validate_codemeta
+from .forms import CaptchaForm
+from django.shortcuts import render, redirect
+from django.contrib import messages
 
 class IndexView(TemplateView):
     template_name = 'meta_creator/index.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['captcha_form'] = CaptchaForm()  # ← add this
+        return context
 
 
 # navigation to homepage and information page_based on requiremment analysis 
@@ -42,56 +49,66 @@ def index(request):
         HttpResponse: The HTTP response object.
 
     """
-    try:
-        result = data_extraction(request)
-        
-        if not result.get('success'):
-            errors = result.get('errors')
+    captcha_form = CaptchaForm(request.POST or None)
 
-            # Check if errors is a list or a string and format accordingly
-            if isinstance(errors, list):
-                error_messages = ['Error in extraction:'] + errors
-            else:
-                error_messages = ['Error in extraction:', errors]          
-            return render(request, 'meta_creator/error.html', {
-                'error_message': "; ".join(error_messages)
+     # Handle GET request - just show the form
+    if request.method == "GET":
+        return render(request, 'meta_creator/index.html', {
+            "captcha_form": captcha_form,
+        })
+
+    # Handle POST request
+    if request.method == "POST":
+
+        if not captcha_form.is_valid():
+          messages.error(request, "Invalid Captcha. Please try again.")
+          return redirect('meta_creator:index')
+
+        # Captcha is valid, proceed with extraction
+        try:
+            result = data_extraction(request)
+
+            if not result.get('success'):
+                errors = result.get('errors')
+                if isinstance(errors, list):
+                    error_messages = ['Error in extraction:'] + errors
+                else:
+                    error_messages = ['Error in extraction:', errors]
+                return render(request, 'meta_creator/error.html', {
+                    'error_message': "; ".join(error_messages)
                 })
 
- 
+            extracted_metadata, description_metadata, type_metadata, joined_metadata = result['metadata']
+            is_valid_jsonld = validate_codemeta(joined_metadata)
 
-        my_json_str = {}
-        # Extract metadata
-        extracted_metadata, description_metadata, type_metadata, joined_metadata = result['metadata']
-        # Validate the JSON data
-        is_valid_jsonld = validate_codemeta(joined_metadata)
-        if is_valid_jsonld:
-            validation_result = "The JSON data is a valid JSON-LD Codemeta object"
-        else:
-            validation_result = "The JSON data is not a valid JSON-LD Codemeta object"
-        # Convert the dictionary to JSON
-        my_json_str = json.dumps(joined_metadata, indent=4)
-        template = loader.get_template('meta_creator/showdata.html')
-        return HttpResponse(template.render({
-            "type_metadata": type_metadata,
-            "description_metadata":description_metadata,
-            "extracted_metadata":extracted_metadata,
-            "my_json_str": my_json_str,
-            "from_showdata": True,
+            if is_valid_jsonld:
+                validation_result = "The JSON data is a valid JSON-LD Codemeta object"
+            else:
+                validation_result = "The JSON data is not a valid JSON-LD Codemeta object"
+
+            my_json_str = json.dumps(joined_metadata, indent=4)
+            template = loader.get_template('meta_creator/showdata.html')
+            return HttpResponse(template.render({
+                "type_metadata": type_metadata,
+                "description_metadata": description_metadata,
+                "extracted_metadata": extracted_metadata,
+                "my_json_str": my_json_str,
+                "from_showdata": True,
             }, request))
 
-    except ConnectTimeout:
-        error_message = "Connection timed out."
-    except ReadTimeout:
-        error_message = "Read operation timed out."
-    except RequestException:
-        error_message = "Error fetching data from GitHub API"
-    except ConnectionError as conn_error:
-        error_message = f"Could not establish a connection: {conn_error}"
-    except PermissionDenied:
-        error_message = "CSRF Error: This action is not allowed."
-        return HttpResponseForbidden(error_message)
-    except Exception as unexpected_exception:
-        error_message = f"An unexpected error occurred: {str(unexpected_exception)}"
-        return HttpResponseServerError(error_message)
+        except ConnectTimeout:
+            error_message = "Connection timed out."
+        except ReadTimeout:
+            error_message = "Read operation timed out."
+        except RequestException:
+            error_message = "Error fetching data from GitHub API"
+        except ConnectionError as conn_error:
+            error_message = f"Could not establish a connection: {conn_error}"
+        except PermissionDenied:
+            error_message = "CSRF Error: This action is not allowed."
+            return HttpResponseForbidden(error_message)
+        except Exception as unexpected_exception:
+            error_message = f"An unexpected error occurred: {str(unexpected_exception)}"
+            return HttpResponseServerError(error_message)
 
-    return render(request, 'meta_creator/error.html', {'error_message': error_message})
+        return render(request, 'meta_creator/error.html', {'error_message': error_message})
