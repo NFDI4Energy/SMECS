@@ -35,6 +35,7 @@ test_job:
   script:
     - echo "$GL_URL"
     - echo "$GH_URL"
+    - python manage.py migrate
     # - echo "$CI_PERSONAL_TOKEN_KEY_GL"
     - python manage.py test tests
 

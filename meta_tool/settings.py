@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 import environs
+import sys
 # from configobj import ConfigObj
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -134,3 +135,6 @@ STATICFILES_DIRS = [
 ]
 DEBUG = True
 JSONFORMS_SCHEMA_DIR = 'static/metajsons/'
+
+if 'test' in sys.argv:
+    CAPTCHA_TEST_MODE = True
