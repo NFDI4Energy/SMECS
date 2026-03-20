@@ -79,14 +79,20 @@
           >{{ error_message_token }}</span
         >
         {% endif %}
-        <div class="captcha-box" style="padding-top: 20px; text-align: left">
-          <label for="id_captcha_1" class="captcha_label"
-            >Security Check {% for message in messages %}<span
+        <div class="captcha-box">
+          <h6 for="id_captcha_1" class="custom-tooltip">
+            Captcha Check
+            <span class="tooltip-text">
+              CAPTCHA is a security system used to prevent spam and abuse by
+              distinguishing human users from automated bots.
+            </span>
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+            {% for message in messages %}<span
               id="captcha-error"
               class="captcha-error"
               >{{ message }}</span
-            >{% endfor %}</label
-          >
+            >{% endfor %}
+          </h6>
           <!-- Captcha image box + refresh button -->
           <div class="captcha-image-wrapper">
             {{ captcha_form.captcha}}

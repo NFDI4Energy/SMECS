@@ -176,7 +176,10 @@ button#new-url-extraction-page:hover {
 }
 /******captcha******/
 /* Captcha error */
-
+.captcha-box {
+  display: flex;
+  flex-direction: column;
+}
 .captcha-error {
   color: #e53935;
   font-size: 0.875rem;
@@ -197,7 +200,7 @@ button#new-url-extraction-page:hover {
   border-radius: 6px;
   background: #f9f9f9;
   width: auto;
-  height: 50px;
+  height: 60px;
   object-fit: contain;
   display: block;
 }
