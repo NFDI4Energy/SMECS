@@ -25,5 +25,6 @@ urlpatterns = [
     path(
         'meta_creator/',
         include('meta_creator.urls', namespace='meta_creator')
-    )
+    ),
+      path('captcha/', include('captcha.urls')),
 ]

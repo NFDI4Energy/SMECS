@@ -5,6 +5,7 @@ environs==9.3.5
 marshmallow>=3.26.2,<4
 pyyaml>=6.0
 pyld==2.0.3
+django-simple-captcha==0.6.0
 
 # Git integration libraries
 python-gitlab==3.13.0

@@ -48,10 +48,10 @@ export function setupUI() {
     forwardBtn.addEventListener("click", function (event) {
       event.preventDefault();
       const tabLinks = Array.from(
-        document.querySelectorAll(".tab-links_ext a")
+        document.querySelectorAll(".tab-links_ext a"),
       );
       const activeTab = tabLinks.find((link) =>
-        link.parentElement.classList.contains("active")
+        link.parentElement.classList.contains("active"),
       );
       if (!activeTab) return;
       const currentIndex = tabLinks.indexOf(activeTab);
@@ -66,10 +66,10 @@ export function setupUI() {
     backwardBtn.addEventListener("click", function (event) {
       event.preventDefault();
       const tabLinks = Array.from(
-        document.querySelectorAll(".tab-links_ext a")
+        document.querySelectorAll(".tab-links_ext a"),
       );
       const activeTab = tabLinks.find((link) =>
-        link.parentElement.classList.contains("active")
+        link.parentElement.classList.contains("active"),
       );
       if (!activeTab) return;
       const currentIndex = tabLinks.indexOf(activeTab);
@@ -274,7 +274,7 @@ export function validateInput(input) {
         const taggingWrapper = tagsContainer.closest(".tagging-wrapper");
         if (taggingWrapper) {
           const hiddenInput = taggingWrapper.querySelector(
-            'input[type="hidden"]'
+            'input[type="hidden"]',
           );
           const label = taggingWrapper.querySelector(".tagging-label");
           const taggingType = label
@@ -324,7 +324,7 @@ export function validateInput(input) {
       input.classList.remove(
         "invalid",
         "invalid-required",
-        "invalid-recommended"
+        "invalid-recommended",
       );
     });
 }
@@ -437,4 +437,65 @@ export function showToast(message, type = "info") {
     toast.style.opacity = "0";
     setTimeout(() => toast.remove(), 500);
   }, 5000);
+}
+export function initCaptcha() {
+  // Auto-hide captcha error after 1 second
+  const captchaError = document.getElementById("captcha-error");
+  console.log(captchaError);
+  if (captchaError) {
+    // Show it
+
+    // Fade out after 2 seconds
+    setTimeout(function () {
+      captchaError.style.transition = "opacity 0.5s ease";
+      captchaError.style.opacity = "0";
+      setTimeout(function () {
+        captchaError.style.display = "none";
+      }, 500);
+    }, 2000);
+  }
+
+  // Refresh captcha button
+  const refreshBtn = document.getElementById("captcha-refresh");
+  if (refreshBtn) {
+    refreshBtn.addEventListener("click", function () {
+      // Get CSRF token from cookie
+      const csrfToken = getCookie("csrftoken");
+
+      fetch("/captcha/refresh/", {
+        method: "POST", // ← must be POST
+        headers: {
+          "X-CSRFToken": csrfToken, // ← CSRF token required
+          "X-Requested-With": "XMLHttpRequest", // ← marks it as AJAX
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Full response data:", data); // ← add this
+          console.log("Keys:", Object.keys(data));
+
+          // Use querySelector since Django renders the img without a custom id
+          const captchaImg = document.querySelector("img.captcha");
+          const captchaKey = document.getElementById("id_captcha_0");
+          const captchaInput = document.getElementById("id_captcha_1");
+
+          if (captchaImg) captchaImg.src = data.image_url;
+          if (captchaKey) captchaKey.value = data.key;
+          if (captchaInput) captchaInput.value = "";
+        })
+        .catch((err) => console.error("Captcha refresh failed:", err));
+    });
+  }
+}
+
+// Helper to read CSRF token from browser cookie
+function getCookie(name) {
+  const cookies = document.cookie.split(";");
+  for (let cookie of cookies) {
+    cookie = cookie.trim();
+    if (cookie.startsWith(name + "=")) {
+      return decodeURIComponent(cookie.substring(name.length + 1));
+    }
+  }
+  return null;
 }
