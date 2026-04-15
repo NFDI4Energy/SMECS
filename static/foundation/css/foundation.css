@@ -2,7 +2,8 @@
 
 /******************** General ********************/
 body {
-  overflow: hidden;
+  /* overflow: hidden; */
+  min-height: 100dvh;
   caret-color: transparent;
 }
 input,
@@ -241,6 +242,280 @@ label[for="id_captcha_1"] {
   display: block;
   font-weight: 700;
   font-size: 0.87rem;
+}
+
+/**********cookies concent banner*******/
+#cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #1e1e2e;
+  color: #f0f0f0;
+  padding: 16px 24px;
+  z-index: 9999;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.3);
+  border-top: 2px solid #4a90d9;
+}
+
+#cookie-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+#cookie-text {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+#cookie-text span {
+  font-size: 24px;
+}
+
+#cookie-text p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #cccccc;
+}
+
+#cookie-buttons {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+#cookie-accept {
+  background-color: #4a90d9;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+#cookie-accept:hover {
+  background-color: #357abd;
+}
+
+#cookie-decline {
+  background-color: transparent;
+  color: #aaaaaa;
+  border: 1px solid #555;
+  padding: 10px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+#cookie-decline:hover {
+  background-color: #333;
+  color: #ffffff;
+}
+
+/* Mobile responsive */
+@media (max-width: 600px) {
+  #cookie-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  #cookie-buttons {
+    width: 100%;
+  }
+
+  #cookie-accept,
+  #cookie-decline {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+/************privacy policy**************/
+/* static/css/legals.css */
+/* Styles for the Legals / Impressum page */
+
+/* ─── Layout ─────────────────────────────────────────── */
+
+.legals-container {
+    margin: 100px auto 60px;
+    padding: 0 24px;
+}
+
+.legals-section {
+    margin-bottom: 40px;
+}
+
+/* ─── Typography ──────────────────────────────────────── */
+
+.legals-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+}
+
+.legals-subtitle {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 40px;
+}
+
+.legals-heading-2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 16px;
+}
+
+.legals-heading-3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2E75B6;
+    margin-bottom: 12px;
+}
+
+.legals-body {
+    color: #444;
+    line-height: 1.8;
+    margin-bottom: 12px;
+}
+
+.legals-link {
+    color: #4a90d9;
+    text-decoration: underline;
+}
+
+.legals-link:hover {
+    color: #357abd;
+}
+
+/* ─── List ────────────────────────────────────────────── */
+
+.legals-list {
+    color: #444;
+    line-height: 2;
+    padding-left: 24px;
+    margin-bottom: 12px;
+}
+
+/* ─── Dividers ────────────────────────────────────────── */
+
+.legals-divider {
+    border: none;
+    margin-bottom: 40px;
+}
+
+.legals-divider--primary {
+    border-top: 2px solid #4a90d9;
+}
+
+.legals-divider--secondary {
+    border-top: 1px solid #ddd;
+    margin-top: 8px;
+}
+
+/* ─── Cookie Info Box ─────────────────────────────────── */
+
+.legals-cookie-box {
+    background: #f8f9fa;
+    border-left: 4px solid #4a90d9;
+    border-radius: 0 8px 8px 0;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+}
+
+.legals-cookie-row {
+    margin: 0 0 12px 0;
+    color: #333;
+    line-height: 1.6;
+}
+
+.legals-cookie-row--last {
+    margin-bottom: 0;
+}
+
+.legals-code {
+    background: #e8f0fe;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #1a56db;
+    font-family: monospace;
+}
+
+/* ─── Withdraw Button ─────────────────────────────────── */
+
+.legals-btn {
+    border: none;
+    padding: 12px 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    transition: background-color 0.2s, opacity 0.2s;
+}
+
+.legals-btn--withdraw {
+    background-color: #c0392b;
+    color: white;
+}
+
+.legals-btn--withdraw:hover {
+    background-color: #a93226;
+}
+
+.legals-btn--withdraw:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+/* ─── Confirm Message ─────────────────────────────────── */
+
+.legals-confirm {
+    margin-top: 16px;
+    padding: 14px 20px;
+    background: #f0faf4;
+    border-left: 4px solid #27ae60;
+    border-radius: 0 8px 8px 0;
+    color: #1e7e34;
+    font-size: 0.95rem;
+}
+
+.legals-confirm--hidden {
+    display: none;
+}
+
+/* ─── Status Messages ─────────────────────────────────── */
+
+.legals-status {
+    padding: 14px 20px;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.95rem;
+}
+
+.legals-status--declined {
+    background: #f8f9fa;
+    border-left: 4px solid #aaa;
+    color: #666;
+}
+
+.legals-status--neutral {
+    background: #f8f9fa;
+    border-left: 4px solid #aaa;
+    color: #666;
 }
 /************ Tool Tip Styles ************/
 .tooltip-container {
