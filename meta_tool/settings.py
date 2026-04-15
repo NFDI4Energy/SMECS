@@ -52,11 +52,13 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'meta_creator.middleware.TrackingMiddleware', 
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'meta_tool.urls'
@@ -124,6 +126,15 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Delay session cookie — only save session when explicitly modified
+# This prevents Django from setting sessionid before consent is given
+SESSION_SAVE_EVERY_REQUEST = False
+ 
+# Security settings for the session cookie
+SESSION_COOKIE_SAMESITE = 'Lax'
+ 
+# Uncomment the line below ONLY if your site runs on HTTPS
+# SESSION_COOKIE_SECURE = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/

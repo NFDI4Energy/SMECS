@@ -145,5 +145,28 @@
     </nav>
 
     {% block content %}{% endblock %} {% block scripts %}{% endblock %}
+
+    <!-- COOKIE CONSENT BANNER    -->
+
+    {% if not request.COOKIES.cookie_consent %}
+    <div id="cookie-banner">
+      <div id="cookie-content">
+        <div id="cookie-text">
+          <span>🍪</span>
+          <p>
+                      We use two cookies on this site: <strong>cookie_consent</strong> (stores your
+                preference for 1 year) and <strong>sessionid</strong> (temporary, deleted when
+                you close your browser). These are used solely to count anonymous visitors and
+                page requests. No personal data is stored.
+                <a href="{% url 'meta_creator:legals' %}" id="cookie-learn-more">Learn more</a>
+          </p>
+        </div>
+        <div id="cookie-buttons">
+          <button id="cookie-accept">Accept</button>
+          <button id="cookie-decline">Decline</button>
+        </div>
+      </div>
+    </div>
+    {% endif %}
   </body>
 </html>

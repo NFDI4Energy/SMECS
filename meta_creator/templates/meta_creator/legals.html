@@ -58,6 +58,167 @@
             </address>
         </div>
     </div>
+    <div class="legals-container">
+ 
+    <h1 class="legals-title">Legals / Impressum</h1>
+    <p class="legals-subtitle">Last updated: April 2026</p>
+ 
+    <hr class="legals-divider legals-divider--primary">
+ 
+    <!-- Privacy & Cookie Notice -->
+    <section class="legals-section">
+        <h2 class="legals-heading-2">Privacy &amp; Cookie Notice</h2>
+        <p class="legals-body">
+            This website uses minimal cookies and collects only limited, anonymous usage data.
+            No personal data is collected or stored at any point.
+        </p>
+    </section>
+ 
+    <!-- Legal Basis -->
+    <section class="legals-section">
+        <h3 class="legals-heading-3">Legal Basis</h3>
+        <p class="legals-body">
+            The legal basis for any data processing on this site is <strong>user consent</strong>,
+            in accordance with <strong>GDPR Article 6(1)(a)</strong>. No data is processed before
+            consent is explicitly given by the user.
+        </p>
+    </section>
+ 
+    <!-- Cookies -->
+    <section class="legals-section">
+        <h3 class="legals-heading-3">Cookies</h3>
+        <p class="legals-body">We use the following cookies:</p>
+        <div class="legals-cookie-box">
+            <p class="legals-cookie-row">
+                <code class="legals-code">cookie_consent</code>
+                &nbsp;— stores your cookie preference for <strong>6 months</strong>.
+            </p>
+            <p class="legals-cookie-row legals-cookie-row--last">
+                <code class="legals-code">sessionid</code>
+                &nbsp;— a temporary session identifier, <strong>deleted when you close your browser</strong>.
+            </p>
+        </div>
+        <p class="legals-body">
+            These cookies are used solely for consent management and anonymous visitor
+            counting. No personal behaviour is tracked.
+        </p>
+    </section>
+ 
+    <!-- Data Collection -->
+    <section class="legals-section">
+        <h3 class="legals-heading-3">Data Collection</h3>
+        <p class="legals-body">We collect only anonymous usage data:</p>
+        <ul class="legals-list">
+            <li>Number of visitors per hour</li>
+            <li>Number of page requests per hour</li>
+        </ul>
+        <p class="legals-body">
+            <strong>No personal data</strong> — including names, IP addresses, email addresses,
+            or any other identifying information — is collected or stored.
+        </p>
+    </section>
+ 
+    <!-- Purpose -->
+    <section class="legals-section">
+        <h3 class="legals-heading-3">Purpose of Data Processing</h3>
+        <p class="legals-body">
+            The collected data is used exclusively for <strong>internal performance
+            monitoring</strong> and basic KPIs such as site usage and traffic trends.
+            It is not used for marketing, profiling, or any commercial purpose.
+        </p>
+    </section>
+ 
+    <!-- Data Retention -->
+    <section class="legals-section">
+        <h3 class="legals-heading-3">Data Retention</h3>
+        <p class="legals-body">
+            Anonymous usage records are stored as hourly aggregates and retained
+            indefinitely unless manually deleted by a site administrator.
+        </p>
+    </section>
+ 
+    <!-- Access -->
+    <section class="legals-section">
+        <h3 class="legals-heading-3">Access to Data</h3>
+        <p class="legals-body">
+            Access is restricted to <strong>site administrators only</strong> and is managed
+            through the internal Admin panel. No external parties have access.
+        </p>
+    </section>
+ 
+    <!-- Third Party -->
+    <section class="legals-section">
+        <h3 class="legals-heading-3">Third-Party Sharing</h3>
+        <p class="legals-body">
+            No data is shared with third parties. All data is stored and processed
+            exclusively on our own servers.
+        </p>
+    </section>
+ 
+    <!-- Data Controller -->
+    <section class="legals-section">
+        <h3 class="legals-heading-3">Data Controller</h3>
+        <p class="legals-body">
+            <strong>[Your Organisation Name]</strong><br>
+            For data-related enquiries, contact:
+            <a class="legals-link" href="mailto:your-email@organisation.org">
+                your-email@organisation.org
+            </a>
+        </p>
+    </section>
+ 
+    <!-- User Rights -->
+    <section class="legals-section">
+        <h3 class="legals-heading-3">Your Rights</h3>
+        <p class="legals-body">Under GDPR, you have the right to:</p>
+        <ul class="legals-list">
+            <li>Withdraw your consent to cookie usage at any time</li>
+            <li>Request confirmation of what data (if any) relates to you</li>
+            <li>Request erasure of any data held about you</li>
+            <li>Lodge a complaint with your national Data Protection Authority</li>
+        </ul>
+        <p class="legals-body">
+            Since this site collects no personal data, most of these rights are trivially
+            satisfied. However, we are committed to honouring all requests promptly.
+        </p>
+    </section>
+ 
+    <hr class="legals-divider legals-divider--secondary">
+ 
+    <!-- Withdraw Consent -->
+    <section class="legals-section">
+        <h3 class="legals-heading-3">Withdraw Cookie Consent</h3>
+        <p class="legals-body">
+            You can withdraw your cookie consent at any time by clicking the button below.
+            This will stop all anonymous tracking immediately. 
+        </p>
+ 
+        {% if request.COOKIES.cookie_consent == 'true' %}
+            <button id="withdraw-btn" class="legals-btn legals-btn--withdraw">
+                Withdraw Cookie Consent
+            </button>
+            <div id="withdraw-confirm" class="legals-confirm legals-confirm--hidden">
+                &#10003; Your consent has been withdrawn. The cookie banner will reappear in 10 minutes.
+            </div>
+ 
+        {% elif request.COOKIES.cookie_consent == 'false' %}
+            <div class="legals-status legals-status--declined">
+                You have already declined cookies. No tracking is taking place.
+            </div>
+ 
+        {% else %}
+            <div class="legals-status legals-status--neutral">
+                You have not yet made a cookie choice. You will be asked on your next visit.
+            </div>
+        {% endif %}
+ 
+    </section>
+ 
+</div>
  </div>
 
+<script type="module">
+    import { withdrawConsent } from "{% static 'foundation/js/vendor/cookie-consent.js' %}";
+    window.withdrawConsent = withdrawConsent;
+</script>
 {% endblock content %}
