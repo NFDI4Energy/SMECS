@@ -244,8 +244,7 @@ label[for="id_captcha_1"] {
 }
 /************ Tool Tip Styles ************/
 .tooltip-container {
-  display: flex;
-  align-items: center;
+  display: block;
 }
 
 .tool-tip {
@@ -1016,8 +1015,7 @@ div.input-container input::placeholder {
 
 .custom-tooltip {
   position: relative;
-  float: left;
-  display: inline;
+  display: inline-block;
   cursor: pointer;
 }
 
@@ -1071,8 +1069,10 @@ label > .fa-info-circle {
   padding: 5px;
   z-index: 1000;
   position: absolute;
-  left: -20px;
-  top: 25px;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 6px;
   transition: opacity 0.3s;
   pointer-events: none;
   opacity: 0;
@@ -1101,8 +1101,10 @@ label > .fa-info-circle {
   padding: 5px;
   position: absolute;
   z-index: 1;
-  left: 15%;
-  transform: translateX(10%);
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 6px;
   transition: opacity 0.3s;
   pointer-events: none;
 }
@@ -1552,7 +1554,7 @@ input:checked + .slider:before {
 @media (min-width: 1024px) and (max-width: 1700px) {
   .custom-tooltip .tooltip-text {
     width: 25rem;
-    left: 8%;
+    left: 100%;
   }
 
   #form1 h6 {

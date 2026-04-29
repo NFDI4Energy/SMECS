@@ -23,12 +23,14 @@
     <div class="col-12">
       <form id="form1" method="post" action="{% url 'meta_creator:getdata' %}">
         {% csrf_token %}
-        <h6 class="custom-tooltip">
+        <h6>
           Project URL
-          <span class="tooltip-text">
+          <span class="custom-tooltip">
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+            <span class="tooltip-text">
             The GitHub or GitLab repository URL
+            </span>
           </span>
-          <i class="fa fa-info-circle" aria-hidden="true"></i>
         </h6>
         <input
           type="url"
@@ -42,8 +44,10 @@
         >
         {% endif %}
         <div class="tooltip-container">
-          <h6 class="custom-tooltip">
+          <h6>
             Token Key
+            <span class="custom-tooltip">
+              <i class="fa fa-info-circle" aria-hidden="true"></i>
             <span class="tooltip-text">
               To extract metadata from GitHub repositories token is not needed,
               however, using one resolves rate limitations and allows for
@@ -65,7 +69,7 @@
                 >Create a personal access token</a
               >
             </span>
-            <i class="fa fa-info-circle" aria-hidden="true"></i>
+            </span>
           </h6>
         </div>
         <input
@@ -80,13 +84,15 @@
         >
         {% endif %}
         <div class="captcha-box">
-          <h6 for="id_captcha_1" class="custom-tooltip">
+          <h6 for="id_captcha_1" >
             Captcha Check
-            <span class="tooltip-text">
+            <span class="custom-tooltip">
+              <i class="fa fa-info-circle" aria-hidden="true"></i>
+              <span class="tooltip-text">
               CAPTCHA is a security system used to prevent spam and abuse by
               distinguishing human users from automated bots.
             </span>
-            <i class="fa fa-info-circle" aria-hidden="true"></i>
+            </span>
             {% for message in messages %}<span
               id="captcha-error"
               class="captcha-error"
