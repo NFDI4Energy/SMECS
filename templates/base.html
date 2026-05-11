@@ -93,6 +93,7 @@
               <a
                 class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
                 href="{% url 'meta_creator:index' %}"
+                title="Extract metadata from a GitHub or GitLab repository"
                 >Home</a
               >
             </li>
@@ -100,6 +101,7 @@
               <a
                 class="nav-link {% if request.resolver_match.url_name == 'information' %}active{% endif %}"
                 href="{% url 'meta_creator:information' %}"
+                title="Learn more about SMECS"
                 >About SMECS</a
               >
             </li>
@@ -124,7 +126,8 @@
               type="button"
               data-bs-toggle="offcanvas"
               data-bs-target="#offcanvasRight"
-              aria-controls="offcanvasRight">
+              aria-controls="offcanvasRight"
+              title="Learn more about SMECS user interface">
               Hints<span
                 ><i class="fa-solid fa-circle-question" style="color: white"></i
               ></span>
