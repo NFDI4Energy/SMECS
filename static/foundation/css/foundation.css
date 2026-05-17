@@ -89,6 +89,9 @@ textarea {
 .navbar .navbar-toggler {
   border-color: rgba(255, 255, 255, 0.5);
 }
+.hints-icon {
+  color: white;
+}
 
 /******************** Initial Form of the software metadata Extractor (index.html) ********************/
 .InitialFormContainer {
@@ -1009,6 +1012,13 @@ div.input-container input::placeholder {
 
 .info-content h4 {
   color: #333;
+}
+
+/********************* Legals page **************************************/
+
+.legals-page {
+  overflow-y: auto;
+  max-height: calc(100vh - 9rem);
 }
 
 /********************* SMECS First page tool-tips  **********************/
