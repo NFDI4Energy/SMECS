@@ -1357,6 +1357,15 @@ input:checked + .slider:before {
   transform: translateX(243%);
 }
 
+/**************************************JSON viewer*************************************/
+
+.json-readonly-alert {
+  font-size: 13px;
+  padding: 8px 12px;
+}
+.hidden-alert {
+  display: none;
+}
 /************************************** tabs_ext **************************************/
 .tabs_ext {
   width: 100%;
