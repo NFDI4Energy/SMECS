@@ -31,6 +31,20 @@ export function setupUI() {
     document.execCommand("copy");
     actionFeedback("Text copied!");
   });
+  // Make JSON viewer read-only
+  if (metadataJson) {
+    metadataJson.readOnly = true;
+
+   const alertDiv = document.createElement('span');
+   alertDiv.className = 'highlight-tag json-readonly-alert';
+   alertDiv.innerHTML = 'The JSON viewer is read-only. Please use the form on the left to curate the metadata. <span class="acknowledge-tag">Got it!</span>';
+   metadataJson.parentNode.insertBefore(alertDiv, metadataJson);
+
+  // Got it! click handler
+   alertDiv.querySelector('.acknowledge-tag').addEventListener('click', function() {
+   alertDiv.classList.add('hidden-alert');
+   });
+  }
   // tabs_ext
   tabs_ext.forEach((tab) => {
     tab.addEventListener("click", function (event) {
