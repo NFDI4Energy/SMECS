@@ -11,21 +11,31 @@
              <div class="info-header"> <h3>Legals/Impressum</h3></div>
         </div>
     </div>
-    <div class="row">
-        <div class="co1-6">
-            <h4>Address:</h4>
-            <address>
-                OFFIS e. V.<br>
-                Escherweg 2<br>
-                26121 Oldenburg<br>
-                Germany<br>
-                Telefon: +49 441 9722-0<br>
-                Fax: +49 441 9722-102<br>
-                E-Mail: <a href="mailto:institut@offis.de">institut@offis.de</a><br>
-                Internet: <a href="http://www.offis.de" target="_blank">www.offis.de</a>
-            </address>
+    <div class="row justify-content-center mb-3">
+        <div class="col-auto">
+            <button class="btn lang-btn active-lang" id="lang-toggle" data-lang="en" onclick="toggleLang()">
+                <i class="fa fa-globe"></i> DE
+            </button>
         </div>
-        <div class="col-12">
+    </div>
+
+    <!-- English Content -->
+    <div id="content-en">
+        <div class="row">
+            <div class="col-12">
+                <h4>Address:</h4>
+                <address>
+                    OFFIS e. V.<br>
+                    Escherweg 2<br>
+                    26121 Oldenburg<br>
+                    Germany<br>
+                    Telefon: +49 441 9722-0<br>
+                    Fax: +49 441 9722-102<br>
+                    E-Mail: <a href="mailto:institut@offis.de">institut@offis.de</a><br>
+                    Internet: <a href="http://www.offis.de" target="_blank">www.offis.de</a>
+                </address>
+            </div>
+            <div class="col-12">
               <h4>Board Members</h4>
                 <p>
                     Prof. Dr. Sebastian Lehnhoff (Chairman)<br>
@@ -33,31 +43,95 @@
                     Prof. Dr.-Ing. Andreas Hein<br>
                     Prof. Dr.-Ing. Astrid Nie&szlig;e
                 </p>
-        </div>
-        <div class="col-12">
-             <h4>Register Court</h4>
-            <p>
-                Amtsgericht Oldenburg<br>
-                Registernummer VR 1956
-            </p>
-        </div>
-        <div class="col-12">
-              <h4>VAT Identification Number</h4>
+            </div>
+            <div class="col-12">
+                <h4>Register Court</h4>
+                <p>
+                    Amtsgericht Oldenburg<br>
+                    Registernummer VR 1956
+                </p>
+            </div>
+            <div class="col-12">
+                <h4>VAT Identification Number</h4>
                 <p>
                     DE 811582102
                 </p>
-        </div>
-        <div class="col-12">
+            </div>
+            <div class="col-12">
               
-            <h4>Responsible in the sense of press law</h4>
-            <address>
-                Dr. J&uuml;rgen Meister<br>
-                OFFIS e.V.<br>
-                Escherweg 2<br>
-                26121 Oldenburg
-            </address>
+                <h4>Responsible in the sense of press law</h4>
+                <address>
+                    Dr. J&uuml;rgen Meister<br>
+                    OFFIS e.V.<br>
+                    Escherweg 2<br>
+                    26121 Oldenburg
+                </address>
+            </div>
         </div>
     </div>
- </div>
+
+<!-- German Content -->
+   <div id="content-de" class="legals-hidden">
+        <div class="row">
+            <div class="col-12">
+                <h4>Adresse:</h4>
+                <address>
+                    OFFIS e. V.<br>
+                    Escherweg 2<br>
+                    26121 Oldenburg<br>
+                    Deutschland<br>
+                    Telefon: +49 441 9722-0<br>
+                    Fax: +49 441 9722-102<br>
+                    E-Mail: <a href="mailto:institut@offis.de">institut@offis.de</a><br>
+                    Internet: <a href="http://www.offis.de" target="_blank">www.offis.de</a>
+                </address>
+            </div>
+            <div class="col-12">
+                <h4>Vorstandsmitglieder</h4>
+                <p>
+                    Prof. Dr. Sebastian Lehnhoff (Vorsitzender)<br>
+                    Prof. Dr. techn. Susanne Boll-Westermann<br>
+                    Prof. Dr.-Ing. Andreas Hein<br>
+                    Prof. Dr.-Ing. Astrid Nieße
+                </p>
+            </div>
+            <div class="col-12">
+                <h4>Registergericht</h4>
+                <p>
+                    Amtsgericht Oldenburg<br>
+                    Registernummer VR 1956
+                </p>
+            </div>
+            <div class="col-12">
+                <h4>USt-Identifikationsnummer</h4>
+                <p>DE 811582102</p>
+            </div>
+            <div class="col-12">
+                <h4>Verantwortlich im Sinne des Presserechts</h4>
+                <address>
+                    Dr. J&uuml;rgen Meister<br>
+                    OFFIS e.V.<br>
+                    Escherweg 2<br>
+                    26121 Oldenburg
+                </address>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+function toggleLang() {
+    const btn = document.getElementById('lang-toggle');
+    const isEN = btn.getAttribute('data-lang') === 'en';
+
+    document.getElementById('content-en').classList.toggle('legals-hidden', isEN);
+    document.getElementById('content-de').classList.toggle('legals-hidden', !isEN);
+
+    btn.setAttribute('data-lang', isEN ? 'de' : 'en');
+    btn.innerHTML = isEN ? '<i class="fa fa-globe"></i> EN' : '<i class="fa fa-globe"></i> DE';
+}
+</script>
+{% endblock scripts %}
 
 {% endblock content %}
