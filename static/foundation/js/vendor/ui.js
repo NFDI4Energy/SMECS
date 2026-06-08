@@ -513,3 +513,14 @@ function getCookie(name) {
   }
   return null;
 }
+
+// Language toggle for legals/impressum page
+function toggleLang() {
+    const btn = document.getElementById('lang-toggle');
+    const isEN = btn.getAttribute('data-lang') === 'en';
+    document.getElementById('content-en').classList.toggle('legals-hidden', isEN);
+    document.getElementById('content-de').classList.toggle('legals-hidden', !isEN);
+    btn.setAttribute('data-lang', isEN ? 'de' : 'en');
+    btn.innerHTML = isEN ? '<i class="fa fa-globe"></i> EN' : '<i class="fa fa-globe"></i> DE';
+}
+window.toggleLang = toggleLang;
