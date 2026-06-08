@@ -14,7 +14,7 @@
     <div class="row justify-content-center mb-3">
         <div class="col-auto">
             <button class="btn lang-btn active-lang" id="lang-toggle" data-lang="en" onclick="toggleLang()">
-                <i class="fa fa-globe"></i> DE
+                <i class="fa fa-globe"></i> Deutsch
             </button>
         </div>
     </div>
@@ -25,7 +25,7 @@
             <div class="col-12">
                 <h4>Address:</h4>
                 <address>
-                    OFFIS e. V.<br>
+                    OFFIS e.V.<br>
                     Escherweg 2<br>
                     26121 Oldenburg<br>
                     Germany<br>
@@ -76,7 +76,7 @@
             <div class="col-12">
                 <h4>Adresse:</h4>
                 <address>
-                    OFFIS e. V.<br>
+                    OFFIS e.V.<br>
                     Escherweg 2<br>
                     26121 Oldenburg<br>
                     Deutschland<br>
@@ -129,7 +129,7 @@ function toggleLang() {
     document.getElementById('content-de').classList.toggle('legals-hidden', !isEN);
 
     btn.setAttribute('data-lang', isEN ? 'de' : 'en');
-    btn.innerHTML = isEN ? '<i class="fa fa-globe"></i> EN' : '<i class="fa fa-globe"></i> DE';
+    btn.innerHTML = isEN ? '<i class="fa fa-globe"></i> English' : '<i class="fa fa-globe"></i> Deutsch';
 }
 </script>
 {% endblock scripts %}
