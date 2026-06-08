@@ -129,7 +129,7 @@ function toggleLang() {
     document.getElementById('content-de').classList.toggle('legals-hidden', !isEN);
 
     btn.setAttribute('data-lang', isEN ? 'de' : 'en');
-    btn.innerHTML = isEN ? '<i class="fa fa-globe"></i> English' : '<i class="fa fa-globe"></i> Deutsch';
+    btn.innerHTML = isEN ? '<i class="fa fa-globe" title="Switch to English"></i> English' : '<i class="fa fa-globe" title="Switch to German"></i> Deutsch';
 }
 </script>
 {% endblock scripts %}
