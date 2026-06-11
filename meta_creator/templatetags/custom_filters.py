@@ -83,6 +83,73 @@ def row_has_values(row, columns):
             return True
     return False
 
+def _persons_are_same(p1, p2):
+    """Return True if two person dicts represent the same individual."""
+    if not isinstance(p1, dict) or not isinstance(p2, dict):
+        return False
+
+    def first_email(e):
+        if isinstance(e, list):
+            return e[0].strip().lower() if e else ""
+        return (e or "").strip().lower()
+
+    e1, e2 = first_email(p1.get("email")), first_email(p2.get("email"))
+    if e1 and e2 and e1 == e2:
+        return True
+
+    g1 = (p1.get("givenName") or "").strip().lower()
+    f1 = (p1.get("familyName") or "").strip().lower()
+    g2 = (p2.get("givenName") or "").strip().lower()
+    f2 = (p2.get("familyName") or "").strip().lower()
+    return bool(g1 or f1) and g1 == g2 and f1 == f2
+
+
+@register.filter
+def check_person_in_list(person_list, person):
+    """
+    Return True if person (dict) matches any entry in person_list.
+    Used in the unique-tab person table to determine role checkbox state.
+    """
+    if not isinstance(person_list, list) or not isinstance(person, dict):
+        return False
+    return any(_persons_are_same(person, p) for p in person_list)
+
+
+@register.filter
+def get_rows(value, metadata_dict):
+    """
+    Return a deduplicated list of all persons from contributor, author, and
+    maintainer when the tab contains all three role lists (i.e. RelatedPersons).
+    For all other tabs the original value is returned unchanged.
+
+    Used as {{ value|get_rows:metadata_dict }} on the table row iteration so
+    that persons who only appear in 'author' or 'maintainer' (e.g. from a CFF
+    source) are also shown in the unified person table.
+    """
+    if not isinstance(metadata_dict, dict):
+        return value
+
+    role_keys = {"contributor", "author", "maintainer"}
+    if not role_keys.issubset(set(metadata_dict.keys())):
+        return value  # Not the person tab — use the field's own list unchanged
+
+    result = []
+    for role_key in ("contributor", "author", "maintainer"):
+        for person in metadata_dict.get(role_key, []):
+            if not isinstance(person, dict):
+                continue
+            given  = (person.get("givenName")  or "").strip()
+            family = (person.get("familyName") or "").strip()
+            if not given and not family:
+                continue
+            if not any(_persons_are_same(person, p) for p in result):
+                result.append(person)
+
+    # If nothing found (all lists have only empty placeholders), fall back so
+    # the add-row row still renders correctly
+    return result if result else value
+
+
 @register.filter
 def all_types_same(type_metadata, metadata_dict):
     """

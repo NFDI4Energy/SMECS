@@ -8,7 +8,7 @@ pyld==2.0.3
 django-simple-captcha==0.6.0
 
 # Git integration libraries
-python-gitlab==3.13.0
+python-gitlab==8.4.0
 GitPython>=3.1.41
 
 # Git-based packages pinned to specific commits/branches

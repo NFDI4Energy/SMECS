@@ -370,7 +370,7 @@
                                         {% elif forloop.first or not unique_tab %}
                                         <!-- small_table -->
                                         <div class="long_field copyright_table">
-                                            {% with specific_types=type_metadata|get_array:key default_type=value.0|get:"@type"%}
+                                            {% with specific_types=type_metadata|get_array:key default_type=value.0|get:"@type"|default:"Person"%}
                                             {% if not unique_tab %}
                                             
                                             <div class="action" >
@@ -417,7 +417,7 @@
                                             {% if key == "contributor" %}
                                             <div class="scrollable">
                                                 {% endif %}
-                                            <table class="auto-property table table-responsive table-hover table-sortable" id="{{ key }}Table" data-at-type={{default_type}} unique-tab={{unique_tab}}>
+                                            <table class="auto-property table table-responsive table-hover table-sortable" id="{{ key }}Table" data-at-type="{{ default_type }}" unique-tab={{unique_tab}}>
                                                 <thead>
                                                     <tr>
                                                         <th class="text-center" data-col=""  style="width: fit-content;">Select</th>
@@ -452,7 +452,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {% for row in value %}
+                                                    {% for row in value|get_rows:metadata_dict %}
                                                     {% if row|row_has_values:specific_types.keys %}
                                                     <tr>
                                                         <td class="text-center" data-col="select" data-coltype="select">
@@ -460,7 +460,7 @@
                                                         </td>
                                                         {% for col, value in specific_types.items %}
                                                         {% if value == 'tagging' or value == 'tagging_autocomplete' or value == 'dropdown' %}
-                                                        <td class="table-tagging-cell" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" data-row="{{ forloop.parentloop.counter0 }}">
+                                                        <td class="table-tagging-cell" data-type="{{ default_type }}" data-coltype="{{ value }}" data-col="{{ col }}" data-row="{{ forloop.parentloop.counter0 }}">
                                                             <div class="tags-list">
                                                                 {% for tag in row|get:col %}
                                                                 <span class="tag" data-tag="{{ tag }}">{{ tag }} <span class="remove-tag" data-tag="{{ tag }}">×</span></span>
@@ -479,15 +479,7 @@
                                                         {% if unique_tab %}
                                                         {% for col, value in metadata_dict.items %}
                                                         <td data-col="{{ col }}" data-coltype="element" class="text-center">
-                                                            {% if col == key %}
-                                                            <input type="checkbox" class="checkbox-element" data-role="{{ col }}" name="checkbox-{{ col }}" checked>
-                                                            {% elif col == "author" %}
-                                                            <input type="checkbox" class="checkbox-element" data-role="{{ col }}" name="checkbox-{{ col }}" {% if metadata_dict|check_author:contributor %}checked{% endif %}>
-                                                            {% elif col == "maintainer" %}
-                                                            <input type="checkbox" class="checkbox-element" data-role="{{ col }}" name="checkbox-{{ col }}" {% if metadata_dict|check_maintainer:contributor %}checked{% endif %}>
-                                                            {% else %}
-                                                            <input type="checkbox" class="checkbox-element" data-role="{{ col }}" name="checkbox-{{ col }}">
-                                                            {% endif %}
+                                                            <input type="checkbox" class="checkbox-element" data-role="{{ col }}" name="checkbox-{{ col }}" {% if value|check_person_in_list:row %}checked{% endif %}>
                                                         </td>
                                                         {% endfor %}
                                                         {% endif %}
@@ -502,16 +494,16 @@
                                                         <td class="disabled"></td>
                                                         {% for col, value in specific_types.items %}
                                                         {% if value == 'tagging' or value == 'tagging_autocomplete' %}
-                                                        <td class="tags-table-container add-row-tags-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
+                                                        <td class="tags-table-container add-row-tags-container" data-type="{{ default_type }}" data-coltype="{{ value }}" data-col="{{ col }}">
                                                             <!-- Tags will be inserted here by JS -->
                                                             {% if value == "tagging" %}
-                                                            <input type="text" class="add-row-tag-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Add {{col|camel_to_spaces_lower}} and press Enter" />
+                                                            <input type="text" class="add-row-tag-input" data-type="{{ default_type }}" data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Add {{col|camel_to_spaces_lower}} and press Enter" />
                                                             {% else %}
-                                                            <input type="text" class="add-row-tag-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Type and select from list for {{col|camel_to_spaces_lower}}" />
+                                                            <input type="text" class="add-row-tag-input" data-type="{{ default_type }}" data-coltype="{{ value }}" data-col="{{ col }}" placeholder="Type and select from list for {{col|camel_to_spaces_lower}}" />
                                                             {% endif %}
                                                         </td>
                                                         {% elif value == 'dropdown' %}
-                                                        <td class="tags-table-container add-row-tags-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
+                                                        <td class="tags-table-container add-row-tags-container" data-type="{{ default_type }}" data-coltype="{{ value }}" data-col="{{ col }}">
                                                             <select class="add-row-dropdown-select"
                                                                     data-type="{{ default_type }}"
                                                                     data-coltype="{{ value }}"
@@ -521,8 +513,8 @@
                                                             </select>
                                                         </td>
                                                         {% else %}
-                                                        <td class="tags-table-container" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}">
-                                                            <input type="text" class="add-row-input" data-type={{default_type}} data-coltype="{{ value }}" data-col="{{ col }}" placeholder="{{ col|camel_to_spaces_lower }}"/>
+                                                        <td class="tags-table-container" data-type="{{ default_type }}" data-coltype="{{ value }}" data-col="{{ col }}">
+                                                            <input type="text" class="add-row-input" data-type="{{ default_type }}" data-coltype="{{ value }}" data-col="{{ col }}" placeholder="{{ col|camel_to_spaces_lower }}"/>
                                                         </td>
                                                         {% endif %}
                                                         {% endfor %}

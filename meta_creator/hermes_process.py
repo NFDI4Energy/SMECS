@@ -164,7 +164,7 @@ def run_hermes_commands(url, token=None):
             "keywords": hermes_metadata_dict.get('keywords', ''),
             "downloadUrl": hermes_metadata_dict.get('downloadUrl', ''),
             "readme": hermes_metadata_dict.get('readme', ''),
-            "version": hermes_metadata_dict.get('version', ''),
+            "softwareVersion": hermes_metadata_dict.get('version', ''),
             "citation": hermes_metadata_dict.get('citation', ''),
             "author": authors_metadata, 
             "contributor": contributors_metadata    
