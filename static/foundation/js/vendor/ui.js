@@ -93,61 +93,48 @@ export function setupUI() {
     });
   });
 
-  // custom tooltips
-  // document
-  //   .querySelectorAll(".custom-tooltip-metadata")
-  //   .forEach(function (element) {
-  //     const tooltip = element.querySelector(".tooltip-text-metadata");
-  //     const icon = element.querySelector("i");
+  
+  (function () {
+    const tip = document.createElement("div");
+    tip.id = "contributor-th-fixed-tooltip";
+    document.body.appendChild(tip);
 
-  //     // Helper to get scale factor from parent (default 1)
-  //     function getScaleFactor(el) {
-  //       let scale = 1;
-  //       let parent = el;
-  //       while (parent) {
-  //         const transform = window.getComputedStyle(parent).transform;
-  //         if (transform && transform !== "none") {
-  //           const match = transform.match(
-  //             /matrix\(([^,]+),[^,]+,[^,]+,[^,]+,[^,]+,[^,]+\)/
-  //           );
-  //           if (match) {
-  //             scale *= parseFloat(match[1]);
-  //           }
-  //         }
-  //         parent = parent.parentElement;
-  //       }
-  //       return scale;
-  //     }
+    document
+      .querySelectorAll(
+        "#contributorTable thead th .custom-tooltip-metadata"
+      )
+      .forEach(function (trigger) {
+        const span = trigger.querySelector(".tooltip-text-metadata");
+        if (!span) return;
+        const text = span.textContent.trim();
+        if (!text) return;
 
-  //     element.addEventListener("mouseenter", function () {
-  //       tooltip.style.display = "block";
-  //       tooltip.style.visibility = "visible";
-  //       tooltip.style.opacity = "1";
-  //       tooltip.style.position = "absolute";
-  //       // tooltip.style.zIndex = "9999";
-  //       const rect = icon.getBoundingClientRect();
-  //       const margin = 16;
+        trigger.addEventListener("mouseenter", function () {
+          tip.textContent = text;
 
-  //       // Find the scale factor (if any) from the closest scaled parent
-  //       const scale = getScaleFactor(icon.parentElement);
-  //       console.info("Tooltip scale factor:", scale);
+          const icon = trigger.querySelector("i") || trigger;
+          const r = icon.getBoundingClientRect();
 
-  //       // Adjust position for scale
-  //       //let left = rect.right * scale;
-  //       //let top = (rect.top + margin) * scale;
-  //       let width = 1;
-  //       let left = 16;
-  //       let top = 16;
-  //       tooltip.style.left = left + "px";
-  //       tooltip.style.top = top + "px";
-  //       tooltip.style.width = width + "px";
-  //     });
-  //     element.addEventListener("mouseleave", function () {
-  //       tooltip.style.display = "none";
-  //       tooltip.style.visibility = "hidden";
-  //       tooltip.style.opacity = "0";
-  //     });
-  //   });
+          // Start to the right of the icon, vertically centred
+          tip.style.left = r.right + 8 + "px";
+          tip.style.top = r.top + r.height / 2 + "px";
+          tip.style.transform = "translateY(-50%)";
+          tip.classList.add("active");
+
+          // After render: flip left if the tooltip clips the right viewport edge
+          requestAnimationFrame(function () {
+            const tr = tip.getBoundingClientRect();
+            if (tr.right > window.innerWidth - 8) {
+              tip.style.left = r.left - tr.width - 8 + "px";
+            }
+          });
+        });
+
+        trigger.addEventListener("mouseleave", function () {
+          tip.classList.remove("active");
+        });
+      });
+  })();
 
   // Initialize the state on page load
   window.onload = function () {

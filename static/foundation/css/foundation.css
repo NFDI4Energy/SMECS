@@ -661,6 +661,9 @@ div.error-container a:hover {
   top: 0;
   z-index: 10;
 }
+#contributorTable thead th:hover {
+  z-index: 20;
+}
 #contributorTable td,
 #copyrightHolderTable td {
   border: 1px solid #ddddddbd;
@@ -1120,6 +1123,39 @@ label > .fa-info-circle {
 }
 
 .custom-tooltip-metadata:hover .tooltip-text-metadata {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+#contributorTable thead th .custom-tooltip-metadata:hover .tooltip-text-metadata {
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+#contributor-th-fixed-tooltip {
+  position: fixed;
+  z-index: 99999;
+  visibility: hidden;
+  opacity: 0;
+  font-size: 70%;
+  min-width: 165px;
+  max-width: 260px;
+  background-color: #5e5b5b;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 5px;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  word-break: break-word;
+  white-space: normal;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  font-weight: 400;
+}
+
+#contributor-th-fixed-tooltip.active {
   visibility: visible;
   opacity: 1;
 }
