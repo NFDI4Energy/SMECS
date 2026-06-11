@@ -23,3 +23,5 @@ hermes.toml
 *.sln
 *.pyproj
 *.user
+db.sqlite3
+hermes.toml

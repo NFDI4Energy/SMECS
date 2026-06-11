@@ -1024,6 +1024,31 @@ div.input-container input::placeholder {
   max-height: calc(100vh - 9rem);
 }
 
+.legals-hidden {
+  display: none;
+}
+
+.lang-btn {
+  border: 1px solid #055f82;
+  color: #055f82;
+  margin: 0 4px;
+  border-radius: 4px;
+  padding: 4px 12px;
+  cursor: pointer;
+  background-color: white;
+}
+
+.lang-btn:hover {
+  background-color: #4ba0af;
+  color: white;
+  border-color: #4ba0af;
+}
+
+.active-lang {
+  background-color: #055f82;
+  color: white;
+}
+
 /********************* SMECS First page tool-tips  **********************/
 
 .custom-tooltip {
