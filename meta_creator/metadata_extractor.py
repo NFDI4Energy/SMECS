@@ -31,55 +31,33 @@ def data_extraction(request):
         repo_url = request.POST.get('repo_url')
         personal_token_key = request.POST.get('personal_token_key')
         
-        valid_token = validate_token(repo_url, personal_token_key)
-        
-        if not is_github_repo(repo_url) and not valid_token:
-            result =  {
-                'success': False,
-                'errors': "GitLab requires a valid personal access token."
+        token_result = validate_token(repo_url, personal_token_key)
+
+        if token_result["error_type"]:
+            return {
+                "success": False,
+                "errors": token_result["error_message"],
             }
+
+        token = token_result["token"]  # could be None for GitHub public repos
+
+        result = {
+            'success': True,
+            'warnings': [],
+            'errors': [],
+            'metadata': None
+        }
+
+        # Run HERMES process
+        hermes_metadata = run_hermes_commands(repo_url, token)
+
+        if isinstance(hermes_metadata, dict):
+            result['metadata'] = init_curated_metadata(hermes_metadata.get('metadata'))
+            result['warnings'].extend(hermes_metadata.get('warnings', []))
+            result['errors'].extend(hermes_metadata.get('errors', []))
+            result['success'] = hermes_metadata.get('success', False)
         else:
-            token = valid_token  # could be None for GitHub
+            result['success'] = False
+            result['errors'].append("HERMES returned unexpected result format.")
 
-            # Define empty result dict
-            result = {
-                'success': True,
-                'warnings': [],
-                'errors': [],
-                'metadata': None
-            }
-
-            # # Validate GitHub input
-            # is_valid_github, error_messages = validate_github_inputs(gl_url)
-            # if not is_valid_github:
-            #     is_valid_gitlab, error_messages_gitlab = validate_gitlab_inputs(gl_url, personal_token_key)
-
-            #     if not is_valid_gitlab:
-            #         error_messages.join(error_messages_gitlab)
-            #         return {
-            #             'success': False,
-            #             'errors': error_messages
-            #         }
-
-            #     extracted_metadata = get_gitlab_metadata(gl_url, personal_token_key)
-            #     if not extracted_metadata:
-            #         extracted_metadata = get_gitlab_metadata(gl_url, default_access_token_gitlab)
-
-            #     result['metadata'] = init_curated_metadata(extracted_metadata)
-
-
-            # Run HERMES process
-            hermes_metadata = run_hermes_commands(repo_url, token)
-            # if hermes_metadata == None:
-            #     hermes_metadata = get_github_metadata(gl_url, default_access_token_GH)
-
-            if isinstance(hermes_metadata, dict):
-                result['metadata'] = init_curated_metadata(hermes_metadata.get('metadata'))
-                result['warnings'].extend(hermes_metadata.get('warnings', []))
-                result['errors'].extend(hermes_metadata.get('errors', []))
-                result['success'] = hermes_metadata.get('success', False)
-            else:
-                result['success'] = False
-                result['errors'].append("HERMES returned unexpected result format.")
-    
         return result

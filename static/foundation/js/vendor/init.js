@@ -7,8 +7,10 @@ import { setupDownload } from "./download.js";
 import { setupUI, loadpage, initCaptcha } from "./ui.js";
 import { initializeDynamicDropdowns } from "./dropdown-utils.js";
 import { setMandatoryFieldsFromSchema } from "./schema-utils.js";
+import { initCookieConsent } from "./cookie-consent.js";
 // Entry point: called when DOM is fully loaded
 document.addEventListener("DOMContentLoaded", () => {
+  initCookieConsent();
   initCaptcha();
   loadpage();
   initializeTaggingFields();
