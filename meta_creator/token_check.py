@@ -1,6 +1,7 @@
 import requests
 import json
 import os
+from urllib.parse import urlparse
 
 def load_tokens_from_file(file_path="tokens.txt"):
     if not os.path.exists(file_path):
@@ -67,25 +68,108 @@ def check_github_token(repo_url, token):
         "message": f"Unexpected response from GitHub API (HTTP {response.status_code}).",
     }
 
+def get_gitlab_instance_type(repo_url):
+    """Returns 'gitlab_com', 'self_hosted', 'github', or 'unknown'"""
+    try:
+        domain = urlparse(repo_url).netloc
+        if "github.com" in domain:
+            return "github"
+        elif domain == "gitlab.com":
+            return "gitlab_com"
+        else:
+            return "self_hosted"
+    except Exception:
+        return "unknown"
+    
+# def check_gitlab_token(repo_url, token):
+#     """
+#     Validates a GitLab token and URL against the GitLab API.
+
+#     Returns:
+#         dict with keys 'status' and 'message'.
+#         status values: 'valid', 'invalid_token', 'expired_token', 'invalid_url', 'error'
+#     """
+#     try:
+#         project_path = repo_url.split("gitlab.com/")[1].rstrip("/").replace("/", "%2F")
+#         api_url = f"https://gitlab.com/api/v4/projects/{project_path}"
+#     except IndexError:
+#         return {"status": "invalid_url", "message": "Invalid GitLab repository URL format."}
+
+#     headers = {"PRIVATE-TOKEN": token} if token else {}
+
+#     try:
+#         response = requests.get(api_url, headers=headers)
+#         print(f"[GitLab API] {api_url} → HTTP {response.status_code}")
+#     except requests.RequestException as e:
+#         return {"status": "error", "message": f"Network error while reaching GitLab: {str(e)}"}
+
+#     if response.status_code == 200:
+#         return {"status": "valid", "message": ""}
+
+#     if response.status_code == 401:
+#         try:
+#             body = response.json()
+#             # GitLab returns {"error": "invalid_token", "error_description": "Token is expired..."}
+#             error_desc = body.get("error_description", "") or body.get("message", "")
+#             if "expired" in error_desc.lower():
+#                 return {
+#                     "status": "expired_token",
+#                     "message": "The GitLab token has expired. Please generate a new token and try again.",
+#                 }
+#         except Exception:
+#             pass
+#         return {
+#             "status": "invalid_token",
+#             "message": "The provided GitLab token is invalid. Please check your token and try again.",
+#         }
+
+#     if response.status_code == 404:
+#         return {
+#             "status": "invalid_url",
+#             "message": "GitLab repository not found. Please check the URL and try again.",
+#         }
+
+#     if response.status_code == 403:
+#         return {
+#             "status": "error",
+#             "message": "Access to the GitLab repository is forbidden.",
+#         }
+
+#     return {
+#         "status": "error",
+#         "message": f"Unexpected response from GitLab API (HTTP {response.status_code}).",
+#     }
 
 def check_gitlab_token(repo_url, token):
     """
     Validates a GitLab token and URL against the GitLab API.
+    Works for both gitlab.com and self-hosted GitLab instances.
 
     Returns:
         dict with keys 'status' and 'message'.
         status values: 'valid', 'invalid_token', 'expired_token', 'invalid_url', 'error'
     """
     try:
-        project_path = repo_url.split("gitlab.com/")[1].rstrip("/").replace("/", "%2F")
-        api_url = f"https://gitlab.com/api/v4/projects/{project_path}"
-    except IndexError:
+        parsed = urlparse(repo_url)
+        base_url = f"{parsed.scheme}://{parsed.netloc}"
+        domain = parsed.netloc
+        project_path = parsed.path.strip("/").replace("/", "%2F")
+        api_url = f"{base_url}/api/v4/projects/{project_path}"
+    except Exception:
         return {"status": "invalid_url", "message": "Invalid GitLab repository URL format."}
+
+    instance_type = get_gitlab_instance_type(repo_url)
 
     headers = {"PRIVATE-TOKEN": token} if token else {}
 
     try:
         response = requests.get(api_url, headers=headers)
+        print(f"[GitLab API] HTTP {response.status_code} → {api_url}")
+    except requests.exceptions.SSLError:
+        return {
+            "status": "error",
+            "message": f"SSL certificate error on {domain}. The server may use a self-signed certificate.",
+        }
     except requests.RequestException as e:
         return {"status": "error", "message": f"Network error while reaching GitLab: {str(e)}"}
 
@@ -95,38 +179,51 @@ def check_gitlab_token(repo_url, token):
     if response.status_code == 401:
         try:
             body = response.json()
-            # GitLab returns {"error": "invalid_token", "error_description": "Token is expired..."}
             error_desc = body.get("error_description", "") or body.get("message", "")
             if "expired" in error_desc.lower():
                 return {
                     "status": "expired_token",
-                    "message": "The GitLab token has expired. Please generate a new token and try again.",
+                    "message": (
+                        f"The token for {domain} has expired. Please generate a new token on {domain} and try again."
+                        if instance_type == "self_hosted"
+                        else "The GitLab token has expired. Please generate a new token and try again."
+                    ),
                 }
         except Exception:
             pass
         return {
             "status": "invalid_token",
-            "message": "The provided GitLab token is invalid. Please check your token and try again.",
+            "message": (
+                f"The token is invalid for {domain}. Make sure you are using a token created on {domain} specifically."
+                if instance_type == "self_hosted"
+                else "The provided GitLab token is invalid. Please check your token and try again."
+            ),
         }
 
     if response.status_code == 404:
         return {
             "status": "invalid_url",
-            "message": "GitLab repository not found. Please check the URL and try again.",
+            "message": (
+                f"Repository not found on {domain}. Please check the URL and try again."
+                if instance_type == "self_hosted"
+                else "GitLab repository not found. Please check the URL and try again."
+            ),
         }
 
     if response.status_code == 403:
         return {
             "status": "error",
-            "message": "Access to the GitLab repository is forbidden.",
+            "message": (
+                f"Access forbidden on {domain}. Your token may not have the required permissions."
+                if instance_type == "self_hosted"
+                else "Access to the GitLab repository is forbidden."
+            ),
         }
 
     return {
         "status": "error",
         "message": f"Unexpected response from GitLab API (HTTP {response.status_code}).",
     }
-
-
 def validate_token(repo_url, token):
     """
     Validates the given token (or a fallback from file) for the given repository URL.
