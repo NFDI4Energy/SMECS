@@ -224,6 +224,16 @@ def check_gitlab_token(repo_url, token):
         "status": "error",
         "message": f"Unexpected response from GitLab API (HTTP {response.status_code}).",
     }
+def get_self_hosted_unsupported_message(repo_url):
+    """Friendly message shown when a self-hosted GitLab repo passes token
+    validation but extraction (HERMES) doesn't support it yet."""
+    domain = urlparse(repo_url).netloc
+    return (
+        f"We are working on extracting from these types of repos and soon "
+        f"you can extract metadata from {domain}."
+    )
+
+
 def validate_token(repo_url, token):
     """
     Validates the given token (or a fallback from file) for the given repository URL.
@@ -233,7 +243,9 @@ def validate_token(repo_url, token):
             'token': str or None  — the valid token to use for subsequent requests,
             'error_type': str or None  — one of 'invalid_token', 'expired_token',
                                          'invalid_url', 'no_token', 'error',
+                                         'self_hosted_unsupported',
             'error_message': str or None  — human-readable error for the user,
+            'instance_type': str or None — 'github', 'gitlab_com', 'self_hosted', or None
         }
     """
     tokens_from_file = load_tokens_from_file()
@@ -275,31 +287,55 @@ def validate_token(repo_url, token):
         return {"token": None, "error_type": None, "error_message": None}
 
     else:  # GitLab
+        instance_type = get_gitlab_instance_type(repo_url)
+
         if token:
             result = check_gitlab_token(repo_url, token)
             if result["status"] == "valid":
-                return {"token": token, "error_type": None, "error_message": None}
+                if instance_type == "self_hosted":
+                    return {
+                        "token": token,
+                        "error_type": "self_hosted_unsupported",
+                        "error_message": get_self_hosted_unsupported_message(repo_url),
+                        "instance_type": instance_type,
+                    }
+                return {"token": token, "error_type": None, "error_message": None, "instance_type": instance_type}
 
             if result["status"] in ("invalid_token", "expired_token"):
                 fallback = tokens_from_file.get("gitlab_token")
                 if fallback and fallback != token:
                     fb_result = check_gitlab_token(repo_url, fallback)
                     if fb_result["status"] == "valid":
-                        return {"token": fallback, "error_type": None, "error_message": None}
-                return {"token": None, "error_type": result["status"], "error_message": result["message"]}
+                        if instance_type == "self_hosted":
+                            return {
+                                "token": fallback,
+                                "error_type": "self_hosted_unsupported",
+                                "error_message": get_self_hosted_unsupported_message(repo_url),
+                                "instance_type": instance_type,
+                            }
+                        return {"token": fallback, "error_type": None, "error_message": None, "instance_type": instance_type}
+                return {"token": None, "error_type": result["status"], "error_message": result["message"], "instance_type": instance_type}
 
-            return {"token": None, "error_type": result["status"], "error_message": result["message"]}
+            return {"token": None, "error_type": result["status"], "error_message": result["message"], "instance_type": instance_type}
 
         # No token provided — try fallback
         fallback = tokens_from_file.get("gitlab_token")
         if fallback:
             fb_result = check_gitlab_token(repo_url, fallback)
             if fb_result["status"] == "valid":
-                return {"token": fallback, "error_type": None, "error_message": None}
-            return {"token": None, "error_type": fb_result["status"], "error_message": fb_result["message"]}
+                if instance_type == "self_hosted":
+                    return {
+                        "token": fallback,
+                        "error_type": "self_hosted_unsupported",
+                        "error_message": get_self_hosted_unsupported_message(repo_url),
+                        "instance_type": instance_type,
+                    }
+                return {"token": fallback, "error_type": None, "error_message": None, "instance_type": instance_type}
+            return {"token": None, "error_type": fb_result["status"], "error_message": fb_result["message"], "instance_type": instance_type}
 
         return {
             "token": None,
             "error_type": "no_token",
             "error_message": "GitLab requires a valid personal access token. Please provide one and try again.",
+            "instance_type": instance_type,
         }
