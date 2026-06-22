@@ -1,10 +1,11 @@
-FROM python:3.8.0-slim
+FROM python:3.11-slim
 
 RUN apt-get update && \
     apt-get install -y \
         build-essential \
         make \
-        gcc
+        gcc \
+        git
 
 RUN addgroup --system django \
     && adduser --system --ingroup django django

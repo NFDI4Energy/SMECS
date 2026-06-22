@@ -1,8 +1,12 @@
-FROM python:3.9-slim
+FROM python:3.10-slim
 
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /smecs
+
+RUN apt-get update && \
+    apt-get install -y \
+        git
 
 COPY requirements.txt requirements.txt
 

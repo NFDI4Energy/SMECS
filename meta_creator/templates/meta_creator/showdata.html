@@ -417,6 +417,14 @@
 
                         <i id="copy-button" class="fa fa-copy" title="Copy the JSON"></i>
 
+                        {% if from_registry %}
+                        <button id="publishBtn" class="ExData" type="button"
+                                data-url="{{ oep_api }}/api/v1/software/{{ registry_id }}/"
+                                data-registry-id="{{ registry_id }}"
+                                data-oep-external="{{ oep_external_url }}">
+                          Publish to Registry
+                        </button>
+                        {% endif %}
                     </div>
                 </div>
                 <textarea name="txtareaJSON" id="metadata-json">{{ my_json_str }}</textarea>
@@ -425,4 +433,55 @@
 
     </div><!-- main div -->
 </div><!-- whole-extraction-page -->
+
+{% block scripts %}
+<script>
+$("#publishBtn").on("click", function () {
+    var publishUrl = $(this).data("url");
+    var jsonData = JSON.parse($("#metadata-json").val());
+    var btn = $(this);
+    btn.prop("disabled", true).text("Validating...");
+
+    var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    $.ajax({
+        url: "/meta_creator/api/validate-jsonld/",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ metadata: jsonData }),
+        headers: { "X-CSRFToken": csrfToken },
+        success: function (valResult) {
+            if (!valResult.is_valid) {
+                btn.text("Publish to Registry").prop("disabled", false);
+                alert("Validation failed: " + valResult.error);
+                return;
+            }
+            btn.text("Publishing...");
+            $.ajax({
+                url: publishUrl,
+                method: "POST",
+                data: JSON.stringify(jsonData),
+                contentType: "application/json",
+                headers: { "X-CSRFToken": csrfToken },
+                success: function (data) {
+                    var externalUrl = btn.data("oep-external") + "/nfdi-registry/software/" + encodeURIComponent(btn.data("registry-id")) + "/";
+                    window.location.href = externalUrl;
+                },
+                error: function (xhr) {
+                    var msg = "Publish failed.";
+                    try { msg = xhr.responseJSON.error || msg; } catch(e) {}
+                    alert(msg + " (HTTP " + xhr.status + ")");
+                    btn.text("Publish to Registry").prop("disabled", false);
+                }
+            });
+        },
+        error: function (xhr) {
+            btn.text("Publish to Registry").prop("disabled", false);
+            alert("Validation request failed (HTTP " + xhr.status + ")");
+        }
+    });
+});
+</script>
+{% endblock %}
+
 {% endblock content %}

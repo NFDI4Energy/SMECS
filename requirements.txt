@@ -5,6 +5,7 @@ environs==9.3.5
 marshmallow>=3.10,<3.20
 pyyaml>=6.0
 pyld==2.0.3
+requests>=2.28.0
 
 # Git integration libraries
 python-gitlab==3.13.0

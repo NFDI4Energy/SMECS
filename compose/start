@@ -6,4 +6,4 @@ set -o nounset
 
 
 python /app/manage.py collectstatic --noinput
-gunicorn meta_tool.wsgi --bind 0.0.0.0:80 --chdir=/app
+gunicorn meta_tool.wsgi --bind 0.0.0.0:8000 --chdir=/app

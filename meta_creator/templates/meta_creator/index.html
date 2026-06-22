@@ -52,6 +52,24 @@
   </form>
 </div>
 
+<hr style="border-top: 1px solid #ccc; margin: 2rem 0;">
+
+<div class="ImportFormContainer" id="importsection">
+  <h6 class="import-header">Or import existing metadata from a JSON-LD file</h6>
+  <form id="importForm" method="post" action="{% url 'meta_creator:import' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h6 class="custom-tooltip">
+      JSON-LD Metadata File
+      <span class="tooltip-text">
+        Upload a CodeMeta or ERSMeta JSON-LD file (.json) containing software metadata.
+      </span>
+      <i class="fa fa-info-circle" aria-hidden="true"></i>
+    </h6>
+    <input type="file" id="jsonld_file" name="jsonld_file" accept=".json,application/json">
+    <button id="importBtn" class="ImportData" type="submit" title="Import metadata from a JSON-LD file">Import Metadata</button>
+  </form>
+</div>
+
 <!-- Pop-up modal overlay for loading spinner -->
 <div class="overlay" id="overlay">
   <div class="loading-spinner">
