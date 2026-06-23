@@ -98,6 +98,12 @@
       "type": "string",
       "title": "dateCreated"
     },
+    "datePublished": {
+      "format": "date",
+      "description": "Date of first broadcast/publication.",
+      "type": "string",
+      "title": "datePublished"
+    },
     "dateModified": {
       "format": "date",
       "description": "The date on which the CreativeWork was most recently modified or when the item's entry was modified within a DataFeed.",
@@ -866,12 +872,6 @@
       "description": "Link to installation instructions/documentation.",
       "type": "string",
       "title": "buildInstruction"
-    },
-    "datePublished": {
-      "format": "date",
-      "description": "Date of first broadcast/publication.",
-      "type": "string",
-      "title": "datePublished"
     },
     "applicationSubCategory": {
       "description": "Subcategory of the application, e.g. 'Arcade Game'.",
