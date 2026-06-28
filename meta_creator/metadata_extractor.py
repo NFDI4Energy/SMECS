@@ -11,7 +11,7 @@ from .url_check_GitHub import validate_github_inputs
 from .github_metadata import get_github_metadata
 from .gitlab_metadata import get_gitlab_metadata
 from .hermes_process import run_hermes_commands
-from .token_check import validate_token, is_github_repo
+from .token_check import validate_token
 
 
 @csrf_exempt

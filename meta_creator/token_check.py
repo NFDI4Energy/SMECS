@@ -3,6 +3,7 @@ import json
 import os
 from urllib.parse import urlparse
 
+
 def load_tokens_from_file(file_path="tokens.txt"):
     if not os.path.exists(file_path):
         return {}
@@ -13,152 +14,159 @@ def load_tokens_from_file(file_path="tokens.txt"):
             return {}
 
 
-def is_github_repo(url):
-    return "github" in url
+def classify_url(url):
+    """
+    Parses a repository URL and identifies the forge type from the domain only.
+
+    Returns:
+        dict with keys:
+            'forge'    — 'github_com' | 'github_enterprise' | 'gitlab_com' |
+                         'gitlab_self_hosted' | 'unknown'
+            'domain'   — netloc string (lowercased)
+            'base_url' — scheme + netloc
+            'owner'    — first path segment or None
+            'repo'     — second path segment or None
+    """
+    try:
+        parsed = urlparse(url)
+        domain = parsed.netloc.lower()
+        path_parts = [p for p in parsed.path.strip("/").split("/") if p]
+        owner = path_parts[0] if len(path_parts) >= 1 else None
+        repo = path_parts[1] if len(path_parts) >= 2 else None
+        base = {
+            "domain": domain,
+            "base_url": f"{parsed.scheme}://{domain}",
+            "owner": owner,
+            "repo": repo,
+        }
+        if domain == "github.com":
+            return {**base, "forge": "github_com"}
+        elif "github" in domain:
+            # Covers github.company.com, code.org.github.com, etc.
+            return {**base, "forge": "github_enterprise"}
+        elif domain == "gitlab.com":
+            return {**base, "forge": "gitlab_com"}
+        elif "gitlab" in domain:
+            # Covers gitlab.org.org, git.org.de with gitlab in name, etc.
+            return {**base, "forge": "gitlab_self_hosted"}
+        else:
+            return {**base, "forge": "unknown"}
+    except Exception:
+        return {
+            "forge": "unknown",
+            "domain": None,
+            "base_url": None,
+            "owner": None,
+            "repo": None,
+        }
+
+
+def probe_is_gitlab(base_url):
+    """
+    Confirms an unknown host is a GitLab instance by probing /api/v4/version.
+    A 200 or 401 response means the GitLab API is present.
+    """
+    try:
+        r = requests.get(f"{base_url}/api/v4/version", timeout=5)
+        return r.status_code in (200, 401)
+    except requests.RequestException:
+        return False
+
+
+def _build_github_api_url(classified):
+    """
+    Constructs the correct GitHub REST API URL from a classified URL dict.
+    github.com  → https://api.github.com/repos/{owner}/{repo}
+    Enterprise  → https://{host}/api/v3/repos/{owner}/{repo}
+    Returns None if owner or repo could not be extracted.
+    """
+    owner, repo = classified["owner"], classified["repo"]
+    if not owner or not repo:
+        return None
+    if classified["forge"] == "github_com":
+        return f"https://api.github.com/repos/{owner}/{repo}"
+    return f"{classified['base_url']}/api/v3/repos/{owner}/{repo}"
 
 
 def check_github_token(repo_url, token):
     """
     Validates a GitHub token and URL against the GitHub API.
+    Supports github.com and GitHub Enterprise Server instances.
 
     Returns:
         dict with keys 'status' and 'message'.
         status values: 'valid', 'invalid_token', 'expired_token', 'invalid_url', 'error'
     """
-    api_url = repo_url.replace("github.com", "api.github.com/repos").rstrip("/")
+    classified = classify_url(repo_url)
+    domain = classified["domain"]
+    api_url = _build_github_api_url(classified)
+
+    if not api_url:
+        return {
+            "status": "invalid_url",
+            "message": "Invalid GitHub repository URL: could not extract owner and repository name.",
+        }
+
     headers = {"Authorization": f"token {token}"} if token else {}
 
     try:
         response = requests.get(api_url, headers=headers)
     except requests.RequestException as e:
-        return {"status": "error", "message": f"Network error while reaching GitHub: {str(e)}"}
+        return {"status": "error", "message": f"Network error while reaching {domain}: {str(e)}"}
 
     if response.status_code == 200:
         return {"status": "valid", "message": ""}
 
     if response.status_code == 401:
-        try:
-            msg = response.json().get("message", "")
-            if "expired" in msg.lower():
-                return {
-                    "status": "expired_token",
-                    "message": "The GitHub token has expired. Please generate a new token and try again.",
-                }
-        except Exception:
-            pass
+        # GitHub API returns "Bad credentials" for both invalid and expired tokens —
+        # it does not expose expiry state in the 401 body for classic PATs (ghp_...).
+        # We surface a message that covers both cases.
         return {
             "status": "invalid_token",
-            "message": "The provided GitHub token is invalid. Please check your token and try again.",
+            "message": f"The provided GitHub token is invalid or has expired for {domain}. Please check your token or generate a new one and try again.",
         }
 
     if response.status_code == 404:
         return {
             "status": "invalid_url",
-            "message": "GitHub repository not found. Please check the URL and try again.",
+            "message": f"GitHub repository not found on {domain}. Please check the URL and try again.",
         }
 
     if response.status_code == 403:
         return {
             "status": "error",
-            "message": "Access to GitHub is forbidden. You may have exceeded the API rate limit.",
+            "message": f"Access to {domain} is forbidden. You may have exceeded the API rate limit.",
         }
 
     return {
         "status": "error",
-        "message": f"Unexpected response from GitHub API (HTTP {response.status_code}).",
+        "message": f"Unexpected response from GitHub API on {domain} (HTTP {response.status_code}).",
     }
 
-def get_gitlab_instance_type(repo_url):
-    """Returns 'gitlab_com', 'self_hosted', 'github', or 'unknown'"""
-    try:
-        domain = urlparse(repo_url).netloc
-        if "github.com" in domain:
-            return "github"
-        elif domain == "gitlab.com":
-            return "gitlab_com"
-        else:
-            return "self_hosted"
-    except Exception:
-        return "unknown"
-    
-# def check_gitlab_token(repo_url, token):
-#     """
-#     Validates a GitLab token and URL against the GitLab API.
-
-#     Returns:
-#         dict with keys 'status' and 'message'.
-#         status values: 'valid', 'invalid_token', 'expired_token', 'invalid_url', 'error'
-#     """
-#     try:
-#         project_path = repo_url.split("gitlab.com/")[1].rstrip("/").replace("/", "%2F")
-#         api_url = f"https://gitlab.com/api/v4/projects/{project_path}"
-#     except IndexError:
-#         return {"status": "invalid_url", "message": "Invalid GitLab repository URL format."}
-
-#     headers = {"PRIVATE-TOKEN": token} if token else {}
-
-#     try:
-#         response = requests.get(api_url, headers=headers)
-#         print(f"[GitLab API] {api_url} → HTTP {response.status_code}")
-#     except requests.RequestException as e:
-#         return {"status": "error", "message": f"Network error while reaching GitLab: {str(e)}"}
-
-#     if response.status_code == 200:
-#         return {"status": "valid", "message": ""}
-
-#     if response.status_code == 401:
-#         try:
-#             body = response.json()
-#             # GitLab returns {"error": "invalid_token", "error_description": "Token is expired..."}
-#             error_desc = body.get("error_description", "") or body.get("message", "")
-#             if "expired" in error_desc.lower():
-#                 return {
-#                     "status": "expired_token",
-#                     "message": "The GitLab token has expired. Please generate a new token and try again.",
-#                 }
-#         except Exception:
-#             pass
-#         return {
-#             "status": "invalid_token",
-#             "message": "The provided GitLab token is invalid. Please check your token and try again.",
-#         }
-
-#     if response.status_code == 404:
-#         return {
-#             "status": "invalid_url",
-#             "message": "GitLab repository not found. Please check the URL and try again.",
-#         }
-
-#     if response.status_code == 403:
-#         return {
-#             "status": "error",
-#             "message": "Access to the GitLab repository is forbidden.",
-#         }
-
-#     return {
-#         "status": "error",
-#         "message": f"Unexpected response from GitLab API (HTTP {response.status_code}).",
-#     }
 
 def check_gitlab_token(repo_url, token):
     """
     Validates a GitLab token and URL against the GitLab API.
-    Works for both gitlab.com and self-hosted GitLab instances.
+    Works for gitlab.com and self-hosted GitLab instances.
 
     Returns:
         dict with keys 'status' and 'message'.
         status values: 'valid', 'invalid_token', 'expired_token', 'invalid_url', 'error'
     """
+    classified = classify_url(repo_url)
+    domain = classified["domain"]
+    base_url = classified["base_url"]
+    is_self_hosted = classified["forge"] == "gitlab_self_hosted"
+
     try:
         parsed = urlparse(repo_url)
-        base_url = f"{parsed.scheme}://{parsed.netloc}"
-        domain = parsed.netloc
-        project_path = parsed.path.strip("/").replace("/", "%2F")
+        raw_path = parsed.path.strip("/")
+        if not raw_path:
+            return {"status": "invalid_url", "message": "Invalid GitLab repository URL: no path found."}
+        project_path = raw_path.replace("/", "%2F")
         api_url = f"{base_url}/api/v4/projects/{project_path}"
     except Exception:
         return {"status": "invalid_url", "message": "Invalid GitLab repository URL format."}
-
-    instance_type = get_gitlab_instance_type(repo_url)
 
     headers = {"PRIVATE-TOKEN": token} if token else {}
 
@@ -171,7 +179,7 @@ def check_gitlab_token(repo_url, token):
             "message": f"SSL certificate error on {domain}. The server may use a self-signed certificate.",
         }
     except requests.RequestException as e:
-        return {"status": "error", "message": f"Network error while reaching GitLab: {str(e)}"}
+        return {"status": "error", "message": f"Network error while reaching {domain}: {str(e)}"}
 
     if response.status_code == 200:
         return {"status": "valid", "message": ""}
@@ -185,7 +193,7 @@ def check_gitlab_token(repo_url, token):
                     "status": "expired_token",
                     "message": (
                         f"The token for {domain} has expired. Please generate a new token on {domain} and try again."
-                        if instance_type == "self_hosted"
+                        if is_self_hosted
                         else "The GitLab token has expired. Please generate a new token and try again."
                     ),
                 }
@@ -194,8 +202,8 @@ def check_gitlab_token(repo_url, token):
         return {
             "status": "invalid_token",
             "message": (
-                f"The token is invalid for {domain}. Make sure you are using a token created on {domain} specifically."
-                if instance_type == "self_hosted"
+                f"The token is invalid for {domain}. Make sure you are using a token created on {domain}."
+                if is_self_hosted
                 else "The provided GitLab token is invalid. Please check your token and try again."
             ),
         }
@@ -205,7 +213,7 @@ def check_gitlab_token(repo_url, token):
             "status": "invalid_url",
             "message": (
                 f"Repository not found on {domain}. Please check the URL and try again."
-                if instance_type == "self_hosted"
+                if is_self_hosted
                 else "GitLab repository not found. Please check the URL and try again."
             ),
         }
@@ -215,21 +223,20 @@ def check_gitlab_token(repo_url, token):
             "status": "error",
             "message": (
                 f"Access forbidden on {domain}. Your token may not have the required permissions."
-                if instance_type == "self_hosted"
+                if is_self_hosted
                 else "Access to the GitLab repository is forbidden."
             ),
         }
 
     return {
         "status": "error",
-        "message": f"Unexpected response from GitLab API (HTTP {response.status_code}).",
+        "message": f"Unexpected response from GitLab API on {domain} (HTTP {response.status_code}).",
     }
-def get_self_hosted_unsupported_message(repo_url):
-    """Friendly message shown when a self-hosted GitLab repo passes token
-    validation but extraction (HERMES) doesn't support it yet."""
-    domain = urlparse(repo_url).netloc
+
+
+def _self_hosted_unsupported_message(domain):
     return (
-        f"We are working on extracting from these types of repos and soon "
+        f"We are working on extracting from self-hosted repositories and soon "
         f"you can extract metadata from {domain}."
     )
 
@@ -240,102 +247,118 @@ def validate_token(repo_url, token):
 
     Returns:
         dict: {
-            'token': str or None  — the valid token to use for subsequent requests,
-            'error_type': str or None  — one of 'invalid_token', 'expired_token',
-                                         'invalid_url', 'no_token', 'error',
-                                         'self_hosted_unsupported',
-            'error_message': str or None  — human-readable error for the user,
-            'instance_type': str or None — 'github', 'gitlab_com', 'self_hosted', or None
+            'token'        : str or None — the valid token to use for subsequent requests,
+            'error_type'   : str or None — one of 'invalid_token', 'expired_token',
+                                           'invalid_url', 'no_token', 'error',
+                                           'self_hosted_unsupported', 'unsupported_forge',
+            'error_message': str or None — human-readable error for the user,
+            'forge'        : str         — 'github_com', 'github_enterprise',
+                                           'gitlab_com', 'gitlab_self_hosted', or 'unknown'
         }
     """
+    classified = classify_url(repo_url)
+    forge = classified["forge"]
+    domain = classified["domain"]
     tokens_from_file = load_tokens_from_file()
 
-    if is_github_repo(repo_url):
+    def _ok(tok):
+        return {"token": tok, "error_type": None, "error_message": None, "forge": forge}
+
+    def _err(error_type, message):
+        return {"token": None, "error_type": error_type, "error_message": message, "forge": forge}
+
+    # For unknown domains, probe the host before giving up — it may be a
+    # self-hosted GitLab instance without "gitlab" in the domain name.
+    if forge == "unknown":
+        if classified["base_url"] and probe_is_gitlab(classified["base_url"]):
+            classified["forge"] = "gitlab_self_hosted"
+            forge = "gitlab_self_hosted"
+        else:
+            return _err(
+                "unsupported_forge",
+                f"Unsupported repository host: {domain}. Only GitHub and GitLab instances are currently supported.",
+            )
+
+    # --- GitHub (github.com + GitHub Enterprise Server) ---
+    if forge in ("github_com", "github_enterprise"):
         if token:
             result = check_github_token(repo_url, token)
             if result["status"] == "valid":
-                return {"token": token, "error_type": None, "error_message": None}
+                return _ok(token)
 
-            # For a token-specific error, try the fallback before surfacing to the user
             if result["status"] in ("invalid_token", "expired_token"):
                 fallback = tokens_from_file.get("github_token")
                 if fallback and fallback != token:
                     fb_result = check_github_token(repo_url, fallback)
                     if fb_result["status"] == "valid":
-                        return {"token": fallback, "error_type": None, "error_message": None}
-                # Surface the original user-token error
-                return {"token": None, "error_type": result["status"], "error_message": result["message"]}
+                        return _ok(fallback)
+                # Both tokens failed — surface the user token's error (more actionable)
+                return _err(result["status"], result["message"])
 
-            # URL invalid or other error — return immediately
-            return {"token": None, "error_type": result["status"], "error_message": result["message"]}
+            # URL invalid or unexpected error
+            return _err(result["status"], result["message"])
 
-        # No token provided — try fallback, then proceed without auth (public repos)
+        # No token — try file fallback, then anonymous (public repos)
         fallback = tokens_from_file.get("github_token")
         if fallback:
             fb_result = check_github_token(repo_url, fallback)
             if fb_result["status"] == "valid":
-                return {"token": fallback, "error_type": None, "error_message": None}
+                return _ok(fallback)
             if fb_result["status"] == "invalid_url":
-                return {"token": None, "error_type": "invalid_url", "error_message": fb_result["message"]}
+                return _err("invalid_url", fb_result["message"])
 
-        # No token at all — check URL validity anonymously
         url_check = check_github_token(repo_url, None)
         if url_check["status"] == "invalid_url":
-            return {"token": None, "error_type": "invalid_url", "error_message": url_check["message"]}
+            return _err("invalid_url", url_check["message"])
 
-        # Public repo, proceed without a token
-        return {"token": None, "error_type": None, "error_message": None}
+        return _ok(None)  # public repo, no token needed
 
-    else:  # GitLab
-        instance_type = get_gitlab_instance_type(repo_url)
+    # --- GitLab (gitlab.com + self-hosted) ---
+    if token:
+        result = check_gitlab_token(repo_url, token)
+        if result["status"] == "valid":
+            if forge == "gitlab_self_hosted":
+                return {
+                    "token": token,
+                    "error_type": "self_hosted_unsupported",
+                    "error_message": _self_hosted_unsupported_message(domain),
+                    "forge": forge,
+                }
+            return _ok(token)
 
-        if token:
-            result = check_gitlab_token(repo_url, token)
-            if result["status"] == "valid":
-                if instance_type == "self_hosted":
-                    return {
-                        "token": token,
-                        "error_type": "self_hosted_unsupported",
-                        "error_message": get_self_hosted_unsupported_message(repo_url),
-                        "instance_type": instance_type,
-                    }
-                return {"token": token, "error_type": None, "error_message": None, "instance_type": instance_type}
+        if result["status"] in ("invalid_token", "expired_token"):
+            fallback = tokens_from_file.get("gitlab_token")
+            if fallback and fallback != token:
+                fb_result = check_gitlab_token(repo_url, fallback)
+                if fb_result["status"] == "valid":
+                    if forge == "gitlab_self_hosted":
+                        return {
+                            "token": fallback,
+                            "error_type": "self_hosted_unsupported",
+                            "error_message": _self_hosted_unsupported_message(domain),
+                            "forge": forge,
+                        }
+                    return _ok(fallback)
+            return _err(result["status"], result["message"])
 
-            if result["status"] in ("invalid_token", "expired_token"):
-                fallback = tokens_from_file.get("gitlab_token")
-                if fallback and fallback != token:
-                    fb_result = check_gitlab_token(repo_url, fallback)
-                    if fb_result["status"] == "valid":
-                        if instance_type == "self_hosted":
-                            return {
-                                "token": fallback,
-                                "error_type": "self_hosted_unsupported",
-                                "error_message": get_self_hosted_unsupported_message(repo_url),
-                                "instance_type": instance_type,
-                            }
-                        return {"token": fallback, "error_type": None, "error_message": None, "instance_type": instance_type}
-                return {"token": None, "error_type": result["status"], "error_message": result["message"], "instance_type": instance_type}
+        return _err(result["status"], result["message"])
 
-            return {"token": None, "error_type": result["status"], "error_message": result["message"], "instance_type": instance_type}
+    # No token — try file fallback
+    fallback = tokens_from_file.get("gitlab_token")
+    if fallback:
+        fb_result = check_gitlab_token(repo_url, fallback)
+        if fb_result["status"] == "valid":
+            if forge == "gitlab_self_hosted":
+                return {
+                    "token": fallback,
+                    "error_type": "self_hosted_unsupported",
+                    "error_message": _self_hosted_unsupported_message(domain),
+                    "forge": forge,
+                }
+            return _ok(fallback)
+        return _err(fb_result["status"], fb_result["message"])
 
-        # No token provided — try fallback
-        fallback = tokens_from_file.get("gitlab_token")
-        if fallback:
-            fb_result = check_gitlab_token(repo_url, fallback)
-            if fb_result["status"] == "valid":
-                if instance_type == "self_hosted":
-                    return {
-                        "token": fallback,
-                        "error_type": "self_hosted_unsupported",
-                        "error_message": get_self_hosted_unsupported_message(repo_url),
-                        "instance_type": instance_type,
-                    }
-                return {"token": fallback, "error_type": None, "error_message": None, "instance_type": instance_type}
-            return {"token": None, "error_type": fb_result["status"], "error_message": fb_result["message"], "instance_type": instance_type}
-
-        return {
-            "token": None,
-            "error_type": "no_token",
-            "error_message": "GitLab requires a valid personal access token. Please provide one and try again.",
-            "instance_type": instance_type,
-        }
+    return _err(
+        "no_token",
+        "GitLab requires a valid personal access token. Please provide one and try again.",
+    )
