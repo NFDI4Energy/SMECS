@@ -2,8 +2,13 @@
 
 /******************** General ********************/
 body {
-  overflow: hidden;
+  overflow-x: hidden;
   caret-color: transparent;
+}
+
+/* Showdata page locks vertical scroll so internal panels scroll instead */
+body.showdata-body {
+  overflow: hidden;
 }
 input,
 textarea {
@@ -98,7 +103,8 @@ textarea {
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  margin-top: 9rem;
+  /* Scales from 3rem on short laptop screens up to 9rem on tall monitors */
+  margin-top: clamp(3rem, 8vh, 9rem);
 }
 
 .mainHeader {
@@ -331,8 +337,8 @@ span.error_message {
 /******************** Style for showdata.html ********************/
 /* Styles for the entered data section */
 .whole-extraction-page {
-  margin-top: 5rem;
-  height: 98%;
+  margin-top: 1rem;
+  /* height: 98%; */
 }
 #more-info {
   font-size: 14px;
@@ -568,7 +574,7 @@ select {
 #metadata-json {
   /* overflow: scroll; */
   width: 100%;
-  height: 93%;
+  height: 90%;
   padding: 8px;
   border-radius: 4px;
   margin-bottom: 2px;
@@ -607,7 +613,8 @@ button#new-url {
 .main-container {
   display: flex;
   transition: all 0.3s ease;
-  height: 90%;
+  /* Clamp so the panel never shrinks below 500px or expands beyond 95vh */
+  height: clamp(500px, 90vh, 95vh);
 }
 
 /* Error page / connection time out */
@@ -999,9 +1006,8 @@ div.input-container input::placeholder {
   color: #333;
   display: flex;
   flex-direction: column;
-  /* height: 100vh; */
-  /* padding-bottom: 100px; */
-  margin-top: 9rem;
+  /* Scales from 3rem on short laptop screens up to 9rem on tall monitors */
+  margin-top: clamp(3rem, 8vh, 9rem);
 }
 
 .info-content a {
@@ -1021,7 +1027,8 @@ div.input-container input::placeholder {
 
 .legals-page {
   overflow-y: auto;
-  max-height: calc(100vh - 9rem);
+  /* 100vh minus navbar (~3.5rem) minus page margin-top (matches clamp above, worst-case 9rem) */
+  max-height: calc(100vh - clamp(3rem, 8vh, 9rem) - 3.5rem);
 }
 
 .legals-hidden {
@@ -1620,14 +1627,19 @@ input:checked + .slider:before {
 /********************* Responsiveness  **********************/
 @media (min-width: 300px) and (max-width: 990px) {
   .form-container {
-    height: 50%;
+    height: auto;
+    min-height: 50vh;
   }
   .main-container {
-    /* display: list-item; */
     flex-wrap: wrap;
+    height: auto;
   }
   .metadata-form-display {
     overflow: scroll;
+    max-height: 40vh;
+  }
+  .InitialFormContainer {
+    margin-top: 2rem;
   }
 }
 
@@ -1721,7 +1733,89 @@ input:checked + .slider:before {
 
 /* ******************************************** */
 
-@media (min-width: 2320px) AND (max-width: 2560px) {
+/* Large desktop: 1701px–2319px (covers 1920×1080, QHD 2560×1440, etc.) */
+@media (min-width: 1701px) and (max-width: 2319px) {
+  .metadata-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .left {
+    flex-grow: 1;
+    justify-content: flex-start;
+  }
+
+  .right {
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
+    flex-grow: 2;
+  }
+
+  .fa-copy:before,
+  .fa-download:before {
+    font-size: 90%;
+  }
+
+  #metadata-json {
+    font-size: 85%;
+  }
+
+  #metadata-form-display h4 {
+    font-size: medium;
+  }
+
+  .tab-links_ext a {
+    font-size: 60%;
+  }
+
+  .navigation-buttons .backwardBtn,
+  .navigation-buttons .forwardBtn {
+    width: 2.5em;
+    height: 2.5em;
+  }
+
+  button.contributorBTN,
+  button.authorBTN {
+    font-size: 70%;
+  }
+
+  .contributors-table,
+  .authors-table {
+    font-size: 85%;
+  }
+
+  .color-code-container {
+    padding: 0.5% 3% 0%;
+  }
+
+  .form-group fieldset.fieldset_content,
+  .form-group fieldset.copyrightHolder {
+    width: 45%;
+    margin-right: 4%;
+    margin-top: 4%;
+    margin-bottom: 7%;
+  }
+
+  .custom-tooltip .tooltip-text {
+    width: 28rem;
+    left: 100%;
+  }
+
+  .main-container {
+    height: clamp(550px, 91vh, 95vh);
+  }
+
+  .scrollable {
+    height: clamp(350px, 50vh, 600px);
+  }
+}
+
+/* ******************************************** */
+
+@media (min-width: 2320px) {
   button#new-url-extraction-page {
     font-size: 86%;
   }
@@ -1731,7 +1825,8 @@ input:checked + .slider:before {
   }
 
   .color-code-container {
-    height: 12%;
+    height: auto;
+    padding: 0.5% 3%;
   }
 
   .contributors-table,
@@ -1829,11 +1924,17 @@ input:checked + .slider:before {
   }
 
   .InitialFormContainer {
-    max-width: 45%;
-    max-height: 77%;
-    overflow: hidden;
-    left: 15%;
+    max-width: 600px;
     font-size: 89%;
+    /* On tall ultrawide screens the clamp() gives 9rem, which is ideal */
+  }
+
+  .main-container {
+    height: clamp(600px, 92vh, 96vh);
+  }
+
+  .scrollable {
+    height: clamp(400px, 55vh, 700px);
   }
 
   button.ExData {
