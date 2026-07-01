@@ -183,6 +183,18 @@
 
                     </div>
 
+                    <!-- Confirmation popup before leaving the Extraction page -->
+                    <div id="leavePagePopup" class="popup">
+                        <div class="popup-content leave-page-content">
+                            <h1>Unsaved progress</h1>
+                            <p>You have not saved your extracted metadata. If you leave this page, your progress will be lost. Would you like to continue?</p>
+                            <div class="popup-actions">
+                                <button type="button" id="leavePageCancel" class="btn btn-stay-page">Stay on this page</button>
+                                <button type="button" id="leavePageConfirm" class="btn btn-leave-page">Leave page</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Tabs -->
                     <form class="data-form3 col-12" id="metadata-form">
                         {% csrf_token %}

@@ -1567,6 +1567,46 @@ input:checked + .slider:before {
   cursor: pointer;
 }
 
+.popup-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.leave-page-content {
+  width: 30%;
+  margin: 18% auto;
+}
+
+.leave-page-content h1 {
+  font-size: 1.5rem;
+}
+
+.leave-page-content p {
+  font-size: 1rem;
+}
+.popup-actions button.btn-leave-page {
+  background-color: #055f82;
+  color: white;
+  border: 1px solid #055f82;
+}
+
+.popup-actions button.btn-leave-page:hover {
+  background-color: #4ba0af;
+  border-color: #4ba0af;
+}
+
+.popup-actions button.btn-stay-page {
+  background-color: white;
+  color: #055f82;
+  border: 1px solid #055f82;
+}
+
+.popup-actions button.btn-stay-page:hover {
+  background-color: #f0f0f0;
+}
+
 /************************************Color-code-info**************************************/
 /* Create info strings to explain color and other codes */
 .color-code-container {
