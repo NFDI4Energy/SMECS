@@ -151,6 +151,39 @@ export function setupUI() {
   //highlightsURLs
   highlightEditableUrls(urlInputs);
   initAutoCloseCollapses();
+
+  // Custom confirmation alert before leaving the Extraction page
+  const isExtractionPage = document.querySelector('.tab-links_ext');
+  if (isExtractionPage) {
+    const leavePopup = document.getElementById('leavePagePopup');
+    const confirmBtn = document.getElementById('leavePageConfirm');
+    const cancelBtn = document.getElementById('leavePageCancel');
+    let pendingDestination = null;
+
+    const navLinks = document.querySelectorAll('#main-nav .nav-link, #new-url-extraction-page');
+    navLinks.forEach((link) => {
+      link.addEventListener('click', function (event) {
+        event.preventDefault();
+        pendingDestination = this.getAttribute('href') || '/';
+        leavePopup.style.display = 'block';
+      });
+    });
+
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', function () {
+        if (pendingDestination) {
+          window.location.href = pendingDestination;
+        }
+      });
+    }
+
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', function () {
+        leavePopup.style.display = 'none';
+        pendingDestination = null;
+      });
+    }
+  }
 }
 
 // pop-up message for Contributor and Author tabs

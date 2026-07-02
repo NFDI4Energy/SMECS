@@ -7,7 +7,7 @@ __________________________________________________________
 |
 | 📄 For more details, see our `Paper <http://dx.doi.org/10.14279/eceasst.v85.2708>`_.
 |
-| **Authors:** Stephan Ferenz, Aida Jafarbigloo
+| **Authors:** Stephan Ferenz `@sferenz <https://github.com/sferenz>`_, Aida Jafarbigloo `@AidaJafarbigloo <https://github.com/Aidajafarbigloo>`_
 |
 Phases in SMECS
 __________________________________________________________
@@ -227,7 +227,9 @@ __________________________________________________________
 |
 Acknowledgements
 __________________________________________________________
-We would like to thank `meta_tool <https://github.com/rl-institut/meta_tool>`_ for providing the foundational framework upon which this project is built.
+| The authors would like to thank the German Federal Government, the German State Governments, and the Joint Science Conference (GWK) for their funding and support as part of the `NFDI4Energy consortium <https://nfdi4energy.uol.de/>`_ within the German National Research Data Infrastructure (NFDI, www.nfdi.de). This work has been partially funded by the German Research Foundation (DFG) with grants `No. 561044496 <https://gepris.dfg.de/project/561044496>`_ corresponding to the `ConnOSS project <https://connoss-project.github.io/>`_ and `No. 501865131 <https://gepris.dfg.de/project/501865131>`_ corresponding to `NFDI4Energy <https://nfdi4energy.uol.de/>`_.
+
+| The authors also thank the `meta_tool <https://github.com/rl-institut/meta_tool>`_ for providing the foundational framework upon which this project is built.
 
 
 .. |badge_license| image:: https://img.shields.io/github/license/rl-institut/meta_tool
@@ -254,4 +256,3 @@ We would like to thank `meta_tool <https://github.com/rl-institut/meta_tool>`_ f
 
 .. |badge_pr_closes| image:: https://img.shields.io/github/issues-pr-closed-raw/rl-institut/meta_tool
     :alt: closes issues
-    
