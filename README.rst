@@ -227,8 +227,7 @@ __________________________________________________________
 |
 Acknowledgements
 __________________________________________________________
-| The authors would like to thank the German Federal Government, the German State Governments, and the Joint Science Conference (GWK) for their funding and support as part of the `NFDI4Energy consortium <https://nfdi4energy.uol.de/>`_ within the German National Research Data Infrastructure (NFDI, www.nfdi.de). This work has been partially funded by the German Research Foundation (DFG) with grants
-`No. 561044496 <https://gepris.dfg.de/project/561044496>`_ corresponding to the `ConnOSS project <https://connoss-project.github.io/>`_ and `No. 501865131 <https://gepris.dfg.de/project/501865131>`_ corresponding to `NFDI4Energy <https://nfdi4energy.uol.de/>`_.
+| The authors would like to thank the German Federal Government, the German State Governments, and the Joint Science Conference (GWK) for their funding and support as part of the `NFDI4Energy consortium <https://nfdi4energy.uol.de/>`_ within the German National Research Data Infrastructure (NFDI, www.nfdi.de). This work has been partially funded by the German Research Foundation (DFG) with grants `No. 561044496 <https://gepris.dfg.de/project/561044496>`_ corresponding to the `ConnOSS project <https://connoss-project.github.io/>`_ and `No. 501865131 <https://gepris.dfg.de/project/501865131>`_ corresponding to `NFDI4Energy <https://nfdi4energy.uol.de/>`_.
 
 | The authors also thank the `meta_tool <https://github.com/rl-institut/meta_tool>`_ for providing the foundational framework upon which this project is built.
 
