@@ -93,6 +93,15 @@ textarea {
   color: white;
 }
 
+/********************* SMECS Footer **********************/
+footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
 /******************** Initial Form of the software metadata Extractor (index.html) ********************/
 .InitialFormContainer {
   padding: 20px;
