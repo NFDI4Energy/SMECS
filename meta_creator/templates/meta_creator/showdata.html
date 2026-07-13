@@ -195,6 +195,19 @@
                         </div>
                     </div>
 
+                    <!-- popup for Download validation error  -->
+                    <div id="downloadErrorPopup" class="popup">
+                        <div class="popup-content leave-page-content">
+                            <h1>Download unavailable</h1>
+                            <p>To proceed with the download, please ensure that all required fields have been completed.</p>
+                            <p>The following fields are missing:</p>
+                            <div class="download-error-fields" id="downloadErrorFields"></div>
+                            <div class="popup-actions">
+                                <button type="button" id="downloadErrorClose" class="btn btn-leave-page">Understood</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Tabs -->
                     <form class="data-form3 col-12" id="metadata-form">
                         {% csrf_token %}
