@@ -7,6 +7,34 @@ Formats and downloads the JSON as a codemeta.json file
 
 import { keysMatchRecursive } from "./schema-utils.js";
 
+function showDownloadError(fields, schema) {
+  const popup = document.getElementById('downloadErrorPopup');
+  const fieldsDiv = document.getElementById('downloadErrorFields');
+  const closeBtn = document.getElementById('downloadErrorClose');
+  if (!popup) return;
+  if (fieldsDiv) {
+    if (fields && fields.length > 0) {
+      const readable = fields.map(f => {
+        const original = schema
+          ? (Object.keys(schema.properties || {}).find(k => k.toLowerCase() === f) || f)
+          : f;
+        return original.replace(/([A-Z])/g, ' $1').trim()
+          .replace(/^./, c => c.toUpperCase());
+      }).join(', ');
+      fieldsDiv.textContent = readable;
+      fieldsDiv.style.display = 'block';
+    } else {
+      fieldsDiv.style.display = 'none';
+    }
+  }
+  popup.style.display = 'block';
+  if (closeBtn) {
+    closeBtn.onclick = function () {
+      popup.style.display = 'none';
+    };
+  }
+}
+
 const JsonSchema = "/static/schema/codemeta_schema.json";
 const metadataJson = document.getElementById("metadata-json");
 const downloadButtons = [
@@ -67,7 +95,7 @@ function downloadFile(event) {
               "\n"
             )}`;
           }
-          alert(errorMessage);
+          showDownloadError(keyCheck.missingKeys, schema);
         } else {
           jsonPrettier(repoName, metadata);
         }
@@ -76,13 +104,7 @@ function downloadFile(event) {
         console.error("Error loading schema:", error);
       });
   } catch (e) {
-    let errorMessage = `\n\nCurrent Metadata:\n${JSON.stringify(
-      metadata,
-      null,
-      2
-    )}`;
-    alert(errorMessage);
-    alert("Invalid JSON. Please check your syntax:metadata");
+    showDownloadError([]);
     console.error("JSON Parsing Error:", e);
   }
 }
