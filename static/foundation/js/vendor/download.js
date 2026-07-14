@@ -7,17 +7,20 @@ Formats and downloads the JSON as a codemeta.json file
 
 import { keysMatchRecursive } from "./schema-utils.js";
 
-function showDownloadError(fields) {
+function showDownloadError(fields, schema) {
   const popup = document.getElementById('downloadErrorPopup');
   const fieldsDiv = document.getElementById('downloadErrorFields');
   const closeBtn = document.getElementById('downloadErrorClose');
   if (!popup) return;
   if (fieldsDiv) {
     if (fields && fields.length > 0) {
-      const readable = fields.map(f =>
-        f.replace(/([A-Z])/g, ' $1').trim()
-          .replace(/^./, c => c.toUpperCase())
-      ).join(', ');
+      const readable = fields.map(f => {
+        const original = schema
+          ? (Object.keys(schema.properties || {}).find(k => k.toLowerCase() === f) || f)
+          : f;
+        return original.replace(/([A-Z])/g, ' $1').trim()
+          .replace(/^./, c => c.toUpperCase());
+      }).join(', ');
       fieldsDiv.textContent = readable;
       fieldsDiv.style.display = 'block';
     } else {
@@ -92,7 +95,7 @@ function downloadFile(event) {
               "\n"
             )}`;
           }
-          showDownloadError(keyCheck.missingKeys);
+          showDownloadError(keyCheck.missingKeys, schema);
         } else {
           jsonPrettier(repoName, metadata);
         }
