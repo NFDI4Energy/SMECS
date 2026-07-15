@@ -393,6 +393,32 @@ export function loadpage() {
   if (form && overlay) {
     lodder("form1", "overlay");
   }
+
+  const tokenInput = document.getElementById("token_input");
+  const tokenError = document.getElementById("token-error");
+  const captchaInput = document.getElementById("id_captcha_1");
+
+  if (captchaInput && tokenInput && tokenError) {
+    captchaInput.addEventListener("focus", function () {
+      if (tokenInput.value.trim() === "") {
+        tokenError.style.display = "inline-block";
+        tokenError.style.opacity = "1";
+        setTimeout(function () {
+          tokenError.style.transition = "opacity 0.5s ease";
+          tokenError.style.opacity = "0";
+          setTimeout(function () {
+            tokenError.style.display = "none";
+          }, 500);
+        }, 2000);
+      }
+    });
+
+    tokenInput.addEventListener("input", function () {
+      if (tokenInput.value.trim() !== "") {
+        tokenError.style.display = "none";
+      }
+    });
+  }
 }
 function initAutoCloseCollapses(collapseSelector = ".collapsible-content") {
   document.querySelectorAll('[data-bs-toggle="collapse"]').forEach((button) => {

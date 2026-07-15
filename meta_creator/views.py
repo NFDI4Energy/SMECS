@@ -75,7 +75,7 @@ def index(request):
                 else:
                     error_messages = ['Error in extraction:', errors]
                 return render(request, 'meta_creator/error.html', {
-                    'error_message': "; ".join(error_messages)
+                    'error_message': " ".join(error_messages)
                 })
 
             extracted_metadata, description_metadata, type_metadata, joined_metadata = result['metadata']
