@@ -62,7 +62,11 @@ def index(request):
 
         if not captcha_form.is_valid():
           messages.error(request, "Invalid Captcha. Please try again.")
-          return redirect('meta_creator:index')
+          return render(request, 'meta_creator/index.html', {
+        "captcha_form": CaptchaForm(),  # fresh, unbound → generates a NEW captcha challenge
+        "repo_url": request.POST.get("repo_url", ""),
+        "personal_token_key": request.POST.get("personal_token_key", ""),
+    })
 
         # Captcha is valid, proceed with extraction
         try:
