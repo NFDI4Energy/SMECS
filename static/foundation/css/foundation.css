@@ -616,7 +616,7 @@ button#new-url {
 .main-container {
   display: flex;
   transition: all 0.3s ease;
-  height: 90%;
+  height: clamp(400px, calc(100dvh - 9rem), 900px);
 }
 
 /* Error page / connection time out */
