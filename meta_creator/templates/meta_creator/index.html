@@ -79,7 +79,7 @@
           id="url_input"
           name="repo_url"
           placeholder="e.g.: https://github.com/NFDI4Energy/SMECS"
-          value="" />
+          value="{{ repo_url }}" />
         {% if error_message_url %}
         <span id="url_error" class="error_message"
           >{{ error_message_url }}</span
@@ -119,7 +119,7 @@
           id="token_input"
           name="personal_token_key"
           placeholder="Enter your personal token key from GitHub or GitLab"
-          value="" />
+          value="{{ personal_token_key }}" />
         {% if error_message_token %}
         <span id="token_error" class="error_message"
           >{{ error_message_token }}</span
