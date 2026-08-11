@@ -21,10 +21,52 @@
       </p>
     </div>
     <div class="col-12">
-      <form id="form1" method="post" action="{% url 'meta_creator:getdata' %}">
+      <form id="form1" method="post" action="{% url 'meta_creator:getdata' %}" enctype="multipart/form-data">
         {% csrf_token %}
-        <h6>
-          Project URL
+
+        <h6 class="input-source-label">
+          Input Source
+          <span class="custom-tooltip">
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+            <span class="tooltip-text">
+            Provide a repository to extract metadata from, or upload a metadata file (e.g. CodeMeta JSON) you already have.
+            </span>
+          </span>
+        </h6>
+        <div class="input-source-row">
+          <label class="input-source-option">
+            <input
+              type="radio"
+              id="input-source-url"
+              name="input_source"
+              value="url"
+              data-submit-label="Extract Metadata"
+              checked />
+            Repository URL
+          </label>
+          <label class="input-source-option">
+            <input
+              type="radio"
+              id="input-source-file"
+              name="input_source"
+              value="file"
+              data-submit-label="Import Metadata" />
+            Local metadata file
+          </label>
+          <label class="input-source-option">
+            <input
+              type="radio"
+              id="input-source-paste"
+              name="input_source"
+              value="paste"
+              data-submit-label="Load Metadata" />
+            Paste JSON
+          </label>
+        </div>
+
+        <div id="url-fields">
+          <h6>
+            Project URL
           <span class="custom-tooltip">
             <i class="fa fa-info-circle" aria-hidden="true"></i>
             <span class="tooltip-text">
@@ -83,6 +125,65 @@
           >{{ error_message_token }}</span
         >
         {% endif %}
+        </div>
+
+        <div id="file-fields" class="hidden-panel">
+          <h6>
+            Metadata File
+            <span class="custom-tooltip">
+              <i class="fa fa-info-circle" aria-hidden="true"></i>
+              <span class="tooltip-text">
+              Upload a metadata file describing your software (CodeMeta, ERSmeta, or JSON-LD).
+              </span>
+            </span>
+          </h6>
+          <div class="metadata-dropzone" id="metadata-dropzone">
+            <button type="button" class="dropzone-browse-btn" id="dropzone-browse-btn">
+              Browse...
+            </button>
+            <span class="dropzone-hint" id="dropzone-hint">
+              or drag &amp; drop a metadata file here (e.g. CodeMeta JSON)
+            </span>
+            <input
+              type="file"
+              id="metadata_file_input"
+              name="metadata_file"
+              accept=".json"
+              class="dropzone-file-input" />
+          </div>
+          {% if error_message_file %}
+          <span id="file_error" class="error_message"
+            >{{ error_message_file }}</span
+          >
+          {% endif %}
+        </div>
+
+
+        <div id="paste-fields" class="hidden-panel">
+          <h6>
+            Metadata JSON
+            <span class="custom-tooltip">
+              <i class="fa fa-info-circle" aria-hidden="true"></i>
+              <span class="tooltip-text">
+              Paste metadata JSON (e.g. CodeMeta) directly. Useful for quickly fixing
+              validation errors without re-uploading a file.
+              </span>
+            </span>
+          </h6>
+          <textarea
+            id="paste_json_input"
+            name="pasted_metadata"
+            class="metadata-paste-textarea"
+            placeholder='e.g.: { "name": "SMECS", "license": "MIT" }'
+            rows="8"></textarea>
+          <span id="paste_json_feedback" class="error_message hidden-panel"></span>
+          {% if error_message_paste %}
+          <span id="paste_error" class="error_message"
+            >{{ error_message_paste }}</span
+          >
+          {% endif %}
+        </div>
+
         <div class="captcha-box">
           <h6 for="id_captcha_1" >
             Captcha Check

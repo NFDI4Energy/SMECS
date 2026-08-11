@@ -2,6 +2,8 @@
 This module provides functions for extracting metadata from GitHub repositories through HERMES processes.
 """
 
+import json
+
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 
@@ -14,6 +16,91 @@ from .hermes_process import run_hermes_commands
 from .token_check import validate_token, is_github_repo
 
 
+
+def parse_metadata_json(raw_text):
+    """
+    Parse and validate a raw metadata JSON string, shared by both the file-upload
+    and paste-JSON input paths so they apply identical validation.
+
+    Args:
+        raw_text (str): Raw JSON text (already decoded to a Python str).
+
+    Returns:
+        dict: Same shape as data_extraction()'s return value
+              ({'success', 'warnings', 'errors', 'metadata'}).
+    """
+    result = {
+        'success': True,
+        'warnings': [],
+        'errors': [],
+        'metadata': None,
+    }
+
+    try:
+        parsed_metadata = json.loads(raw_text)
+    except json.JSONDecodeError as decode_error:
+        result['success'] = False
+        result['errors'].append(f"The provided metadata is not valid JSON: {decode_error}")
+        return result
+
+    if not isinstance(parsed_metadata, dict):
+        result['success'] = False
+        result['errors'].append("The provided metadata must be a JSON object.")
+        return result
+
+    result['metadata'] = init_curated_metadata(parsed_metadata)
+    return result
+
+
+@csrf_exempt
+def extract_metadata_from_file(uploaded_file):
+    """
+    Handle metadata extraction from a user-uploaded metadata file (e.g. CodeMeta JSON).
+
+    Args:
+        uploaded_file (UploadedFile): The uploaded file from request.FILES.
+
+    Returns:
+        dict: Same shape as data_extraction()'s return value
+              ({'success', 'warnings', 'errors', 'metadata'}).
+    """
+    try:
+        raw_bytes = uploaded_file.read()
+        raw_text = raw_bytes.decode('utf-8')
+    except UnicodeDecodeError:
+        return {
+            'success': False,
+            'warnings': [],
+            'errors': ["The uploaded file is not valid UTF-8 text."],
+            'metadata': None,
+        }
+
+    return parse_metadata_json(raw_text)
+
+
+@csrf_exempt
+def extract_metadata_from_paste(pasted_metadata):
+    """
+    Handle metadata extraction from metadata JSON pasted directly into the
+    landing page textarea, so users can fix validation errors inline instead
+    of re-uploading a file each time.
+
+    Args:
+        pasted_metadata (str): Raw JSON text pasted by the user.
+
+    Returns:
+        dict: Same shape as data_extraction()'s return value
+              ({'success', 'warnings', 'errors', 'metadata'}).
+    """
+    if not pasted_metadata or not pasted_metadata.strip():
+        return {
+            'success': False,
+            'warnings': [],
+            'errors': ["No metadata JSON was provided."],
+            'metadata': None,
+        }
+
+    return parse_metadata_json(pasted_metadata)
 @csrf_exempt
 def data_extraction(request):
     """
@@ -26,6 +113,14 @@ def data_extraction(request):
         JsonResponse with success status, metadata, warnings, and errors.
     """
     if request.method == 'POST':
+        uploaded_file = request.FILES.get('metadata_file')
+        if uploaded_file:
+            return extract_metadata_from_file(uploaded_file)
+
+        pasted_metadata = request.POST.get('pasted_metadata')
+        if pasted_metadata:
+            return extract_metadata_from_paste(pasted_metadata)
+
         # getting values from post
         project_name = request.POST.get('project_name')
         repo_url = request.POST.get('repo_url')

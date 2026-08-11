@@ -186,6 +186,123 @@ export function setupUI() {
   }
 }
 
+// Toggle between "Repository URL" and "Local metadata file" and "paste JSON" on the start page.
+// Exported as its own top-level setup function (like setupForm, setupDownload)
+// rather than folded into setupUI(), since setupUI() throws before finishing on
+// index.html (no #copy-button ) and would silently skip this otherwise.
+export function setupInputSourceToggle() {
+  const urlRadio = document.getElementById("input-source-url");
+  const fileRadio = document.getElementById("input-source-file");
+  const pasteRadio = document.getElementById("input-source-paste");
+  const urlFields = document.getElementById("url-fields");
+  const fileFields = document.getElementById("file-fields");
+  const pasteFields = document.getElementById("paste-fields");
+  const urlInput = document.getElementById("url_input");
+  const fileInput = document.getElementById("metadata_file_input");
+  const pasteInput = document.getElementById("paste_json_input");
+
+  if (!urlRadio || !fileRadio || !urlFields || !fileFields) return;
+
+  const panels = [
+    { radio: urlRadio, field: urlFields, input: urlInput },
+    { radio: fileRadio, field: fileFields, input: fileInput },
+    { radio: pasteRadio, field: pasteFields, input: pasteInput },
+  ].filter((entry) => entry.radio && entry.field);
+
+    const submitBtn = document.getElementById("submitBtn");
+
+  function showPanel(activeEntry) {
+    panels.forEach((entry) => {
+      const isActive = entry === activeEntry;
+      entry.field.classList.toggle("hidden-panel", !isActive);
+      if (entry.input) entry.input.required = isActive;
+    });
+    if (submitBtn && activeEntry) {
+      const label = activeEntry.radio.getAttribute("data-submit-label");
+      if (label) submitBtn.textContent = label;
+    }
+  }
+
+  panels.forEach((entry) => {
+    entry.radio.addEventListener("change", function () {
+      if (entry.radio.checked) showPanel(entry);
+    });
+  });
+
+  const checkedEntry = panels.find((entry) => entry.radio.checked);
+  showPanel(checkedEntry || panels[0]);
+
+  const browseBtn = document.getElementById("dropzone-browse-btn");
+  const dropzone = document.getElementById("metadata-dropzone");
+  const dropzoneHint = document.getElementById("dropzone-hint");
+  if (browseBtn && fileInput) {
+    browseBtn.addEventListener("click", function () {
+      fileInput.click();
+    });
+  }
+
+  if (fileInput && dropzoneHint) {
+    fileInput.addEventListener("change", function () {
+      if (fileInput.files && fileInput.files.length > 0) {
+        dropzoneHint.textContent = fileInput.files[0].name;
+      } else {
+        dropzoneHint.textContent =
+          "or drag & drop a metadata file here (e.g. CodeMeta JSON)";
+      }
+    });
+  }
+
+  if (dropzone && fileInput) {
+    ["dragenter", "dragover"].forEach(function (eventName) {
+      dropzone.addEventListener(eventName, function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        dropzone.classList.add("dropzone-active");
+      });
+    });
+
+    ["dragleave", "drop"].forEach(function (eventName) {
+      dropzone.addEventListener(eventName, function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        dropzone.classList.remove("dropzone-active");
+      });
+    });
+
+    dropzone.addEventListener("drop", function (event) {
+      const droppedFiles = event.dataTransfer ? event.dataTransfer.files : null;
+      if (droppedFiles && droppedFiles.length > 0) {
+        fileInput.files = droppedFiles;
+        fileInput.dispatchEvent(new Event("change"));
+      }
+    });
+  }
+
+    // Live JSON validation for the paste textarea
+  const pasteFeedback = document.getElementById("paste_json_feedback");
+  if (pasteInput && pasteFeedback) {
+    pasteInput.addEventListener("input", function () {
+      const value = pasteInput.value.trim();
+      if (!value) {
+        pasteFeedback.classList.add("hidden-panel");
+        pasteFeedback.textContent = "";
+        return;
+      }
+      try {
+        const parsed = JSON.parse(value);
+        if (typeof parsed !== "object" || Array.isArray(parsed) || parsed === null) {
+          throw new Error("Metadata JSON must be a JSON object.");
+        }
+        pasteFeedback.classList.add("hidden-panel");
+        pasteFeedback.textContent = "";
+      } catch (err) {
+        pasteFeedback.textContent = "Invalid JSON: " + err.message;
+        pasteFeedback.classList.remove("hidden-panel");
+      }
+    });
+  }
+}
+
 // pop-up message for Contributor and Author tabs
 function showPopup() {
   document.getElementById("popup").style.display = "block";
