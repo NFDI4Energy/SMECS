@@ -46,9 +46,9 @@ def merge_people_metadata(people_list):
     return [
         {
             "@type": "Person",
-            "givenName": p["givenName"],
-            "familyName": p["familyName"],
-            "email": sorted(p["emails"]),
+            "givenName": person["givenName"],
+            "familyName": person["familyName"],
+            "email": sorted(person["emails"]),
         }
-        for p in merged.values()
+        for person in merged.values()
     ]
