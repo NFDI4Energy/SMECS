@@ -4,6 +4,10 @@
 body {
   overflow: hidden;
   caret-color: transparent;
+  padding-top: 5rem;    
+  padding-bottom: 4rem; 
+  height: 100%;
+
 }
 input,
 textarea {
@@ -340,8 +344,8 @@ span.error_message {
 /******************** Style for showdata.html ********************/
 /* Styles for the entered data section */
 .whole-extraction-page {
-  margin-top: 5rem;
-  height: 98%;
+  margin-top: 0;
+  height: 100%;
 }
 #more-info {
   font-size: 14px;
@@ -402,7 +406,7 @@ form.data-form2 {
 
 form.data-form3 {
   overflow-y: auto;
-  height: 90%;
+  height:clamp(200px, calc(100vh - 16rem),5000px);
   border-radius: 2px;
   margin-top: 0;
 }
@@ -577,7 +581,7 @@ select {
 #metadata-json {
   /* overflow: scroll; */
   width: 100%;
-  height: 93%;
+  height: clamp(200px, calc(100vh - 14rem), 5000px);
   padding: 8px;
   border-radius: 4px;
   margin-bottom: 2px;
@@ -616,7 +620,7 @@ button#new-url {
 .main-container {
   display: flex;
   transition: all 0.3s ease;
-  height: clamp(400px, calc(100dvh - 9rem), 900px);
+  height: stretch;
 }
 
 /* Error page / connection time out */
@@ -1371,7 +1375,8 @@ label > .fa-info-circle {
   overflow: hidden;
   margin: 2px;
   width: 100%;
-  height: 99%;
+  height:99%;
+  background-color: #f0f0f0;
 }
 
 .full-width {
