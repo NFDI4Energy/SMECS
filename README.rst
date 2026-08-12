@@ -149,7 +149,7 @@ Install from GitHub
 
    | for more details visit `Installing Packages <https://packaging.python.org/en/latest/tutorials/installing-packages/>`_
 
-   * Build the database*.
+   * Build the database.
          * **Windows:** 
          .. code-block:: shell
 
@@ -159,8 +159,7 @@ Install from GitHub
          .. code-block:: shell
 
           python3 manage.py migrate
-|   
-|
+
 * **Running the project**
     * Open and run the project in an editor (e.g. VS code).
     * Run the project.
