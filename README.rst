@@ -148,6 +148,17 @@ Install from GitHub
           python3 -m pip install -r requirements.txt
 
    | for more details visit `Installing Packages <https://packaging.python.org/en/latest/tutorials/installing-packages/>`_
+
+   * Build the database*.
+         * **Windows:** 
+         .. code-block:: shell
+
+          python manage.py migrate
+
+         * **Unix/MacOS:** 
+         .. code-block:: shell
+
+          python3 manage.py migrate
 |   
 |
 * **Running the project**
