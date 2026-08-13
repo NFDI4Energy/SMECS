@@ -29,7 +29,7 @@
           <span class="custom-tooltip">
             <i class="fa fa-info-circle" aria-hidden="true"></i>
             <span class="tooltip-text">
-            Provide a repository to extract metadata from, or upload a metadata file (e.g. CodeMeta JSON) you already have.
+            Provide a repository URL to extract metadata from, or upload a metadata file (e.g. CodeMeta JSON) you already have, or paste metadata JSON directly. Choose the appropriate option below.
             </span>
           </span>
         </h6>
@@ -133,7 +133,7 @@
             <span class="custom-tooltip">
               <i class="fa fa-info-circle" aria-hidden="true"></i>
               <span class="tooltip-text">
-              Upload a metadata file describing your software (CodeMeta, ERSmeta, or JSON-LD).
+              Upload a structured metadata file describing your software, aligned with standards such as CodeMeta or ERSmeta.
               </span>
             </span>
           </h6>
@@ -142,7 +142,7 @@
               Browse...
             </button>
             <span class="dropzone-hint" id="dropzone-hint">
-              or drag &amp; drop a metadata file here (e.g. CodeMeta JSON)
+              or drag &amp; drop a structured metadata file here (e.g., CodeMeta- or ERSmeta-aligned JSON file)
             </span>
             <input
               type="file"
@@ -165,7 +165,7 @@
             <span class="custom-tooltip">
               <i class="fa fa-info-circle" aria-hidden="true"></i>
               <span class="tooltip-text">
-              Paste metadata JSON (e.g. CodeMeta) directly. Useful for quickly fixing
+              Paste structured metadata JSON directly. Useful for quickly fixing
               validation errors without re-uploading a file.
               </span>
             </span>
@@ -174,7 +174,7 @@
             id="paste_json_input"
             name="pasted_metadata"
             class="metadata-paste-textarea"
-            placeholder='e.g.: { "name": "SMECS", "license": "MIT" }'
+            placeholder='e.g.: { "name": "SMECS", "license": "AGPL-3.0" }'
             rows="8"></textarea>
           <span id="paste_json_feedback" class="error_message hidden-panel"></span>
           {% if error_message_paste %}
@@ -232,7 +232,7 @@
 <div class="overlay" id="overlay">
   <div class="loading-spinner">
     <div class="spinner"></div>
-    <p>Extracting...</p>
+    <p>Processing...</p>
   </div>
 </div>
 
