@@ -151,6 +151,7 @@ Install from GitHub
 
    * Build the database.
       * Django stores the database structure as migration files in the repository. This command applies those migrations to create your local database with all the tables the application needs, such as captcha, sessions, and admin. Run it once during setup, and again whenever new migrations are added later.
+
          * **Windows:** 
          .. code-block:: shell
 
