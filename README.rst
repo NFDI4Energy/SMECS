@@ -149,8 +149,9 @@ Install from GitHub
 
    | for more details visit `Installing Packages <https://packaging.python.org/en/latest/tutorials/installing-packages/>`_
 
-   * Build the database. 
-      * Django stores the database structure as migration files in the repository. This command applies those migrations to create your local database with all the tables the application needs, such as captcha, sessions, and admin. Run it once during setup, and again whenever new migrations are added later.
+* **Running the project**
+    * Build the database. 
+         * Django stores the database structure as migration files in the repository. This command applies those migrations to create your local database with all the tables the application needs, such as captcha, sessions, and admin. Run it once during setup, and again whenever new migrations are added later.
       * **Windows:** 
       .. code-block:: shell
 
@@ -160,8 +161,6 @@ Install from GitHub
       .. code-block:: shell
 
        python3 manage.py migrate
-
-* **Running the project**
     * Open and run the project in an editor (e.g. VS code).
     * Run the project.
         * **Windows:** 
