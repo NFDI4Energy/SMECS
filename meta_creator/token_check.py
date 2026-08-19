@@ -81,7 +81,10 @@ def _build_github_api_url(classified):
     Returns None if owner or repo could not be extracted.
     """
     owner, repo = classified["owner"], classified["repo"]
+    domain = classified["domain"]
     if not owner or not repo:
+        return None
+    if not domain or "." not in domain:      # ← add this: malformed host like "github"
         return None
     if classified["forge"] == "github_com":
         return f"https://api.github.com/repos/{owner}/{repo}"
@@ -104,7 +107,7 @@ def check_github_token(repo_url, token):
     if not api_url:
         return {
             "status": "invalid_url",
-            "message": "Invalid GitHub repository URL: could not extract owner and repository name.",
+            "message": "Invalid GitHub repository URL: Could not extract from the given url. Please use the valid Url",
         }
 
     headers = {"Authorization": f"token {token}"} if token else {}
@@ -112,8 +115,8 @@ def check_github_token(repo_url, token):
     try:
         response = requests.get(api_url, headers=headers)
     except requests.RequestException as e:
-        return {"status": "error", "message": f"Network error while reaching {domain}: {str(e)}"}
-
+        return {"status": "error", "message": f"Network error while reaching {domain}: Please check your Network and try again."}
+        
     if response.status_code == 200:
         return {"status": "valid", "message": ""}
 
@@ -127,16 +130,27 @@ def check_github_token(repo_url, token):
         }
 
     if response.status_code == 404:
-        return {
-            "status": "invalid_url",
-            "message": f"GitHub repository not found on {domain}. Please check the URL and try again.",
-        }
+        token_hint = " If this is a private repository, make sure you have provided a valid access token." if not token else ""
+    return {
+        "status": "invalid_url",
+        "message": f"GitHub repository not found on {domain}.{token_hint} Please check the URL and try again.",
+    }
 
     if response.status_code == 403:
+        try:
+            message = response.json().get("message", "")
+        except Exception:
+            message = ""
+        if "rate limit" in message.lower():
+            return {
+                "status": "error",
+                "message": f"GitHub API rate limit exceeded for {domain}. Provide a valid token to get a higher limit.",
+            }
         return {
             "status": "error",
-            "message": f"Access to {domain} is forbidden. You may have exceeded the API rate limit.",
+            "message": f"Access forbidden on {domain}. You may not have permission to access this repository.",
         }
+
 
     return {
         "status": "error",
@@ -304,13 +318,13 @@ def validate_token(repo_url, token):
             fb_result = check_github_token(repo_url, fallback)
             if fb_result["status"] == "valid":
                 return _ok(fallback)
-            if fb_result["status"] == "invalid_url":
-                return _err("invalid_url", fb_result["message"])
-
+            if fb_result["status"] not in ("valid", "invalid_token", "expired_token"):
+                return _err(fb_result["status"], fb_result["message"])
+            
         url_check = check_github_token(repo_url, None)
-        if url_check["status"] == "invalid_url":
-            return _err("invalid_url", url_check["message"])
-
+        if url_check["status"] != "valid":
+            return _err(url_check["status"], url_check["message"])
+        
         return _ok(None)  # public repo, no token needed
 
     # --- GitLab (gitlab.com + self-hosted) ---
@@ -362,3 +376,5 @@ def validate_token(repo_url, token):
         "no_token",
         "GitLab requires a valid personal access token. Please provide one and try again.",
     )
+
+
