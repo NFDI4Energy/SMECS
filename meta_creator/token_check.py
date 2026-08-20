@@ -2,8 +2,20 @@ import requests
 import json
 import os
 from urllib.parse import urlparse
+import socket
 
-
+def _has_internet(host="8.8.8.8", port=53, timeout=3):
+    """
+    Returns True if the internet is reachable at all.
+    Connects to an IP directly (Google DNS) so this check itself
+    does not depend on DNS resolution.
+    """
+    try:
+        with socket.create_connection((host, port), timeout=timeout):
+            return True
+    except OSError:
+        return False
+    
 def load_tokens_from_file(file_path="tokens.txt"):
     if not os.path.exists(file_path):
         return {}
@@ -113,7 +125,7 @@ def check_github_token(repo_url, token):
     headers = {"Authorization": f"token {token}"} if token else {}
 
     try:
-        response = requests.get(api_url, headers=headers)
+        response = requests.get(api_url, headers=headers, timeout=10)
     except requests.RequestException as e:
         return {"status": "error", "message": f"Network error while reaching {domain}: Please check your Network and try again."}
         
@@ -171,12 +183,16 @@ def check_gitlab_token(repo_url, token):
     domain = classified["domain"]
     base_url = classified["base_url"]
     is_self_hosted = classified["forge"] == "gitlab_self_hosted"
-
+    if not domain or "." not in domain:
+        return {
+            "status": "invalid_url",
+            "message": "GitLab repository not found. Please check the URL and try again.",
+        }
     try:
         parsed = urlparse(repo_url)
         raw_path = parsed.path.strip("/")
         if not raw_path:
-            return {"status": "invalid_url", "message": "Invalid GitLab repository URL: no path found."}
+            return {"status": "invalid_url", "message": "Invalid GitLab repository URL: Please check the URL and try again."}
         project_path = raw_path.replace("/", "%2F")
         api_url = f"{base_url}/api/v4/projects/{project_path}"
     except Exception:
@@ -185,7 +201,7 @@ def check_gitlab_token(repo_url, token):
     headers = {"PRIVATE-TOKEN": token} if token else {}
 
     try:
-        response = requests.get(api_url, headers=headers)
+        response = requests.get(api_url, headers=headers, timeout=10)
         print(f"[GitLab API] HTTP {response.status_code} → {api_url}")
     except requests.exceptions.SSLError:
         return {
@@ -193,8 +209,7 @@ def check_gitlab_token(repo_url, token):
             "message": f"SSL certificate error on {domain}. The server may use a self-signed certificate.",
         }
     except requests.RequestException as e:
-        return {"status": "error", "message": f"Network error while reaching {domain}: {str(e)}"}
-
+        return {"status": "error", "message": f"Network error while reaching {domain}: Please check your Network and try again."}
     if response.status_code == 200:
         return {"status": "valid", "message": ""}
 
@@ -207,8 +222,6 @@ def check_gitlab_token(repo_url, token):
                     "status": "expired_token",
                     "message": (
                         f"The token for {domain} has expired. Please generate a new token on {domain} and try again."
-                        if is_self_hosted
-                        else "The GitLab token has expired. Please generate a new token and try again."
                     ),
                 }
         except Exception:
@@ -217,8 +230,6 @@ def check_gitlab_token(repo_url, token):
             "status": "invalid_token",
             "message": (
                 f"The token is invalid for {domain}. Make sure you are using a token created on {domain}."
-                if is_self_hosted
-                else "The provided GitLab token is invalid. Please check your token and try again."
             ),
         }
 
@@ -237,8 +248,7 @@ def check_gitlab_token(repo_url, token):
             "status": "error",
             "message": (
                 f"Access forbidden on {domain}. Your token may not have the required permissions."
-                if is_self_hosted
-                else "Access to the GitLab repository is forbidden."
+                
             ),
         }
 
@@ -270,6 +280,14 @@ def validate_token(repo_url, token):
                                            'gitlab_com', 'gitlab_self_hosted', or 'unknown'
         }
     """
+    # No internet at all — fail fast before any host/token checks.
+    if not _has_internet():
+        return {
+            "token": None,
+            "error_type": "error",
+            "error_message": "Network error: no internet connection. Please check your connection and try again.",
+            "forge": None,
+        }
     classified = classify_url(repo_url)
     forge = classified["forge"]
     domain = classified["domain"]
