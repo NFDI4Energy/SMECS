@@ -131,10 +131,10 @@ def check_github_token(repo_url, token):
 
     if response.status_code == 404:
         token_hint = " If this is a private repository, make sure you have provided a valid access token." if not token else ""
-    return {
+        return {
         "status": "invalid_url",
         "message": f"GitHub repository not found on {domain}.{token_hint} Please check the URL and try again.",
-    }
+        }
 
     if response.status_code == 403:
         try:
