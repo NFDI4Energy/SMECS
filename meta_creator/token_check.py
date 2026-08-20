@@ -114,6 +114,7 @@ def check_github_token(repo_url, token):
     """
     classified = classify_url(repo_url)
     domain = classified["domain"]
+    owner, repo = classified["owner"], classified["repo"]
     api_url = _build_github_api_url(classified)
 
     if not api_url:
@@ -127,7 +128,7 @@ def check_github_token(repo_url, token):
     try:
         response = requests.get(api_url, headers=headers, timeout=10)
     except requests.RequestException as e:
-        return {"status": "error", "message": f"Network error while reaching {domain}: Please check your Network and try again."}
+        return {"status": "error", "message": f"Network error while reaching {domain}/{owner}/{repo}: Please check your Network and try again."}
         
     if response.status_code == 200:
         return {"status": "valid", "message": ""}
@@ -138,14 +139,14 @@ def check_github_token(repo_url, token):
         # We surface a message that covers both cases.
         return {
             "status": "invalid_token",
-            "message": f"The provided GitHub token is invalid or has expired for {domain}. Please check your token or generate a new one and try again.",
+            "message": f"The provided GitHub token is invalid or has expired for {domain}/{owner}/{repo}. Please check your token or generate a new one and try again.",
         }
 
     if response.status_code == 404:
         token_hint = " If this is a private repository, make sure you have provided a valid access token." if not token else ""
         return {
         "status": "invalid_url",
-        "message": f"GitHub repository not found on {domain}.{token_hint} Please check the URL and try again.",
+        "message": f"GitHub repository not found on {domain}/{owner}/{repo}.{token_hint} Please check the URL and try again.",
         }
 
     if response.status_code == 403:
@@ -156,11 +157,11 @@ def check_github_token(repo_url, token):
         if "rate limit" in message.lower():
             return {
                 "status": "error",
-                "message": f"GitHub API rate limit exceeded for {domain}. Provide a valid token to get a higher limit.",
+                "message": f"GitHub API rate limit exceeded for {domain}/{owner}/{repo}. Provide a valid token to get a higher limit.",
             }
         return {
             "status": "error",
-            "message": f"Access forbidden on {domain}. You may not have permission to access this repository.",
+            "message": f"Access forbidden on {domain}/{owner}/{repo}. You may not have permission to access this repository.",
         }
 
 
@@ -202,11 +203,10 @@ def check_gitlab_token(repo_url, token):
 
     try:
         response = requests.get(api_url, headers=headers, timeout=10)
-        print(f"[GitLab API] HTTP {response.status_code} → {api_url}")
     except requests.exceptions.SSLError:
         return {
             "status": "error",
-            "message": f"SSL certificate error on {domain}. The server may use a self-signed certificate.",
+            "message": f"SSL certificate error on {domain}/{raw_path}. The server may use a self-signed certificate.",
         }
     except requests.RequestException as e:
         return {"status": "error", "message": f"Network error while reaching {domain}: Please check your Network and try again."}
@@ -229,7 +229,7 @@ def check_gitlab_token(repo_url, token):
         return {
             "status": "invalid_token",
             "message": (
-                f"The token is invalid for {domain}. Make sure you are using a token created on {domain}."
+                f"The token is invalid for {domain}/{raw_path}. Make sure you are using a correct token."
             ),
         }
 
@@ -237,9 +237,7 @@ def check_gitlab_token(repo_url, token):
         return {
             "status": "invalid_url",
             "message": (
-                f"Repository not found on {domain}. Please check the URL and try again."
-                if is_self_hosted
-                else "GitLab repository not found. Please check the URL and try again."
+                f"Repository not found on {domain}/{raw_path}. Please check the URL and try again."
             ),
         }
 
@@ -247,8 +245,7 @@ def check_gitlab_token(repo_url, token):
         return {
             "status": "error",
             "message": (
-                f"Access forbidden on {domain}. Your token may not have the required permissions."
-                
+                f"Access forbidden on {domain}/{raw_path}. Your token may not have the required permissions." 
             ),
         }
 
