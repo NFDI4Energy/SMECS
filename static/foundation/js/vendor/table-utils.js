@@ -485,10 +485,9 @@ export function setupTables() {
       } else {
         const deleteTd = document.createElement("td");
 
-        deleteTd.className = "d-flex justify-content-center align-items-center";
-        deleteTd.style.height = "50px";
+        deleteTd.className = "copyright-holder-delete-cell";
         deleteTd.innerHTML =
-          '<i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i>';
+          '<i class="fas fa-trash-alt delete-row-btn" title="Delete row"></i>';
         newRow.appendChild(deleteTd);
       }
 

@@ -771,6 +771,18 @@ div.error-container a:hover {
 #copyrightHolderTable td {
   border: 1px solid #ddddddbd;
 }
+
+.copyright-holder-delete-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+}
+
+.copyright-holder-delete-cell .delete-row-btn {
+  cursor: pointer;
+}
+
 #contributorTable th:last-child,
 #contributorTable td:last-child {
   border: none !important;

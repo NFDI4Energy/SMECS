@@ -508,8 +508,10 @@
                                                         </td>
                                                         {% endfor %}
                                                         {% endif %}
-                                                        <td >
-                                                            <!-- <i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i> -->
+                                                        <td{% if key == "copyrightHolder" %} class="copyright-holder-delete-cell"{% endif %}>
+                                                            {% if key == "copyrightHolder" %}
+                                                            <i class="fas fa-trash-alt delete-row-btn" title="Delete row"></i>
+                                                            {% endif %}
                                                         </td>
                                                     </tr>
                                                     {% endif %}
