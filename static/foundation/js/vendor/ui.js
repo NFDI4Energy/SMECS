@@ -198,6 +198,8 @@ export function setupInputSourceToggle() {
   const fileFields = document.getElementById("file-fields");
   const pasteFields = document.getElementById("paste-fields");
   const urlInput = document.getElementById("url_input");
+  const form = document.getElementById("form1");
+  const fileError = document.getElementById("file_error");
   const fileInput = document.getElementById("metadata_file_input");
   const pasteInput = document.getElementById("paste_json_input");
 
@@ -216,9 +218,7 @@ export function setupInputSourceToggle() {
       const isActive = entry === activeEntry;
       entry.field.classList.toggle("hidden-panel", !isActive);
       if (entry.input) {
-        // Browsers clear file inputs on a new response. A staged file is kept
-        // server-side after an invalid CAPTCHA, so it does not need to be selected again.
-        entry.input.required = isActive && !entry.input.dataset.stagedFile;
+        entry.input.required = false;
       }
     });
     if (submitBtn && activeEntry) {
@@ -250,9 +250,30 @@ export function setupInputSourceToggle() {
       if (fileInput.files && fileInput.files.length > 0) {
         delete fileInput.dataset.stagedFile;
         dropzoneHint.textContent = fileInput.files[0].name;
+        if (fileError) {
+          fileError.textContent = "";
+          fileError.classList.add("hidden-panel");
+        }
       } else {
         dropzoneHint.textContent =
           "or drag & drop a metadata file here (e.g. CodeMeta JSON)";
+      }
+    });
+  }
+
+  if (form && fileInput) {
+    form.addEventListener("submit", function (event) {
+      const isFileSource = fileRadio.checked;
+      const hasSelectedFile = fileInput.files && fileInput.files.length > 0;
+      const hasStagedFile = Boolean(fileInput.dataset.stagedFile);
+
+      if (isFileSource && !hasSelectedFile && !hasStagedFile) {
+        event.preventDefault();
+        if (fileError) {
+          fileError.textContent = "Please select a metadata file before importing.";
+          fileError.classList.remove("hidden-panel");
+        }
+        browseBtn.focus();
       }
     });
   }

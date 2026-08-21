@@ -162,9 +162,23 @@ def index(request):
             "captcha_form": captcha_form,
         })
 
-    # Handle form submissions by validating the CAPTCHA first and then
-    # continuing with the extraction flow if the check passes.
+    # Handle form submissions by validating the selected input and CAPTCHA
+    # before continuing with the extraction flow.
     if request.method == "POST":
+        # Validate the selected source before CAPTCHA validation. The custom
+        # file picker is visually hidden, so this server-side fallback keeps
+        # the missing-file feedback clear even when JavaScript is unavailable.
+        if (
+            request.POST.get("input_source") == "file"
+            and not request.FILES.get("metadata_file")
+            and not request.session.get(STAGED_METADATA_FILE_SESSION_KEY)
+        ):
+            context = _index_context(request, CaptchaForm())
+            context["error_message_file"] = (
+                "Please select a metadata file before importing."
+            )
+            return render(request, "meta_creator/index.html", context)
+
         # If CAPTCHA validation fails, preserve file uploads for retry while
         # clearing any staged state for non-file submissions and showing a
         # user-facing error message.
@@ -250,3 +264,4 @@ def index(request):
             )
 
         return render(request, 'meta_creator/error.html', {'error_message': error_message})
+    

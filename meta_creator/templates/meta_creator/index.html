@@ -157,11 +157,9 @@
           {% if staged_file_name %}
           <p class="dropzone-hint">Using previously uploaded file: {{ staged_file_name }}</p>
           {% endif %}
-          {% if error_message_file %}
-          <span id="file_error" class="error_message"
+          <span id="file_error" class="error_message{% if not error_message_file %} hidden-panel{% endif %}"
             >{{ error_message_file }}</span
           >
-          {% endif %}
         </div>
 
 
