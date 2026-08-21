@@ -3,101 +3,235 @@ This module contains views and functions for handling metadata in the Meta Creat
 
 It includes views for rendering templates, handling requests, and extracting metadata.
 """
+
+import base64
 import json
-from django.views.generic import TemplateView
-from django.template import loader
-from django.http import HttpResponse
+
+from django.contrib import messages
+from django.core.exceptions import PermissionDenied
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseServerError
 from django.shortcuts import render
-from django.core.exceptions import PermissionDenied  # Import PermissionDenied
-from django.http import HttpResponseServerError, HttpResponseForbidden
+from django.template import loader
+from django.views.generic import TemplateView
 from requests.exceptions import ConnectTimeout, ReadTimeout, RequestException
+
+from .forms import CaptchaForm
 from .metadata_extractor import data_extraction
 from .validate_jsonLD import validate_codemeta
-from .forms import CaptchaForm
-from django.shortcuts import render, redirect
-from django.contrib import messages
+
+
+# Session key used to temporarily store an uploaded metadata file (name and
+# base64-encoded content) so it can be restored if a CAPTCHA validation fails.
+STAGED_METADATA_FILE_SESSION_KEY = "staged_metadata_file"
+
+def _stage_uploaded_file(request):
+    """
+    Keep a file available for a CAPTCHA retry in this user's session.
+    """
+    uploaded_file = request.FILES.get("metadata_file")
+    if uploaded_file:
+        # Store a small representation of the file in the user's session so
+        # it can be reconstituted later if CAPTCHA validation fails.
+        request.session[STAGED_METADATA_FILE_SESSION_KEY] = {
+            "name": uploaded_file.name,
+            "content": base64.b64encode(uploaded_file.read()).decode("ascii"),
+        }
+
+
+def _get_staged_uploaded_file(request):
+    """
+    Recreate the file staged by a failed CAPTCHA attempt, if present.
+    """
+    # Retrieve the staged file metadata from the user's session. The stored
+    # representation is a small dict containing the original filename and the
+    # file content encoded as base64 text (so it is JSON-serializable).
+    staged_file = request.session.get(STAGED_METADATA_FILE_SESSION_KEY)
+
+    # If there is no staged file information, nothing to recreate.
+    if not staged_file:
+        return None
+
+    try:
+        # Decode the base64-encoded content back to bytes and create a SimpleUploadedFile instance
+        # that behaves like an uploaded file in Django request.FILES.
+        return SimpleUploadedFile(
+            staged_file["name"],
+            base64.b64decode(staged_file["content"]),
+            content_type="application/json",
+        )
+    except (KeyError, TypeError, ValueError):
+        # If the stored structure is malformed or decoding fails, remove the
+        # bad session entry to avoid repeated failures and return None.
+        request.session.pop(STAGED_METADATA_FILE_SESSION_KEY, None)
+        return None
+
+
+def _index_context(request, captcha_form):
+    """
+    Return the start-form context while retaining non-CAPTCHA input.
+    """
+    # Retrieve any previously staged uploaded file info so the filename can
+    # be displayed back to the user (useful when a CAPTCHA validation fails
+    # and the upload was preserved in the session).
+    staged_file = request.session.get(STAGED_METADATA_FILE_SESSION_KEY, {})
+
+    # Build a minimal context for rendering the index/start form. We want to
+    # persist the non-CAPTCHA inputs so the user does not need to re-enter
+    # them after a failed CAPTCHA attempt.
+    return {
+        # The CAPTCHA form instance (either empty or bound with POST data).
+        "captcha_form": captcha_form,
+
+        # Repository URL entered by the user (if input_source is 'url').
+        "repo_url": request.POST.get("repo_url", ""),
+
+        # Personal access token (optional) used for authenticated API calls.
+        "personal_token_key": request.POST.get("personal_token_key", ""),
+
+        # Any metadata text pasted directly into the form.
+        "pasted_metadata": request.POST.get("pasted_metadata", ""),
+
+        # Which input source the user selected: 'url', 'file', or 'paste'.
+        "input_source": request.POST.get("input_source", "url"),
+
+        # Name of a staged/uploaded file preserved in the session (if any).
+        "staged_file_name": staged_file.get("name", ""),
+    }
+
 
 class IndexView(TemplateView):
+    """
+    Simple TemplateView for the start/index page.
+
+    This view renders the index template and injects an instance of the
+    CaptchaForm into the template context so the form is available when the
+    page is rendered via class-based view handling.
+    """
     template_name = 'meta_creator/index.html'
+
     def get_context_data(self, **kwargs):
+        """
+        Return context for the index template.
+
+        We call the superclass implementation to get the base context, then
+        add a fresh CaptchaForm instance under the key 'captcha_form' so the
+        template can render the CAPTCHA field.
+        """
         context = super().get_context_data(**kwargs)
-        context['captcha_form'] = CaptchaForm()  # ← add this
+        # Provide an empty (unbound) CAPTCHA form for initial page load.
+        context['captcha_form'] = CaptchaForm()  
         return context
 
 
-# navigation to homepage and information page_based on requiremment analysis 
 def homepage(request):
+    """
+    Render the simple homepage.
+    This view is used for the root URL and renders the index.html template.
+    """
     return render(request, 'index.html')
 
+
 def information(request):
+    """
+    Render the information page.
+    This view is used for the '/About SMECS' URL and renders the information.html template.
+    """
     return render(request, 'meta_creator/information.html')
 
+
 def legals(request):
+    """
+    Render the legals page.
+    This view is used for the '/Legals/Impressum' URL and renders the legals.html template.
+    """
     return render(request, 'meta_creator/legals.html')
 
-# Function for metadata extracting
+
 def index(request):
     """
-    View function for the index page.
-
-    Handles the POST request and displays the form or extracted metadata.
-
-    Args:
-        request (HttpRequest): The HTTP request object.
-
-    Returns:
-        HttpResponse: The HTTP response object.
-
+    Validate the CAPTCHA and extract metadata from the selected source.
     """
+    # Bind the submitted CAPTCHA data to the form so we can validate the user
+    # input on every POST request before processing the metadata submission.
     captcha_form = CaptchaForm(request.POST or None)
 
-     # Handle GET request - just show the form
+    # Render the initial page on a GET request
     if request.method == "GET":
         return render(request, 'meta_creator/index.html', {
             "captcha_form": captcha_form,
         })
 
-    # Handle POST request
+    # Handle form submissions by validating the CAPTCHA first and then
+    # continuing with the extraction flow if the check passes.
     if request.method == "POST":
-
+        # If CAPTCHA validation fails, preserve file uploads for retry while
+        # clearing any staged state for non-file submissions and showing a
+        # user-facing error message.
         if not captcha_form.is_valid():
-          messages.error(request, "Invalid Captcha. Please try again.")
-          return render(request, 'meta_creator/index.html', {
-        "captcha_form": CaptchaForm(),  # fresh, unbound → generates a NEW captcha challenge
-        "repo_url": request.POST.get("repo_url", ""),
-        "personal_token_key": request.POST.get("personal_token_key", ""),
-    })
+            if request.POST.get("input_source") == "file":
+                # Keep the uploaded file in the session so the user can retry the
+                # CAPTCHA without re-selecting the file.
+                _stage_uploaded_file(request)
+            else:
+                # Clear any previous staged file when the user is not uploading a
+                # file, since there is no file to restore for a retry.
+                request.session.pop(STAGED_METADATA_FILE_SESSION_KEY, None)
 
-        # Captcha is valid, proceed with extraction
+            messages.error(request, "Invalid Captcha. Please try again.")
+            return render(
+                request,
+                "meta_creator/index.html",
+                _index_context(request, CaptchaForm()),
+            )
+
+        # CAPTCHA passed; restore a staged upload if one exists and continue
+        # with metadata extraction from the chosen input source.
         try:
-            result = data_extraction(request)
+            staged_uploaded_file = _get_staged_uploaded_file(request)
+            result = data_extraction(request, staged_uploaded_file)
+            request.session.pop(STAGED_METADATA_FILE_SESSION_KEY, None)
 
             if not result.get('success'):
                 errors = result.get('errors')
-                if isinstance(errors, list):
-                    error_messages = ['Error in extraction:'] + errors
+                error_messages = ["Error in extraction:"]
+                if isinstance(errors, (list, tuple)):
+                    normalized_errors = [str(error) for error in errors if error is not None]
+                elif errors is not None:
+                    normalized_errors = [str(errors)]
                 else:
-                    error_messages = ['Error in extraction:', errors]
+                    normalized_errors = ["Unknown error"]
+                error_messages.extend(normalized_errors)
                 return render(request, 'meta_creator/error.html', {
                     'error_message': "; ".join(error_messages)
                 })
 
             extracted_metadata, description_metadata, type_metadata, joined_metadata = result['metadata']
-            is_valid_jsonld = validate_codemeta(joined_metadata)
 
-            if is_valid_jsonld:
-                validation_result = "The JSON data is a valid JSON-LD Codemeta object"
-            else:
-                validation_result = "The JSON data is not a valid JSON-LD Codemeta object"
+            # Validate the joined metadata against the JSON-LD Codemeta schema and
+            # set a user-friendly validation message based on the result.
+            validation_result = (
+                "The JSON data is a valid JSON-LD Codemeta object"
+                if validate_codemeta(joined_metadata)
+                else "The JSON data is not a valid JSON-LD Codemeta object"
+            )
 
+            # Serialize the joined metadata to a formatted JSON string with 4-space
+            # indentation for improved readability in the template output.
             my_json_str = json.dumps(joined_metadata, indent=4)
+
+
             template = loader.get_template('meta_creator/showdata.html')
+
+            # Render the template with all extracted metadata components and return
+            # the HTTP response to the user.
             return HttpResponse(template.render({
                 "type_metadata": type_metadata,
                 "description_metadata": description_metadata,
                 "extracted_metadata": extracted_metadata,
                 "my_json_str": my_json_str,
                 "from_showdata": True,
+                "validation_result": validation_result,
             }, request))
 
         except ConnectTimeout:
@@ -109,10 +243,10 @@ def index(request):
         except ConnectionError as conn_error:
             error_message = f"Could not establish a connection: {conn_error}"
         except PermissionDenied:
-            error_message = "CSRF Error: This action is not allowed."
-            return HttpResponseForbidden(error_message)
+            return HttpResponseForbidden("CSRF Error: This action is not allowed.")
         except Exception as unexpected_exception:
-            error_message = f"An unexpected error occurred: {str(unexpected_exception)}"
-            return HttpResponseServerError(error_message)
+            return HttpResponseServerError(
+                f"An unexpected error occurred: {unexpected_exception}"
+            )
 
         return render(request, 'meta_creator/error.html', {'error_message': error_message})

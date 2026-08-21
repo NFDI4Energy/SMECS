@@ -215,7 +215,11 @@ export function setupInputSourceToggle() {
     panels.forEach((entry) => {
       const isActive = entry === activeEntry;
       entry.field.classList.toggle("hidden-panel", !isActive);
-      if (entry.input) entry.input.required = isActive;
+      if (entry.input) {
+        // Browsers clear file inputs on a new response. A staged file is kept
+        // server-side after an invalid CAPTCHA, so it does not need to be selected again.
+        entry.input.required = isActive && !entry.input.dataset.stagedFile;
+      }
     });
     if (submitBtn && activeEntry) {
       const label = activeEntry.radio.getAttribute("data-submit-label");
@@ -244,6 +248,7 @@ export function setupInputSourceToggle() {
   if (fileInput && dropzoneHint) {
     fileInput.addEventListener("change", function () {
       if (fileInput.files && fileInput.files.length > 0) {
+        delete fileInput.dataset.stagedFile;
         dropzoneHint.textContent = fileInput.files[0].name;
       } else {
         dropzoneHint.textContent =

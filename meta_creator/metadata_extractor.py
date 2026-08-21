@@ -8,7 +8,7 @@ from .metadata_results import metadata_result
 from .repository_extractor import extract_repository_metadata
 
 
-def data_extraction(request):
+def data_extraction(request, staged_uploaded_file=None):
     """
     Route the submitted input source to file, paste, or repository handling.
     """
@@ -19,9 +19,10 @@ def data_extraction(request):
 
     input_source = request.POST.get("input_source")
 
-    # Handle metadata uploaded as a file.
+    # A file may be staged in the session after a failed CAPTCHA, 
+    # because a browser cannot repopulate a file input after rendering a new page.
     if input_source == "file":
-        uploaded_file = request.FILES.get("metadata_file")
+        uploaded_file = request.FILES.get("metadata_file") or staged_uploaded_file
         if not uploaded_file:
             return metadata_result(success=False, errors=["No metadata file was provided."])
         return import_metadata_file(uploaded_file)

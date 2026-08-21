@@ -41,7 +41,7 @@
               name="input_source"
               value="url"
               data-submit-label="Extract Metadata"
-              checked />
+              {% if input_source == "url" or not input_source %}checked{% endif %} />
             Repository URL
           </label>
           <label class="input-source-option">
@@ -50,7 +50,8 @@
               id="input-source-file"
               name="input_source"
               value="file"
-              data-submit-label="Import Metadata" />
+              data-submit-label="Import Metadata"
+              {% if input_source == "file" %}checked{% endif %} />
             Local metadata file
           </label>
           <label class="input-source-option">
@@ -59,7 +60,8 @@
               id="input-source-paste"
               name="input_source"
               value="paste"
-              data-submit-label="Load Metadata" />
+              data-submit-label="Load Metadata"
+              {% if input_source == "paste" %}checked{% endif %} />
             Paste JSON
           </label>
         </div>
@@ -149,8 +151,12 @@
               id="metadata_file_input"
               name="metadata_file"
               accept=".json"
-              class="dropzone-file-input" />
+              class="dropzone-file-input"
+              {% if staged_file_name %}data-staged-file="{{ staged_file_name }}"{% endif %} />
           </div>
+          {% if staged_file_name %}
+          <p class="dropzone-hint">Using previously uploaded file: {{ staged_file_name }}</p>
+          {% endif %}
           {% if error_message_file %}
           <span id="file_error" class="error_message"
             >{{ error_message_file }}</span
@@ -175,7 +181,7 @@
             name="pasted_metadata"
             class="metadata-paste-textarea"
             placeholder='e.g.: { "name": "SMECS", "license": "AGPL-3.0" }'
-            rows="8"></textarea>
+            rows="8">{{ pasted_metadata }}</textarea>
           <span id="paste_json_feedback" class="error_message hidden-panel"></span>
           {% if error_message_paste %}
           <span id="paste_error" class="error_message"
