@@ -337,6 +337,100 @@ span.error_message {
   margin-top: 5px;
 }
 
+/******** Input Source toggle  ********/
+.input-source-label {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 2rem;
+}
+
+.input-source-row {
+  display: flex;
+  gap: 2rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.input-source-option {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.input-source-option input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #055f82;
+  cursor: pointer;
+}
+
+.hidden-panel {
+  display: none;
+}
+
+/* Metadata file dropzone */
+.metadata-dropzone {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px dashed #ccc;
+  border-radius: 6px;
+  padding: 1rem;
+  background: #fafaf8;
+}
+
+.metadata-dropzone.dropzone-active {
+  border-color: #055f82;
+  background: #eef6f8;
+}
+
+.dropzone-browse-btn {
+  background: #f1efe8;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dropzone-browse-btn:hover {
+  background: #e4e2d8;
+}
+
+.dropzone-hint {
+  font-size: 14px;
+  color: #6b6a66;
+}
+
+.dropzone-file-input {
+  display: none;
+}
+
+/* Metadata paste textarea */
+.metadata-paste-textarea {
+  width: 100%;
+  min-height: 10rem;
+  padding: 0.75rem;
+  border: 1px solid #cacaca;
+  border-radius: 4px;
+  background-color: #fefefe;
+  font-family: monospace;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.metadata-paste-textarea:focus {
+  outline: none;
+  border-color: #055f82;
+  box-shadow: 0 0 0 2px rgba(5, 95, 130, 0.2);
+}
+
 /******************** Style for showdata.html ********************/
 /* Styles for the entered data section */
 .whole-extraction-page {
@@ -677,6 +771,18 @@ div.error-container a:hover {
 #copyrightHolderTable td {
   border: 1px solid #ddddddbd;
 }
+
+.copyright-holder-delete-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+}
+
+.copyright-holder-delete-cell .delete-row-btn {
+  cursor: pointer;
+}
+
 #contributorTable th:last-child,
 #contributorTable td:last-child {
   border: none !important;

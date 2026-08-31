@@ -25,3 +25,6 @@ hermes.toml
 *.user
 db.sqlite3
 hermes.toml
+
+tokens.txt
+db.sqlite3
