@@ -18,6 +18,7 @@ from requests.exceptions import ConnectTimeout, ReadTimeout, RequestException
 
 from .forms import CaptchaForm
 from .metadata_extractor import data_extraction
+from .metadata_paster import load_pasted_metadata
 from .validate_jsonLD import validate_codemeta
 
 
@@ -179,6 +180,19 @@ def index(request):
             )
             return render(request, "meta_creator/index.html", context)
 
+        # Validate pasted metadata before the CAPTCHA check, matching the missing-file flow above.
+        if request.POST.get("input_source") == "paste":
+            paste_result = load_pasted_metadata(
+                request.POST.get("pasted_metadata", "")
+            )
+            if not paste_result.get("success"):
+                errors = paste_result.get("errors") or ["Invalid metadata JSON."]
+                context = _index_context(request, CaptchaForm())
+                context["error_message_paste"] = "; ".join(
+                    str(error) for error in errors if error is not None
+                )
+                return render(request, "meta_creator/index.html", context)
+        
         # If CAPTCHA validation fails, preserve file uploads for retry while
         # clearing any staged state for non-file submissions and showing a
         # user-facing error message.

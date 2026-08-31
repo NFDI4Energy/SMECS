@@ -202,6 +202,8 @@ export function setupInputSourceToggle() {
   const fileError = document.getElementById("file_error");
   const fileInput = document.getElementById("metadata_file_input");
   const pasteInput = document.getElementById("paste_json_input");
+  const pasteFeedback = document.getElementById("paste_json_feedback");
+  const pasteError = document.getElementById("paste_error");
 
   if (!urlRadio || !fileRadio || !urlFields || !fileFields) return;
 
@@ -261,9 +263,27 @@ export function setupInputSourceToggle() {
     });
   }
 
+  function validatePastedMetadata() {
+    const value = pasteInput.value.trim();
+    // if (!value) {
+    //   return "Please paste metadata JSON before loading.";
+    // }
+
+    try {
+      const parsed = JSON.parse(value);
+      if (typeof parsed !== "object" || Array.isArray(parsed) || parsed === null) {
+        return "Metadata JSON must be a JSON object.";
+      }
+      return "";
+    } catch (error) {
+      return "Invalid JSON: " + error.message;
+    }
+  }
+
   if (form && fileInput) {
     form.addEventListener("submit", function (event) {
       const isFileSource = fileRadio.checked;
+      const isPasteSource = pasteRadio && pasteRadio.checked;
       const hasSelectedFile = fileInput.files && fileInput.files.length > 0;
       const hasStagedFile = Boolean(fileInput.dataset.stagedFile);
 
@@ -274,6 +294,17 @@ export function setupInputSourceToggle() {
           fileError.classList.remove("hidden-panel");
         }
         browseBtn.focus();
+        return;
+      }
+
+      if (isPasteSource && pasteInput && pasteFeedback) {
+        const error = validatePastedMetadata();
+        if (error) {
+          event.preventDefault();
+          pasteFeedback.textContent = error;
+          pasteFeedback.classList.remove("hidden-panel");
+          pasteInput.focus();
+        }
       }
     });
   }
@@ -305,24 +336,25 @@ export function setupInputSourceToggle() {
   }
 
     // Live JSON validation for the paste textarea
-  const pasteFeedback = document.getElementById("paste_json_feedback");
   if (pasteInput && pasteFeedback) {
     pasteInput.addEventListener("input", function () {
-      const value = pasteInput.value.trim();
-      if (!value) {
+      // A server-rendered error describes the previous submission.
+      // Remove it while the user edits and let live validation describe the new input.
+      if (pasteError) {
+        pasteError.textContent = "";
+        pasteError.classList.add("hidden-panel");
+      }
+      const error = validatePastedMetadata();
+      if (!pasteInput.value.trim()) {
         pasteFeedback.classList.add("hidden-panel");
         pasteFeedback.textContent = "";
         return;
       }
-      try {
-        const parsed = JSON.parse(value);
-        if (typeof parsed !== "object" || Array.isArray(parsed) || parsed === null) {
-          throw new Error("Metadata JSON must be a JSON object.");
-        }
+      if (!error) {
         pasteFeedback.classList.add("hidden-panel");
         pasteFeedback.textContent = "";
-      } catch (err) {
-        pasteFeedback.textContent = "Invalid JSON: " + err.message;
+      } else {
+        pasteFeedback.textContent = error;
         pasteFeedback.classList.remove("hidden-panel");
       }
     });
