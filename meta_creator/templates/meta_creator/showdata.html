@@ -255,7 +255,7 @@
                                                 </span>
                                                 <i class="fa fa-info-circle" aria-hidden="true"></i>
                                             </div>
-                                            <select name="{{ key }}" id="{{ key }}" data-dropdown-schema="{{ key }}">
+                                            <select name="{{ key }}" id="{{ key }}" data-dropdown-schema="{{ key }}" data-initial-value="{{ value }}">
                                                 <option value="" class="suggestion-item"></option>
                                             </select>
                                             <div id="{{ key }}Suggestions"></div>
@@ -508,8 +508,10 @@
                                                         </td>
                                                         {% endfor %}
                                                         {% endif %}
-                                                        <td >
-                                                            <!-- <i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i> -->
+                                                        <td{% if key == "copyrightHolder" %} class="copyright-holder-delete-cell"{% endif %}>
+                                                            {% if key == "copyrightHolder" %}
+                                                            <i class="fas fa-trash-alt delete-row-btn" title="Delete row"></i>
+                                                            {% endif %}
                                                         </td>
                                                     </tr>
                                                     {% endif %}
