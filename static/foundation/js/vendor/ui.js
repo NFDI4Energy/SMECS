@@ -186,6 +186,181 @@ export function setupUI() {
   }
 }
 
+// Toggle between "Repository URL" and "Local metadata file" and "paste JSON" on the start page.
+// Exported as its own top-level setup function (like setupForm, setupDownload)
+// rather than folded into setupUI(), since setupUI() throws before finishing on
+// index.html (no #copy-button ) and would silently skip this otherwise.
+export function setupInputSourceToggle() {
+  const urlRadio = document.getElementById("input-source-url");
+  const fileRadio = document.getElementById("input-source-file");
+  const pasteRadio = document.getElementById("input-source-paste");
+  const urlFields = document.getElementById("url-fields");
+  const fileFields = document.getElementById("file-fields");
+  const pasteFields = document.getElementById("paste-fields");
+  const urlInput = document.getElementById("url_input");
+  const form = document.getElementById("form1");
+  const fileError = document.getElementById("file_error");
+  const fileInput = document.getElementById("metadata_file_input");
+  const pasteInput = document.getElementById("paste_json_input");
+  const pasteFeedback = document.getElementById("paste_json_feedback");
+  const pasteError = document.getElementById("paste_error");
+
+  if (!urlRadio || !fileRadio || !urlFields || !fileFields) return;
+
+  const panels = [
+    { radio: urlRadio, field: urlFields, input: urlInput },
+    { radio: fileRadio, field: fileFields, input: fileInput },
+    { radio: pasteRadio, field: pasteFields, input: pasteInput },
+  ].filter((entry) => entry.radio && entry.field);
+
+    const submitBtn = document.getElementById("submitBtn");
+
+  function showPanel(activeEntry) {
+    panels.forEach((entry) => {
+      const isActive = entry === activeEntry;
+      entry.field.classList.toggle("hidden-panel", !isActive);
+      if (entry.input) {
+        entry.input.required = false;
+      }
+    });
+    if (submitBtn && activeEntry) {
+      const label = activeEntry.radio.getAttribute("data-submit-label");
+      if (label) submitBtn.textContent = label;
+    }
+  }
+
+  panels.forEach((entry) => {
+    entry.radio.addEventListener("change", function () {
+      if (entry.radio.checked) showPanel(entry);
+    });
+  });
+
+  const checkedEntry = panels.find((entry) => entry.radio.checked);
+  showPanel(checkedEntry || panels[0]);
+
+  const browseBtn = document.getElementById("dropzone-browse-btn");
+  const dropzone = document.getElementById("metadata-dropzone");
+  const dropzoneHint = document.getElementById("dropzone-hint");
+  if (browseBtn && fileInput) {
+    browseBtn.addEventListener("click", function () {
+      fileInput.click();
+    });
+  }
+
+  if (fileInput && dropzoneHint) {
+    fileInput.addEventListener("change", function () {
+      if (fileInput.files && fileInput.files.length > 0) {
+        delete fileInput.dataset.stagedFile;
+        dropzoneHint.textContent = fileInput.files[0].name;
+        if (fileError) {
+          fileError.textContent = "";
+          fileError.classList.add("hidden-panel");
+        }
+      } else {
+        dropzoneHint.textContent =
+          "or drag & drop a metadata file here (e.g. CodeMeta JSON)";
+      }
+    });
+  }
+
+  function validatePastedMetadata() {
+    const value = pasteInput.value.trim();
+    // if (!value) {
+    //   return "Please paste metadata JSON before loading.";
+    // }
+
+    try {
+      const parsed = JSON.parse(value);
+      if (typeof parsed !== "object" || Array.isArray(parsed) || parsed === null) {
+        return "Metadata JSON must be a JSON object.";
+      }
+      return "";
+    } catch (error) {
+      return "Invalid JSON: " + error.message;
+    }
+  }
+
+  if (form && fileInput) {
+    form.addEventListener("submit", function (event) {
+      const isFileSource = fileRadio.checked;
+      const isPasteSource = pasteRadio && pasteRadio.checked;
+      const hasSelectedFile = fileInput.files && fileInput.files.length > 0;
+      const hasStagedFile = Boolean(fileInput.dataset.stagedFile);
+
+      if (isFileSource && !hasSelectedFile && !hasStagedFile) {
+        event.preventDefault();
+        if (fileError) {
+          fileError.textContent = "Please select a metadata file before importing.";
+          fileError.classList.remove("hidden-panel");
+        }
+        browseBtn.focus();
+        return;
+      }
+
+      if (isPasteSource && pasteInput && pasteFeedback) {
+        const error = validatePastedMetadata();
+        if (error) {
+          event.preventDefault();
+          pasteFeedback.textContent = error;
+          pasteFeedback.classList.remove("hidden-panel");
+          pasteInput.focus();
+        }
+      }
+    });
+  }
+
+  if (dropzone && fileInput) {
+    ["dragenter", "dragover"].forEach(function (eventName) {
+      dropzone.addEventListener(eventName, function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        dropzone.classList.add("dropzone-active");
+      });
+    });
+
+    ["dragleave", "drop"].forEach(function (eventName) {
+      dropzone.addEventListener(eventName, function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        dropzone.classList.remove("dropzone-active");
+      });
+    });
+
+    dropzone.addEventListener("drop", function (event) {
+      const droppedFiles = event.dataTransfer ? event.dataTransfer.files : null;
+      if (droppedFiles && droppedFiles.length > 0) {
+        fileInput.files = droppedFiles;
+        fileInput.dispatchEvent(new Event("change"));
+      }
+    });
+  }
+
+    // Live JSON validation for the paste textarea
+  if (pasteInput && pasteFeedback) {
+    pasteInput.addEventListener("input", function () {
+      // A server-rendered error describes the previous submission.
+      // Remove it while the user edits and let live validation describe the new input.
+      if (pasteError) {
+        pasteError.textContent = "";
+        pasteError.classList.add("hidden-panel");
+      }
+      const error = validatePastedMetadata();
+      if (!pasteInput.value.trim()) {
+        pasteFeedback.classList.add("hidden-panel");
+        pasteFeedback.textContent = "";
+        return;
+      }
+      if (!error) {
+        pasteFeedback.classList.add("hidden-panel");
+        pasteFeedback.textContent = "";
+      } else {
+        pasteFeedback.textContent = error;
+        pasteFeedback.classList.remove("hidden-panel");
+      }
+    });
+  }
+}
+
 // pop-up message for Contributor and Author tabs
 function showPopup() {
   document.getElementById("popup").style.display = "block";
