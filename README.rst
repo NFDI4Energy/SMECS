@@ -20,12 +20,26 @@ __________________________________________________________
 
 1. **Start Phase**
 __________________________________________________________
-In the Start phase, users provide two key inputs:
+In the Start phase, users choose one of three input sources, each with its own submit action (*Extract Metadata*, *Import Metadata*, or *Load Metadata*).
+
+**Input sources:**
+
+**a) Repository URL** (default — with extraction)
+
+Users provide two key inputs:
       - A repository link (GitHub or GitLab)
       - A personal access token for the corresponding platform
 SMECS can operate without user-provided tokens for some repositories by using internal default tokens. However:
       - For other GitLab instances, a user-provided token is always required.
       - Providing a token can enable SMECS to extract more detailed metadata from certain repositories.
+
+**b) Local metadata file**
+
+Users can import and curate an existing metadata file (no extraction).
+
+**c) Paste JSON**
+
+The third input source enables users to paste metadata JSON content and continue with the curation.
 |
 2. **Extraction Phase**
 __________________________________________________________
