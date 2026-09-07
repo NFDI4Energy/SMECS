@@ -40,6 +40,7 @@ Users can import and curate an existing metadata file (no extraction).
 **c) Paste JSON**
 
 The third input source enables users to paste metadata JSON content and continue with the curation.
+
 |
 |
 2. **Extraction Phase**
