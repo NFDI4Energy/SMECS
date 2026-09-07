@@ -41,6 +41,7 @@ Users can import and curate an existing metadata file (no extraction).
 
 The third input source enables users to paste metadata JSON content and continue with the curation.
 |
+|
 2. **Extraction Phase**
 __________________________________________________________
 The Extraction phase uses `HERMES <https://github.com/softwarepub/hermes>`_ harvesting steps to retrieve metadata from multiple sources. For details on the metadata fields, see: `Metadata Terms in SMECS <https://github.com/NFDI4Energy/SMECS/blob/master/static/schema/codemeta_schema.json>`_. Once the inputs from the Start phase are submitted, SMECS initiates metadata retrieval using four HERMES harvesters:
