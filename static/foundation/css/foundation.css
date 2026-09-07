@@ -107,11 +107,22 @@ footer {
 }
 
 /******************** Initial Form of the software metadata Extractor (index.html) ********************/
+.form-viewport {
+  position: fixed;
+  top: 5rem;             /* nav height */
+  bottom: 4rem;          /* footer height */
+  left: 0;
+  right: 0;
+  display: flex;
+  overflow-y: auto;      /* scrolls only when the card is taller than the gap */
+  padding: 1rem;         /* keeps the card border off the screen edges */
+}
 .InitialFormContainer {
+ margin: auto;          /* centres in both axes, and stays scrollable on overflow */
+  width: min(760px, 92vw);
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  margin-top: 9rem;
 }
 
 .mainHeader {
@@ -129,7 +140,7 @@ footer {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin: 3.5rem auto;
+  margin: 1.5rem auto;
   max-width: 600px;
 }
 
@@ -434,7 +445,17 @@ span.error_message {
   border-color: #055f82;
   box-shadow: 0 0 0 2px rgba(5, 95, 130, 0.2);
 }
-
+@media (max-height: 760px) {
+  .mainHeader        { font-size: 2.2rem; }
+  #smecsSubtitle     { font-size: 1.1rem; }
+  .input-source-label{ margin-top: 1rem; }
+  #form1             { margin: 1rem auto; }
+  .InitialFormContainer { padding: 12px; }
+}
+@media (max-height: 620px) {
+  .mainHeader { font-size: 1.8rem; }
+  #form1      { margin: 0.5rem auto; }
+}
 /******************** Style for showdata.html ********************/
 /* Styles for the entered data section */
 .whole-extraction-page {
