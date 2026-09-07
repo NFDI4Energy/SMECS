@@ -13,7 +13,7 @@ Phases in SMECS
 __________________________________________________________
 | The workflow of SMECS consists of four sequential phases: **Start**, **Extraction**, **Curation**, and **Export**.
 |
-.. image:: https://github.com/NFDI4Energy/SMECS/blob/master/docs/Extraction_via_hermes-1.png
+.. image:: https://github.com/NFDI4Energy/SMECS/blob/master/docs/Phases of SMECS_Extraction-Import.png
    :alt: SMECS Workflow
    :width: 1000px
 |
