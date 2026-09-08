@@ -3,17 +3,19 @@ Software Metadata Extraction and Curation Software (SMECS)
 __________________________________________________________
 | A web application to extract and curate research software metadata following the `CodeMeta <https://codemeta.github.io/>`_ (`version 3.0 <https://raw.githubusercontent.com/codemeta/codemeta/3.0/codemeta.jsonld>`_) software metadata standard.
 |
-| SMECS facilitates the creation and curation of research software metadata by extracting metadata from GitHub and GitLab repositories or importing existing metadata. It provides a user-friendly graphical interface for reviewing, editing, and completing the metadata without unnecessarily re-entering information already available elsewhere. The curated metadata are exported as CodeMeta-compliant JSON, supporting integration with other tools and the discoverability and reuse of research software.
+| SMECS facilitates the creation and curation of research software metadata. For repository-based input, SMECS uses CoMET to extract metadata from GitHub and GitLab repositories. Users can also import existing metadata. SMECS provides a user-friendly graphical interface for reviewing, editing, and completing the metadata without unnecessarily re-entering information already available elsewhere. The curated metadata are exported as CodeMeta-compliant JSON, supporting integration with other tools and the discoverability and reuse of research software.
 |
 | 📄 For more details, see our `Paper <http://dx.doi.org/10.14279/eceasst.v85.2708>`_.
 |
 | **Authors:** Stephan Ferenz `@sferenz <https://github.com/sferenz>`_, Aida Jafarbigloo `@AidaJafarbigloo <https://github.com/Aidajafarbigloo>`_
 |
+| Note: This branch uses CoMET for metadata extraction instead of the HERMES-based extraction workflow used in the original SMECS implementation.
+|
 Phases in SMECS
 __________________________________________________________
 | The workflow of SMECS consists of four phases: **Start**, **Extraction**, **Curation**, and **Export**.
 | Depending on the selected input method, the **Extraction** phase may be skipped.
-.. image:: https://github.com/NFDI4Energy/SMECS/blob/master/docs/Phases%20of%20SMECS_Extraction-Import.png
+.. image:: https://github.com/NFDI4Energy/SMECS/blob/feature/ConnOSS-integration/docs/Phases-of-SMECS-Extraction-via-CoMET.png
    :alt: SMECS Workflow
    :width: 1000px
 
@@ -50,22 +52,22 @@ Users can also paste existing CodeMeta JSON content directly into SMECS. As with
 __________________________________________________________
 The **Extraction** phase is used when users select metadata extraction from a GitHub or GitLab repository in the **Start** phase. If users import a local metadata file or paste existing metadata content, this phase is skipped and the provided metadata are passed directly to the **Curation** phase.
 
-For repository-based input, SMECS uses the harvesting functionality of `HERMES <https://github.com/softwarepub/hermes>`_ to retrieve metadata from multiple sources. For details on the metadata fields, see: `Metadata Terms in SMECS <https://github.com/NFDI4Energy/SMECS/blob/master/static/schema/codemeta_schema.json>`_.
+For repository-based input, SMECS uses the `CoMET-RS <https://github.com/zbmed-semtec/comet-metadata-extraction>`_ metadata extraction tool to extract metadata from software repositories. For details on the metadata fields, see: `Metadata Terms in SMECS <https://github.com/NFDI4Energy/SMECS/blob/master/static/schema/codemeta_schema.json>`_.
 
-SMECS uses four HERMES harvesters:
+CoMET performs the metadata extraction and provides the extracted metadata to SMECS. SMECS then processes the extracted metadata and presents it in the **Curation** interface, where users can review, edit, and complete the metadata.
+
+SMECS uses CoMET functionality to extract metadata from:
 
 - GitHub
 - GitLab
-- CFF (`Citation File Format <https://citation-file-format.github.io/>`_)
-- CodeMeta
 
-GitHub and GitLab metadata are harvested via the `HERMES GitHub/GitLab plugin <https://github.com/softwarepub/hermes-plugin-github-gitlab>`_.
+The extraction workflow can be summarized as follows:
 
-All harvested metadata are mapped to CodeMeta using existing crosswalks from CodeMeta and HERMES, together with a custom crosswalk for GitLab.
-
-The harvested metadata are then processed and merged through the HERMES processing step, producing a unified metadata set that is passed to the **Curation** phase.
-
-The HERMES-based approach provides an interoperable and modular extraction architecture and facilitates the integration of additional harvesting sources in the future.
+- The user provides a repository URL and personal access token through SMECS.
+- SMECS sends the inputs to CoMET.
+- CoMET extracts the available research software metadata from the repository.
+- The extracted metadata are returned to SMECS.
+- SMECS makes the metadata available in the Curation phase for review and editing.
 
 |
 3. **Curation Phase**
@@ -81,7 +83,7 @@ The metadata are displayed in a form-based interface organized into four main ta
 
 Key visualization and curation features include:
 
-- **Metadata Visualization & User-Friendly Interface:** Metadata are displayed in a structured, easy-to-read format. The interface is intuitive, responsive, and allows smooth    navigation through metadata fields.
+- **Metadata Visualization & User-Friendly Interface:** Metadata are displayed in a structured, easy-to-read format. The interface is intuitive, responsive, and allows smooth navigation through metadata fields.
 - **Missing Metadata Identification:** SMECS flags fields where metadata is absent.
 - **Required Metadata Properties:** Certain fields are marked as mandatory to ensure completeness of the final output.
 - **Editable Fields:** Users can directly edit or correct metadata within the interface.
@@ -104,8 +106,11 @@ The exported file can, for example, be:
 |
 Installation and Usage
 __________________________________________________________
-Install from GitHub
+Install SMECS locally and CoMET through Docker
 ----------
+Prerequisites: Make sure `Docker <https://www.docker.com/products/docker-desktop/>`_  is installed on your local machine.
+
+1. Installing SMECS
 
 * Cloning the repository
 .. code-block:: shell
@@ -196,52 +201,123 @@ Install from GitHub
       .. code-block:: shell
 
        python3 manage.py migrate
-    * Run the project.
-        * **Windows:** 
-        .. code-block:: shell
 
-          py manage.py runserver
+2. Installing and Running CoMET
 
-        * **Unix/MacOS:** 
-        .. code-block:: shell
+* CoMET is used by SMECS as the metadata extraction backend. It runs separately from SMECS in a Docker container.
 
-          python3 manage.py runserver
+* Open another terminal and clone the CoMET repository:
 
-* To see the output on the browser follow the link shown in the terminal. (e.g. http://127.0.0.1:8000/)
+.. code-block:: shell
+
+   git clone https://github.com/zbmed-semtec/comet-metadata-extraction.git
+
+* Navigate to the project directory:
+
+.. code-block:: shell
+   
+   cd comet-metadata-extraction
+
+Build and start only the CoMET backend service:
+
+.. code-block:: shell
+   
+   docker compose up --build backend
+
+3. Running SMECS
+
+After configuring SMECS to communicate with the CoMET backend, return to the SMECS terminal and start the Django development server on port ``8001``
+   
+* **Windows:** 
+   .. code-block:: shell
+      
+      py manage.py runserver 8001
+
+* **Unix/MacOS:** 
+   .. code-block:: shell
+      
+      python3 manage.py runserver 8001
+
+SMECS can then be accessed at: http://127.0.0.1:8001/ (In this setup, the two applications run independently.)
+
 |
 |
 Install through Docker
 ----------
-To get started with SMECS using Docker, follow the steps below:
+In this setup, SMECS and CoMET run as separate Docker Compose applications. SMECS provides the web application and curation interface, while CoMET provides the metadata extraction backend.
 
 * Prerequisites: Make sure `Docker <https://www.docker.com/products/docker-desktop/>`_  is installed on your local machine.
 
-* Cloning the Repository
+1. Clone SMECS
+
+* Clone the SMECS repository:
 .. code-block:: shell
 
    git clone https://github.com/NFDI4Energy/SMECS.git
 
-* Navigate to the Project Directory
+* Navigate to the project directory:
 .. code-block:: shell
 
    cd SMECS
 
-* Building the Docker Images
+2. Clone CoMET
+
+* In a separate directory or terminal, clone the CoMET repository:
 .. code-block:: shell
 
-   docker-compose build
+   git clone https://github.com/zbmed-semtec/comet-metadata-extraction.git
 
-* Starting the Services
+* Navigate to the CoMET project directory:
 .. code-block:: shell
 
-   docker-compose up
+   cd comet-metadata-extraction
 
-* Accessing the Application: Navigate to ``http://localhost:8000`` in your web browser.
+3. Build and start the CoMET backend
+
+Only the CoMET backend is required by SMECS.
+
+* Build and start the backend:
+.. code-block:: shell
+
+   docker compose up --build backend
+
+Keep this terminal running while using SMECS.
+
+4. Build and start SMECS
+
+* Open another terminal and navigate to the SMECS directory:
+.. code-block:: shell
+
+   cd SMECS
+
+* Build and start the SMECS application:
+.. code-block:: shell
+
+   docker compose up --build
+
+5. Access SMECS
+
+* Open the SMECS application in your browser:
+.. code-block:: text
+
+   http://localhost:8001
+
+SMECS uses the running CoMET backend for repository-based metadata extraction.
 
 * Stopping the Services
+
+* To stop SMECS, run the following command from the SMECS directory:
 .. code-block:: shell
 
-   docker-compose down
+   docker compose down
+
+* To stop CoMET, run the following command from the CoMET directory:
+.. code-block:: shell
+
+   docker compose down
+
+(In this setup, SMECS and CoMET run as separate Docker-based applications.)
+
 |
 | **Setting Up GitLab/GitHub Personal Token**
 | Depending on the repository and hosting platform, SMECS may require a personal access token to retrieve repository metadata. Providing a personal access token may also enable access to additional metadata that is not available without authentication.
@@ -260,7 +336,6 @@ __________________________________________________________
 | We believe in the power of collaboration and welcome contributions from the community to enhance the SMECS workflow. Whether you have found a bug, have a feature idea, or want to share feedback, your contribution matters. Feel free to submit a pull request, open up an issue, or reach out with any questions or concerns.
 |
 | To see upcoming features in SMECS, please refer to our `open issues <https://github.com/NFDI4Energy/SMECS/issues?q=is%3Aopen+is%3Aissue>`_.
-| To stay updated on upcoming changes to the `HERMES GitHub and GitLab Plugin <https://github.com/softwarepub/hermes-plugin-github-gitlab>`_, visit the `project’s issues page <https://github.com/softwarepub/hermes-plugin-github-gitlab/issues>`_. And if you have questions, suggestions, feedback, or need to report a bug, please open a new issue `there <https://github.com/softwarepub/hermes-plugin-github-gitlab/issues>`_.
 |
 |
 License and Citation
