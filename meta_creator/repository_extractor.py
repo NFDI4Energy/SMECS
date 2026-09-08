@@ -1,8 +1,8 @@
 """
-Extract metadata from a GitHub or GitLab repository through HERMES.
+Extract metadata from a GitHub or GitLab repository through CoMET.
 """
 
-from .hermes_process import run_hermes_commands
+from .comet_process import run_comet
 from .init_curated_metadata import init_curated_metadata
 from .metadata_results import metadata_result
 from .token_check import is_github_repo, validate_token
@@ -10,11 +10,18 @@ from .token_check import is_github_repo, validate_token
 
 def extract_repository_metadata(repo_url, personal_token_key=None):
     """
-    Validate repository access, run HERMES, and curate its metadata.
-    Handle metadata extraction from a GitHub or GitLab repository.
+    Extract and curate metadata from a GitHub or GitLab repository.
+    GitHub repositories may be accessed without a personal access token, while GitLab repositories require a valid token.
+
+    Args:
+        repo_url: URL of the GitHub or GitLab repository.
+        personal_token_key: Optional personal access token or token key used for repository authentication.
+
+    Returns:
+        A metadata result containing success status, warnings, errors, and curated repository metadata when available.
     """
 
-    # A repository URL is required before attempting authentication or running HERMES.
+    # A repository URL is required before attempting authentication or running CoMET.
     if not repo_url:
         return metadata_result(success=False, errors=["A repository URL is required."])
 
@@ -27,28 +34,28 @@ def extract_repository_metadata(repo_url, personal_token_key=None):
             errors=["GitLab requires a valid personal access token."],
         )
 
-    # Run HERMES to extract metadata from the repository.
-    hermes_metadata = run_hermes_commands(repo_url, valid_token)
-    if not isinstance(hermes_metadata, dict):
+    # Run CoMET to extract metadata from the repository.
+    comet_result = run_comet(repo_url, valid_token)
+    if not isinstance(comet_result, dict):
         return metadata_result(
             success=False,
-            errors=["HERMES returned unexpected result format."],
+            errors=["COMET returned an unexpected result format."],
         )
 
-    extracted_metadata = hermes_metadata.get("metadata")
+    extracted_metadata = comet_result.get("metadata")
     result = metadata_result(
-        success=hermes_metadata.get("success", False),
-        warnings=hermes_metadata.get("warnings", []),
-        errors=hermes_metadata.get("errors", []),
+        success=comet_result.get("success", False),
+        warnings=comet_result.get("warnings", []),
+        errors=comet_result.get("errors", []),
     )
     
     # Normalize the extracted metadata into the tool's curated metadata structure before returning it.
     if isinstance(extracted_metadata, dict):
         result["metadata"] = init_curated_metadata(extracted_metadata)
 
-    # A successful HERMES run should always provide metadata.
+    # A successful CoMET run should always provide metadata.
     elif result["success"]:
         result["success"] = False
-        result["errors"].append("HERMES did not return metadata.")
+        result["errors"].append("CoMET did not return metadata.")
 
     return result
