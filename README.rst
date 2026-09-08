@@ -3,7 +3,7 @@ Software Metadata Extraction and Curation Software (SMECS)
 __________________________________________________________
 | A web application to extract and curate research software metadata following the `CodeMeta <https://codemeta.github.io/>`_ (`version 3.0 <https://raw.githubusercontent.com/codemeta/codemeta/3.0/codemeta.jsonld>`_) software metadata standard.
 |
-| SMECS facilitates the extraction of research software metadata from GitHub and GitLab repositories. It provides a user-friendly graphical interface for visualizing the retrieved metadata, enabling researchers and research software engineers to create high-quality metadata without reentering information already available elsewhere. The curated metadata is exported as CodeMeta-compliant JSON, ensuring integration with other tools and enhancing the discoverability, reuse, and impact of research software.
+| SMECS facilitates the creation and curation of research software metadata by extracting metadata from GitHub and GitLab repositories or importing existing metadata. It provides a user-friendly graphical interface for reviewing, editing, and completing the metadata without unnecessarily re-entering information already available elsewhere. The curated metadata are exported as CodeMeta-compliant JSON, supporting integration with other tools and the discoverability and reuse of research software.
 |
 | 📄 For more details, see our `Paper <http://dx.doi.org/10.14279/eceasst.v85.2708>`_.
 |
@@ -11,75 +11,95 @@ __________________________________________________________
 |
 Phases in SMECS
 __________________________________________________________
-| The workflow of SMECS consists of four sequential phases: **Start**, **Extraction**, **Curation**, and **Export**.
-|
-.. image:: https://github.com/NFDI4Energy/SMECS/blob/master/docs/Phases of SMECS_Extraction-Import.png
+| The workflow of SMECS consists of four phases: **Start**, **Extraction**, **Curation**, and **Export**.
+| Depending on the selected input method, the **Extraction** phase may be skipped.
+.. image:: https://github.com/NFDI4Energy/SMECS/blob/master/docs/Phases%20of%20SMECS_Extraction-Import.png
    :alt: SMECS Workflow
    :width: 1000px
 |
 
 1. **Start Phase**
 __________________________________________________________
-In the Start phase, users choose one of three input sources, each with its own submit action (*Extract Metadata*, *Import Metadata*, or *Load Metadata*).
+In the **Start** phase, users select how metadata should be provided to SMECS.
+Three input methods are available:
 
-**Input sources:**
+**a) Extract metadata from a repository**
 
-**a) Repository URL** (default — with extraction)
+This is the default workflow. Users provide:
 
-Users provide two key inputs:
-      - A repository link (GitHub or GitLab)
-      - A personal access token for the corresponding platform
-SMECS can operate without user-provided tokens for some repositories by using internal default tokens. However:
-      - For other GitLab instances, a user-provided token is always required.
-      - Providing a token can enable SMECS to extract more detailed metadata from certain repositories.
+- A repository URL from **GitHub or GitLab**
+- A personal access token for the corresponding platform
 
-**b) Local metadata file**
+SMECS uses the repository information to automatically extract available software metadata. The extracted metadata are then passed to the **Curation** phase.
 
-Users can import and curate an existing metadata file (no extraction).
+For some repositories, SMECS can perform the extraction without a user-provided token by using an internally configured token. However:
 
-**c) Paste JSON**
+- For GitLab instances, a user-provided token is required.
+- Providing a personal access token may allow SMECS to access and extract additional repository metadata.
 
-The third input source enables users to paste metadata JSON content and continue with the curation.
+**b) Import a local metadata file**
+
+Users who already have software metadata can upload an existing CodeMeta JSON file. In this case, the extraction phase is skipped and the imported metadata are loaded directly into the **Curation** phase.
+
+**c) Paste metadata content**
+
+Users can also paste existing CodeMeta JSON content directly into SMECS. As with file import, the **Extraction** phase is skipped and the provided metadata are loaded directly into the **Curation** phase for review and editing.
 
 |
 |
 2. **Extraction Phase**
 __________________________________________________________
-The Extraction phase uses `HERMES <https://github.com/softwarepub/hermes>`_ harvesting steps to retrieve metadata from multiple sources. For details on the metadata fields, see: `Metadata Terms in SMECS <https://github.com/NFDI4Energy/SMECS/blob/master/static/schema/codemeta_schema.json>`_. Once the inputs from the Start phase are submitted, SMECS initiates metadata retrieval using four HERMES harvesters:
-      - GitHub
-      - GitLab
-      - CFF (`Citation File Format <https://citation-file-format.github.io/>`_)
-      - CodeMeta
+The **Extraction** phase is used when users select metadata extraction from a GitHub or GitLab repository in the **Start** phase. If users import a local metadata file or paste existing metadata content, this phase is skipped and the provided metadata are passed directly to the **Curation** phase.
+
+For repository-based input, SMECS uses the harvesting functionality of `HERMES <https://github.com/softwarepub/hermes>`_ to retrieve metadata from multiple sources. For details on the metadata fields, see: `Metadata Terms in SMECS <https://github.com/NFDI4Energy/SMECS/blob/master/static/schema/codemeta_schema.json>`_.
+
+SMECS uses four HERMES harvesters:
+
+- GitHub
+- GitLab
+- CFF (`Citation File Format <https://citation-file-format.github.io/>`_)
+- CodeMeta
+
 GitHub and GitLab metadata are harvested via the `HERMES GitHub/GitLab plugin <https://github.com/softwarepub/hermes-plugin-github-gitlab>`_.
 
-All harvested metadata are mapped to CodeMeta using existing crosswalks from CodeMeta and HERMES, plus a custom crosswalk we created for GitLab.
-The metadata are then processed and merged via the HERMES processing step, producing a unified set of metadata.
-These results are displayed in the Curation phase. The HERMES-based approach ensures an interoperable, modular architecture that makes it easy to integrate additional harvesting sources in the future.
+All harvested metadata are mapped to CodeMeta using existing crosswalks from CodeMeta and HERMES, together with a custom crosswalk for GitLab.
+
+The harvested metadata are then processed and merged through the HERMES processing step, producing a unified metadata set that is passed to the **Curation** phase.
+
+The HERMES-based approach provides an interoperable and modular extraction architecture and facilitates the integration of additional harvesting sources in the future.
 
 |
 3. **Curation Phase**
 __________________________________________________________
-The Curation phase allows users to edit and refine the extracted metadata. The metadata are displayed in a form-based interface organized into four main tabs:
-   #. General Information
-   #. Provenance
-   #. Related Persons
-   #. Technical Aspects
+The **Curation** phase allows users to review, edit, and refine the metadata obtained through either repository-based extraction or metadata import.
+
+The metadata are displayed in a form-based interface organized into four main tabs:
+
+#. General Information
+#. Provenance
+#. Related Persons
+#. Technical Aspects
 
 Key visualization and curation features include:
-   - **Metadata Visualization & User-Friendly Interface:** Metadata is displayed in a structured, easy-to-read format. The interface is intuitive, responsive, and allows smooth    navigation through metadata fields.
-   - **Missing Metadata Identification:** SMECS flags fields where metadata is absent.
-   - **Required Metadata Properties:** Certain fields are marked as mandatory to ensure completeness of the final output.
-   - **Editable Fields:** Users can directly edit or correct metadata within the interface.
-   - **Tagging Feature:** Some fields allow multiple values for better metadata organization.
-   - **Suggestion Lists:** For selected fields, SMECS provides suggestions to reduce manual input and ensure consistency.
-   - **Form-to-JSON Synchronization:** Updates in the form are mirrored in the JSON view (one-directional) so users can track changes instantly.
+
+- **Metadata Visualization & User-Friendly Interface:** Metadata are displayed in a structured, easy-to-read format. The interface is intuitive, responsive, and allows smooth    navigation through metadata fields.
+- **Missing Metadata Identification:** SMECS flags fields where metadata is absent.
+- **Required Metadata Properties:** Certain fields are marked as mandatory to ensure completeness of the final output.
+- **Editable Fields:** Users can directly edit or correct metadata within the interface.
+- **Tagging Feature:** Some fields allow multiple values for better metadata organization.
+- **Suggestion Lists:** For selected fields, SMECS provides suggestions to reduce manual input and ensure consistency.
+- **Form-to-JSON Synchronization:** Updates in the form are mirrored in the JSON view (one-directional) so users can track changes instantly.
 
 
 4. **Export Phase**
 _________________________________________________________
-In the Export phase, the curated metadata can be downloaded as a CodeMeta 3.0–compliant JSON file. Users can:
-     - Include this file in their repository to make their research software more FAIR
-     - Use it for other purposes, such as uploading metadata to a software registry
+In the **Export** phase, the curated metadata can be downloaded as a CodeMeta 3.0–compliant JSON file.
+
+The exported file can, for example, be:
+
+- Included in the software repository
+- Used as input for other tools or services
+- Uploaded to a software registry
   
 |
 |
@@ -152,7 +172,7 @@ Install from GitHub
          
          python3 -m pip install --upgrade pip
 
-   * Install a list of requirements specified in a *Requirements.txt*.
+   * Install the required packages listed in ``Requirements.txt``.
          * **Windows:** 
          .. code-block:: shell
 
@@ -171,13 +191,12 @@ Install from GitHub
       * **Windows:** 
       .. code-block:: shell
 
-       python manage.py migrate
+       py manage.py migrate
 
       * **Unix/MacOS:** 
       .. code-block:: shell
 
        python3 manage.py migrate
-    * Open and run the project in an editor (e.g. VS code).
     * Run the project.
         * **Windows:** 
         .. code-block:: shell
@@ -196,8 +215,7 @@ Install through Docker
 ----------
 To get started with SMECS using Docker, follow the steps below:
 
-* Prerequisites
-   * Make sure `Docker <https://www.docker.com/products/docker-desktop/>`_  is installed on your local machine.
+* Prerequisites: Make sure `Docker <https://www.docker.com/products/docker-desktop/>`_  is installed on your local machine.
 
 * Cloning the Repository
 .. code-block:: shell
@@ -219,8 +237,7 @@ To get started with SMECS using Docker, follow the steps below:
 
    docker-compose up
 
-* Accessing the Application
-   * Navigate to ``http://localhost:8000`` in your web browser.
+* Accessing the Application: Navigate to ``http://localhost:8000`` in your web browser.
 
 * Stopping the Services
 .. code-block:: shell
@@ -228,7 +245,7 @@ To get started with SMECS using Docker, follow the steps below:
    docker-compose down
 |
 | **Setting Up GitLab/GitHub Personal Token**
-| To enhance the functionality of this program and ensure secure interactions with the GitLab/GitHub API, users are required to provide their personal access token. Follow these steps to integrate your token:
+| Depending on the repository and hosting platform, SMECS may require a personal access token to retrieve repository metadata. Providing a personal access token may also enable access to additional metadata that is not available without authentication.
 
 * Generate a GitLab Token:
     * Visit `Create a personal access token <https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#create-a-personal-access-token>`_ for more information on how to generate a new token.
