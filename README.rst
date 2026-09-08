@@ -16,8 +16,8 @@ __________________________________________________________
 .. image:: https://github.com/NFDI4Energy/SMECS/blob/master/docs/Phases%20of%20SMECS_Extraction-Import.png
    :alt: SMECS Workflow
    :width: 1000px
-|
 
+|
 1. **Start Phase**
 __________________________________________________________
 In the **Start** phase, users select how metadata should be provided to SMECS.
@@ -45,7 +45,6 @@ Users who already have software metadata can upload an existing CodeMeta JSON fi
 
 Users can also paste existing CodeMeta JSON content directly into SMECS. As with file import, the **Extraction** phase is skipped and the provided metadata are loaded directly into the **Curation** phase for review and editing.
 
-|
 |
 2. **Extraction Phase**
 __________________________________________________________
@@ -90,7 +89,7 @@ Key visualization and curation features include:
 - **Suggestion Lists:** For selected fields, SMECS provides suggestions to reduce manual input and ensure consistency.
 - **Form-to-JSON Synchronization:** Updates in the form are mirrored in the JSON view (one-directional) so users can track changes instantly.
 
-
+|
 4. **Export Phase**
 _________________________________________________________
 In the **Export** phase, the curated metadata can be downloaded as a CodeMeta 3.0–compliant JSON file.
@@ -255,6 +254,7 @@ To get started with SMECS using Docker, follow the steps below:
 | **Tip for developers**
 | If the page does not refresh correctly, clear the browser cache. You can force Chrome to pull in new data and ignore the saved ("cached") data by using the keyboard shortcut ``Cmd+Shift+R`` on Mac, and ``Ctrl+F5`` or ``Ctrl+Shift+R`` on Windows. 
 |
+|
 Collaboration
 __________________________________________________________
 | We believe in the power of collaboration and welcome contributions from the community to enhance the SMECS workflow. Whether you have found a bug, have a feature idea, or want to share feedback, your contribution matters. Feel free to submit a pull request, open up an issue, or reach out with any questions or concerns.
@@ -262,11 +262,12 @@ __________________________________________________________
 | To see upcoming features in SMECS, please refer to our `open issues <https://github.com/NFDI4Energy/SMECS/issues?q=is%3Aopen+is%3Aissue>`_.
 | To stay updated on upcoming changes to the `HERMES GitHub and GitLab Plugin <https://github.com/softwarepub/hermes-plugin-github-gitlab>`_, visit the `project’s issues page <https://github.com/softwarepub/hermes-plugin-github-gitlab/issues>`_. And if you have questions, suggestions, feedback, or need to report a bug, please open a new issue `there <https://github.com/softwarepub/hermes-plugin-github-gitlab/issues>`_.
 |
+|
 License and Citation
 __________________________________________________________
 | The code is licensed under the **GNU Affero General Public License v3.0 or later** (AGPL-3.0-or-later).
 | See `LICENSE.txt <LICENSE.txt>`_ for further information.
-
+|
 |
 Acknowledgements
 __________________________________________________________
