@@ -696,7 +696,7 @@ select {
 #metadata-json {
   /* overflow: scroll; */
   width: 100%;
-  height: clamp(200px, calc(100vh - 14rem), 5000px);
+  height: clamp(200px, calc(100vh - 18rem), 5000px);
   padding: 8px;
   border-radius: 4px;
   margin-bottom: 2px;

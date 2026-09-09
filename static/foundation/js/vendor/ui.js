@@ -184,6 +184,15 @@ export function setupUI() {
       });
     }
   }
+    const alertDiv = document.querySelector('.json-readonly-alert');
+    const gotIt = alertDiv ? alertDiv.querySelector('.acknowledge-tag') : null;
+
+    if (gotIt) {
+      gotIt.addEventListener('click', function () {
+        alertDiv.classList.add('hidden-alert');
+        metadataJson.style.height = 'clamp(200px, calc(100vh - 14rem), 5000px)';
+      });
+    }
 }
 
 // Toggle between "Repository URL" and "Local metadata file" and "paste JSON" on the start page.
