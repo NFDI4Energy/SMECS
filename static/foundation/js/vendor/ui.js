@@ -193,6 +193,13 @@ export function setupUI() {
         metadataJson.style.height = 'clamp(200px, calc(100vh - 14rem), 5000px)';
       });
     }
+
+      // laptop width and below: let the page scroll; larger screens stay locked
+  function updateBodyOverflow() {
+    document.body.style.overflow = window.innerWidth <= 1366 ? 'auto' : 'hidden';
+  }
+  updateBodyOverflow();
+  window.addEventListener('resize', updateBodyOverflow);
 }
 
 // Toggle between "Repository URL" and "Local metadata file" and "paste JSON" on the start page.
@@ -728,3 +735,4 @@ function toggleLang() {
     btn.innerHTML = isEN ? '<i class="fa fa-globe" title="Switch to English"></i> English' : '<i class="fa fa-globe" title="Switch to German"></i> Deutsch';
 }
 window.toggleLang = toggleLang;
+
