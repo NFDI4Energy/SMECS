@@ -4,7 +4,27 @@
 from django.conf import settings
 import json
 import os
-
+# Extra human-readable context for the RelatedPersons role columns.
+# Appended to the schema description shown in the info-icon tooltip.
+ROLE_EXPLANATIONS = {
+    'contributor': (
+        'A "contributor" refers to anyone who aids in software development in any '
+        'capacity, from coding to testing, highlighting the collaborative nature of '
+        'software projects.'
+    ),
+    'author': (
+        'An "author" in software authorship is someone who significantly contributes '
+        'to the creation and development of software, including roles like coding, '
+        'project management, and documentation.'
+    ),
+    'maintainer': (
+        'A "maintainer" is the individual or entity responsible for the regular '
+        'maintenance of the software. This role may be distinct from the original '
+        'creator and can be fulfilled by a person or a corporate entity. The '
+        'maintainer is typically identifiable through a contact address, such as an '
+        'email, for maintenance-related communication.'
+    ),
+}
 def load_schema(schema_name: str) -> dict:
     """
     Load a JSON schema file from the static/schema directory.
@@ -61,8 +81,13 @@ def load_description_dict_from_schema(schema: dict) -> dict[str, str]:
     description_dict['Provenance'] = "This section describes the creation history of the software."
     description_dict['RelatedPersons'] = "This section lists all relevant persons who are connected to the software."
     description_dict['TechnicalAspects'] = "This section describes the technical aspects of the software."
+    ## Append role explanations to the schema descriptions
+    for key, explanation in ROLE_EXPLANATIONS.items():
+        base = description_dict.get(key, '').strip()
+        description_dict[key] = f"{base} {explanation}".strip() if base else explanation
 
     return description_dict
+
 
 # Define required field_type per element
 def define_field_type(schema: dict, types: dict, array = False) -> dict[str, str]:
