@@ -24,7 +24,7 @@ COMET_API_URL = os.getenv(
 COMET_METADATA_ENDPOINT = "/api/metadata/enriched"
 
 
-def run_comet(repo_url, access_token=None, schema_class=None):
+def run_comet(repo_url, access_token=None, schema="CODEMETA", schema_class="SoftwareSourceCode"):
     """
     Call the COMET metadata extraction API.
 
@@ -56,6 +56,8 @@ def run_comet(repo_url, access_token=None, schema_class=None):
 
     params = {
         "repo_url": repo_url,
+        "schema": schema,
+        "schema_class": schema_class,
     }
 
     if access_token:

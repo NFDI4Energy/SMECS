@@ -2,6 +2,7 @@
 Extract metadata from a GitHub or GitLab repository through CoMET.
 """
 
+from unittest import result
 from .comet_process import run_comet
 from .init_curated_metadata import init_curated_metadata
 from .metadata_results import metadata_result
@@ -35,7 +36,12 @@ def extract_repository_metadata(repo_url, personal_token_key=None):
         )
 
     # Run CoMET to extract metadata from the repository.
-    comet_result = run_comet(repo_url, valid_token)
+    comet_result = run_comet(
+    repo_url,
+    valid_token,
+    schema="connoss",
+    schema_class="Software",
+    )
     if not isinstance(comet_result, dict):
         return metadata_result(
             success=False,
@@ -51,7 +57,7 @@ def extract_repository_metadata(repo_url, personal_token_key=None):
     
     # Normalize the extracted metadata into the tool's curated metadata structure before returning it.
     if isinstance(extracted_metadata, dict):
-        result["metadata"] = init_curated_metadata(extracted_metadata)
+        result["metadata"] = init_curated_metadata(extracted_metadata, schema_type="connoss")
 
     # A successful CoMET run should always provide metadata.
     elif result["success"]:

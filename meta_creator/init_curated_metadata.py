@@ -289,7 +289,7 @@ def join_tabs_to_dict(filled_metadata: dict[str, dict]) -> dict:
 
 
 # Create curated metadata
-def init_curated_metadata(extract_metadata):
+def init_curated_metadata(extract_metadata, schema_type="codemeta"):
     """
     Initializes the curated metadata structure, filling it with extracted metadata and schema information.
 
