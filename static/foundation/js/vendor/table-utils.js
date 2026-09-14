@@ -811,13 +811,14 @@ export function setupTables() {
     const givenNameIdx = headers.indexOf("givenName");
     const familyNameIdx = headers.indexOf("familyName");
     const emailIdx = headers.indexOf("email");
+    const affiliationIdx = headers.indexOf("affiliation");
     const identifierIdx = headers.indexOf("identifier");
 
     // 🔹 Extract data for all selected rows (including roles + identifier)
     const selectedData = Array.from(selectedCheckboxes).map((checkbox) => {
       const row = checkbox.closest("tr");
       const cells = row.querySelectorAll("td");
-
+      const affiliation = affiliationIdx !== -1 ? cells[affiliationIdx]?.textContent.trim() || "" : ""; // Affiliation (simple text based)
       const givenName = cells[givenNameIdx]?.textContent.trim() || "";
       const familyName = cells[familyNameIdx]?.textContent.trim() || "";
 
@@ -833,6 +834,20 @@ export function setupTables() {
           );
         } else if (emailCell.textContent.trim() !== "") {
           emails = [emailCell.textContent.trim().toLowerCase()];
+        }
+      }
+            // Affiliations (same tag handling as email, but keeps its spelling)
+      let affiliations = [];
+      if (affiliationIdx !== -1) {
+        const affiliationCell = cells[affiliationIdx];
+        const tags = affiliationCell.querySelectorAll(".tag");
+
+        if (tags.length > 0) {
+          affiliations = Array.from(tags).map((t) =>
+            (t.dataset.tag || "").trim(),
+          );
+        } else if (affiliationCell.textContent.trim() !== "") {
+          affiliations = affiliationCell.textContent.split(",");
         }
       }
 
@@ -855,6 +870,7 @@ export function setupTables() {
         givenName,
         familyName,
         emails,
+         affiliations,
         identifier,
         contributorChecked,
         authorChecked,
@@ -884,7 +900,17 @@ export function setupTables() {
               .map((e) => e.trim().toLowerCase()),
           ),
         ];
-
+         const allAffiliations = [];
+        group
+          .flatMap((g) => g.affiliations)
+          .forEach((affiliation) => {
+            const value = (affiliation || "").trim();
+            if (!value) return;
+            const isDuplicate = allAffiliations.some(
+              (existing) => existing.toLowerCase() === value.toLowerCase(),
+            );
+            if (!isDuplicate) allAffiliations.push(value);
+          });
         // 🔸 Aggregate identifier + decide if we can merge
         let mergedIdentifier = "";
         let canMergeThisGroup = true;
@@ -933,11 +959,30 @@ export function setupTables() {
               span.innerHTML = `${email} <span class="remove-tag" data-tag="${email}">×</span>`;
               tagsList.appendChild(span);
             });
+
           } else {
             emailCell.textContent = allEmails.join(", ");
           }
         }
+                // Update affiliation cell in main row
+        if (affiliationIdx !== -1) {
+          const affiliationCell =
+            mainRow.querySelectorAll("td")[affiliationIdx];
+          const tagsList = affiliationCell.querySelector(".tags-list");
 
+          if (tagsList) {
+            tagsList.innerHTML = "";
+            allAffiliations.forEach((affiliation) => {
+              const span = document.createElement("span");
+              span.className = "tag";
+              span.dataset.tag = affiliation;
+              span.innerHTML = `${affiliation} <span class="remove-tag" data-tag="${affiliation}">×</span>`;
+              tagsList.appendChild(span);
+            });
+          } else {
+            affiliationCell.textContent = allAffiliations.join(", ");
+          }
+        }
         // Update identifier cell in main row (only if we got a non-empty one)
         if (identifierIdx !== -1) {
           const identifierCell = mainRow.querySelectorAll("td")[identifierIdx];
