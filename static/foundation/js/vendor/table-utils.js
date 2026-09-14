@@ -836,6 +836,20 @@ export function setupTables() {
           emails = [emailCell.textContent.trim().toLowerCase()];
         }
       }
+            // Affiliations (same tag handling as email, but keeps its spelling)
+      let affiliations = [];
+      if (affiliationIdx !== -1) {
+        const affiliationCell = cells[affiliationIdx];
+        const tags = affiliationCell.querySelectorAll(".tag");
+
+        if (tags.length > 0) {
+          affiliations = Array.from(tags).map((t) =>
+            (t.dataset.tag || "").trim(),
+          );
+        } else if (affiliationCell.textContent.trim() !== "") {
+          affiliations = affiliationCell.textContent.split(",");
+        }
+      }
 
       // Identifier (simple text based)
       const identifier =
@@ -856,7 +870,7 @@ export function setupTables() {
         givenName,
         familyName,
         emails,
-        affiliation,
+         affiliations,
         identifier,
         contributorChecked,
         authorChecked,
@@ -886,15 +900,17 @@ export function setupTables() {
               .map((e) => e.trim().toLowerCase()),
           ),
         ];
-        const allAffiliations = [];
-        group.forEach((g) => {
-          const value = (g.affiliation || "").trim();
-          if (!value) return;
-          const isDuplicate = allAffiliations.some(
-            (existing) => existing.toLowerCase() === value.toLowerCase(),
-          );
-          if (!isDuplicate) allAffiliations.push(value);
-        });
+         const allAffiliations = [];
+        group
+          .flatMap((g) => g.affiliations)
+          .forEach((affiliation) => {
+            const value = (affiliation || "").trim();
+            if (!value) return;
+            const isDuplicate = allAffiliations.some(
+              (existing) => existing.toLowerCase() === value.toLowerCase(),
+            );
+            if (!isDuplicate) allAffiliations.push(value);
+          });
         // 🔸 Aggregate identifier + decide if we can merge
         let mergedIdentifier = "";
         let canMergeThisGroup = true;
@@ -949,9 +965,23 @@ export function setupTables() {
           }
         }
                 // Update affiliation cell in main row
-        if (affiliationIdx !== -1 && allAffiliations.length > 0) {
-          mainRow.querySelectorAll("td")[affiliationIdx].textContent =
-            allAffiliations.join(", ");
+        if (affiliationIdx !== -1) {
+          const affiliationCell =
+            mainRow.querySelectorAll("td")[affiliationIdx];
+          const tagsList = affiliationCell.querySelector(".tags-list");
+
+          if (tagsList) {
+            tagsList.innerHTML = "";
+            allAffiliations.forEach((affiliation) => {
+              const span = document.createElement("span");
+              span.className = "tag";
+              span.dataset.tag = affiliation;
+              span.innerHTML = `${affiliation} <span class="remove-tag" data-tag="${affiliation}">×</span>`;
+              tagsList.appendChild(span);
+            });
+          } else {
+            affiliationCell.textContent = allAffiliations.join(", ");
+          }
         }
         // Update identifier cell in main row (only if we got a non-empty one)
         if (identifierIdx !== -1) {

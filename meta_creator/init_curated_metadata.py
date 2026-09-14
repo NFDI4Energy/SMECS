@@ -266,7 +266,7 @@ def enforce_element_structure(empty_value, value):
             element_structure = empty_value[0]
             return [enforce_element_structure(element_structure, v) for v in value]
         else:
-            return value
+                    return [v for v in value if v not in (None, "", [], {})]
     else:
         return value
 
