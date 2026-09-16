@@ -106,11 +106,10 @@ export function setupUI() {
       .forEach(function (trigger) {
         const span = trigger.querySelector(".tooltip-text-metadata");
         if (!span) return;
-        const text = span.textContent.trim();
-        if (!text) return;
+        if (!span.textContent.trim()) return;
 
         trigger.addEventListener("mouseenter", function () {
-          tip.textContent = text;
+          tip.replaceChildren(...span.cloneNode(true).childNodes);
 
           const icon = trigger.querySelector("i") || trigger;
           const r = icon.getBoundingClientRect();

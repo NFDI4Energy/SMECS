@@ -1236,6 +1236,15 @@ label > .fa-info-circle {
   vertical-align: middle;
   /* Optionally, adjust font-size or line-height if needed */
 }
+.tooltip-section {
+  display: block;
+}
+
+.tooltip-section + .tooltip-section {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
+}
 
 .tooltip-text-metadata {
   visibility: hidden;

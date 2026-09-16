@@ -5,7 +5,8 @@ from django.conf import settings
 import json
 import os
 # Extra human-readable context for the RelatedPersons role columns.
-# Appended to the schema description shown in the info-icon tooltip.
+# Rendered as a SECOND section in the info-icon tooltip, not merged into
+# the schema description.
 ROLE_EXPLANATIONS = {
     'contributor': (
         'A "contributor" refers to anyone who aids in software development in any '
@@ -81,10 +82,7 @@ def load_description_dict_from_schema(schema: dict) -> dict[str, str]:
     description_dict['Provenance'] = "This section describes the creation history of the software."
     description_dict['RelatedPersons'] = "This section lists all relevant persons who are connected to the software."
     description_dict['TechnicalAspects'] = "This section describes the technical aspects of the software."
-    ## Append role explanations to the schema descriptions
-    for key, explanation in ROLE_EXPLANATIONS.items():
-        base = description_dict.get(key, '').strip()
-        description_dict[key] = f"{base} {explanation}".strip() if base else explanation
+  
 
     return description_dict
 

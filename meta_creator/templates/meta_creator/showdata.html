@@ -452,8 +452,9 @@
                                                         <th data-col="{{ col }}" data-coltype="element" class="align-items-center">
                                                             {{ col|camel_to_spaces_lower }}
                                                            <div class="custom-tooltip-metadata">
-                                                                <span class="tooltip-text-metadata">
-                                                                    {% if col in description_metadata %}{{ description_metadata|get:col }}{% endif %}
+                                                               <span class="tooltip-text-metadata">
+                                                                     {% if col in description_metadata %}<span class="tooltip-section">{{ description_metadata|get:col }}</span>{% endif %}
+                                                                    {% if col in extra_description_metadata %}<span class="tooltip-section">{{ extra_description_metadata|get:col }}</span>{% endif %}
                                                                 </span>
                                                                 <i class="fa fa-info-circle" aria-hidden="true"></i>
                                                             </div>
