@@ -412,20 +412,10 @@
                                             
                                              {% elif key == "contributor" %}
                                             <div class="relative-wrapper">
-                                            <!-- <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapseContributors" aria-expanded="false" aria-controls="multiCollapseContributors">Who are Contributors?</button> -->
-                                            <div class="person-info collapsible-content collapse" id="multiCollapsecontributor">
-                                                <p>A "contributor" refers to anyone who aids in software development in any capacity, from coding to testing, highlighting the collaborative nature of software projects.</p>
-                                            </div>
-                                             <!-- <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapseauthor" aria-expanded="false" aria-controls="multiCollapseAuthors">Who are Authors?</button> -->
-                                            <div class="person-info collapsible-content collapse" id="multiCollapseauthor">
-                                                <p>An "author" in software authorship is someone who significantly contributes to the creation and development of software, including roles like coding, project management, and documentation.</p>
-                                            </div>
-                                             <!-- <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapseMaintainer" aria-expanded="false" aria-controls="multiCollapseMaintainer">Who are Maintainer?</button> -->
-                                            <div class="person-info collapsible-content collapse" id="multiCollapsemaintainer">
-                                                <p>A "maintainer" in software authorship is the individual or entity responsible for the regular maintenance of the software. This role may be distinct from the original creator or programmer and can be fulfilled by a person or a corporate entity. The maintainer is typically identifiable through a contact address, such as an email, for maintenance-related communication.</p>
-                                            </div>
+                                           
+                                           
                                             <div class="action"> 
-                                                <span class="highlight-tag"> ⚠️ Click on contributors, authors, or maintainers to see the description<span class="acknowledge-tag">Got it!</span></span>
+                                                <!-- <span class="highlight-tag"> ⚠️ Click on contributors, authors, or maintainers to see the description<span class="acknowledge-tag">Got it!</span></span> -->
                                                  <span class="highlight-tag"> ⚠️Click on any table cell to edit.<span class="acknowledge-tag">Got it!</span></span>
                                                
                                                 <span><i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer; display: none;"></i></span>
@@ -459,14 +449,12 @@
                                                         {% endfor %}
                                                         {% if unique_tab %}
                                                         {% for col, value in metadata_dict.items %}
-                                                        <th data-col="{{ col }}" data-coltype="element">
-                                                           <button type="button" class=" collapsible-button"  data-bs-toggle="collapse" data-bs-target="#multiCollapse{{ col }}" aria-expanded="false" aria-controls="multiCollapseContributors" added >{{ col|camel_to_spaces_lower }}</button> 
-                                                            <!-- <div class="person-info collapsible-content collapse" id="multiCollapse{{ col }}">
-                                                             <p>{% if col in description_metadata %}{{ description_metadata|get:col }}{% endif %}</p>
-                                                             </div> -->
+                                                        <th data-col="{{ col }}" data-coltype="element" class="align-items-center">
+                                                            {{ col|camel_to_spaces_lower }}
                                                            <div class="custom-tooltip-metadata">
-                                                                <span class="tooltip-text-metadata">
-                                                                    {% if col in description_metadata %}{{ description_metadata|get:col }}{% endif %}
+                                                               <span class="tooltip-text-metadata">
+                                                                     {% if col in description_metadata %}<span class="tooltip-section">{{ description_metadata|get:col }}</span>{% endif %}
+                                                                    {% if col in extra_description_metadata %}<span class="tooltip-section">{{ extra_description_metadata|get:col }}</span>{% endif %}
                                                                 </span>
                                                                 <i class="fa fa-info-circle" aria-hidden="true"></i>
                                                             </div>
@@ -492,7 +480,7 @@
                                                                 {% endfor %}
                                                             </div>
                                                             {% if value == 'tagging' %}
-                                                            <input class="tag-input" type="text" style="display:none;" placeholder="Add Email and press Enter" />
+                                                            <input class="tag-input" type="text" style="display:none;" placeholder="Add {{ col|camel_to_spaces_lower }} and press Enter" />
                                                             {% else %}
                                                             <input class="tag-input" type="text" style="display:none;" placeholder="Type and select from list" />
                                                             {% endif %}
