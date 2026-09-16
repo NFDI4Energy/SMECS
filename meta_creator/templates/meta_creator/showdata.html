@@ -415,7 +415,7 @@
                                            
                                            
                                             <div class="action"> 
-                                                <span class="highlight-tag"> ⚠️ Click on contributors, authors, or maintainers to see the description<span class="acknowledge-tag">Got it!</span></span>
+                                                <!-- <span class="highlight-tag"> ⚠️ Click on contributors, authors, or maintainers to see the description<span class="acknowledge-tag">Got it!</span></span> -->
                                                  <span class="highlight-tag"> ⚠️Click on any table cell to edit.<span class="acknowledge-tag">Got it!</span></span>
                                                
                                                 <span><i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer; display: none;"></i></span>
@@ -479,7 +479,7 @@
                                                                 {% endfor %}
                                                             </div>
                                                             {% if value == 'tagging' %}
-                                                            <input class="tag-input" type="text" style="display:none;" placeholder="Add Email and press Enter" />
+                                                            <input class="tag-input" type="text" style="display:none;" placeholder="Add {{ col|camel_to_spaces_lower }} and press Enter" />
                                                             {% else %}
                                                             <input class="tag-input" type="text" style="display:none;" placeholder="Type and select from list" />
                                                             {% endif %}

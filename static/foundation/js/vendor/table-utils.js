@@ -452,7 +452,8 @@ export function setupTables() {
           input.className = "tag-input";
           input.type = "text";
           input.style.display = "none";
-          input.placeholder = "Add Email and press Enter";
+          const label = col.replace(/([A-Z])/g, " $1").replace(/^./, (c) => c.toUpperCase()).trim();
+          input.placeholder = `Add ${label} and press Enter`;
           td.appendChild(tagsList);
           td.appendChild(input);
           // Reset tags for next row
@@ -527,6 +528,7 @@ export function setupTables() {
   // Initialize tagging for add-row-controls
   document.querySelectorAll(".add-row-tags-container").forEach((container) => {
     const col = container.getAttribute("data-col");
+    const label = col.replace(/([A-Z])/g, " $1").replace(/^./, (c) => c.toUpperCase()).trim();
     addRowTags[col] = [];
     const input = container.querySelector(".add-row-tag-input");
 
@@ -558,9 +560,9 @@ export function setupTables() {
         span.innerHTML =
           tag + ' <span class="remove-tag" data-tag="' + tag + '">×</span>';
         container.insertBefore(span, input);
-        showToast("Email has been added", "success");
+        showToast(`${label} has been added`, "success");
       } else {
-        showToast("This email is already added", "error");
+        showToast(`This ${label.toLowerCase()} is already added`, "error");
       }
 
       // Clear input after success
