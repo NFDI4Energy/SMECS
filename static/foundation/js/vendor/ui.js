@@ -500,20 +500,22 @@ export function showToast(message, type = "info") {
 }
 export function initCaptcha() {
   // Auto-hide captcha error after 1 second
-  const captchaError = document.getElementById("captcha-error");
-  console.log(captchaError);
-  if (captchaError) {
-    // Show it
-
-    // Fade out after 2 seconds
+   // Auto-hide transient inline errors (captcha, URL, token) after a delay
+  function autoHide(id, delay) {
+    const el = document.getElementById(id);
+    if (!el) return;
     setTimeout(function () {
-      captchaError.style.transition = "opacity 0.5s ease";
-      captchaError.style.opacity = "0";
+      el.style.transition = "opacity 0.5s ease";
+      el.style.opacity = "0";
       setTimeout(function () {
-        captchaError.style.display = "none";
+        el.style.display = "none";
       }, 500);
-    }, 2000);
+    }, delay);
   }
+
+  autoHide("captcha-error", 2000);
+  autoHide("url_error", 5000);
+  autoHide("token_error", 5000);
 
   // Refresh captcha button
   const refreshBtn = document.getElementById("captcha-refresh");
@@ -523,16 +525,14 @@ export function initCaptcha() {
       const csrfToken = getCookie("csrftoken");
 
       fetch("/captcha/refresh/", {
-        method: "POST", // ← must be POST
+        method: "POST", 
         headers: {
-          "X-CSRFToken": csrfToken, // ← CSRF token required
-          "X-Requested-With": "XMLHttpRequest", // ← marks it as AJAX
+          "X-CSRFToken": csrfToken, 
+          "X-Requested-With": "XMLHttpRequest",
         },
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log("Full response data:", data); // ← add this
-          console.log("Keys:", Object.keys(data));
 
           // Use querySelector since Django renders the img without a custom id
           const captchaImg = document.querySelector("img.captcha");

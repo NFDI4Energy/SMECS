@@ -36,6 +36,7 @@ def data_extraction(request):
         if token_result["error_type"]:
             return {
                 "success": False,
+                "error_type": token_result["error_type"],
                 "errors": token_result["error_message"],
             }
 
