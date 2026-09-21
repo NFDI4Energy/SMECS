@@ -101,6 +101,10 @@ def _index_context(request, captcha_form):
     }
 
 
+URL_FIELD_ERRORS   = {"invalid_url", "unsupported_forge"}
+TOKEN_FIELD_ERRORS = {"invalid_token", "expired_token", "no_token"}
+LANDING_PAGE_ERRORS = URL_FIELD_ERRORS | TOKEN_FIELD_ERRORS
+
 class IndexView(TemplateView):
     """
     Simple TemplateView for the start/index page.
@@ -120,6 +124,7 @@ class IndexView(TemplateView):
         template can render the CAPTCHA field.
         """
         context = super().get_context_data(**kwargs)
+
         # Provide an empty (unbound) CAPTCHA form for initial page load.
         context['captcha_form'] = CaptchaForm()  
         return context
@@ -220,18 +225,36 @@ def index(request):
             result = data_extraction(request, staged_uploaded_file)
             request.session.pop(STAGED_METADATA_FILE_SESSION_KEY, None)
 
+            # if not result.get('success'):
+            #     errors = result.get('errors')
+            #     if isinstance(errors, list):
+            #         error_messages = ['Error in extraction:'] + errors
+            #     else:
+            #         error_messages = ['Error in extraction:', errors]
+            #     return render(request, 'meta_creator/error.html', {
+            #         'error_message': " ".join(error_messages)
+            #     })
             if not result.get('success'):
+                error_type = result.get('error_type')
                 errors = result.get('errors')
-                error_messages = ["Error in extraction:"]
-                if isinstance(errors, (list, tuple)):
-                    normalized_errors = [str(error) for error in errors if error is not None]
-                elif errors is not None:
-                    normalized_errors = [str(errors)]
-                else:
-                    normalized_errors = ["Unknown error"]
-                error_messages.extend(normalized_errors)
+                error_message = (
+                    "; ".join(str(e) for e in errors if e is not None)
+                    if isinstance(errors, (list, tuple))
+                    else (str(errors) if errors else "An unknown error occurred.")
+                )
+
+                # Landing-page errors → re-render the form with the message beside the right field
+                if error_type in LANDING_PAGE_ERRORS:
+                    context = _index_context(request, CaptchaForm())
+                    if error_type in URL_FIELD_ERRORS:
+                        context["error_message_url"] = error_message
+                    else:
+                        context["error_message_token"] = error_message
+                    return render(request, "meta_creator/index.html", context)
+
+                # Everything else → dedicated error page
                 return render(request, 'meta_creator/error.html', {
-                    'error_message': "; ".join(error_messages)
+                    'error_message': f"Error in extraction: {error_message}"
                 })
 
             extracted_metadata, description_metadata, type_metadata, joined_metadata = result['metadata']

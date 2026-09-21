@@ -161,6 +161,7 @@ def run_hermes_commands(url, token=None):
             "copyrightHolder": {"@type": "Person", "name": copyright_holder},
             "dateModified": hermes_metadata_dict.get('dateModified', ''),
             "dateCreated": hermes_metadata_dict.get('dateCreated', ''),
+            "datePublished": hermes_metadata_dict.get('datePublished', ''),
             "keywords": hermes_metadata_dict.get('keywords', ''),
             "downloadUrl": hermes_metadata_dict.get('downloadUrl', ''),
             "readme": hermes_metadata_dict.get('readme', ''),
