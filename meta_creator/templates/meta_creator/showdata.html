@@ -196,6 +196,19 @@
                         </div>
                     </div>
 
+                    <!-- popup for Download validation error  -->
+                    <div id="downloadErrorPopup" class="popup">
+                        <div class="popup-content leave-page-content">
+                            <h1>Download unavailable</h1>
+                            <p>To proceed with the download, please ensure that all required fields have been completed.</p>
+                            <p>The following fields are missing:</p>
+                            <div class="download-error-fields" id="downloadErrorFields"></div>
+                            <div class="popup-actions">
+                                <button type="button" id="downloadErrorClose" class="btn btn-leave-page">Understood</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Tabs -->
                     <form class="data-form3 col-12" id="metadata-form">
                         {% csrf_token %}
@@ -243,7 +256,7 @@
                                                 </span>
                                                 <i class="fa fa-info-circle" aria-hidden="true"></i>
                                             </div>
-                                            <select name="{{ key }}" id="{{ key }}" data-dropdown-schema="{{ key }}">
+                                            <select name="{{ key }}" id="{{ key }}" data-dropdown-schema="{{ key }}" data-initial-value="{{ value }}">
                                                 <option value="" class="suggestion-item"></option>
                                             </select>
                                             <div id="{{ key }}Suggestions"></div>
@@ -414,7 +427,7 @@
                                             </div>
                                             <div class="action"> 
                                                 <span class="highlight-tag"> ⚠️ Click on contributors, authors, or maintainers to see the description<span class="acknowledge-tag">Got it!</span></span>
-                                                 <span class="highlight-tag"> ⚠️Click on the Given Name or Family Name column header to sort the table.<span class="acknowledge-tag">Got it!</span></span>
+                                                 <span class="highlight-tag"> ⚠️Click on any table cell to edit.<span class="acknowledge-tag">Got it!</span></span>
                                                
                                                 <span><i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer; display: none;"></i></span>
                                                 <span><i class="fa-solid fa-table-list" title="Merge Rows" style="cursor:pointer; display: none;"></i></span>
@@ -496,8 +509,10 @@
                                                         </td>
                                                         {% endfor %}
                                                         {% endif %}
-                                                        <td >
-                                                            <!-- <i class="fas fa-trash-alt delete-row-btn" title="Delete row" style="cursor:pointer;"></i> -->
+                                                        <td{% if key == "copyrightHolder" %} class="copyright-holder-delete-cell"{% endif %}>
+                                                            {% if key == "copyrightHolder" %}
+                                                            <i class="fas fa-trash-alt delete-row-btn" title="Delete row"></i>
+                                                            {% endif %}
                                                         </td>
                                                     </tr>
                                                     {% endif %}

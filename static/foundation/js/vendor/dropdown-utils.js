@@ -28,6 +28,10 @@ class DynamicDropdown {
           return;
         }
 
+        // Values from imported or pasted metadata are rendered by Django. 
+        // Keep that value while replacing the placeholder options below.
+        const initialValue = dropdown.dataset.initialValue || "";
+
         // Clear existing options
         dropdown.innerHTML = "";
 
@@ -44,6 +48,21 @@ class DynamicDropdown {
           option.textContent = value;
           dropdown.appendChild(option);
         });
+
+        if (initialValue) {
+          // Do not drop valid metadata just because an imported value is not
+          // in this version of the local schema's enum.
+          if (!enumValues.includes(initialValue)) {
+            const importedOption = document.createElement("option");
+            importedOption.value = initialValue;
+            importedOption.textContent = initialValue;
+            dropdown.appendChild(importedOption);
+          }
+          dropdown.value = initialValue;
+          // Keep the JSON preview and required-field validation in sync with
+          // the value restored after asynchronous dropdown population.
+          dropdown.dispatchEvent(new Event("change", { bubbles: true }));
+        }
       })
       .catch((error) => {
         console.error(

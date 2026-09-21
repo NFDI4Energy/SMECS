@@ -1,6 +1,7 @@
 
 import os
 import unittest
+from unittest.mock import patch, MagicMock
 from meta_creator.gitlab_metadata import addContribution, filLanguages, addLang, convertToJson, get_gitlab_metadata, extract_license_info
 from meta_creator.validate_jsonLD import validate_codemeta
 
@@ -49,11 +50,29 @@ class test_gitlab_metadata_extractor(unittest.TestCase):
         result = validate_codemeta(json_data)
         self.assertTrue(result, "Failed to validate Codemeta JSON")
 
-    def test_get_gitlab_metadata(self):
+    @patch('meta_creator.gitlab_metadata.requests.get')
+    def test_get_gitlab_metadata(self, mock_get):
+        # Mock the response from GitLab API
+        mock_response = MagicMock()
+        mock_response.json.return_value = {
+            'id': 1,
+            'name': 'test_project',
+            'description': 'Test project'
+        }
+        mock_response.status_code = 200
+        mock_get.return_value = mock_response
+        
         result = get_gitlab_metadata(GitLab_url, personal_token_gl)
         self.assertIsNotNone(result, "Failed to retrieve GitLab metadata")
 
-    def test_extract_license_info(self):
+    @patch('meta_creator.gitlab_metadata.requests.get')
+    def test_extract_license_info(self, mock_get):
+        # Mock the response from GitLab API
+        mock_response = MagicMock()
+        mock_response.json.return_value = {'license': 'MIT'}
+        mock_response.status_code = 200
+        mock_get.return_value = mock_response
+        
         result = extract_license_info(GitLab_url, personal_token_gl)
         self.assertIsNotNone(result, "Failed to extract license information")
 
