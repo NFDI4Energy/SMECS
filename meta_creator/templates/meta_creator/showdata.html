@@ -120,32 +120,32 @@
         </div><!-- metadataFormDisplay -->
          <div id="formContainer" class="form-container col-lg-12 col-md-12" >
                     <!-- tabs -->
-                    <div class=" nav justify-content-center">
+                    <nav class="tab-navigation" aria-label="Metadata sections">
                         <ul class="tab-links_ext">
                             {% for tab_name, metadata_dict in extracted_metadata.items %}
                             {% if forloop.first %}
-                            <li class="active"><a href="#{{tab_name}}" title="{{ description_metadata|get:tab_name }}">{{tab_name|camel_to_spaces_lower}}</a></li>
+                            <li class="active"><a href="#tab-{{ tab_name|slugify }}" title="{{ description_metadata|get:tab_name }}">{{tab_name}}</a></li>
                             {% else %}
-                            <li><a href="#{{tab_name}}" title="{{ description_metadata|get:tab_name }}">{{tab_name|camel_to_spaces_lower}}</a></li>
+                            <li><a href="#tab-{{ tab_name|slugify }}" title="{{ description_metadata|get:tab_name }}">{{tab_name}}</a></li>
                             {% endif %}
                             {% endfor %}
                         </ul>
-                    </div>
+                    </nav>
 
                     <!-- Displaying the color coding -->
                     <div class="color-code-container">
                         <div class="row">
-                            <div class="col-3 color-code">
-                                <span class="red"></span>
-                                <span class="fs-6">Missing required metadata</span>
-                            </div>
                             <div class="col-4 color-code">
-                                <span class="yellow"></span>
-                                <span class="fs-6">Missing recommended metadata</span>
+                                <span class="symbol"></span>
+                                <span class="fs-6">The property is <strong>"Mandatory"</strong> to be filled.</span>
                             </div>
                             <div class="col-3 color-code">
-                                <span class="symbol"></span>
-                                <span class="fs-6">Mandatory elements</span>
+                                <span class="recommended-symbol">⭐</span>
+                                <span class="fs-6">The property is <strong>"Recommended"</strong> to be filled.</span>
+                            </div>
+                            <div class="col-3 color-code">
+                                <span class="optional-symbol"><strong>+</strong></span>
+                                <span class="fs-6">The property is <strong>"Optional"</strong> to be filled.</span>
                             </div>
                           
                             <div class="col-2 toggle">
@@ -209,7 +209,7 @@
                     </div>
 
                     <!-- Tabs -->
-                    <form class="data-form3 col-12" id="metadata-form">
+                    <form class="data-form3 col-12" id="metadata-form" data-schema-type="{{ schema_type }}" data-required-properties="{{ connoss_required_properties|join:',' }}">
                         {% csrf_token %}
                         <!-- content in tabs -->
                         <div class="tab-content_ext">
@@ -218,9 +218,9 @@
                             {% with unique_tab=type_metadata|all_types_same:metadata_dict %}
                             <!-- {{tab_name}}_info -->
                             {% if forloop.first %}
-                             <div id="{{ tab_name }}" class="tab active{% if unique_tab %} unique-tab{% endif %}">
+                             <div id="tab-{{ tab_name|slugify }}" class="tab active{% if unique_tab %} unique-tab{% endif %}">
                                 {% else %}
-                                <div id="{{ tab_name }}" class="tab{% if unique_tab %} unique-tab{% endif %}">
+                                <div id="tab-{{ tab_name|slugify }}" class="tab{% if unique_tab %} unique-tab{% endif %}">
                                     {% endif %}
                                   {% if unique_tab %}
                             <div class="unique-tab-inner">
@@ -233,7 +233,118 @@
                                 {% endif %}
                                     {% for key, value in metadata_dict.items %}
                                     <div class="form-group ">
-                                        {% if type_metadata|get:key == "hidden" %}
+                                        {% if schema_type == "connoss" and type_metadata|get:key == "people_table" %}
+                                        <div class="connoss-people-panel">
+                                            <label>{{ connoss_field_markers|get:key }}{{ key|camel_to_spaces_lower }} / Contributors</label>
+                                            <span class="custom-tooltip-metadata"><span class="tooltip-text-metadata">{{ description_metadata|get:key }}</span><i class="fa fa-info-circle" aria-hidden="true"></i></span>
+                                            <div class="connoss-people-actions" aria-live="polite">
+                                                <button type="button" class="connoss-delete-selected" title="Delete selected people" hidden><i class="fas fa-trash-alt" aria-hidden="true"></i> Delete</button>
+                                                <button type="button" class="connoss-merge-selected" title="Merge selected people with matching names" hidden><i class="fa-solid fa-table-list" aria-hidden="true"></i> Merge</button>
+                                                <span class="connoss-people-confirm" hidden></span>
+                                            </div>
+                                            <div class="connoss-people-scroll" tabindex="0" aria-label="Scrollable people table">
+                                            <table class="connoss-people-table" data-connoss-people="true">
+                                                <thead><tr><th>Select</th><th>Identifier (@id)</th><th>Given name</th><th>Family name</th><th>Email</th><th>Account</th><th>URL</th><th>Affiliation</th><th>Author</th><th>Contributor</th></tr></thead>
+                                                <tbody>
+                                                    {% for person in metadata_dict|connoss_people %}
+                                                    <tr data-person="{{ person|json_pretty|escape }}">
+                                                        <td><input class="connoss-person-select" type="checkbox" aria-label="Select person"></td>
+                                                        <td><input data-person-field="@id" value="{{ person|person_value:'@id' }}"></td>
+                                                        <td><input data-person-field="givenName" value="{{ person.givenName|default_if_none:'' }}"></td>
+                                                        <td><input data-person-field="familyName" value="{{ person.familyName|default_if_none:'' }}"></td>
+                                                        <td class="connoss-tag-cell" data-person-field="email"><div class="connoss-tags tags-list">{% for tag in person.email|person_tags %}<span class="connoss-tag tag" data-value="{{ tag }}">{{ tag }} <button type="button" class="connoss-remove-tag" aria-label="Remove {{ tag }}">&times;</button></span>{% endfor %}</div><input class="connoss-tag-input" type="email" placeholder="Add email and press Enter"></td>
+                                                        <td><input data-person-field="account.url" value="{{ person|person_value:'account.url' }}"></td>
+                                                        <td><input data-person-field="url" value="{{ person.url|default_if_none:'' }}"></td>
+                                                        <td class="connoss-tag-cell" data-person-field="affiliation"><div class="connoss-tags tags-list">{% for tag in person.affiliation|person_tags %}<span class="connoss-tag tag" data-value="{{ tag }}">{{ tag }} <button type="button" class="connoss-remove-tag" aria-label="Remove {{ tag }}">&times;</button></span>{% endfor %}</div><input class="connoss-tag-input" placeholder="Add affiliation and press Enter"></td>
+                                                        <td><input data-person-role="author" type="checkbox" {% if person.author_role %}checked{% endif %}></td>
+                                                        <td><input data-person-role="contributor" type="checkbox" {% if person.contributor_role %}checked{% endif %}></td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                            </div>
+                                            <button type="button" class="connoss-add-person">Add person</button>
+                                        </div>
+                                        {% elif schema_type == "connoss" and type_metadata|get:key == "people_table_member" %}
+                                        {# Rendered by the merged author/contributor table above. #}
+                                        {% elif schema_type == "connoss" and type_metadata|get:key == "development_status" %}
+                                        <div class="single_inputs">
+                                            <label for="{{ key }}">{{ connoss_field_markers|get:key }}{{ key|camel_to_spaces_lower }}</label>
+                                            <span class="custom-tooltip-metadata"><span class="tooltip-text-metadata">{{ description_metadata|get:key }}</span><i class="fa fa-info-circle" aria-hidden="true"></i></span>
+                                            <select id="{{ key }}" name="{{ key }}" data-json-key="{{ key }}" data-field-type="text">
+                                                <option value=""></option>
+                                                {% for status in "concept,development,active,maintenance,deprecated,archived"|split:"," %}
+                                                <option value="{{ status }}" {% if value == status %}selected{% endif %}>{{ status }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        {% elif schema_type == "connoss" and type_metadata|get:key == "license_tagging" %}
+                                        <div class="single_inputs tagging-wrapper" id="{{ key }}Wrapper">
+                                            <label class="tagging-label" for="{{ key }}Input" data-tagging="{{ key }}" data-tagging-type="tagging_autocomplete">{{ connoss_field_markers|get:key }}{{ key|camel_to_spaces_lower }}</label><span class="custom-tooltip-metadata"><span class="tooltip-text-metadata">{{ description_metadata|get:key }}</span><i class="fa fa-info-circle" aria-hidden="true"></i></span>
+                                            <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" value="{{ value|license_names|join:', ' }}">
+                                            <div class="tags-container" id="{{ key }}Tags">
+                                                {% for item in value|license_names %}
+                                                <span class="tag" data-value="{{ item }}">{{ item }}<span class="remove-tag" data-value="{{ item }}">×</span></span>
+                                                {% endfor %}
+                                                <input type="text" id="{{ key }}Input" name="{{ key }}" class="searchable-dropdown" placeholder="Search SPDX licenses...">
+                                            </div>
+                                            <div id="{{ key }}Suggestions" class="tag-suggestions"></div>
+                                        </div>
+                                        {% elif schema_type == "connoss" and type_metadata|get:key == "tagging_autocomplete" %}
+                                        <div class="single_inputs tagging-wrapper" id="{{ key }}Wrapper">
+                                            <label class="tagging-label" for="{{ key }}Input" data-tagging="{{ key }}" data-tagging-type="tagging_autocomplete">{{ connoss_field_markers|get:key }}{{ key|camel_to_spaces_lower }} <span title="Choose from the suggested list">▾</span></label>
+                                            <span class="custom-tooltip-metadata"><span class="tooltip-text-metadata">{{ description_metadata|get:key }}</span><i class="fa fa-info-circle" aria-hidden="true"></i></span>
+                                            <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" value="{{ value|as_list|join:', ' }}">
+                                            <div class="tags-container" id="{{ key }}Tags"><input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type to search..."></div>
+                                            <div id="{{ key }}Suggestions" class="tag-suggestions"></div>
+                                        </div>
+                                        {% elif schema_type == "connoss" and type_metadata|get:key == "tagging" %}
+                                        <div class="single_inputs tagging-wrapper" id="{{ key }}Wrapper">
+                                            <label class="tagging-label" for="{{ key }}Input" data-tagging="{{ key }}" data-tagging-type="tagging">{{ connoss_field_markers|get:key }}{{ key|camel_to_spaces_lower }}</label><span class="custom-tooltip-metadata"><span class="tooltip-text-metadata">{{ description_metadata|get:key }}</span><i class="fa fa-info-circle" aria-hidden="true"></i></span>
+                                            {% if key == "citation" %}
+                                            <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" data-tag-serialization="json" value="{{ value|as_list|json_compact }}">
+                                            {% else %}
+                                            <input type="hidden" id="{{ key }}HiddenInput" name="{{ key }}" value="{{ value|as_list|join:', ' }}">
+                                            {% endif %}
+                                            <div class="tags-container" id="{{ key }}Tags">
+                                                {% for item in value|as_list %}{% if item is string %}
+                                                <span class="tag" data-value="{{ item }}">{{ item }}<span class="remove-tag" data-value="{{ item }}">×</span></span>
+                                                {% endif %}{% endfor %}
+                                                <input type="text" id="{{ key }}Input" name="{{ key }}" placeholder="Type and press Enter to add...">
+                                            </div>
+                                        </div>
+                                        {% elif schema_type == "connoss" and type_metadata|get:key == "boolean" %}
+                                        <div class="single_inputs">
+                                            <label for="{{ key }}">{{ connoss_field_markers|get:key }}{{ key|camel_to_spaces_lower }}</label><span class="custom-tooltip-metadata"><span class="tooltip-text-metadata">{{ description_metadata|get:key }}</span><i class="fa fa-info-circle" aria-hidden="true"></i></span>
+                                            <input id="{{ key }}" name="{{ key }}" type="checkbox" data-json-key="{{ key }}" data-field-type="boolean" {% if value %}checked{% endif %}>
+                                        </div>
+                                        {% elif schema_type == "connoss" and type_metadata|get:key == "date" %}
+                                        <div class="single_inputs">
+                                            <label for="{{ key }}">{{ connoss_field_markers|get:key }}{{ key|camel_to_spaces_lower }}</label><span class="custom-tooltip-metadata"><span class="tooltip-text-metadata">{{ description_metadata|get:key }}</span><i class="fa fa-info-circle" aria-hidden="true"></i></span>
+                                            <input id="{{ key }}" name="{{ key }}" type="date" data-json-key="{{ key }}" data-field-type="date" value="{{ value|default_if_none:'' }}">
+                                        </div>
+                                        {% elif schema_type == "connoss" and type_metadata|get:key == "text" and not value|list %}
+                                        <div class="single_inputs">
+                                            <label for="{{ key }}">{{ connoss_field_markers|get:key }}{{ key|camel_to_spaces_lower }}</label><span class="custom-tooltip-metadata"><span class="tooltip-text-metadata">{{ description_metadata|get:key }}</span><i class="fa fa-info-circle" aria-hidden="true"></i></span>
+                                            <input id="{{ key }}" name="{{ key }}" type="text" data-json-key="{{ key }}" data-field-type="text" value="{{ value|default_if_none:'' }}">
+                                            {% if value|is_url %}<a class="metadata-link" href="{{ value }}" target="_blank" rel="noopener noreferrer" title="Open link in a new tab" aria-label="Open {{ key }} in a new tab">↗</a>{% endif %}
+                                        </div>
+                                        {% elif schema_type == "connoss" and type_metadata|get:key == "textarea" %}
+                                        <div class="single_inputs">
+                                            <label for="{{ key }}">{{ connoss_field_markers|get:key }}{{ key|camel_to_spaces_lower }}</label><span class="custom-tooltip-metadata"><span class="tooltip-text-metadata">{{ description_metadata|get:key }}</span><i class="fa fa-info-circle" aria-hidden="true"></i></span>
+                                            <textarea id="{{ key }}" name="{{ key }}" data-json-key="{{ key }}" data-field-type="textarea" rows="3">{{ value|default_if_none:'' }}</textarea>
+                                        </div>
+                                        {% elif schema_type == "connoss" and type_metadata|get:key == "object_single" %}
+                                        <div class="single_inputs">
+                                            <label for="{{ key }}">{{ connoss_field_markers|get:key }}{{ key|camel_to_spaces_lower }}</label><span class="custom-tooltip-metadata"><span class="tooltip-text-metadata">{{ description_metadata|get:key }}</span><i class="fa fa-info-circle" aria-hidden="true"></i></span>
+                                            <input id="{{ key }}" name="{{ key }}" type="text" data-json-key="{{ key }}" data-field-type="object" value="{{ value|json_compact }}">
+                                        </div>
+                                        {% elif schema_type == "connoss" %}
+                                        <div class="single_inputs">
+                                            <label for="{{ key }}">{{ connoss_field_markers|get:key }}{{ key|camel_to_spaces_lower }}</label><span class="custom-tooltip-metadata"><span class="tooltip-text-metadata">{{ description_metadata|get:key }}</span><i class="fa fa-info-circle" aria-hidden="true"></i></span>
+                                            <textarea id="{{ key }}" name="{{ key }}" data-json-key="{{ key }}" data-field-type="object" rows="5">{{ value|json_pretty }}</textarea>
+                                        </div>
+                                        {% elif type_metadata|get:key == "hidden" %}
                                         <!-- Hidden element -->
                                         <div class="single_inputs" hidden>
                                             <label for="{{ key }}" hidden>{{ key }}</label>

@@ -1,6 +1,8 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
+{% extends 'base.html' %} {% load static %}
+{% block body_class %}information-page-body{% endblock %}
+{% block content %}
 
-<div class="info-page container overflow-auto">
+<div class="info-page container" role="main">
   <div class="row">
     <div class="col-12">
       <div class="info-header text-center"><h3>What is SMECS?</h3></div>
@@ -34,13 +36,26 @@
         </p>
       </div>
     </div>
-    <div class="d-grid col-3 mx-auto">
+    <div class="d-grid col-3 mx-auto about-try-button">
       <button
         class="TrySMECS btn"
         title="Enter a specific URL and extract metadata"
         onclick="window.location.href = '/'">
         Try SMECS
       </button>
+    </div>
+    <div class="col-12">
+      <div class="about-logos">
+        <a href="https://nfdi4energy.uol.de/" target="_blank" rel="noopener noreferrer">
+          <img src="{% static 'foundation/images/nfdi4energy_logo.png' %}" alt="NFDI4Energy">
+        </a>
+        <a href="https://www.offis.de/" target="_blank" rel="noopener noreferrer">
+          <img src="{% static 'foundation/images/offis_logo.png' %}" alt="OFFIS – Institute for Information Technology">
+        </a>
+        <a href="https://connoss-project.github.io/" target="_blank" rel="noopener noreferrer">
+          <img src="{% static 'foundation/images/connoss_logo.png' %}" alt="ConnOSS">
+        </a>
+      </div>
     </div>
   </div>
 
