@@ -18,13 +18,13 @@ logger = logging.getLogger(__name__)
 
 COMET_API_URL = os.getenv(
     "COMET_API_URL",
-    "http://localhost:8000",
+    "http://localhost:8002",
 )
 
 COMET_METADATA_ENDPOINT = "/api/metadata/enriched"
 
 
-def run_comet(repo_url, access_token=None, schema="CODEMETA", schema_class="SoftwareSourceCode"):
+def run_comet(repo_url, access_token=None, schema="ConnOSS", schema_class="Software"):
     """
     Call the COMET metadata extraction API.
 
@@ -69,6 +69,11 @@ def run_comet(repo_url, access_token=None, schema="CODEMETA", schema_class="Soft
     if schema_class:
         params["schema_class"] = schema_class
         logger.info("Schema class: %s", schema_class)
+
+    if schema:
+        params["schema"] = schema
+        logger.info("Schema: %s", schema)
+
     else:
         logger.info("No schema class provided")
 
