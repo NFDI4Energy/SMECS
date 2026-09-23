@@ -5,6 +5,23 @@ body {
   overflow: hidden;
   caret-color: transparent;
 }
+
+/* The extraction workspace manages its own scrolling, but the landing form
+   must remain reachable when browser zoom reduces the available viewport. */
+body.landing-page {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body.legals-page-body {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body.information-page-body {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
 input,
 textarea {
   caret-color: auto; /* or you can set a color like black */
@@ -108,6 +125,7 @@ footer {
   border: 1px solid #ddd;
   border-radius: 5px;
   margin-top: 9rem;
+  margin-bottom: 6rem;
 }
 
 .mainHeader {
@@ -410,6 +428,39 @@ span.error_message {
   display: none;
 }
 
+@media (max-width: 576px) {
+  .InitialFormContainer {
+    margin-top: 6rem;
+    padding: 1rem;
+  }
+
+  .mainHeader {
+    font-size: 2.25rem;
+  }
+
+  #smecsSubtitle {
+    font-size: 1.05rem;
+  }
+
+  #form1 {
+    margin: 2rem auto;
+  }
+
+  .input-source-row,
+  .metadata-dropzone {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  #form1 .d-grid.col-4 {
+    width: 100%;
+  }
+
+  .captcha-image-wrapper {
+    flex-wrap: wrap;
+  }
+}
+
 /* Metadata paste textarea */
 .metadata-paste-textarea {
   width: 100%;
@@ -434,8 +485,13 @@ span.error_message {
 /******************** Style for showdata.html ********************/
 /* Styles for the entered data section */
 .whole-extraction-page {
+  /* Keep the extraction workspace inside the visible viewport.  The panels
+     within it, rather than the document, provide scrolling. */
+  height: calc(100dvh - 9rem);
+  min-height: 0;
   margin-top: 5rem;
-  height: 98%;
+  margin-bottom: 4rem;
+  overflow: hidden;
 }
 #more-info {
   font-size: 14px;
@@ -495,8 +551,10 @@ form.data-form2 {
 }
 
 form.data-form3 {
-  overflow-y: auto;
-  height: 90%;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  height: auto;
   border-radius: 2px;
   margin-top: 0;
 }
@@ -664,18 +722,20 @@ select {
 /* Styles for the metadata display section */
 
 .metadata-container {
-  flex: 1;
+  /* flex: 1; */
   margin-left: 20px;
 }
 
 #metadata-json {
-  /* overflow: scroll; */
   width: 100%;
-  height: 93%;
+  height: auto;
+  min-height: 0;
+  flex: 1 1 auto;
   padding: 8px;
   border-radius: 4px;
   margin-bottom: 2px;
   font-size: medium;
+  resize: none;
 }
 /* @media (width >= 2000px) {
   #metadata-json {
@@ -710,7 +770,9 @@ button#new-url {
 .main-container {
   display: flex;
   transition: all 0.3s ease;
-  height: 90%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
 /* Error page / connection time out */
@@ -823,6 +885,77 @@ div.error-container a:hover {
   height: 500px;
   overflow-y: auto;
 }
+
+/* ConnOSS people table: preserve all columns on narrower screens. */
+.connoss-people-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: 0.6rem 0;
+  border: 1px solid #c7d7dc;
+  border-radius: 6px;
+  background: #fff;
+}
+
+/* a full-width workspace */
+.connoss-people-panel {
+  clear: both;
+  float: none;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 1rem;
+  box-sizing: border-box;
+}
+
+/* Keep the table and its actions across the available page width when JSON is hidden. */
+#formContainer.col-lg-12 .connoss-people-panel {
+  width: 100%;
+}
+
+.connoss-people-table {
+  width: max-content;
+  min-width: 1080px;
+  margin: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.9rem;
+}
+
+.connoss-people-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 0.7rem 0.6rem;
+  color: #fff;
+  background: #055f82;
+  white-space: nowrap;
+}
+
+.connoss-people-table td {
+  min-width: 115px;
+  padding: 0.45rem;
+  vertical-align: top;
+  border-top: 1px solid #e2ebed;
+}
+
+.connoss-people-table td:first-child,
+.connoss-people-table td:nth-last-child(-n + 2) {
+  min-width: auto;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.connoss-people-table tbody tr:nth-child(even) { background: #f5fafb; }
+.connoss-people-table tbody tr:hover { background: #e9f4f6; }
+.connoss-people-table input:not([type="checkbox"]) { width: 100%; min-width: 120px; box-sizing: border-box; }
+.connoss-tag-cell { min-width: 220px !important; }
+.connoss-tag-input { margin-top: 0.25rem; }
+.connoss-remove-tag { border: 0; padding: 0 0 0 0.3rem; color: #055f82; background: transparent; font-weight: bold; }
+.connoss-people-actions { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; margin: 0.5rem 0; }
+.connoss-people-actions button { padding: 0.3rem 0.55rem; border: 1px solid #055f82; border-radius: 4px; color: #055f82; background: #fff; }
+.connoss-people-actions button:hover { color: #fff; background: #055f82; }
+.connoss-people-confirm { padding: 0.35rem 0.5rem; border-radius: 4px; background: #fff3cd; }
 
 /* Set fixed width for first row */
 .auto-property th:first-child,
@@ -1117,6 +1250,9 @@ div.input-container input::placeholder {
   /* height: 100vh; */
   /* padding-bottom: 100px; */
   margin-top: 9rem;
+  /* The global footer is fixed, so leave enough document space to scroll the
+     final About-page content above it at any browser zoom level. */
+  margin-bottom: 6rem;
 }
 
 .info-content a {
@@ -1132,11 +1268,51 @@ div.input-container input::placeholder {
   color: #333;
 }
 
+.about-logos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.5rem, 5vw, 4rem);
+  margin: 2.5rem auto 1rem;
+}
+
+.about-logos a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 13rem);
+}
+
+.about-logos img {
+  display: block;
+  width: 100%;
+  height: 5rem;
+  object-fit: contain;
+}
+
+@media (max-width: 576px) {
+  .info-page {
+    margin-top: 6rem;
+    padding: 1rem;
+  }
+
+  .about-try-button {
+    width: min(100%, 18rem);
+  }
+
+  .about-logos {
+    margin-top: 2rem;
+  }
+}
+
 /********************* Legals page **************************************/
 
 .legals-page {
-  overflow-y: auto;
-  max-height: calc(100vh - 9rem);
+  /* Let the document scroll at any zoom level instead of clipping content in
+     a viewport-sized nested panel. */
+  max-height: none;
+  margin-bottom: 6rem;
 }
 
 .legals-hidden {
@@ -1474,10 +1650,30 @@ label > .fa-info-circle {
   border: 1px solid #ccc;
   border-radius: 5px;
   transition: all 0.3s ease;
-  overflow: hidden;
+  min-height: 0;
   margin: 2px;
-  width: 100%;
-  height: 99%;
+  height: auto;
+}
+
+.form-container {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.metadata-form-display {
+  flex: 0 1 25%;
+  min-width: 14rem;
+  overflow: hidden;
+}
+
+#metadata-form-display {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
 }
 
 .full-width {
@@ -1559,14 +1755,22 @@ input:checked + .slider:before {
   width: 100%;
 }
 
+.tab-navigation {
+  display: flex;
+  width: 100%;
+  overflow: visible;
+}
+
 .tab-links_ext {
   list-style-type: none;
   display: flex;
+  flex-wrap: nowrap;
   justify-content: flex-start;
+  gap: 0.5rem;
+  width: 100%;
+  min-width: 0;
   margin: 0 auto;
-  width: 80%;
-  justify-content: space-between;
-  font-size: x-large;
+  padding: 0;
   font-family: Arial, sans-serif;
 }
 
@@ -1578,13 +1782,18 @@ input:checked + .slider:before {
 
 .tab-links_ext li {
   margin: 0;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .tab-links_ext a {
   display: block;
-  padding: 10px 20px;
+  padding: 0.45rem 0.6rem;
   text-decoration: none;
-  font-size: 55%;
+  font-size: clamp(0.75rem, 1.1vw, 1rem);
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
   color: #555;
   border-radius: 4px 4px 0 0;
   transition:
@@ -1592,15 +1801,32 @@ input:checked + .slider:before {
     color 0.3s;
 }
 
-.tab-links_ext a:hover {
+.tab-links_ext li:hover {
   background-color: #f0f0f0;
+  border-radius: 4px 4px 0 0;
+}
+
+.tab-links_ext li:hover a {
   color: #000;
 }
 
-.tab-links_ext li.active a {
+.tab-links_ext li.active:hover {
   background: #02103f;
+}
+
+.tab-links_ext li.active:hover a {
   color: #ccc;
+}
+
+.tab-links_ext li.active a {
+  color: #ccc;
+  background: transparent;
+}
+
+.tab-links_ext li.active {
+  background: #02103f;
   border-bottom: 2px solid #02103f;
+  border-radius: 4px 4px 0 0;
 }
 
 .tab {
@@ -1783,17 +2009,50 @@ input:checked + .slider:before {
   content: "*"; /* Add the * symbol */
 }
 
+.color-code > span.optional-symbol,
+.color-code > span.recommended-symbol {
+  width: 15px;
+  height: 15px;
+  margin-right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.color-code > span.recommended-symbol { font-size: 14px; }
+
+.metadata-link { margin-left: 7px; font-size: 1.1rem; text-decoration: none; }
+
+.copy-citation {
+  margin-left: 0.45rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #055f82;
+  font-size: 0.78em;
+  cursor: pointer;
+}
+
+.copy-citation:hover,
+.copy-citation:focus-visible {
+  color: #003f5c;
+  text-decoration: underline;
+}
+
 /********************* Responsiveness  **********************/
 @media (min-width: 300px) and (max-width: 990px) {
-  .form-container {
-    height: 50%;
-  }
   .main-container {
-    /* display: list-item; */
-    flex-wrap: wrap;
+    flex-direction: column;
   }
   .metadata-form-display {
-    overflow: scroll;
+    width: auto;
+    min-width: 0;
+  }
+
+  .main-container.has-json-viewer .metadata-form-display {
+    flex-basis: 40%;
   }
 }
 
@@ -2179,6 +2438,19 @@ div div p#contributor-explanation {
   color: #055f82;
   cursor: pointer;
   text-decoration: underline;
+}
+
+.asterisk {
+  color: #c62828;
+  font-weight: 700;
+}
+
+.connoss-required-empty input,
+.connoss-required-empty textarea,
+input.connoss-required-empty,
+textarea.connoss-required-empty {
+  border: 2px solid #d9534f !important;
+  background-color: #fff0f0;
 }
 
 .info-header {
