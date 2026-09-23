@@ -1,0 +1,180 @@
+{
+  "@context": {
+    "linkml": "https://w3id.org/linkml/",
+    "sdo": "https://schema.org/",
+    "cm": "https://codemeta.github.io/terms/",
+    "spdx": "https://spdx.org/licenses/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "codeRepository": "sdo:codeRepository",
+    "codeSampleType": "sdo:codeSampleType",
+    "programmingLanguage": "sdo:programmingLanguage",
+    "runtimePlatform": "sdo:runtimePlatform",
+    "targetProduct": "sdo:targetProduct",
+    "applicationCategory": "sdo:applicationCategory",
+    "applicationSubCategory": "sdo:applicationSubCategory",
+    "applicationSuite": "sdo:applicationSuite",
+    "availableOnDevice": "sdo:availableOnDevice",
+    "countriesNotSupported": "sdo:countriesNotSupported",
+    "countriesSupported": "sdo:countriesSupported",
+    "downloadUrl": "sdo:downloadUrl",
+    "featureList": "sdo:featureList",
+    "fileSize": "sdo:fileSize",
+    "installUrl": "sdo:installUrl",
+    "memoryRequirements": "sdo:memoryRequirements",
+    "operatingSystem": "sdo:operatingSystem",
+    "permissions": "sdo:permissions",
+    "processorRequirements": "sdo:processorRequirements",
+    "releaseNotes": "sdo:releaseNotes",
+    "screenshot": "sdo:screenshot",
+    "softwareAddOn": "sdo:softwareAddOn",
+    "softwareHelp": "sdo:softwareHelp",
+    "softwareRequirements": "sdo:softwareRequirements",
+    "softwareVersion": "sdo:softwareVersion",
+    "storageRequirements": "sdo:storageRequirements",
+    "supportingData": "sdo:supportingData",
+    "author": "sdo:author",
+    "citation": "sdo:citation",
+    "contributor": "sdo:contributor",
+    "copyrightHolder": "sdo:copyrightHolder",
+    "copyrightYear": "sdo:copyrightYear",
+    "dateCreated": "sdo:dateCreated",
+    "dateModified": "sdo:dateModified",
+    "datePublished": "sdo:datePublished",
+    "encodingFormat": "sdo:encodingFormat",
+    "funder": "sdo:funder",
+    "hasPart": "sdo:hasPart",
+    "isAccessibleForFree": "sdo:isAccessibleForFree",
+    "isPartOf": "sdo:isPartOf",
+    "keywords": "sdo:keywords",
+    "license": "sdo:license",
+    "publisher": "sdo:publisher",
+    "review": "sdo:review",
+    "sponsor": "sdo:sponsor",
+    "description": "sdo:description",
+    "identifier": "sdo:identifier",
+    "name": "sdo:name",
+    "sameAs": "sdo:sameAs",
+    "url": "sdo:url",
+    "relatedLink": "sdo:relatedLink",
+    "relatedSoftware": "sdo:relatedSoftware",
+    "contactPoint": "sdo:contactPoint",
+    "creditText": "sdo:creditText",
+    "alternateName": "sdo:alternateName",
+    "intendedUse": "sdo:intendedUse",
+    "applicationDomain": "sdo:applicationDomain",
+    "legalConsiderations": "sdo:legalConsiderations",
+    "ethicalSocialConsiderations": "sdo:ethicalSocialConsiderations",
+    "archivedAt": "sdo:archivedAt",
+    "conditionsOfAccess": "sdo:conditionsOfAccess",
+    "documentation": "sdo:documentation",
+    "softwareInterface": "sdo:softwareInterface",
+    "testedWith": "sdo:testedWith",
+    "implementsSpecification": "sdo:implementsSpecification",
+    "softwareContainer": "sdo:softwareContainer",
+    "input": "sdo:input",
+    "output": "sdo:output",
+    "partOfCommunity": "sdo:partOfCommunity",
+    "latestRelease": "sdo:latestRelease",
+    "buildInstructions": "cm:buildInstructions",
+    "continuousIntegration": "cm:continuousIntegration",
+    "developmentStatus": "cm:developmentStatus",
+    "embargoEndDate": "cm:embargoEndDate",
+    "hasSourceCode": "cm:hasSourceCode",
+    "isSourceCodeOf": "cm:isSourceCodeOf",
+    "issueTracker": "cm:issueTracker",
+    "readme": "cm:readme",
+    "referencePublication": "cm:referencePublication",
+    "developerDocumentation": "cm:developerDocumentation",
+    "userDocumentation": "cm:userDocumentation",
+    "latestReleaseVersion": "cm:latestReleaseVersion"
+  },
+  "name": "Software Metadata Extraction and Curation Software (SMECS)",
+  "description": "SMECS is a web-based tool designed to extract and curate research software metadata in alignment with the codemeta software metadata standard. By accessing repositories on platforms like GitHub and GitLab, SMECS extracts multiple already existing metadata in the harvesting phase. In the curation phase its intuitive graphical interface allows researchers to easily improve and change the retrieved metadata to bestly represent their software. Ultimately, SMECS allows to export the curated metadata in JSON format in line with the codemeta stand.",
+  "identifier": [
+    "796699799"
+  ],
+  "softwareVersion": "v0.9.3",
+  "url": "https://github.com/NFDI4Energy/SMECS",
+  "keywords": [
+    "software metadata",
+    "extraction",
+    "curation",
+    "repository",
+    "research software",
+    "codemeta"
+  ],
+  "codeRepository": "https://github.com/NFDI4Energy/SMECS",
+  "hasSourceCode": "https://github.com/NFDI4Energy/SMECS",
+  "archivedAt": [
+    "https://web.archive.org/web/https://github.com/NFDI4Energy/SMECS"
+  ],
+  "downloadUrl": "https://github.com/NFDI4Energy/SMECS/releases",
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Stephan",
+      "familyName": "Ferenz",
+      "@id": "_:author_1"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Aida",
+      "familyName": "Jafarbigloo",
+      "@id": "_:author_2"
+    }
+  ],
+  "contributor": [
+    {
+      "@type": "Person",
+      "givenName": "Stephan",
+      "familyName": "Ferenz",
+      "@id": "_:author_1"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Aida",
+      "familyName": "Jafarbigloo",
+      "@id": "_:author_2"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Syed",
+      "familyName": "Sundraiz Shah",
+      "@id": "_:contributor_3"
+    }
+  ],
+  "issueTracker": "https://github.com/NFDI4Energy/SMECS/issues",
+  "releaseNotes": "https://github.com/NFDI4Energy/SMECS/releases/tag/v0.9.3",
+  "dateCreated": "2024-05-06",
+  "dateModified": "2026-09-08",
+  "datePublished": "2026-02-12",
+  "programmingLanguage": [
+    "Python",
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "Dockerfile",
+    "Shell"
+  ],
+  "softwareRequirements": [
+    "https://github.com/NFDI4Energy/SMECS/blob/master/requirements.txt"
+  ],
+  "storageRequirements": "1.33 MB",
+  "readme": [
+    "https://github.com/NFDI4Energy/SMECS/blob/master/README.rst"
+  ],
+  "documentation": [
+    "https://github.com/NFDI4Energy/SMECS/tree/master/docs"
+  ],
+  "citation": [
+    "Ferenz, S., & Jafarbigloo, A. Software Metadata Extraction and Curation Software (SMECS) [Computer software]. https://github.com/NFDI4Energy/SMECS"
+  ],
+  "license": {
+    "@type": "CreativeWork",
+    "@context": "https://schema.org",
+    "url": "https://spdx.org/licenses/AGPL-3.0",
+    "name": "AGPL-3.0"
+  },
+  "copyrightHolder": "Free Software Foundation, Inc. <https://fsf.org/>",
+  "copyrightYear": 2007
+}
