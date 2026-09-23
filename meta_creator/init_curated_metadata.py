@@ -4,6 +4,56 @@
 from django.conf import settings
 import json
 import os
+import copy
+import re
+from functools import lru_cache
+
+from .connoss_config import (
+    CONNOSS_DESCRIPTIONS,
+    CONNOSS_FIELD_TYPES,
+    CONNOSS_JSONLD_CONTEXT,
+    CONNOSS_TABS,
+)
+
+# Cache the SPDX license index to avoid re-reading and parsing the JSON file on every call.
+@lru_cache(maxsize=1)
+def _spdx_licenses_by_id() -> dict:
+    """Load the bundled SPDX list once and index it by license identifier."""
+    spdx_path = os.path.join(
+        settings.BASE_DIR, "static", "data", "spdx", "licenses.json"
+    )
+    with open(spdx_path, "r", encoding="utf-8") as file:
+        licenses = json.load(file).get("licenses", [])
+    return {license_["licenseId"]: license_ for license_ in licenses}
+
+
+def _spdx_id_from_url(value):
+    """Return a verified SPDX identifier when *value* is an SPDX license URL."""
+    if not isinstance(value, str):
+        return None
+    match = re.match(r"^https?://spdx\.org/licenses/([^/?#]+?)(?:\.json)?/?(?:[?#].*)?$", value)
+    if not match:
+        return None
+    license_id = match.group(1)
+    return license_id if license_id in _spdx_licenses_by_id() else None
+
+
+def normalize_connoss_license(value):
+    """Add an SPDX tag name for CreativeWork licenses expressed only as URLs."""
+    licenses = value if isinstance(value, list) else [value]
+    normalized = []
+    for license_ in licenses:
+        if not isinstance(license_, dict):
+            normalized.append(copy.deepcopy(license_))
+            continue
+        item = copy.deepcopy(license_)
+        # CoMET commonly returns {"url": "https://spdx.org/licenses/AGPL-3.0"}.
+        # The verified SPDX ID is what the form autocomplete uses as its tag value.
+        spdx_id = _spdx_id_from_url(item.get("url"))
+        if spdx_id and not item.get("name"):
+            item["name"] = spdx_id
+        normalized.append(item)
+    return normalized if isinstance(value, list) else normalized[0]
 
 def load_schema(schema_name: str) -> dict:
     """
@@ -287,28 +337,93 @@ def join_tabs_to_dict(filled_metadata: dict[str, dict]) -> dict:
     return output_metadata
 
 
+def init_connoss_curated_metadata(extracted_metadata: dict):
+    """
+    Prepare extracted metadata for curation using the ConnOSS schema.
+
+    Every schema property remains present even when CoMET returned null or
+    omitted it. 
+    """
+    extracted_metadata = copy.deepcopy(extracted_metadata)
+    if "license" in extracted_metadata:
+        extracted_metadata["license"] = normalize_connoss_license(
+            extracted_metadata["license"]
+        )
+
+    metadata = {
+        tab_name: {
+            property_name: copy.deepcopy(
+                extracted_metadata.get(property_name)
+            )
+            for property_name in property_names
+        }
+        for tab_name, property_names in CONNOSS_TABS.items()
+    }
+
+    descriptions = {
+        tab_name: f"ConnOSS metadata: {tab_name}."
+        for tab_name in CONNOSS_TABS
+    }
+    descriptions.update(CONNOSS_DESCRIPTIONS)
+
+    field_types = dict(CONNOSS_FIELD_TYPES)
+
+    configured_properties = {
+        property_name
+        for property_names in CONNOSS_TABS.values()
+        for property_name in property_names
+    }
+
+    missing_field_types = configured_properties - field_types.keys()
+    if missing_field_types:
+        raise ValueError(
+            "ConnOSS field-type configuration missing properties: "
+            f"{sorted(missing_field_types)}"
+        )
+
+    joined_metadata = {
+        "@context": copy.deepcopy(CONNOSS_JSONLD_CONTEXT),
+        **{
+        property_name: value
+        for tab_data in metadata.values()
+        for property_name, value in tab_data.items()
+        },
+    }
+
+    return metadata, descriptions, field_types, joined_metadata
+
 
 # Create curated metadata
 def init_curated_metadata(extract_metadata, schema_type="codemeta"):
     """
-    Initializes the curated metadata structure, filling it with extracted metadata and schema information.
+    Initialize metadata for the curation backend.
 
     Args:
         extract_metadata (dict): The extracted metadata to fill in.
 
     Returns:
-        tuple: (filled_metadata, metadata_description, metadata_field_types, joined_metadata)
+        (metadata_by_tab, descriptions, field_types, joined_metadata)
     """
+    normalized_schema_type = schema_type.lower()
+
+    if normalized_schema_type == "connoss":
+        return init_connoss_curated_metadata(extract_metadata)
+
+    if normalized_schema_type != "codemeta":
+        raise ValueError(f"Unsupported schema type: {schema_type}")
+
     schema_name = 'codemeta_schema.json'
     full_schema = load_schema(schema_name)
     empty_metadata = create_empty_metadata(full_schema)
-    #print(f"Empty metadata:\n{empty_metadata}")
     filled_metadata = fill_empty_metadata(empty_metadata, extract_metadata)
-    #print(f"Filled metadata:\n{filled_metadata}")
 
     metadata_description = load_description_dict_from_schema(full_schema)
     metadata_field_types = define_field_type(full_schema, full_schema["$defs"])
-    #print(f"Field types:\n{metadata_field_types}")
-    
     joined_metadata = join_tabs_to_dict(filled_metadata)
-    return filled_metadata, metadata_description, metadata_field_types, joined_metadata
+
+    return (
+            filled_metadata,
+            metadata_description,
+            metadata_field_types,
+            joined_metadata,
+        )

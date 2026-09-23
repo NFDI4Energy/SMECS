@@ -14,6 +14,105 @@ def is_dict(value):
 def is_list(value):
     return isinstance(value, list)
 
+
+@register.filter
+def as_list(value):
+    """Normalize a scalar or null value for a string-tag field."""
+    if value is None:
+        return []
+    return value if isinstance(value, list) else [value]
+
+
+@register.filter
+def license_names(value):
+    """Extract display/edit values from ConnOSS license CreativeWork objects."""
+    values = value if isinstance(value, list) else [value]
+    names = []
+    for item in values:
+        if isinstance(item, dict):
+            name = item.get("name")
+            if name:
+                names.append(name)
+        elif item:
+            names.append(item)
+    return names
+
+
+@register.filter
+def connoss_people(metadata):
+    """Merge ConnOSS author and contributor values while retaining role flags."""
+    if not isinstance(metadata, dict):
+        return []
+    merged = {}
+    for role in ("author", "contributor"):
+        people = metadata.get(role) or []
+        if not isinstance(people, list):
+            people = [people]
+        for person in people:
+            if not isinstance(person, dict):
+                continue
+            identity = person.get("@id") or person.get("email") or "|".join(
+                str(person.get(key, "")) for key in ("givenName", "familyName", "url")
+            )
+            row = merged.setdefault(identity, {**person, "author_role": False, "contributor_role": False})
+            row["author_role" if role == "author" else "contributor_role"] = True
+    return list(merged.values())
+
+
+@register.filter
+def person_value(person, path):
+    """Return a (possibly nested) value from a person table row."""
+    if not isinstance(person, dict):
+        return ""
+    value = person
+    for key in str(path).split("."):
+        if not isinstance(value, dict):
+            return ""
+        value = value.get(key)
+    return value if value is not None else ""
+
+
+@register.filter
+def person_tags(value):
+    """Normalise scalar/list person values for tag rendering."""
+    if value is None or value == "":
+        return []
+    values = value if isinstance(value, list) else [value]
+    result = []
+    for item in values:
+        if isinstance(item, dict):
+            item = item.get("name") or item.get("url") or ""
+        if item:
+            result.append(item)
+    return result
+
+
+@register.filter
+def json_pretty(value):
+    """Render structured ConnOSS values without flattening their shape."""
+    if value is None:
+        return ""
+    return json.dumps(value, ensure_ascii=False, indent=2)
+
+
+@register.filter
+def json_compact(value):
+    """Serialize a structured single-line field for an HTML input."""
+    if value is None:
+        return ""
+    return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+
+
+@register.filter
+def is_url(value):
+    """Return whether a scalar value is an absolute HTTP(S) URL."""
+    return isinstance(value, str) and value.startswith(("https://", "http://"))
+
+
+@register.filter
+def split(value, separator=","):
+    return str(value).split(separator)
+
 #Define 'get' to access values in the dictionary
 @register.filter
 def get(dictionary, key):

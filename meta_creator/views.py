@@ -6,6 +6,7 @@ It includes views for rendering templates, handling requests, and extracting met
 
 import base64
 import json
+import traceback
 
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
@@ -20,6 +21,11 @@ from .forms import CaptchaForm
 from .metadata_extractor import data_extraction
 from .metadata_paster import load_pasted_metadata
 from .validate_jsonLD import validate_codemeta
+from .connoss_config import (
+    CONNOSS_OPTIONAL_PROPERTIES,
+    CONNOSS_RECOMMENDED_PROPERTIES,
+    CONNOSS_REQUIRED_PROPERTIES,
+)
 
 
 # Session key used to temporarily store an uploaded metadata file (name and
@@ -236,13 +242,32 @@ def index(request):
 
             extracted_metadata, description_metadata, type_metadata, joined_metadata = result['metadata']
 
+            schema_type = result.get("schema_type", "codemeta")
+            tabs = list(extracted_metadata.keys())
+            connoss_required_properties = (
+                CONNOSS_REQUIRED_PROPERTIES if schema_type == "connoss" else []
+            )
+            connoss_field_markers = {}
+            if schema_type == "connoss":
+                connoss_field_markers = {
+                    property_name: "+ "
+                    for property_name in CONNOSS_OPTIONAL_PROPERTIES
+                }
+                connoss_field_markers.update({
+                    property_name: "⭐ "
+                    for property_name in CONNOSS_RECOMMENDED_PROPERTIES
+                })
+
             # Validate the joined metadata against the JSON-LD Codemeta schema and
             # set a user-friendly validation message based on the result.
-            validation_result = (
-                "The JSON data is a valid JSON-LD Codemeta object"
-                if validate_codemeta(joined_metadata)
-                else "The JSON data is not a valid JSON-LD Codemeta object"
-            )
+            if schema_type == "codemeta":
+                validation_result = (
+                    "The JSON data is a valid JSON-LD Codemeta object"
+                    if validate_codemeta(joined_metadata)
+                    else "The JSON data is not a valid JSON-LD Codemeta object"
+                )
+            else:
+                validation_result = "ConnOSS metadata received from CoMET."
 
             # Serialize the joined metadata to a formatted JSON string with 4-space
             # indentation for improved readability in the template output.
@@ -257,6 +282,13 @@ def index(request):
                 "type_metadata": type_metadata,
                 "description_metadata": description_metadata,
                 "extracted_metadata": extracted_metadata,
+                "metadata": extracted_metadata,
+                "tabs": tabs,
+                "schema_type": schema_type,
+                "connoss_required_properties": connoss_required_properties,
+                "connoss_optional_properties": CONNOSS_OPTIONAL_PROPERTIES,
+                "connoss_recommended_properties": CONNOSS_RECOMMENDED_PROPERTIES,
+                "connoss_field_markers": connoss_field_markers,
                 "my_json_str": my_json_str,
                 "from_showdata": True,
                 "validation_result": validation_result,
@@ -273,6 +305,7 @@ def index(request):
         except PermissionDenied:
             return HttpResponseForbidden("CSRF Error: This action is not allowed.")
         except Exception as unexpected_exception:
+            # traceback.print_exc()
             return HttpResponseServerError(
                 f"An unexpected error occurred: {unexpected_exception}"
             )
