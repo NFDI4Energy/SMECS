@@ -10,6 +10,11 @@ const SPDX_URL =
   "https://raw.githubusercontent.com/spdx/license-list-data/master/json/licenses.json";
 const metadataJson = document.getElementById("metadata-json");
 let enterHandledBySuggestion = false;
+const PROGRAMMING_LANGUAGES = [
+  "Python", "R", "Julia", "JavaScript", "TypeScript", "Java", "C", "C++",
+  "C#", "Fortran", "MATLAB", "Rust", "Go", "Ruby", "PHP", "Scala", "Kotlin",
+  "Shell", "SQL", "HTML", "CSS",
+];
 
 // show highlighted tag for keywords
 
@@ -41,11 +46,21 @@ export function setupTagging({
 
   let selectedTags = [];
   let activeSuggestionIndex = -1; //for keyboard autocomplete navigation
+  const usesJsonSerialization = hiddenInput.dataset.tagSerialization === "json";
+  let initialValueWasArray = true;
   // Parse initial value
   if (taggingType === "tagging_object") {
     try {
       const parsed = JSON.parse(hiddenInput.value);
       if (Array.isArray(parsed)) selectedTags = parsed;
+    } catch {
+      selectedTags = [];
+    }
+  } else if (usesJsonSerialization) {
+    try {
+      const parsed = JSON.parse(hiddenInput.value);
+      initialValueWasArray = Array.isArray(parsed);
+      selectedTags = Array.isArray(parsed) ? parsed : [parsed];
     } catch {
       selectedTags = [];
     }
@@ -68,6 +83,17 @@ export function setupTagging({
         tag.classList.add("tag");
         tag.setAttribute("data-value", identifier);
         tag.innerHTML = `${identifier}<span class="remove-tag" data-value="${identifier}">×</span>`;
+        if (/^https?:\/\//i.test(item)) {
+          const externalLink = document.createElement("a");
+          externalLink.className = "metadata-link";
+          externalLink.href = item;
+          externalLink.target = "_blank";
+          externalLink.rel = "noopener noreferrer";
+          externalLink.title = "Open link in a new tab";
+          externalLink.setAttribute("aria-label", "Open link in a new tab");
+          externalLink.textContent = "↗";
+          tag.insertBefore(externalLink, tag.querySelector(".remove-tag"));
+        }
         container.insertBefore(tag, input);
       });
     } else {
@@ -76,6 +102,35 @@ export function setupTagging({
         tag.classList.add("tag");
         tag.setAttribute("data-value", item);
         tag.innerHTML = `${item}<span class="remove-tag" data-value="${item}">×</span>`;
+        if (jsonKey === "citation") {
+          const copyButton = document.createElement("button");
+          copyButton.type = "button";
+          copyButton.className = "copy-citation";
+          copyButton.title = "Copy citation";
+          copyButton.setAttribute("aria-label", "Copy citation");
+          copyButton.innerHTML = '<i class="fa fa-copy" aria-hidden="true"></i>';
+          copyButton.addEventListener("click", async (event) => {
+            event.stopPropagation();
+            try {
+              await navigator.clipboard.writeText(item);
+              showToast("Citation copied", "success");
+            } catch {
+              showToast("Could not copy the citation", "error");
+            }
+          });
+          tag.insertBefore(copyButton, tag.querySelector(".remove-tag"));
+        }
+        if (/^https?:\/\//i.test(item)) {
+          const externalLink = document.createElement("a");
+          externalLink.className = "metadata-link";
+          externalLink.href = item;
+          externalLink.target = "_blank";
+          externalLink.rel = "noopener noreferrer";
+          externalLink.title = "Open link in a new tab";
+          externalLink.setAttribute("aria-label", "Open link in a new tab");
+          externalLink.textContent = "↗";
+          tag.insertBefore(externalLink, tag.querySelector(".remove-tag"));
+        }
         container.insertBefore(tag, input);
       });
     }
@@ -107,6 +162,7 @@ export function setupTagging({
     input.blur();
   }
 
+  /* Curation cue banners are disabled for now.
   // Show yellow tag once if any tag exists
   if (selectedTags.length > 0) {
     const highlightTag = document.createElement("span");
@@ -119,6 +175,7 @@ export function setupTagging({
     highlightTag.innerHTML = `⚠️ Multiple entries supported: please press enter after typing each <span class="acknowledge-tag">Got it!</span>`;
     container.insertBefore(highlightTag, input);
   }
+  */
 
   if (useAutocomplete && suggestionsBox) {
     input.addEventListener("input", () => {
@@ -361,12 +418,17 @@ export function setupTagging({
   function updateHidden() {
     if (taggingType === "tagging_object") {
       hiddenInput.value = JSON.stringify(selectedTags);
+    } else if (usesJsonSerialization) {
+      hiddenInput.value = JSON.stringify(selectedTags);
     } else {
       hiddenInput.value = selectedTags.join(", ");
     }
     const jsonObject = JSON.parse(metadataJson.value);
-    jsonObject[jsonKey] = selectedTags;
+    jsonObject[jsonKey] = usesJsonSerialization && !initialValueWasArray && selectedTags.length === 1
+      ? selectedTags[0]
+      : selectedTags;
     metadataJson.value = JSON.stringify(jsonObject, null, 2);
+    hiddenInput.dispatchEvent(new Event("change", { bubbles: true }));
     validateInput(input);
   }
 
@@ -407,6 +469,16 @@ export function initializeTaggingFields() {
           .catch((error) =>
             console.error("Error fetching SPDX licenses:", error)
           );
+      } else if (key === "programmingLanguage") {
+        setupTagging({
+          containerId,
+          hiddenInputId,
+          inputId,
+          suggestionsId,
+          jsonKey: key,
+          useAutocomplete: true,
+          autocompleteSource: PROGRAMMING_LANGUAGES,
+        });
       } else {
         getSchema().then((schema) => {
           const autocompleteSource =

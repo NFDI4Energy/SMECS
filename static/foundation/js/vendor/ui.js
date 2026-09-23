@@ -25,12 +25,14 @@ export function setupUI() {
   };
   const copyBtn = document.getElementById("copy-button");
   // copy button for json
-  copyBtn.addEventListener("click", function (event) {
-    event.preventDefault();
-    metadataJson.select();
-    document.execCommand("copy");
-    actionFeedback("Text copied!");
-  });
+  if (copyBtn && metadataJson) {
+    copyBtn.addEventListener("click", function (event) {
+      event.preventDefault();
+      metadataJson.select();
+      document.execCommand("copy");
+      actionFeedback("Text copied!");
+    });
+  }
   // Make JSON viewer read-only
   if (metadataJson) {
     metadataJson.readOnly = true;
@@ -139,7 +141,8 @@ export function setupUI() {
   // Initialize the state on page load
   window.onload = function () {
     const toggleSwitch = document.getElementById("toggleSwitch");
-    if (window.screen.width <= 990) {
+    if (!toggleSwitch) return;
+    if (window.innerWidth <= 990) {
       toggleSwitch.checked = false;
     }
 
@@ -383,16 +386,11 @@ function toggleSection() {
   var formContainer = document.getElementById("formContainer");
   var metadataFormDisplay = document.getElementById("metadataFormDisplay");
   var toggleSwitch = document.getElementById("toggleSwitch");
+  var mainContainer = document.querySelector(".main-container");
   var personInfoElements = document.querySelectorAll(".person-info"); // Select all elements with the class 'person-info'
-  if (window.screen.width <= 990 && toggleSwitch.checked == false) {
-    formContainer.style.height = "100%";
-  } else if (window.screen.width <= 990 && toggleSwitch.checked) {
-    formContainer.style.height = "50%";
-  } else {
-    formContainer.style.height = "99%";
-  }
   if (toggleSwitch.checked) {
     metadataFormDisplay.style.display = "block";
+    mainContainer.classList.add("has-json-viewer");
     formContainer.classList.remove("col-lg-12");
     formContainer.classList.add("col-lg-9");
     metadataFormDisplay.classList.add("col-lg-3");
@@ -402,6 +400,7 @@ function toggleSection() {
     });
   } else {
     metadataFormDisplay.style.display = "none";
+    mainContainer.classList.remove("has-json-viewer");
     formContainer.classList.remove("col-lg-9");
     formContainer.classList.add("col-lg-12");
     metadataFormDisplay.classList.remove("col-lg-3");

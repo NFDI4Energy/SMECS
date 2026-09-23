@@ -59,6 +59,25 @@ function downloadFile(event) {
     const data = metadataJson.value;
     const entered_metadata = JSON.parse(data); // Move inside try block
     const metadata = getCleanedMetadata(entered_metadata);
+    const schemaType = document.getElementById("metadata-form")?.dataset.schemaType;
+
+    if (schemaType === "connoss") {
+      const required = (document.getElementById("metadata-form")?.dataset.requiredProperties || "")
+        .split(",")
+        .filter(Boolean);
+      const missing = required.filter((key) => {
+        const value = metadata[key];
+        return value === null || value === undefined || value === "" ||
+          (Array.isArray(value) && value.length === 0);
+      });
+      if (missing.length) {
+        showDownloadError(missing);
+        return;
+      }
+      downloadJson("connoss-metadata.json", metadata);
+      return;
+    }
+
     const jsonKeys = Object.keys(metadata); // Extract keys from received JSON
 
     let repoName = "metadata"; // Default name
@@ -107,6 +126,21 @@ function downloadFile(event) {
     showDownloadError([]);
     console.error("JSON Parsing Error:", e);
   }
+}
+
+function downloadJson(fileName, metadata) {
+  const blob = new Blob([JSON.stringify(metadata, null, 2)], {
+    type: "application/json",
+  });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  setTimeout(() => {
+    URL.revokeObjectURL(link.href);
+    link.remove();
+  }, 100);
 }
 
 // Provide metadata as download
