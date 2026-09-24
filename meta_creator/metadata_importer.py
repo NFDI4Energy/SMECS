@@ -37,8 +37,29 @@ def parse_metadata_json(raw_text):
             errors=["The provided metadata must be a JSON object."],
         )
 
-    # Normalize the parsed metadata into the tool's curated metadata structure before returning it to the caller.
-    return metadata_result(metadata=init_curated_metadata(parsed_metadata))
+    # Preserve the schema chosen by the JSON-LD context while converting the
+    # input into the same curated structure used by repository extraction.
+    schema_type = detect_schema_type(parsed_metadata)
+    return metadata_result(
+        metadata=init_curated_metadata(parsed_metadata, schema_type=schema_type),
+        schema_type=schema_type,
+    )
+
+
+def detect_schema_type(metadata):
+    """Infer whether an imported JSON-LD object uses CodeMeta or ConnOSS."""
+    context = metadata.get("@context")
+    if isinstance(context, dict):
+        connoss_context_markers = {"linkml", "cm", "spdx", "xsd", "sdo"}
+        if connoss_context_markers.intersection(context):
+            return "connoss"
+        return "codemeta"
+
+    if isinstance(context, str):
+        normalized_context = context.lower()
+        if any(marker in normalized_context for marker in ("connoss", "linkml")):
+            return "connoss"
+    return "codemeta"
 
 
 def import_metadata_file(uploaded_file):

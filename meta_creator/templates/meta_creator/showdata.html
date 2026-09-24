@@ -244,7 +244,7 @@
                                             </div>
                                             <div class="connoss-people-scroll" tabindex="0" aria-label="Scrollable people table">
                                             <table class="connoss-people-table" data-connoss-people="true">
-                                                <thead><tr><th>Select</th><th>Identifier (@id)</th><th>Given name</th><th>Family name</th><th>Email</th><th>Account</th><th>URL</th><th>Affiliation</th><th>Author</th><th>Contributor</th></tr></thead>
+                                                <thead><tr><th>Select</th><th>Identifier</th><th>Given name</th><th>Family name</th><th>Email</th><th>Account</th><th>URL</th><th>Affiliation</th><th>Author</th><th>Contributor</th></tr></thead>
                                                 <tbody>
                                                     {% for person in metadata_dict|connoss_people %}
                                                     <tr data-person="{{ person|json_pretty|escape }}">

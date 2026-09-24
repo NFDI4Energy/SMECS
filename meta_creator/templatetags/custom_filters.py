@@ -51,12 +51,73 @@ def connoss_people(metadata):
         for person in people:
             if not isinstance(person, dict):
                 continue
-            identity = person.get("@id") or person.get("email") or "|".join(
-                str(person.get(key, "")) for key in ("givenName", "familyName", "url")
+            given_name = _person_name(person.get("givenName"))
+            family_name = _person_name(person.get("familyName"))
+            person = {**person, "givenName": given_name, "familyName": family_name}
+            if given_name or family_name:
+                identity = ("name", given_name.casefold(), family_name.casefold())
+            else:
+                identity = _person_identity(person)
+
+            row = merged.setdefault(
+                identity,
+                {**person, "author_role": False, "contributor_role": False},
             )
-            row = merged.setdefault(identity, {**person, "author_role": False, "contributor_role": False})
+            if row is not person:
+                _merge_person_data(row, person)
             row["author_role" if role == "author" else "contributor_role"] = True
     return list(merged.values())
+
+
+def _person_name(value):
+    """Normalize a person name."""
+    if isinstance(value, str):
+        return value.strip().strip(",; ")
+    return ""
+
+
+def _person_identity(person):
+    identifier = person.get("@id")
+    if identifier:
+        return ("id", str(identifier).strip().casefold())
+    email = person.get("email")
+    if isinstance(email, list):
+        email = email[0] if email else ""
+    if email:
+        return ("email", str(email).strip().casefold())
+    return ("other", str(person.get("url") or "").strip().casefold())
+
+
+def _merge_person_data(target, source):
+    """Keep non-empty person values from duplicate role records."""
+    for key, value in source.items():
+        if key in {"author_role", "contributor_role"} or value in (None, "", [], {}):
+            continue
+        current = target.get(key)
+        if current in (None, "", [], {}):
+            target[key] = value
+        elif isinstance(current, dict) and isinstance(value, dict):
+            _merge_person_data(current, value)
+        elif isinstance(current, list) or isinstance(value, list):
+            current_values = current if isinstance(current, list) else [current]
+            new_values = value if isinstance(value, list) else [value]
+            combined = list(current_values)
+            for item in new_values:
+                if isinstance(item, dict):
+                    match = next(
+                        (existing for existing in combined
+                         if isinstance(existing, dict) and _person_identity(existing) == _person_identity(item)),
+                        None,
+                    )
+                    if match is not None:
+                        _merge_person_data(match, item)
+                    else:
+                        combined.append(item)
+                elif item not in combined:
+                    combined.append(item)
+            target[key] = combined
+        elif current != value:
+            target[key] = [current, value]
 
 
 @register.filter

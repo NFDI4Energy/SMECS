@@ -210,6 +210,13 @@ function setupConnossPeopleTable(form) {
   };
   table.addEventListener("change", refreshActions);
   table.addEventListener("focusout", (event) => {
+    if (!event.target.matches('[data-person-field="givenName"], [data-person-field="familyName"]')) return;
+    setTimeout(() => {
+      mergeConnossPeople([...table.querySelectorAll("tbody tr")]);
+      syncConnossPeople(form);
+    }, 0);
+  });
+  table.addEventListener("focusout", (event) => {
     const row = event.target.closest('tr[data-new-person="true"]');
     if (!row) return;
     // Wait for the next focused element so moving within a row does not remove it.
@@ -249,22 +256,28 @@ function setupConnossPeopleTable(form) {
 function mergeConnossPeople(rows) {
   const groups = new Map();
   rows.forEach((row) => {
-    const given = row.querySelector('[data-person-field="givenName"]')?.value.trim().toLowerCase();
-    const family = row.querySelector('[data-person-field="familyName"]')?.value.trim().toLowerCase();
-    if (!given || !family) return;
-    const key = `${given}|${family}`;
+    const givenInput = row.querySelector('[data-person-field="givenName"]');
+    const familyInput = row.querySelector('[data-person-field="familyName"]');
+    const given = givenInput?.value.trim().replace(/[,;]+$/, "").trim() || "";
+    const family = familyInput?.value.trim().replace(/^[,;]+|[,;]+$/g, "").trim() || "";
+    if (givenInput) givenInput.value = given;
+    if (familyInput) familyInput.value = family;
+    if (!given && !family) return;
+    const key = `${given.toLocaleLowerCase()}|${family.toLocaleLowerCase()}`;
     groups.set(key, [...(groups.get(key) || []), row]);
   });
   groups.forEach((group) => {
     if (group.length < 2) return;
     const main = group[0];
+    ["@id", "url", "account.url", "identifier"].forEach((field) => {
+      const target = main.querySelector(`[data-person-field="${field}"]`);
+      if (!target) return;
+      const values = [target.value.trim(), ...group.slice(1).map((row) => row.querySelector(`[data-person-field="${field}"]`)?.value.trim())].filter(Boolean);
+      target.value = [...new Set(values)].join(", ");
+    });
     ["email", "affiliation"].forEach((field) => {
       const target = main.querySelector(`.connoss-tag-cell[data-person-field="${field}"]`);
       group.slice(1).forEach((row) => row.querySelectorAll(`.connoss-tag-cell[data-person-field="${field}"] .connoss-tag`).forEach((tag) => addConnossTag(target, tag.dataset.value)));
-    });
-    ["@id", "account.url", "url"].forEach((field) => {
-      const target = main.querySelector(`[data-person-field="${field}"]`);
-      if (!target.value.trim()) target.value = group.slice(1).map((row) => row.querySelector(`[data-person-field="${field}"]`)?.value.trim()).find(Boolean) || "";
     });
     ["author", "contributor"].forEach((role) => main.querySelector(`[data-person-role="${role}"]`).checked = group.some((row) => row.querySelector(`[data-person-role="${role}"]`).checked));
     group.slice(1).forEach((row) => row.remove());
