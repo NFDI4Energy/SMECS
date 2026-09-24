@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 COMET_API_URL = os.getenv(
     "COMET_API_URL",
-    "http://localhost:8002",
+    "http://localhost:8000",
 )
 
 COMET_METADATA_ENDPOINT = "/api/metadata/enriched"
