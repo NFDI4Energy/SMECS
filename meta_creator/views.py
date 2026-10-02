@@ -20,6 +20,7 @@ from .forms import CaptchaForm
 from .metadata_extractor import data_extraction
 from .metadata_paster import load_pasted_metadata
 from .validate_jsonLD import validate_codemeta
+from .init_curated_metadata import ROLE_EXPLANATIONS
 
 
 # Session key used to temporarily store an uploaded metadata file (name and
@@ -256,6 +257,7 @@ def index(request):
             return HttpResponse(template.render({
                 "type_metadata": type_metadata,
                 "description_metadata": description_metadata,
+                "extra_description_metadata": ROLE_EXPLANATIONS,
                 "extracted_metadata": extracted_metadata,
                 "my_json_str": my_json_str,
                 "from_showdata": True,

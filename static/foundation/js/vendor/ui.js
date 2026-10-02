@@ -106,11 +106,10 @@ export function setupUI() {
       .forEach(function (trigger) {
         const span = trigger.querySelector(".tooltip-text-metadata");
         if (!span) return;
-        const text = span.textContent.trim();
-        if (!text) return;
+        if (!span.textContent.trim()) return;
 
         trigger.addEventListener("mouseenter", function () {
-          tip.textContent = text;
+          tip.replaceChildren(...span.cloneNode(true).childNodes);
 
           const icon = trigger.querySelector("i") || trigger;
           const r = icon.getBoundingClientRect();
@@ -184,6 +183,22 @@ export function setupUI() {
       });
     }
   }
+    const alertDiv = document.querySelector('.json-readonly-alert');
+    const gotIt = alertDiv ? alertDiv.querySelector('.acknowledge-tag') : null;
+
+    if (gotIt) {
+      gotIt.addEventListener('click', function () {
+        alertDiv.classList.add('hidden-alert');
+        metadataJson.style.height = 'clamp(200px, calc(100vh - 14rem), 5000px)';
+      });
+    }
+
+      // laptop width and below: let the page scroll; larger screens stay locked
+  function updateBodyOverflow() {
+    document.body.style.overflow = window.innerWidth <= 1366 ? 'auto' : 'hidden';
+  }
+  updateBodyOverflow();
+  window.addEventListener('resize', updateBodyOverflow);
 }
 
 // Toggle between "Repository URL" and "Local metadata file" and "paste JSON" on the start page.
@@ -719,3 +734,4 @@ function toggleLang() {
     btn.innerHTML = isEN ? '<i class="fa fa-globe" title="Switch to English"></i> English' : '<i class="fa fa-globe" title="Switch to German"></i> Deutsch';
 }
 window.toggleLang = toggleLang;
+
