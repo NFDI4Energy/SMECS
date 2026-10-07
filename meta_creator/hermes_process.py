@@ -4,7 +4,6 @@ import json
 import os
 from .token_handling_in_toml import update_token_to_toml, remove_token_from_toml
 from .utils import merge_people_metadata
-
 # hermes_utils.py
 
 def run_hermes_commands(url, token=None):
@@ -33,7 +32,7 @@ def run_hermes_commands(url, token=None):
     files_exist = os.path.exists(hermes_dir) and any(entry.is_file() for entry in os.scandir(hermes_dir))
 
     if not files_exist:
-        error_msg = ".hermes directory contains no files — nothing harvested."
+        error_msg = f"GitHub API rate limit exceeded for {url}. Please try again later or use a token."
         print(error_msg)
         errors.append(error_msg)
         return {
