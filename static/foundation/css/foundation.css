@@ -4,7 +4,7 @@
 body {
   overflow: hidden;
   caret-color: transparent;
-  /* padding-top: 5rem;     */
+  padding-top: 5rem;    
   padding-bottom: 4rem; 
   height: 100%;
 
@@ -735,7 +735,7 @@ button#new-url {
 .main-container {
   display: flex;
   transition: all 0.3s ease;
-  /* height: stretch; */
+  height: stretch;
 }
 
 /* Error page / connection time out */
