@@ -32,7 +32,7 @@ def run_hermes_commands(url, token=None):
     files_exist = os.path.exists(hermes_dir) and any(entry.is_file() for entry in os.scandir(hermes_dir))
 
     if not files_exist:
-        error_msg = f"GitHub API rate limit exceeded for {url}. Please try again later or use a token."
+        error_msg = f"API rate limit exceeded for {url}. Please try again later or use a token."
         print(error_msg)
         errors.append(error_msg)
         return {

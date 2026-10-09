@@ -120,7 +120,7 @@ def check_github_token(repo_url, token):
     if not api_url:
         return {
             "status": "invalid_url",
-            "message": "Invalid GitHub repository URL: Could not extract from the given url. Please use the valid Url",
+            "message": "Invalid GitHub repository URL. Please provide a valid repository URL in the format https://github.com/{owner}/{repo}",
         }
 
     headers = {"Authorization": f"token {token}"} if token else {}
@@ -139,14 +139,14 @@ def check_github_token(repo_url, token):
         # We surface a message that covers both cases.
         return {
             "status": "invalid_token",
-            "message": f"The provided GitHub token is invalid or has expired for {domain}/{owner}/{repo}. Please check your token or generate a new one and try again.",
+            "message": f"The provided GitHub token is invalid or has expired. Please check your token or generate a new one and try again.",
         }
 
     if response.status_code == 404:
         token_hint = " If this is a private repository, make sure you have provided a valid access token." if not token else ""
         return {
         "status": "invalid_url",
-        "message": f"GitHub repository not found on {domain}/{owner}/{repo}.{token_hint} Please check the URL and try again.",
+        "message": f"The Github repository could not be found. Please check the repository URL and make sure you have access to it.",
         }
 
     if response.status_code == 403:
@@ -157,7 +157,7 @@ def check_github_token(repo_url, token):
         if "rate limit" in message.lower():
             return {
                 "status": "error",
-                "message": f"GitHub API rate limit exceeded for {domain}/{owner}/{repo}. Provide a valid token to get a higher limit.",
+                "message": f"GitHub API rate limit exceeded for {domain}/{owner}/{repo}. Please try again later.",
             }
         return {
             "status": "error",
@@ -187,13 +187,13 @@ def check_gitlab_token(repo_url, token):
     if not domain or "." not in domain:
         return {
             "status": "invalid_url",
-            "message": "GitLab repository not found. Please check the URL and try again.",
+            "message": "The GitLab repository URL is invalid. Please provide a valid GitLab repository URL.",
         }
     try:
         parsed = urlparse(repo_url)
         raw_path = parsed.path.strip("/")
         if not raw_path:
-            return {"status": "invalid_url", "message": "Invalid GitLab repository URL: Please check the URL and try again."}
+            return {"status": "invalid_url", "message": "The GitLab repository URL is invalid. Please provide a valid GitLab repository URL"}
         project_path = raw_path.replace("/", "%2F")
         api_url = f"{base_url}/api/v4/projects/{project_path}"
     except Exception:
@@ -206,10 +206,10 @@ def check_gitlab_token(repo_url, token):
     except requests.exceptions.SSLError:
         return {
             "status": "error",
-            "message": f"SSL certificate error on {domain}/{raw_path}. The server may use a self-signed certificate.",
+            "message": f"A secure connection to {domain}/{raw_path} could not be established because its SSL certificate is not trusted.",
         }
     except requests.RequestException as e:
-        return {"status": "error", "message": f"Network error while reaching {domain}: Please check your Network and try again."}
+        return {"status": "error", "message": f"Unable to connect to {domain}. Please check your network connection and try again."}
     if response.status_code == 200:
         return {"status": "valid", "message": ""}
 
@@ -221,7 +221,7 @@ def check_gitlab_token(repo_url, token):
                 return {
                     "status": "expired_token",
                     "message": (
-                        f"The token for {domain} has expired. Please generate a new token on {domain} and try again."
+                        f"The provided GitLab token has expired. Please generate a new token and try again."
                     ),
                 }
         except Exception:
@@ -229,7 +229,7 @@ def check_gitlab_token(repo_url, token):
         return {
             "status": "invalid_token",
             "message": (
-                f"The token is invalid for {domain}/{raw_path}. Make sure you are using a correct token."
+                f"The provided GitLab token is invalid or unauthorized. Please check your token and try again."
             ),
         }
 
@@ -237,7 +237,7 @@ def check_gitlab_token(repo_url, token):
         return {
             "status": "invalid_url",
             "message": (
-                f"Repository not found on {domain}/{raw_path}. Please check the URL and try again."
+                f"The GitLab repository could not be found. Please check the repository URL and make sure you have access to it."
             ),
         }
 
@@ -245,7 +245,7 @@ def check_gitlab_token(repo_url, token):
         return {
             "status": "error",
             "message": (
-                f"Access forbidden on {domain}/{raw_path}. Your token may not have the required permissions." 
+                f"Access to this GitLab repository is forbidden. Please check that your token has permission to access the repository." 
             ),
         }
 
@@ -257,8 +257,8 @@ def check_gitlab_token(repo_url, token):
 
 def _self_hosted_unsupported_message(domain):
     return (
-        f"We are working on extracting from self-hosted repositories and soon "
-        f"you can extract metadata from {domain}."
+        f"We currently support GitLab.com repositories only. Metadata extraction from self-hosted GitLab repositories is not supported yet."
+        # f"you can extract metadata from {domain}."
     )
 
 
@@ -282,7 +282,7 @@ def validate_token(repo_url, token):
         return {
             "token": None,
             "error_type": "error",
-            "error_message": "Network error: no internet connection. Please check your connection and try again.",
+            "error_message": f"Unable to connect to {repo_url}. Please check your network connection and try again.",
             "forge": None,
         }
     classified = classify_url(repo_url)
@@ -389,7 +389,7 @@ def validate_token(repo_url, token):
 
     return _err(
         "no_token",
-        "GitLab requires a valid personal access token. Please provide one and try again.",
+        "A GitLab personal access token is required. Please provide a valid token and try again.",
     )
 
 
