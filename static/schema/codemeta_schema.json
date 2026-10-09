@@ -1097,10 +1097,11 @@
           }
         },
         "affiliation": {
-          "description": "An organization that this person is affiliated with. For example, a school/university",
-          "type": "string",
-          "title": "affiliation"
-        }
+           "description": "An organization that this person is affiliated with. For example, a school/university",
+            "title": "affiliation",
+              "type": "array",
+             "items": { "type": "string" }
+            }
       }
     }
   }
