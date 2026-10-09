@@ -151,7 +151,7 @@ export function setupUI() {
   highlightEditableUrls(urlInputs);
   initAutoCloseCollapses();
 
-  // Custom confirmation alert before leaving the Extraction page
+  // Confirmation alert before leaving the Extraction page
   const isExtractionPage = document.querySelector('.tab-links_ext');
   if (isExtractionPage) {
     const leavePopup = document.getElementById('leavePagePopup');
@@ -163,7 +163,7 @@ export function setupUI() {
     navLinks.forEach((link) => {
       link.addEventListener('click', function (event) {
         event.preventDefault();
-        pendingDestination = this.getAttribute('href') || '/';
+        pendingDestination = this.getAttribute('href') || this.dataset.href || '/';
         leavePopup.style.display = 'block';
       });
     });
