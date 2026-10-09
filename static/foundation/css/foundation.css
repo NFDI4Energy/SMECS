@@ -735,7 +735,7 @@ button#new-url {
 .main-container {
   display: flex;
   transition: all 0.3s ease;
-  height: stretch;
+  /* height: stretch; */
 }
 
 /* Error page / connection time out */
