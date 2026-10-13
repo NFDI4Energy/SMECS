@@ -139,14 +139,14 @@ def check_github_token(repo_url, token):
         # We surface a message that covers both cases.
         return {
             "status": "invalid_token",
-            "message": f"The provided GitHub token is invalid or has expired. Please check your token or generate a new one and try again.",
+            "message": f"The provided GitHub token is invalid or expired. Please check your token or generate a new one and try again.",
         }
 
     if response.status_code == 404:
         token_hint = " If this is a private repository, make sure you have provided a valid access token." if not token else ""
         return {
         "status": "invalid_url",
-        "message": f"The Github repository could not be found. Please check the repository URL and make sure you have access to it.",
+        "message": f"The Github repository could not be found. Please check the repository URL and make sure you have the right access.",
         }
 
     if response.status_code == 403:
