@@ -376,6 +376,29 @@ export function setupInputSourceToggle() {
   }
 }
 
+// Show or hide toggle for the personal access token field on the start page.
+export function setupTokenVisibilityToggle() {
+  const tokenInput = document.getElementById("token_input");
+  const toggleBtn = document.getElementById("toggle-token-visibility");
+  if (!tokenInput || !toggleBtn) return;
+
+  toggleBtn.addEventListener("click", function () {
+    const show = tokenInput.type === "password";
+    tokenInput.type = show ? "text" : "password";
+
+    const icon = toggleBtn.querySelector("i");
+    if (icon) {
+      icon.classList.toggle("fa-eye", !show);
+      icon.classList.toggle("fa-eye-slash", show);
+    }
+
+    const label = show ? "Hide token" : "Show token";
+    toggleBtn.setAttribute("aria-label", label);
+    toggleBtn.setAttribute("aria-pressed", String(show));
+    toggleBtn.title = label;
+  });
+}
+
 // pop-up message for Contributor and Author tabs
 function showPopup() {
   document.getElementById("popup").style.display = "block";
