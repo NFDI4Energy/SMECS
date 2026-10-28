@@ -152,12 +152,45 @@ footer {
 }
 
 #form1 input[type="url"],
-#form1 input[type="text"] {
+#form1 input[type="text"]
+#form1 input[type="password"]{
   padding: 8px;
+  padding-right: 2.5rem;
   border-radius: 4px;
   border: 1px solid #ccc;
   box-sizing: border-box;
   font-size: 16px;
+}
+
+.token-input-wrapper {
+  position: relative;
+}
+
+/*room for the eye button*/
+#form1 .token-input-wrapper input {
+  padding-right: 2.5rem;
+}
+
+.token-toggle-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #055f82;
+}
+
+.token-toggle-btn:hover {
+  color: #4ba0af;
+}
+
+/* to hide Edge's built-in reveal icon */
+#token_input::-ms-reveal,
+#token_input::-ms-clear {
+  display: none;
 }
 
 button.ExData {
@@ -1314,6 +1347,7 @@ label > .fa-info-circle {
 
 .custom-tooltip .tooltip-text {
   visibility: hidden;
+  opacity : 0;
   font-size: 65%;
   width: 25rem;
   word-wrap: break-word;
@@ -1323,14 +1357,23 @@ label > .fa-info-circle {
   border-radius: 6px;
   padding: 5px;
   position: absolute;
-  z-index: 1;
+  z-index: 10;
   left: 100%;
   top: 50%;
   transform: translateY(-50%);
   margin-left: 6px;
-  transition: opacity 0.3s;
-  pointer-events: none;
+  transition: opacity 0.2s, visibility 0s linear 0.3s;
 }
+
+.custom-tooltip .tooltip-text::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -10px;
+  width: 10px;
+}
+
 
 /* .custom-tooltip-metadata .tooltip-text-metadata {
   visibility: hidden;
