@@ -115,7 +115,7 @@ Prerequisites: Make sure `Docker <https://www.docker.com/products/docker-desktop
 * Cloning the repository
 .. code-block:: shell
 
-   git clone https://github.com/NFDI4Energy/SMECS.git
+   git clone -b feature/ConnOSS-integration https://github.com/NFDI4Energy/SMECS.git
 
 * Navigate to the Project Directory   
 .. code-block:: shell
@@ -253,7 +253,7 @@ In this setup, SMECS and CoMET run as separate Docker Compose applications. SMEC
 * Clone the SMECS repository:
 .. code-block:: shell
 
-   git clone https://github.com/NFDI4Energy/SMECS.git
+   git clone -b feature/ConnOSS-integration https://github.com/NFDI4Energy/SMECS.git
 
 * Navigate to the project directory:
 .. code-block:: shell
