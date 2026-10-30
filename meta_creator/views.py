@@ -254,7 +254,7 @@ def index(request):
                     for property_name in CONNOSS_OPTIONAL_PROPERTIES
                 }
                 connoss_field_markers.update({
-                    property_name: "⭐ "
+                    property_name: "◇ "
                     for property_name in CONNOSS_RECOMMENDED_PROPERTIES
                 })
 

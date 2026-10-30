@@ -170,7 +170,7 @@ def run_comet(repo_url, access_token=None, schema="ConnOSS", schema_class="Softw
     logger.info("COMET metadata extraction reported success")
 
     metadata = comet_response.get("results")
-    logger.info("Metadata received from COMET: %s", metadata)
+    # logger.info("Metadata received from COMET: %s", metadata)
     enriched_metadata = comet_response.get("enriched_metadata")
 
     logger.info(

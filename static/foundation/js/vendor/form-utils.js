@@ -85,8 +85,8 @@ function setupConnossRequiredFields(form) {
     if (label && !label.querySelector(".asterisk")) {
       const star = document.createElement("span");
       star.className = "asterisk";
-      star.textContent = " *";
-      label.appendChild(star);
+      star.textContent = "* ";
+      label.insertBefore(star, label.firstChild);
     }
     updateConnossRequiredField(form, key, field);
   });
