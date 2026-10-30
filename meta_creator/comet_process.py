@@ -4,6 +4,7 @@ Extract metadata from a GitHub or GitLab repository through the COMET API.
 
 import logging
 import os
+from urllib.parse import urlsplit
 
 import requests
 
@@ -22,6 +23,28 @@ COMET_API_URL = os.getenv(
 )
 
 COMET_METADATA_ENDPOINT = "/api/metadata/enriched"
+
+
+def _request_error(exc):
+    """Return a concise message for a failed COMET HTTP request."""
+    if isinstance(exc, requests.ConnectionError):
+        api_url = urlsplit(COMET_API_URL)
+        host = api_url.hostname or COMET_API_URL
+        port = f":{api_url.port}" if api_url.port else ""
+        return (
+            f"Could not connect to the COMET API at {host}{port}. "
+            "Make sure the COMET service is running and COMET_API_URL points "
+            "to the correct address, then try again."
+        )
+    if isinstance(exc, requests.Timeout):
+        return (
+            "The request to the COMET API timed out. The service may be busy; "
+            "please try again."
+        )
+    if isinstance(exc, requests.HTTPError):
+        status = exc.response.status_code if exc.response is not None else "unknown"
+        return f"The COMET API returned HTTP {status}. Please try again later."
+    return "The request to the COMET API failed. Please try again later."
 
 
 def run_comet(repo_url, access_token=None, schema="ConnOSS", schema_class="Software"):
@@ -95,12 +118,13 @@ def run_comet(repo_url, access_token=None, schema="ConnOSS", schema_class="Softw
         response.raise_for_status()
 
     except requests.RequestException as exc:
-        logger.error("COMET API request failed: %s", exc)
+        message = _request_error(exc)
+        logger.error("COMET API request failed: %s", message)
 
         return {
             "success": False,
             "warnings": [],
-            "errors": [f"COMET API request failed: {exc}"],
+            "errors": [message],
             "metadata": None,
             "enriched_metadata": None,
         }

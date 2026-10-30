@@ -194,7 +194,7 @@ def index(request):
             if not paste_result.get("success"):
                 errors = paste_result.get("errors") or ["Invalid metadata JSON."]
                 context = _index_context(request, CaptchaForm())
-                context["error_message_paste"] = "; ".join(
+                context["error_message_paste"] = " ".join(
                     str(error) for error in errors if error is not None
                 )
                 return render(request, "meta_creator/index.html", context)
@@ -237,7 +237,7 @@ def index(request):
                     normalized_errors = ["Unknown error"]
                 error_messages.extend(normalized_errors)
                 return render(request, 'meta_creator/error.html', {
-                    'error_message': "; ".join(error_messages)
+                    'error_message': " ".join(error_messages)
                 })
 
             extracted_metadata, description_metadata, type_metadata, joined_metadata = result['metadata']
