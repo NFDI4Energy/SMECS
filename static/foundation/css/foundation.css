@@ -1957,6 +1957,7 @@ input:checked + .slider:before {
   font-size: 14px;
   color: #055f82;
   font-weight: 500;
+  white-space: pre-line;
 }
 
 /************************************Color-code-info**************************************/

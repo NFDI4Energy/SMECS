@@ -14,14 +14,21 @@ function showDownloadError(fields, schema) {
   if (!popup) return;
   if (fieldsDiv) {
     if (fields && fields.length > 0) {
+      const form = document.getElementById("metadata-form");
       const readable = fields.map(f => {
         const original = schema
           ? (Object.keys(schema.properties || {}).find(k => k.toLowerCase() === f) || f)
           : f;
-        return original.replace(/([A-Z])/g, ' $1').trim()
+        const fieldName = original.replace(/([A-Z])/g, ' $1').trim()
           .replace(/^./, c => c.toUpperCase());
-      }).join(', ');
-      fieldsDiv.textContent = readable;
+        const field = Array.from(form?.querySelectorAll("[name], [data-json-key]") || [])
+          .find(element => element.name === original || element.dataset.jsonKey === original);
+        const tab = field?.closest(".tab");
+        const tabLink = tab && document.querySelector(`.tab-links_ext a[href="#${tab.id}"]`);
+        const tabName = tabLink?.textContent.trim();
+        return tabName ? `${fieldName} (tab: ${tabName})` : fieldName;
+      });
+      fieldsDiv.textContent = readable.join("\n");
       fieldsDiv.style.display = 'block';
     } else {
       fieldsDiv.style.display = 'none';
