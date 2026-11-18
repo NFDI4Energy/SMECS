@@ -428,6 +428,8 @@ export function setupTagging({
       ? selectedTags[0]
       : selectedTags;
     metadataJson.value = JSON.stringify(jsonObject, null, 2);
+    // Identify the top-level JSON property written above for the viewer highlight.
+    metadataJson.highlightUpdate?.(jsonKey);
     hiddenInput.dispatchEvent(new Event("change", { bubbles: true }));
     validateInput(input);
   }
@@ -568,6 +570,8 @@ export function setupSingleInputObject({
     const jsonObject = JSON.parse(metadataJson.value);
     jsonObject[jsonKey] = obj;
     metadataJson.value = JSON.stringify(jsonObject, null, 2);
+    // Identify the top-level JSON property written above for the viewer highlight.
+    metadataJson.highlightUpdate?.(jsonKey);
   }
 }
 

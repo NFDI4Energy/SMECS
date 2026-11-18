@@ -141,6 +141,9 @@ function syncConnossPeople(form) {
   jsonObject.author = authors;
   jsonObject.contributor = contributors;
   metadataJson.value = JSON.stringify(jsonObject, null, 2);
+  // Request highlights for both top-level arrays changed by this people-table sync.
+  // todo. currently highlights only author.
+  metadataJson.highlightUpdate?.(["author", "contributor"]);
 }
 
 function connossTagCell(field, placeholder) {
@@ -354,6 +357,8 @@ function handleInputChange(input) {
   }
 
   metadataJson.value = JSON.stringify(jsonObject, null, 2);
+  // Identify the exact top-level property written above for the JSON viewer.
+  metadataJson.highlightUpdate?.(key);
 }
 
 function isInTable(element) {

@@ -502,8 +502,7 @@ span.error_message {
   border: 1px solid #cacaca;
   border-radius: 4px;
   background-color: #fefefe;
-  font-family: monospace;
-  font-size: 0.9rem;
+  font: inherit;
   line-height: 1.4;
   resize: vertical;
   box-sizing: border-box;
@@ -759,6 +758,46 @@ select {
   margin-left: 20px;
 }
 
+.metadata-json-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.metadata-json-wrap #metadata-json {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  background: transparent;
+}
+
+.metadata-json-display {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+  margin: 0 0 2px;
+  padding: 8px;
+  overflow: auto;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background: #fff;
+  color: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.json-display-line {
+  display: block;
+}
+
+.json-display-line-updated {
+  background: rgba(255, 224, 102, 0.58);
+}
 #metadata-json {
   width: 100%;
   height: auto;

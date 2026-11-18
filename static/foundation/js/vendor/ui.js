@@ -28,19 +28,79 @@ export function setupUI() {
   if (copyBtn && metadataJson) {
     copyBtn.addEventListener("click", function (event) {
       event.preventDefault();
-      metadataJson.select();
+      // Copy from the canonical textarea, which is hidden behind the visible line renderer.
+      const copyBuffer = document.createElement("textarea");
+      copyBuffer.value = metadataJson.value;
+      copyBuffer.style.position = "fixed";
+      copyBuffer.style.left = "-9999px";
+      document.body.appendChild(copyBuffer);
+      copyBuffer.select();
       document.execCommand("copy");
+      copyBuffer.remove();
       actionFeedback("Text copied!");
     });
   }
+  
   // Make JSON viewer read-only
   if (metadataJson) {
     metadataJson.readOnly = true;
+    // Live JSON change locator feature: keep the textarea as the canonical data source,
+    // render one DOM element per JSON line, and briefly highlight and scroll to
+    // the top-level property reported by the curation handlers. Nested @context
+    // terms are intentionally excluded to avoid confusing schema terms with metadata.
+    const jsonWrapper = document.createElement("div");
+    jsonWrapper.className = "metadata-json-wrap";
+    metadataJson.parentNode.insertBefore(jsonWrapper, metadataJson);
+    jsonWrapper.appendChild(metadataJson);
+    metadataJson.style.display = "none";
+    const jsonDisplay = document.createElement("pre");
+    jsonDisplay.id = "metadata-json-display";
+    jsonDisplay.className = "metadata-json-display";
+    jsonDisplay.setAttribute("aria-label", "Metadata JSON viewer");
+    const displayTextStyle = window.getComputedStyle(metadataJson);
+    jsonDisplay.style.font = displayTextStyle.font;
+    jsonDisplay.style.lineHeight = displayTextStyle.lineHeight;
+    jsonWrapper.appendChild(jsonDisplay);
+    
+    let jsonHighlightTimer;
+    const renderJsonDisplay = (changedKeys = new Set()) => {
+      const lines = metadataJson.value.split("\n");
+      // JSON.stringify(..., null, 2) indents root properties by exactly two spaces.
+      const topLevelKey = /^ {2}"((?:\\.|[^"\\])+)"\s*:/;
+
+      jsonDisplay.replaceChildren();
+      lines.forEach((line) => {
+        const lineElement = document.createElement("span");
+        lineElement.className = "json-display-line";
+        const match = line.match(topLevelKey);
+        if (changedKeys.has(match?.[1]) && match?.[1] !== "@context") {
+          lineElement.classList.add("json-display-line-updated");
+        }
+        lineElement.textContent = line;
+        jsonDisplay.appendChild(lineElement);
+      });
+    };
+
+    renderJsonDisplay();
+    // Update handlers pass the exact top-level JSON key(s) they just serialized.
+    metadataJson.highlightUpdate = (changedKey) => {
+      const keys = new Set(Array.isArray(changedKey) ? changedKey : [changedKey]);
+      if (!keys.size) return;
+      renderJsonDisplay(keys);
+      // Scroll the same rendered row that received the highlight into view.
+      const targetLine = jsonDisplay.querySelector(".json-display-line-updated");
+      if (targetLine) {
+        const paddingTop = Number.parseFloat(window.getComputedStyle(jsonDisplay).paddingTop) || 0;
+        jsonDisplay.scrollTop = Math.max(0, targetLine.offsetTop - paddingTop);
+      }
+      clearTimeout(jsonHighlightTimer);
+      jsonHighlightTimer = setTimeout(() => renderJsonDisplay(), 1800);
+    };
 
    const alertDiv = document.createElement('span');
    alertDiv.className = 'highlight-tag json-readonly-alert';
    alertDiv.innerHTML = 'The JSON viewer is read-only. Please use the form on the left to curate the metadata. <span class="acknowledge-tag">Got it!</span>';
-   metadataJson.parentNode.insertBefore(alertDiv, metadataJson);
+   jsonWrapper.parentNode.insertBefore(alertDiv, jsonWrapper);
 
   // Got it! click handler
    alertDiv.querySelector('.acknowledge-tag').addEventListener('click', function() {

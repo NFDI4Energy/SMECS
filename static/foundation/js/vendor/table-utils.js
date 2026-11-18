@@ -103,6 +103,8 @@ export function updateTableHiddenInput(key) {
       existingJson[element] = elementList[element];
     });
     metadataJson.value = JSON.stringify(existingJson, null, 2);
+    // Request highlights for every root property serialized from this unique table.
+    metadataJson.highlightUpdate?.(Object.keys(elementList));
 
     return;
   }
@@ -113,6 +115,8 @@ export function updateTableHiddenInput(key) {
     const jsonObject = JSON.parse(metadataJson.value);
     jsonObject[key] = [];
     metadataJson.value = JSON.stringify(jsonObject, null, 2);
+    // Identify the root property written above for the JSON viewer.
+    metadataJson.highlightUpdate?.(key);
     return;
   }
 
@@ -145,6 +149,8 @@ export function updateTableHiddenInput(key) {
   const jsonObject = JSON.parse(metadataJson.value);
   jsonObject[key] = data;
   metadataJson.value = JSON.stringify(jsonObject, null, 2);
+  // Identify the root property written above for the JSON viewer.
+  metadataJson.highlightUpdate?.(key);
 }
 
 // Function to extract cell value based on column type
